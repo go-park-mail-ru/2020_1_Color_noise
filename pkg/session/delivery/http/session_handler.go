@@ -81,10 +81,17 @@ func (sh *SessionHandler) Login(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Domain: r.Host,
 	}
+	token := &http.Cookie{
+		Name:    "csrf_token",
+		Value:   session.Token,
+		Expires: time.Now().Add(10 * time.Hour),
+		Domain: r.Host,
+	}
 	result.Status = "200"
 	body["id"] = user.Id
 	result.Body = body
 	http.SetCookie(w, cookie)
+	http.SetCookie(w, token)
 	json.NewEncoder(w).Encode(result)
 }
 
@@ -105,6 +112,8 @@ func (sh *SessionHandler) Logout(w http.ResponseWriter, r *http.Request) {
 
 	err := sh.sessionUsecase.Delete(cookie.Value)
 	cookie.Expires = time.Now().AddDate(0, 0, -1)
+	token, _ := r.Cookie("token")
+	token.Expires = time.Now().AddDate(0, 0, -1)
 	if err != nil {
 		result.Status = "500"
 		body["error"] = err.Error()
@@ -114,5 +123,6 @@ func (sh *SessionHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	}
 	result.Status = "200"
 	http.SetCookie(w, cookie)
+	http.SetCookie(w, token)
 	json.NewEncoder(w).Encode(result)
 }

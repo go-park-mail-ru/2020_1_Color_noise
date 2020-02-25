@@ -53,6 +53,7 @@ func main() {
 	r.HandleFunc("/pin/{id}", pinDelivery.DeletePin).Methods("DELETE")
 	r.Use(m.AuthMiddleware)
 	r.Use(m.CORSMiddleware)
+	//r.PathPrefix("/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(""))))
 
 	srv := &http.Server{
 		Handler:      r,

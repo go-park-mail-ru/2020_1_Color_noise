@@ -74,10 +74,18 @@ func (ud *UserDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Domain: r.Host,
 	}
+	token := &http.Cookie{
+		Name:    "csrf_token",
+		Value:   session.Token,
+		Expires: time.Now().Add(10 * time.Hour),
+		Domain: r.Host,
+	}
+
 	result.Status = "200"
 	body["id"] = id
 	result.Body = body
 	http.SetCookie(w, cookie)
+	http.SetCookie(w, token)
 	json.NewEncoder(w).Encode(result)
 }
 
@@ -112,7 +120,6 @@ func (ud *UserDelivery) GetUser(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(result)
 		return
 	}
-
 	result.Status = "200"
 	body["user"] = user
 	result.Body = body
@@ -255,8 +262,11 @@ func (ud *UserDelivery) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	cookie, _ := r.Cookie("session_id")
 	ud.sessionUsecase.Delete(cookie.Value)
 	cookie.Expires = time.Now().AddDate(0, 0, -1)
+	token, _ := r.Cookie("token")
+	token.Expires = time.Now().AddDate(0, 0, -1)
 	result.Status = "200"
 	http.SetCookie(w, cookie)
+	http.SetCookie(w, token)
 	json.NewEncoder(w).Encode(result)
 }
 

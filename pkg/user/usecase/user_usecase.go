@@ -181,11 +181,8 @@ func (uu *UserUsecase) saveAvatar(user *models.User) (error) {
 	return err
 }
 
-var (
-	letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-)
-
 func randStringRunes(n int) string {
+	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 	rand.Seed(time.Now().UnixNano())
 	b := make([]rune, n)
 	for i := range b {

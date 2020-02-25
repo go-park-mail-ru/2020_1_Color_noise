@@ -7,25 +7,24 @@ import (
 )
 
 type SessionRepository struct {
-	data map[string]uint
+	data map[string]*models.Session
 }
 
 func NewSessionRepo() *SessionRepository {
 	return &SessionRepository{
-		data: make(map[string]uint),
+		data: make(map[string]*models.Session),
 	}
 }
 
 func (sr *SessionRepository) Add(session *models.Session) (error) {
-	sr.data[session.Cookie] = session.Id
-	fmt.Println(sr.data)
+	sr.data[session.Cookie] = session
 	return nil
 }
 
 func (sr *SessionRepository) GetByCookie(cookie string) (*models.Session, error) {
-	id, isExist := sr.data[cookie]
+	session, isExist := sr.data[cookie]
 	if isExist {
-		return &models.Session{Id: id, Cookie: cookie}, nil
+		return session, nil
 	}
 	return nil, fmt.Errorf("Not found")
 }

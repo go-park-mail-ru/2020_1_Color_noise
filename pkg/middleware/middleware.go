@@ -2,9 +2,9 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	sessions "pinterest/pkg/session/usecase"
+	"time"
 )
 
 type Middleware struct {
@@ -26,12 +26,39 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 		} else {
 			session, err := m.sessions.GetByCookie(cookie.Value)
 			if err != nil {
-				fmt.Println(err,"2222")
 				ctx = context.WithValue(ctx, "isAuth", false)
 			} else {
+				if r.Method != http.MethodGet {
+					token := r.Header.Get("X-CSRF-Token")
+					if token != session.Token {
+						ctx = context.WithValue(ctx, "isAuth", false)
+					} else {
+						ctx = context.WithValue(ctx, "isAuth", true)
+						ctx = context.WithValue(ctx, "Id", session.Id)
+						newToken := m.sessions.CreateToken()
+						m.sessions.UpdateToken(session, newToken)
+						token := &http.Cookie{
+							Name:    "csrf_token",
+							Value:    newToken,
+							Expires: time.Now().Add(10 * time.Hour),
+							Domain: r.Host,
+						}
+						http.SetCookie(w, token)
+					}
+				} else {
+					ctx = context.WithValue(ctx, "isAuth", true)
+					ctx = context.WithValue(ctx, "Id", session.Id)
+					newToken := m.sessions.CreateToken()
+					m.sessions.UpdateToken(session, newToken)
+					token := &http.Cookie{
+						Name:    "csrf_token",
+						Value:    newToken,
+						Expires: time.Now().Add(10 * time.Hour),
+						Domain: r.Host,
+					}
+					http.SetCookie(w, token)
+				}
 
-				ctx = context.WithValue(ctx, "isAuth", true)
-				ctx = context.WithValue(ctx, "Id", session.Id)
 			}
 		}
 		next.ServeHTTP(w, r.WithContext(ctx))
@@ -41,7 +68,7 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 func (m *Middleware) CORSMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Methods", "POST,PUT,DELETE,GET")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,X-CSRF-Token")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 		if r.Method == http.MethodOptions {
