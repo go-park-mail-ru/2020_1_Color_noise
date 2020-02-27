@@ -19,10 +19,10 @@ type Result struct {
 }
 
 type PinHandler struct {
-	pinUsecase *usecase.PinUsecase
+	pinUsecase usecase.IPinUsecase
 }
 
-func NewPinHandler(usecase *usecase.PinUsecase) *PinHandler {
+func NewPinHandler(usecase usecase.IPinUsecase) *PinHandler {
 	return &PinHandler{
 		pinUsecase: usecase,
 	}
@@ -130,6 +130,7 @@ func (ph *PinHandler) GetPin(w http.ResponseWriter, r *http.Request) {
 	result.Body = body
 	json.NewEncoder(w).Encode(result)
 }
+/*
 
 func (ph *PinHandler) UpdatePin(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -259,3 +260,4 @@ func (ph *PinHandler) DeletePin(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
+*/

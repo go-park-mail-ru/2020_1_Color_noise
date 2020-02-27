@@ -43,9 +43,22 @@ func (sh *SessionHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var in = &models.User{
-		Login:    r.FormValue("login"),
-		Password: r.FormValue("password"),
+	in := &models.User{}
+	err := json.NewDecoder(r.Body).Decode(&in)
+	if err != nil {
+		result.Status = "500"
+		body["error"] = err.Error()
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	if err != nil {
+		result.Status = "500"
+		body["error"] = err.Error()
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
 	}
 
 	user, err := sh.userUsecase.GetByLogin(in.Login)

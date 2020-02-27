@@ -44,11 +44,17 @@ func (ud *UserDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := &models.User{
-		Login:    r.FormValue("login"),
-		Password: r.FormValue("password"),
-	}
+	user := &models.User{}
 
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		result.Status = "500"
+		body["error"] = err.Error()
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+	fmt.Println(user)
 	id, err := ud.userUsecase.Add(user)
 	if err != nil {
 		result.Status = "500"
@@ -112,8 +118,6 @@ func (ud *UserDelivery) GetUser(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(result)
 		return
 	}
-
-	fmt.Println(id)
 
 	user, err := ud.userUsecase.GetById(uint(id))
 	if err != nil {
@@ -220,10 +224,9 @@ func (ud *UserDelivery) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
-	fmt.Println(vars)
 	if err != nil {
-		result.Status = "400"
-		body["error"] = err.Error()
+		result.Status = "500"
+		body["error"] = "Invalid id"
 		result.Body = body
 		json.NewEncoder(w).Encode(result)
 		return
@@ -232,7 +235,7 @@ func (ud *UserDelivery) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	oldUser, err := ud.userUsecase.GetById(uint(id))
 	if err != nil {
 		result.Status = "500"
-		body["error"] = "Internal"
+		body["error"] = err.Error()
 		result.Body = body
 		json.NewEncoder(w).Encode(result)
 		return
@@ -273,4 +276,6 @@ func (ud *UserDelivery) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, token)
 	json.NewEncoder(w).Encode(result)
 }
+
+
 

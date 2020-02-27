@@ -1,5 +1,5 @@
 package http
-
+/*
 import (
 	"context"
 	"fmt"
@@ -29,8 +29,8 @@ type TestCase struct {
 	IsAuth	   bool
 	ID         uint
 	GetID      string
-	Login	   string
-	Password   string
+	Name	   string
+	Desc       string
 	Email      string
 	ErrAdd	   error
 	ErrGet	   error
@@ -38,7 +38,7 @@ type TestCase struct {
 	CookieName string
 	Cookie     string
 	TokenName  string
-	User       models.User
+	Pin        models.Pin
 	Token      string
 	ErrSession error
 	ContextID  uint
@@ -46,77 +46,61 @@ type TestCase struct {
 	StatusCode int
 }
 
-func TestAddUser(t *testing.T) {
+func TestAdd(t *testing.T) {
 	t.Helper()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := mock.NewMockIUserUsecase(ctl)
-	mockSessionUsecase := mock.NewMockISessionUsecase(ctl)
+	mockUserUsecase := mock.NewMockIPinUsecase(ctl)
 
-	userDelivery := NewUserDelivery(mockUserUsecase, mockSessionUsecase)
+	userDelivery := NewPinHandler(mockUserUsecase)
 
 	cases := []TestCase{
 		TestCase{
+			IsAuth:     false,
+			GetID:      "2",
+			StatusCode: 200,
+			Response:   `{"status":"403","body":{"error":"User not found"}}
+`,
+		},
+		TestCase{
 			IsAuth:     true,
-			ID:         2,
-			Login:		"login1",
-			Password:	"password1",
+			GetID:      "h",
+			ErrGet:     nil,
 			StatusCode: 200,
-			Response:   `{"status":"200","body":{"id":2}}
+			Response:   `{"status":"500","body":{"error":"Invalid id"}}
 `,
 		},
 		TestCase{
-			IsAuth:     false,
-			ID:         1,
-			ErrAdd:     nil,
-			Login:		"login1",
-			Password:	"password1",
-			CookieName: "session_id",
-			Cookie:     "cookie",
-			TokenName:  "csrf_token",
-			Token:      "token",
-			ErrSession: nil,
-			StatusCode: 200,
-			Response:   `{"status":"200","body":{"id":1}}
-`,
-		},
-		TestCase{
-			IsAuth:     false,
-			ID:         1,
-			ErrAdd:     fmt.Errorf("some error"),
-			Login:		"login1",
-			Password:	"password1",
-			CookieName: "session_id",
-			Cookie:     "cookie",
-			TokenName:  "csrf_token",
-			Token:      "token",
-			ErrSession: nil,
+			IsAuth:     true,
+			GetID:      "1",
+			ErrGet:     fmt.Errorf("some error"),
 			StatusCode: 200,
 			Response:   `{"status":"500","body":{"error":"some error"}}
 `,
 		},
 		TestCase{
-			IsAuth:     false,
-			ID:         1,
-			ErrAdd:     nil,
-			Login:		"login1",
-			Password:	"password1",
-			CookieName: "session_id",
-			Cookie:     "cookie",
-			TokenName:  "csrf_token",
-			Token:      "token",
-			ErrSession: fmt.Errorf("some error"),
+			IsAuth:     true,
+			GetID:      "1",
+			Pin:		models.Pin{
+				Id:      1,
+				Name:	 "pin1",
+				Description: "desc1",
+				UserId:  1,
+				Data:    []byte{1, 1, 1},
+			},
+			ErrGet:     nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"some error"}}
+			Response:   `{"status":"200","body":{"user":{"id":1,"login":"login1"}}}
 `,
 		},
 	}
 
 	for caseNum, item := range cases {
 		r := httptest.NewRequest("POST", "/signup",
-			strings.NewReader("login=" + item.Login +"&password=" + item.Password))
+			strings.NewReader("name=" + item.Name +"&description=" + item.Desc))
 		r.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+		r.Header.Set("Content-Type", "application/form-data")
 		w := httptest.NewRecorder()
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, "isAuth", item.IsAuth)
@@ -626,4 +610,4 @@ func TestDeleteUser(t *testing.T) {
 
 
 
-
+*/

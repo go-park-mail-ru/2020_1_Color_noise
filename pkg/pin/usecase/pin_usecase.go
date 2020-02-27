@@ -21,7 +21,7 @@ func NewPinUsecase(repo *repo.PinRepository) *PinUsecase {
 }
 
 func (pu *PinUsecase) Add(pin *models.Pin) (uint, error) {
-	err := pu.saveImage(pin)
+	err := pu.SaveImage(pin)
 	pin.Data = []byte{}
 	if err != nil {
 		return 0, err
@@ -40,7 +40,7 @@ func (pu *PinUsecase) Get(id uint) (*models.Pin, error) {
 	}
 	return pins[0], nil
 }
-
+/*
 func (pu *PinUsecase) Update(id uint, pin *models.Pin) error {
 	pins, err := pu.pinRepo.GetByID(id)
 	if err != nil {
@@ -66,6 +66,8 @@ func (pu *PinUsecase) Update(id uint, pin *models.Pin) error {
 	return nil
 }
 
+
+
 func (pu *PinUsecase) Delete(id uint) error {
 	status, err := pu.pinRepo.Delete(id)
 	if err != nil {
@@ -77,7 +79,9 @@ func (pu *PinUsecase) Delete(id uint) error {
 	return nil
 }
 
-func (pu *PinUsecase) saveImage(pin *models.Pin) (error) {
+*/
+
+func (pu *PinUsecase) SaveImage(pin *models.Pin) (error) {
 	name := "store/" + randStringRunes(30) + ".jpg"
 	file, err := os.Create(name)
 	if err != nil{

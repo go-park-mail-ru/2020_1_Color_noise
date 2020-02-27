@@ -4,7 +4,7 @@ type User struct {
 	Id                uint   `json:"id"`
 	Email 	          string `json:"email,omitempty"`
 	Login             string `json:"login"`
-	Password          string `json:"-"`
+	Password          string `json:"password,omitempty"`
 	EncryptedPassword string `json:"-"`
 	About             string `json:"about,omitempty"`
 	DataAvatar        []byte  `json:"-"`
