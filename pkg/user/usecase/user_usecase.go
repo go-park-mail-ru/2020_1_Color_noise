@@ -38,7 +38,7 @@ func (uu *UserUsecase) Add(user *models.User) (uint, error) {
 	}
 	user.EncryptedPassword = encryptedPassword
 	user.Password = ""
-	user.Avatar = "store/avatar.png"
+	user.Avatar = "/avatar.jpg"
 	id, err := uu.userRepo.Add(user)
 	return id, err
 }
@@ -167,7 +167,7 @@ func encryptPassword(password string) (string, error) {
 }
 
 func (uu *UserUsecase) SaveAvatar(user *models.User) (error) {
-	name := "store/" + randStringRunes(30) + ".jpg"
+	name := "/" + randStringRunes(30) + ".jpg"
 	file, err := os.Create(name)
 	if err != nil{
 		return err
