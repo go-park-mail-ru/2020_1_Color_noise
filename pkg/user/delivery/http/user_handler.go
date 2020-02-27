@@ -188,16 +188,30 @@ func (ud *UserDelivery) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		io.Copy(image, file)
 	}
 
-	var user = &models.User{
+	user := &models.User{}
+
+	err = json.NewDecoder(r.Body).Decode(&user)
+	fmt.Println(user)
+	if err != nil {
+		result.Status = "500"
+		body["error"] = err.Error()
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	/*var user = &models.User{
 		Id:         oldUser.Id,
 		Email:      r.FormValue("email"),
 		Login:      r.FormValue("login"),
 		Password:   r.FormValue("password"),
 		About:      r.FormValue("about"),
 		DataAvatar: image.Bytes(),
-	}
+	}*/
 
 	err = ud.userUsecase.Update(user)
+	user.Id = oldUser.Id
+	fmt.Println(user)
 	if err != nil {
 		result.Status = "500"
 		body["error"] = err.Error()

@@ -108,7 +108,7 @@ func (uu *UserUsecase) Update(user *models.User) error {
 		users[0].EncryptedPassword = encryptedPassword
 	}
 
-	if len(user.DataAvatar) > 0 {
+	if len(user.Image) > 0 {
 		err = uu.SaveAvatar(user)
 		user.DataAvatar = []byte{}
 		if err != nil {
@@ -167,14 +167,14 @@ func encryptPassword(password string) (string, error) {
 }
 
 func (uu *UserUsecase) SaveAvatar(user *models.User) (error) {
-	name := "store/" + randStringRunes(30) + ".jpg"
+	name := "/" + randStringRunes(30) + ".jpg"
 	file, err := os.Create(name)
 	if err != nil{
 		return err
 	}
 	defer file.Close()
 
-	_, err = file.Write(user.DataAvatar)
+	_, err = file.Write(user.Image)
 	if err == nil {
 		user.Avatar = name
 	}

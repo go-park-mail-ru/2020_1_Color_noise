@@ -2,9 +2,9 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	sessions "pinterest/pkg/session/usecase"
-	"time"
 )
 
 type Middleware struct {
@@ -21,6 +21,7 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		cookie, err := r.Cookie("session_id")
+		fmt.Println(cookie,1)
 		if err != nil {
 			ctx = context.WithValue(ctx, "isAuth", false)
 		} else {
@@ -28,6 +29,15 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 			if err != nil {
 				ctx = context.WithValue(ctx, "isAuth", false)
 			} else {
+				ctx = context.WithValue(ctx, "isAuth", true)
+				ctx = context.WithValue(ctx, "Id", session.Id)
+				fmt.Println("vdcdscdcd")
+				//newToken := m.sessions.CreateToken()
+				//m.sessions.UpdateToken(session, newToken)
+
+				//http.SetCookie(w, token)
+
+				/*
 				if r.Method != http.MethodGet {
 					token := r.Header.Get("X-CSRF-Token")
 					if token != session.Token {
@@ -57,7 +67,7 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 						Domain: r.Host,
 					}
 					http.SetCookie(w, token)
-				}
+				}*/
 
 			}
 		}
