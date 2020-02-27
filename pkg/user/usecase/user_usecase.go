@@ -70,6 +70,7 @@ func (uu *UserUsecase) Update(user *models.User) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println(users, "hello")
 
 	if len(users) != 1 {
 		return fmt.Errorf("User not found")

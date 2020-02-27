@@ -1,11 +1,9 @@
 package http
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"io"
 	"net/http"
 	"pinterest/pkg/models"
 	sessionUsecase "pinterest/pkg/session/usecase"
@@ -155,6 +153,7 @@ func (ud *UserDelivery) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(result)
 		return
 	}
+
 	oldUser, err := ud.userUsecase.GetById(uint(id))
 	if err != nil {
 		result.Status = "500"
@@ -181,13 +180,6 @@ func (ud *UserDelivery) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.ParseMultipartForm(5 * 1024 * 1025)
-	image := bytes.NewBuffer(nil)
-	file, _, err  := r.FormFile("avatar")
-	if err == nil {
-		io.Copy(image, file)
-	}
-
 	user := &models.User{}
 
 	err = json.NewDecoder(r.Body).Decode(&user)
@@ -208,9 +200,8 @@ func (ud *UserDelivery) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		About:      r.FormValue("about"),
 		DataAvatar: image.Bytes(),
 	}*/
-
-	err = ud.userUsecase.Update(user)
 	user.Id = oldUser.Id
+	err = ud.userUsecase.Update(user)
 	fmt.Println(user)
 	if err != nil {
 		result.Status = "500"

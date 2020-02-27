@@ -22,7 +22,7 @@ func NewPinUsecase(repo *repo.PinRepository) *PinUsecase {
 
 func (pu *PinUsecase) Add(pin *models.Pin) (uint, error) {
 	err := pu.SaveImage(pin)
-	pin.Data = []byte{}
+	pin.Image = []byte{}
 	if err != nil {
 		return 0, err
 	}
@@ -82,14 +82,14 @@ func (pu *PinUsecase) Delete(id uint) error {
 */
 
 func (pu *PinUsecase) SaveImage(pin *models.Pin) (error) {
-	name := "store/" + randStringRunes(30) + ".jpg"
+	name := "/" + randStringRunes(30) + ".jpg"
 	file, err := os.Create(name)
 	if err != nil{
 		return err
 	}
 	defer file.Close()
 
-	_, err = file.Write(pin.Data)
+	_, err = file.Write(pin.Image)
 	if err == nil {
 		pin.ImageAdress = name
 	}
