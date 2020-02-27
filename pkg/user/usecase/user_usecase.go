@@ -38,7 +38,7 @@ func (uu *UserUsecase) Add(user *models.User) (uint, error) {
 	}
 	user.EncryptedPassword = encryptedPassword
 	user.Password = ""
-	user.Avatar = "store/avatar.png"
+	user.Avatar = "/avatar.jpg"
 	id, err := uu.userRepo.Add(user)
 	return id, err
 }
