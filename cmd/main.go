@@ -4,7 +4,7 @@ import (
 	httpDeliverPin "pinterest/pkg/pin/delivery/http"
 	repoPin "pinterest/pkg/pin/repository"
 	usecasePin "pinterest/pkg/pin/usecase"
-	//"fmt"
+
 	httpDeliverSession "pinterest/pkg/session/delivery/http"
 	repoSession "pinterest/pkg/session/repository"
 	usecaseSession "pinterest/pkg/session/usecase"
@@ -45,7 +45,7 @@ func main() {
 	r.HandleFunc("/logout", sessionDelivery.Logout)
 	r.HandleFunc("/signup", userDelivery.AddUser).Methods("POST")
 	r.HandleFunc("/profile/{id}", userDelivery.GetUser).Methods("GET")
-	r.HandleFunc("/profile/{id}", userDelivery.UpdateUser).Methods("POST")
+	r.HandleFunc("/profile/{id}", userDelivery.UpdateUser).Methods("PUT")
 	r.HandleFunc("/profile/{id}", userDelivery.DeleteUser).Methods("DELETE")
 	r.HandleFunc("/pin", pinDelivery.Add).Methods("POST")
 	r.HandleFunc("/pin/{id}", pinDelivery.GetPin).Methods("GET")
@@ -53,7 +53,7 @@ func main() {
 	r.HandleFunc("/pin/{id}", pinDelivery.DeletePin).Methods("DELETE")
 	r.Use(m.AuthMiddleware)
 	r.Use(m.CORSMiddleware)
-	//r.PathPrefix("/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(""))))
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	srv := &http.Server{
 		Handler:      r,

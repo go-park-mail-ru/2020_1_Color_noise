@@ -28,7 +28,7 @@ func (uu *UserUsecase) Add(user *models.User) (uint, error) {
 	if !validatePassword(user.Password) {
 		return 0, fmt.Errorf("Change Password")
 	}
-	err := uu.checkLogin(user)
+	err := uu.CheckLogin(user)
 	if err != nil {
 		return 0, err
 	}
@@ -76,7 +76,7 @@ func (uu *UserUsecase) Update(user *models.User) error {
 	}
 
 	if user.Login != "" {
-		err = uu.checkLogin(user)
+		err = uu.CheckLogin(user)
 		if err != nil {
 			return err
 		}
@@ -87,7 +87,7 @@ func (uu *UserUsecase) Update(user *models.User) error {
 	}
 
 	if user.Email != "" {
-		err = uu.checkEmail(user)
+		err = uu.CheckEmail(user)
 		if err != nil {
 			return err
 		}
@@ -109,7 +109,7 @@ func (uu *UserUsecase) Update(user *models.User) error {
 	}
 
 	if len(user.DataAvatar) > 0 {
-		err = uu.saveAvatar(user)
+		err = uu.SaveAvatar(user)
 		user.DataAvatar = []byte{}
 		if err != nil {
 			return nil
@@ -139,7 +139,7 @@ func (uu *UserUsecase) ComparePassword(user *models.User, password string) bool 
 	return bcrypt.CompareHashAndPassword([]byte(user.EncryptedPassword), []byte(password)) == nil
 }
 
-func (uu *UserUsecase) checkLogin(user *models.User) error {
+func (uu *UserUsecase) CheckLogin(user *models.User) error {
 	oldUser, _ := uu.userRepo.GetByLogin(user.Login)
 	if oldUser == nil {
 		return nil
@@ -150,7 +150,7 @@ func (uu *UserUsecase) checkLogin(user *models.User) error {
 	return fmt.Errorf("Change login")
 }
 
-func (uu *UserUsecase) checkEmail(user *models.User) error {
+func (uu *UserUsecase) CheckEmail(user *models.User) error {
 	oldUser, _ := uu.userRepo.GetByEmail(user.Email)
 	if oldUser == nil {
 		return nil
@@ -166,7 +166,7 @@ func encryptPassword(password string) (string, error) {
 	return string(hash), err
 }
 
-func (uu *UserUsecase) saveAvatar(user *models.User) (error) {
+func (uu *UserUsecase) SaveAvatar(user *models.User) (error) {
 	name := "store/" + randStringRunes(30) + ".jpg"
 	file, err := os.Create(name)
 	if err != nil{

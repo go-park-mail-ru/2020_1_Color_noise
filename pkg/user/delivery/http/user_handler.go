@@ -20,11 +20,11 @@ type Result struct {
 }
 
 type UserDelivery struct {
-	userUsecase  *userUsecase.UserUsecase
-	sessionUsecase *sessionUsecase.SessionUsecase
+	userUsecase  userUsecase.IUserUsecase
+	sessionUsecase sessionUsecase.ISessionUsecase
 }
 
-func NewUserDelivery(usecase *userUsecase.UserUsecase, sessionUsecase *sessionUsecase.SessionUsecase) *UserDelivery {
+func NewUserDelivery(usecase userUsecase.IUserUsecase, sessionUsecase sessionUsecase.ISessionUsecase) *UserDelivery {
 	return &UserDelivery{
 		userUsecase: usecase,
 		sessionUsecase: sessionUsecase,
@@ -74,6 +74,7 @@ func (ud *UserDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Domain: r.Host,
 	}
+
 	token := &http.Cookie{
 		Name:    "csrf_token",
 		Value:   session.Token,
@@ -105,12 +106,14 @@ func (ud *UserDelivery) GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		result.Status = "404"
-		body["error"] = err.Error()
+		result.Status = "500"
+		body["error"] = "Invalid id"
 		result.Body = body
 		json.NewEncoder(w).Encode(result)
 		return
 	}
+
+	fmt.Println(id)
 
 	user, err := ud.userUsecase.GetById(uint(id))
 	if err != nil {
@@ -138,21 +141,20 @@ func (ud *UserDelivery) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(result)
 		return
 	}
-	fmt.Println("1111111")
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		result.Status = "400"
-		body["error"] = err.Error()
+		result.Status = "500"
+		body["error"] = "Invalid id"
 		result.Body = body
 		json.NewEncoder(w).Encode(result)
 		return
 	}
-	fmt.Println("22222222")
 	oldUser, err := ud.userUsecase.GetById(uint(id))
 	if err != nil {
 		result.Status = "500"
-		body["error"] = "Internal"
+		body["error"] = "Internal error"
 		result.Body = body
 		json.NewEncoder(w).Encode(result)
 		return
@@ -175,12 +177,13 @@ func (ud *UserDelivery) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	r.ParseMultipartForm(5 * 1024 * 1025)
 	image := bytes.NewBuffer(nil)
 	file, _, err  := r.FormFile("avatar")
 	if err == nil {
 		io.Copy(image, file)
 	}
-	fmt.Println(oldUser.Id, "here")
+
 	var user = &models.User{
 		Id:         oldUser.Id,
 		Email:      r.FormValue("email"),
@@ -217,6 +220,7 @@ func (ud *UserDelivery) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
+	fmt.Println(vars)
 	if err != nil {
 		result.Status = "400"
 		body["error"] = err.Error()
