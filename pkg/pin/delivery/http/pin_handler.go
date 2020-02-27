@@ -1,6 +1,9 @@
 package http
 
 import (
+	"bytes"
+	"io"
+
 	//"bytes"
 	"encoding/json"
 	"github.com/gorilla/mux"
@@ -41,7 +44,7 @@ func (ph *PinHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	/*file, _, err  := r.FormFile("image")
+	file, _, err  := r.FormFile("image")
 	name := r.FormValue("name")
 	description := r.FormValue("description")
 	if err != nil || name == "" || description == "" {
@@ -52,7 +55,7 @@ func (ph *PinHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	/*image := bytes.NewBuffer(nil)
+	image := bytes.NewBuffer(nil)
 	_, err = io.Copy(image, file)
 	if err != nil {
 		result.Status = "500"
@@ -60,7 +63,7 @@ func (ph *PinHandler) Add(w http.ResponseWriter, r *http.Request) {
 		result.Body = body
 		json.NewEncoder(w).Encode(result)
 		return
-	}*/
+	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
@@ -71,9 +74,9 @@ func (ph *PinHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pin := &models.Pin{}
+	//pin := &models.Pin{}
 
-	err := json.NewDecoder(r.Body).Decode(&pin)
+	/*err := json.NewDecoder(r.Body).Decode(&pin)
 	pin.UserId = userId
 	if err != nil {
 		result.Status = "500"
@@ -81,14 +84,14 @@ func (ph *PinHandler) Add(w http.ResponseWriter, r *http.Request) {
 		result.Body = body
 		json.NewEncoder(w).Encode(result)
 		return
-	}
+	}*/
 
-	/*var pin = &models.Pin{
+	pin := &models.Pin{
 		Name:    r.FormValue("name"),
 		UserId:	 userId,
-		Data: 	 image.Bytes(),
+		Image: 	 image.Bytes(),
 		Description: r.FormValue("description"),
-	}*/
+	}
 
 	id, err := ph.pinUsecase.Add(pin)
 	if err != nil {

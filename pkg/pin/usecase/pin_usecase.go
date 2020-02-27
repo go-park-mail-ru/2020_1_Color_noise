@@ -82,7 +82,7 @@ func (pu *PinUsecase) Delete(id uint) error {
 */
 
 func (pu *PinUsecase) SaveImage(pin *models.Pin) (error) {
-	name := "/" + randStringRunes(30) + ".jpg"
+	name := randStringRunes(30) + ".jpg"
 	file, err := os.Create(name)
 	if err != nil{
 		return err
