@@ -7,9 +7,8 @@ type User struct {
 	Password          string `json:"password,omitempty"`
 	EncryptedPassword string `json:"-"`
 	About             string `json:"about,omitempty"`
-	DataAvatar        []byte  `json:"-"`
 	Avatar            string `json:"avatar,omitempty"`
-	Image			  []byte  `json:"image,omitempty"`
+	Image			  []byte  `json:"-"`
 }
 
 

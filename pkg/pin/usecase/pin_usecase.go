@@ -21,13 +21,23 @@ func NewPinUsecase(repo *repo.PinRepository) *PinUsecase {
 }
 
 func (pu *PinUsecase) Add(pin *models.Pin) (uint, error) {
-	err := pu.SaveImage(pin)
-	pin.Image = []byte{}
+	pins, err := pu.pinRepo.GetByID(pin.Id)
 	if err != nil {
 		return 0, err
 	}
-	id, err := pu.pinRepo.Add(pin)
-	return id, err
+	if len(pins) != 1 {
+		return 0, fmt.Errorf("Internal error")
+	}
+	pins[0].Name = pin.Name
+	pins[0].Description = pin.Description
+	ok, err := pu.pinRepo.Update(pins[0])
+	if err != nil {
+		return 0, err
+	}
+	if !ok {
+		return 0, fmt.Errorf("Internal error")
+	}
+	return 0, nil
 }
 
 func (pu *PinUsecase) Get(id uint) (*models.Pin, error) {
@@ -81,19 +91,27 @@ func (pu *PinUsecase) Delete(id uint) error {
 
 */
 
-func (pu *PinUsecase) SaveImage(pin *models.Pin) (error) {
+func (pu *PinUsecase) SaveImage(pin *models.Pin) (*models.Pin, error) {
 	name := randStringRunes(30) + ".jpg"
-	file, err := os.Create(name)
+	file, err := os.Create("static/" + name)
 	if err != nil{
-		return err
+		return nil, err
 	}
 	defer file.Close()
 
 	_, err = file.Write(pin.Image)
-	if err == nil {
-		pin.ImageAdress = name
+	if err != nil {
+		return nil, err
 	}
-	return err
+
+	pin.Image = []byte{}
+	pin.ImageAdress = name
+	id, err := pu.pinRepo.Add(pin)
+	if err != nil {
+		return nil, err
+	}
+	pin.Id = id
+	return pin, nil
 }
 
 var (

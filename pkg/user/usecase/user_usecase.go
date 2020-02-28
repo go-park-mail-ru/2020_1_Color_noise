@@ -38,7 +38,7 @@ func (uu *UserUsecase) Add(user *models.User) (uint, error) {
 	}
 	user.EncryptedPassword = encryptedPassword
 	user.Password = ""
-	user.Avatar = "/avatar.jpg"
+	user.Avatar = "avatar.jpg"
 	id, err := uu.userRepo.Add(user)
 	return id, err
 }
@@ -66,6 +66,7 @@ func (uu *UserUsecase) GetByLogin(login string) (*models.User, error) {
 }
 
 func (uu *UserUsecase) Update(user *models.User) error {
+	user.Password = ""
 	users, err := uu.userRepo.GetByID(user.Id)
 	if err != nil {
 		return err
@@ -96,26 +97,6 @@ func (uu *UserUsecase) Update(user *models.User) error {
 			return fmt.Errorf("Change Email")
 		}
 		users[0].Email = user.Email
-	}
-
-	if user.Password != "" {
-		if !validatePassword(user.Password) {
-			return fmt.Errorf("Change Password")
-		}
-		encryptedPassword, err := encryptPassword(user.Password)
-		if err != nil {
-			return err
-		}
-		users[0].EncryptedPassword = encryptedPassword
-	}
-
-	if len(user.Image) > 0 {
-		err = uu.SaveAvatar(user)
-		user.DataAvatar = []byte{}
-		if err != nil {
-			return nil
-		}
-		users[0].Avatar = user.Avatar
 	}
 
 	if user.About != "" {
@@ -167,19 +148,28 @@ func encryptPassword(password string) (string, error) {
 	return string(hash), err
 }
 
-func (uu *UserUsecase) SaveAvatar(user *models.User) (error) {
-	name := "/" + randStringRunes(30) + ".jpg"
-	file, err := os.Create(name)
+func (uu *UserUsecase) SaveAvatar(user *models.User) (string, error) {
+	name := randStringRunes(30) + ".jpg"
+	file, err := os.Create("static/" + name)
 	if err != nil{
-		return err
+		return "", err
 	}
 	defer file.Close()
 
 	_, err = file.Write(user.Image)
-	if err == nil {
-		user.Avatar = name
+	if err != nil {
+		return "", err
 	}
-	return err
+	newUser, err := uu.userRepo.GetByID(user.Id)
+	if err != nil {
+		return "", err
+	}
+	newUser[0].Avatar = name
+	_, err = uu.userRepo.Update(newUser[0].Id, newUser[0])
+	if err != nil {
+		return "", err
+	}
+	return name, nil
 }
 
 func randStringRunes(n int) string {
@@ -206,8 +196,12 @@ func validatePassword(password string) bool {
 	return len(password) > 5
 }
 
-/*
+
 func (uu *UserUsecase) ChangePassword(id uint, newPassword string) error {
+	ok := validatePassword(newPassword)
+	if !ok {
+		return fmt.Errorf("Change Password")
+	}
 	users, err:= uu.userRepo.GetByID(id)
 	if err != nil {
 		return err
@@ -224,6 +218,7 @@ func (uu *UserUsecase) ChangePassword(id uint, newPassword string) error {
 	return err
 }
 
+/*
 func (uu *UserUsecase) ChangeLogin(id uint, newLogin string) error {
 	if err := uu.checkLogin(newLogin); err != nil {
 		return err

@@ -1,14 +1,14 @@
 package http
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
+	"io"
 	"net/http"
 	"pinterest/pkg/models"
 	sessionUsecase "pinterest/pkg/session/usecase"
 	userUsecase "pinterest/pkg/user/usecase"
-	"strconv"
 	"time"
 )
 
@@ -87,8 +87,8 @@ func (ud *UserDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result.Status = "200"
-	body["id"] = id
-	result.Body = body
+	//body["id"] = id
+	//result.Body = body
 	http.SetCookie(w, cookie)
 	http.SetCookie(w, token)
 	json.NewEncoder(w).Encode(result)
@@ -107,11 +107,10 @@ func (ud *UserDelivery) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
+	id, ok := r.Context().Value("Id").(uint)
+	if !ok {
 		result.Status = "500"
-		body["error"] = "Invalid id"
+		body["error"] = "Internal error"
 		result.Body = body
 		json.NewEncoder(w).Encode(result)
 		return
@@ -144,17 +143,16 @@ func (ud *UserDelivery) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
+	id, ok := r.Context().Value("Id").(uint)
+	if !ok {
 		result.Status = "500"
-		body["error"] = "Invalid id"
+		body["error"] = "Internal error"
 		result.Body = body
 		json.NewEncoder(w).Encode(result)
 		return
 	}
 
-	oldUser, err := ud.userUsecase.GetById(uint(id))
+	/*oldUser, err := ud.userUsecase.GetById(uint(id))
 	if err != nil {
 		result.Status = "500"
 		body["error"] = "Internal error"
@@ -178,12 +176,11 @@ func (ud *UserDelivery) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		result.Body = body
 		json.NewEncoder(w).Encode(result)
 		return
-	}
+	}*/
 
 	user := &models.User{}
 
-	err = json.NewDecoder(r.Body).Decode(&user)
-	fmt.Println(user)
+	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		result.Status = "500"
 		body["error"] = err.Error()
@@ -200,9 +197,9 @@ func (ud *UserDelivery) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		About:      r.FormValue("about"),
 		DataAvatar: image.Bytes(),
 	}*/
-	user.Id = oldUser.Id
+
+	user.Id = id
 	err = ud.userUsecase.Update(user)
-	fmt.Println(user)
 	if err != nil {
 		result.Status = "500"
 		body["error"] = err.Error()
@@ -211,6 +208,113 @@ func (ud *UserDelivery) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	result.Status = "200"
+	json.NewEncoder(w).Encode(result)
+}
+
+func (ud *UserDelivery) UpdatePassword(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	result := Result{}
+	body := map[string]interface{} {}
+
+	if r.Context().Value("isAuth") == false {
+		result.Status = "403"
+		body["error"] = "User not found"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	id, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		result.Status = "500"
+		body["error"] = "Internal error"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	user := &models.User{}
+
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		result.Status = "500"
+		body["error"] = "Internal error"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	err = ud.userUsecase.ChangePassword(id, user.Password)
+	if err != nil {
+		result.Status = "500"
+		body["error"] = err.Error()
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	result.Status = "200"
+	json.NewEncoder(w).Encode(result)
+}
+
+func (ud *UserDelivery) UploadAvatar(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	result := Result{}
+	body := map[string]interface{} {}
+
+	if r.Context().Value("isAuth") == false {
+		result.Status = "403"
+		body["error"] = "User not found"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	id, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		result.Status = "500"
+		body["error"] = "Internal error"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	file, _, err  := r.FormFile("image")
+	if err != nil {
+		result.Status = "500"
+		body["error"] = "Internal error"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	image := bytes.NewBuffer(nil)
+	_, err = io.Copy(image, file)
+	if err != nil {
+		result.Status = "500"
+		body["error"] = "Internal error"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	user := &models.User{
+		Id:    id,
+		Image: image.Bytes(),
+	}
+
+	address, err := ud.userUsecase.SaveAvatar(user)
+	if err != nil {
+		result.Status = "500"
+		body["error"] = "Internal error"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	result.Status = "200"
+	body["image"] = address
+	result.Body = body
 	json.NewEncoder(w).Encode(result)
 }
 
@@ -227,9 +331,8 @@ func (ud *UserDelivery) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
+	id, ok := r.Context().Value("Id").(uint)
+	if !ok {
 		result.Status = "500"
 		body["error"] = "Invalid id"
 		result.Body = body
@@ -237,16 +340,16 @@ func (ud *UserDelivery) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	oldUser, err := ud.userUsecase.GetById(uint(id))
+	/*oldUser, err := ud.userUsecase.GetById(uint(id))
 	if err != nil {
 		result.Status = "500"
 		body["error"] = err.Error()
 		result.Body = body
 		json.NewEncoder(w).Encode(result)
 		return
-	}
+	}*/
 
-	userId, ok := r.Context().Value("Id").(uint)
+	/*userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		result.Status = "500"
 		body["error"] = "Internal error"
@@ -261,9 +364,9 @@ func (ud *UserDelivery) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		result.Body = body
 		json.NewEncoder(w).Encode(result)
 		return
-	}
+	}*/
 
-	err = ud.userUsecase.Delete(uint(id))
+	err := ud.userUsecase.Delete(uint(id))
 	if err != nil {
 		result.Status = "500"
 		body["error"] = err.Error()

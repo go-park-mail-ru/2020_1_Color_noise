@@ -7,7 +7,7 @@ import (
 type IPinUsecase interface {
 	Add(pin *models.Pin) (uint, error)
 	Get(id uint) (*models.Pin, error)
-	SaveImage(pin *models.Pin) (error)
+	SaveImage(pin *models.Pin) (*models.Pin, error)
 }
 
 

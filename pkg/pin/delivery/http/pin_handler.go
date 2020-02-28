@@ -2,8 +2,8 @@ package http
 
 import (
 	"bytes"
+	"fmt"
 	"io"
-
 	//"bytes"
 	"encoding/json"
 	"github.com/gorilla/mux"
@@ -44,10 +44,36 @@ func (ph *PinHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, _, err  := r.FormFile("image")
-	name := r.FormValue("name")
-	description := r.FormValue("description")
-	if err != nil || name == "" || description == "" {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		result.Status = "500"
+		body["error"] = err.Error()
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	/*userId, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		result.Status = "500"
+		body["error"] = "Internal error"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}*/
+
+	pin := &models.Pin{}
+	err = json.NewDecoder(r.Body).Decode(&pin)
+	if err != nil {
+		result.Status = "500"
+		body["error"] = "Internal error"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	if pin.Name == "" || pin.Description == "" {
 		result.Status = "500"
 		body["error"] = "Fill in all the fields"
 		result.Body = body
@@ -55,45 +81,8 @@ func (ph *PinHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	image := bytes.NewBuffer(nil)
-	_, err = io.Copy(image, file)
-	if err != nil {
-		result.Status = "500"
-		body["error"] = "Internal error"
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
-		return
-	}
-
-	userId, ok := r.Context().Value("Id").(uint)
-	if !ok {
-		result.Status = "500"
-		body["error"] = "Internal error"
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
-		return
-	}
-
-	//pin := &models.Pin{}
-
-	/*err := json.NewDecoder(r.Body).Decode(&pin)
-	pin.UserId = userId
-	if err != nil {
-		result.Status = "500"
-		body["error"] = err.Error()
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
-		return
-	}*/
-
-	pin := &models.Pin{
-		Name:    r.FormValue("name"),
-		UserId:	 userId,
-		Image: 	 image.Bytes(),
-		Description: r.FormValue("description"),
-	}
-
-	id, err := ph.pinUsecase.Add(pin)
+	pin.Id = uint(id)
+	_, err = ph.pinUsecase.Add(pin)
 	if err != nil {
 		result.Status = "500"
 		body["error"] = err.Error()
@@ -103,8 +92,8 @@ func (ph *PinHandler) Add(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result.Status = "200"
-	body["id"] = id
-	result.Body = body
+	//body["id"] = id
+	//result.Body = body
 	json.NewEncoder(w).Encode(result)
 }
 
@@ -142,6 +131,72 @@ func (ph *PinHandler) GetPin(w http.ResponseWriter, r *http.Request) {
 
 	result.Status = "200"
 	body["pin"] = pin
+	result.Body = body
+	json.NewEncoder(w).Encode(result)
+}
+
+func (ph *PinHandler) UploadImage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	result := Result{}
+	body := map[string]interface{} {}
+
+	fmt.Println("hello")
+
+	if r.Context().Value("isAuth") == false {
+		result.Status = "403"
+		body["error"] = "User not found"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	id, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		result.Status = "500"
+		body["error"] = "Internal error"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	file, _, err  := r.FormFile("image")
+	if err != nil {
+		result.Status = "500"
+		body["error"] = "Internal error"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	image := bytes.NewBuffer(nil)
+	_, err = io.Copy(image, file)
+	if err != nil {
+		result.Status = "500"
+		body["error"] = "Internal error"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	pin := &models.Pin{
+		UserId:    id,
+		Image: image.Bytes(),
+	}
+
+	pin, err = ph.pinUsecase.SaveImage(pin)
+	if err != nil {
+		result.Status = "500"
+		body["error"] = "Internal error"
+		result.Body = body
+		json.NewEncoder(w).Encode(result)
+		return
+	}
+
+	result.Status = "200"
+	fmt.Println(pin)
+	body["pin"] = pin
+	/*body["id"] = pin.Id
+	body["image"] = pin.ImageAdress*/
 	result.Body = body
 	json.NewEncoder(w).Encode(result)
 }

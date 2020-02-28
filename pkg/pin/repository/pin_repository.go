@@ -50,9 +50,9 @@ func (pr *PinRepository) GetByName(name string) ([]*models.Pin, error) {
 	return result, nil
 }
 
-func (pr *PinRepository) Update(id uint, pin *models.Pin) (bool, error) {
-	for i, pin := range pr.data {
-		if pin.Id == id {
+func (pr *PinRepository) Update(pin *models.Pin) (bool, error) {
+	for i, oldPin := range pr.data {
+		if oldPin.Id == pin.Id {
 			pr.data[i] = pin
 			return true, nil
 		}
