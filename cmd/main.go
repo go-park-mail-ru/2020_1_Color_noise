@@ -1,19 +1,20 @@
 package main
 
 import (
-	httpDeliverPin "pinterest/pkg/pin/delivery/http"
-	repoPin "pinterest/pkg/pin/repository"
-	usecasePin "pinterest/pkg/pin/usecase"
+	//"echo_example/user/usecase"
+	pinDeliveryHttp "pinterest/internal/pkg/pin/delivery/http"
+	pinRepo "pinterest/internal/pkg/pin/repository"
+	pinUsecase "pinterest/internal/pkg/pin/usecase"
 
-	httpDeliverSession "pinterest/pkg/session/delivery/http"
-	repoSession "pinterest/pkg/session/repository"
-	usecaseSession "pinterest/pkg/session/usecase"
+	sessionDeliveryHttp "pinterest/internal/pkg/session/delivery/http"
+	sessionRepo "pinterest/internal/pkg/session/repository"
+	sessionUsecase "pinterest/internal/pkg/session/usecase"
 
-	httpDeliverUser "pinterest/pkg/user/delivery/http"
-	repoUser "pinterest/pkg/user/repository"
-	usecaseUser "pinterest/pkg/user/usecase"
+	userDeliveryHttp "pinterest/internal/pkg/user/delivery/http"
+	userRepo "pinterest/internal/pkg/user/repository"
+	userUsecase "pinterest/internal/pkg/user/usecase"
 
-	middleware "pinterest/pkg/middleware"
+	"pinterest/internal/pkg/middleware"
 
 	//"awesomeProject/internal/pkg/session/usecase"
 	"github.com/gorilla/mux"
@@ -26,31 +27,30 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	userRepo := repoUser.NewUserRepo()
-	userUsecase := usecaseUser.NewUserUsecase(userRepo)
+	userRepo := userRepo.NewRepo()
+	userUsecase := userUsecase.NewUsecase(userRepo)
 
-	sessionRepo := repoSession.NewSessionRepo()
-	sessionUsecase := usecaseSession.NewSessionUsecase(sessionRepo)
-	sessionDelivery := httpDeliverSession.NewSessionHandler(sessionUsecase, userUsecase)
+	sessionRepo := sessionRepo.NewRepo()
+	sessionUsecase := sessionUsecase.NewUsecase(sessionRepo)
+	sessionDelivery := sessionDeliveryHttp.NewHandler(sessionUsecase, userUsecase)
 
-	userDelivery := httpDeliverUser.NewUserDelivery(userUsecase, sessionUsecase)
+	userDelivery := userDeliveryHttp.NewHandler(userUsecase, sessionUsecase)
 
-	pinRepo := repoPin.NewPinRepo()
-	pinUsecase := usecasePin.NewPinUsecase(pinRepo)
-	pinDelivery := httpDeliverPin.NewPinHandler(pinUsecase)
+	pinRepo := pinRepo.NewRepo()
+	pinUsecase := pinUsecase.NewUsecase(pinRepo)
+	pinDelivery := pinDeliveryHttp.NewHandler(pinUsecase)
 
 	m := middleware.NewMiddleware(sessionUsecase)
 
 	r.HandleFunc("/login", sessionDelivery.Login).Methods("POST")
 	r.HandleFunc("/logout", sessionDelivery.Logout)
-	r.HandleFunc("/signup", userDelivery.AddUser).Methods("POST")
+	r.HandleFunc("/signup", userDelivery.Create).Methods("POST")
 	r.HandleFunc("/profile", userDelivery.GetUser).Methods("GET")
 	r.HandleFunc("/profile", userDelivery.UpdateUser).Methods("PUT")
 	r.HandleFunc("/profile/password", userDelivery.UpdatePassword).Methods("PUT")
 	r.HandleFunc("/profile/avatar", userDelivery.UploadAvatar).Methods("POST")
-	r.HandleFunc("/profile", userDelivery.DeleteUser).Methods("DELETE")
+	//r.HandleFunc("/profile", userDelivery.Delete).Methods("DELETE")
 	r.HandleFunc("/pin/{id:[0-9]+}", pinDelivery.Add).Methods("POST")
-	r.HandleFunc("/pin/image", pinDelivery.UploadImage).Methods("POST")
 	r.HandleFunc("/pin/{id:[0-9]+}", pinDelivery.GetPin).Methods("GET")
 	//r.HandleFunc("/pin/{id}", pinDelivery.UpdatePin).Methods("PUT")
 	//r.HandleFunc("/pin/{id}", pinDelivery.DeletePin).Methods("DELETE")
