@@ -9,9 +9,9 @@ type Pin struct {
 }
 
 type InputPin struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Image       []byte `json:"image"`
+	Name        string `json:"name" valid:"required"`
+	Description string `json:"description" valid:"required"`
+	Image       []byte `json:"image" valid:"base64,required"`
 }
 
 type ResponsePin struct {

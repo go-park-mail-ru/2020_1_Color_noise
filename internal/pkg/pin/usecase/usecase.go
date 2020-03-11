@@ -11,57 +11,75 @@ import (
 )
 
 type Usecase struct {
-	pinRepo  pin.IRepository
+	repo  pin.IRepository
 }
 
 func NewUsecase(repo pin.IRepository) *Usecase {
 	return &Usecase{
-		pinRepo: repo,
+		repo: repo,
 	}
 }
 
-func (pu *Usecase) Add(input *models.InputPin) (uint, error) {
+func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 	length := base64.StdEncoding.EncodedLen(len(input.Image))
 	if length > 10000000 {
-		return 0, TooMuchSize.New("Too much size image")
-	}
-
-	if input.Name == "" || input.Description == "" || length == 0 {
-		return 0, BadPin.New("Fill in all the fields")
+		return 0, Wrapf(TooMuchSize.New("Too much size image"), "Creating pin error, userId: %s", userId)
 	}
 
 	buffer := make([]byte, length)
 
 	l, err := base64.StdEncoding.Decode(buffer, input.Image)
 	if err != nil {
-		return 0, Wrap(err, "Decoding error")
+		err = Wrap(err, "Decoding base64")
+		return 0, Wrapf(err, "Creating pin error, userId: %s", userId)
 	}
 	buffer = buffer[:l]
 
 	name, err := image.SaveImage(&buffer)
 	if err != nil {
-		return 0, nil
+		return 0, Wrapf(err, "Creating pin error, userId: %s", userId)
 	}
 
 	pin := &models.Pin{
+		UserId:      userId,
 		Name:        input.Name,
 		Description: input.Description,
-		Image:       "static/" + name,
+		Image:       name,
 	}
 
-	return pu.pinRepo.Add(pin)
+	id, err := pu.repo.Add(pin)
+	if err != nil {
+		return 0, Wrapf(err, "Creating pin error, userId: %s", userId)
+	}
+
+	return id, nil
 }
 
 func (pu *Usecase) GetById(id uint) (*models.Pin, error) {
-	return pu.pinRepo.GetByID(id)
+	pin, err := pu.repo.GetByID(id)
+	if err != nil {
+		return nil, Wrapf(err, "Getting pin by id error, pinId: %s", id)
+	}
+
+	return pin, nil
 }
 
 func (pu *Usecase) GetByUserId(id uint) ([]*models.Pin, error) {
-	return pu.pinRepo.GetByUserID(id)
+	pins, err := pu.repo.GetByUserID(id)
+	if err != nil {
+		return nil, Wrapf(err, "Getting pin by id error, pinId: %s", id)
+	}
+
+	return pins, nil
 }
 
 func (pu *Usecase) GetByName(name string) ([]*models.Pin, error) {
-	return pu.pinRepo.GetByName(name)
+	pins, err := pu.repo.GetByName(name)
+	if err != nil {
+		return nil, Wrapf(err, "Getting pin by id error, name: %s", name)
+	}
+
+	return pins, nil
 }
 
 /*

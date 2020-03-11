@@ -3,21 +3,26 @@ package repository
 import (
 	"pinterest/internal/models"
 	. "pinterest/internal/pkg/error"
+	"sync"
 )
 
 type Repository struct {
 	data []*models.User
+	mu   *sync.Mutex
 }
 
 func NewRepo() *Repository {
 	return &Repository{
 		data: make([]*models.User, 0),
+		mu:   &sync.Mutex{},
 	}
 }
 
 func (ur *Repository) Add(user *models.User) (uint, error) {
+	ur.mu.Lock()
 	user.Id = uint(len(ur.data) + 1)
 	ur.data = append(ur.data, user)
+	ur.mu.Unlock()
 
 	return user.Id, nil
 }
@@ -29,7 +34,7 @@ func (ur *Repository) GetByID(id uint) (*models.User, error) {
 		}
 	}
 
-	return nil, NotFound.Newf("User to get not found, id: %d", id)
+	return nil, UserNotFound.Newf("User to get not found, id: %d", id)
 }
 
 func (ur *Repository) GetByLogin(login string) (*models.User, error) {
@@ -39,7 +44,7 @@ func (ur *Repository) GetByLogin(login string) (*models.User, error) {
 		}
 	}
 
-	return nil, NotFound.Newf("User to get not found, login: %s", login)
+	return nil, BadLogin.Newf("User to get not found, login: %s", login)
 }
 
 func (ur *Repository) GetByEmail(email string) (*models.User, error) {
@@ -49,21 +54,25 @@ func (ur *Repository) GetByEmail(email string) (*models.User, error) {
 		}
 	}
 
-	return nil, NotFound.Newf("User to get not found, id: %s", email)
+	return nil, BadEmail.Newf("User to get not found, email: %s", email)
 }
 
 func (ur *Repository) Update(newUser *models.User) error {
+	ur.mu.Lock()
 	for i, user := range ur.data {
 		if user.Id == newUser.Id {
 			ur.data[i] = newUser
+			ur.mu.Unlock()
 			return nil
 		}
 	}
+	ur.mu.Unlock()
 
-	return NotFound.Newf("User to update not found, id: %d", newUser.Id)
+	return UserNotFound.Newf("User to update not found, id: %d", newUser.Id)
 }
 
 func (ur *Repository) Delete(id uint) error {
+	ur.mu.Lock()
 	for i, user := range ur.data {
 		if user.Id == id {
 			newData := ur.data[:i]
@@ -71,9 +80,11 @@ func (ur *Repository) Delete(id uint) error {
 				newData = append(newData, ur.data[j])
 			}
 			ur.data = newData
+			ur.mu.Unlock()
 			return nil
 		}
 	}
+	ur.mu.Unlock()
 
-	return NotFound.Newf("User to delete not found, id: %d", id)
+	return UserNotFound.Newf("User to delete not found, id: %d", id)
 }

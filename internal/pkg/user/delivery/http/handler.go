@@ -3,7 +3,7 @@ package http
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"github.com/asaskevich/govalidator"
 	"io"
 	"net/http"
 	"pinterest/internal/models"
@@ -32,32 +32,42 @@ func NewHandler(usecase user.IUsecase, sessionUsecase session.IUsecase) *Handler
 }
 
 func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("ReqId")
+
 	if r.Context().Value("isAuth") == true {
 		response.Respond(w, http.StatusOK, map[string]string {
 			"message": "Ok",
 		})
 		return
 	}
-	fmt.Println("hhhhhh")
 	input := &models.SignUpInput{}
 
 	err := json.NewDecoder(r.Body).Decode(input)
-	fmt.Println(input)
 	if err != nil {
-		fmt.Println("hhhhhh")
-		error.ErrorHandler(w, error.Wrap(err,"Decoding error during creation user"))
+		err = error.Wrap(err,"Decoding error during creation user")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	_, err = govalidator.ValidateStruct(input)
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
+			"Password should be longer than 6 characters and shorter 100. " +
+			"Login should be letters and numbers. " +
+			"Email should be like hello@example.com")
+		error.ErrorHandler(w, err)
 		return
 	}
 
 	id, err := ud.userUsecase.Create(input)
 	if err != nil {
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	session, err := ud.sessionUsecase.CreateSession(id)
 	if err != nil {
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -84,6 +94,8 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
 	if r.Context().Value("isAuth") == false {
 		err := error.Unauthorized.New("User is unauthorized")
 		error.ErrorHandler(w, err)
@@ -93,13 +105,13 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	user, err := ud.userUsecase.GetById(uint(id))
 	if err != nil {
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -114,17 +126,18 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ud *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
 	if r.Context().Value("isAuth") == false {
 		err := error.Unauthorized.New("User is unauthorized")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
-	fmt.Println("hhhhhh")
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -133,13 +146,13 @@ func (ud *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
 		err := error.Wrap(err,"Decoding error during updating user")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	err = ud.userUsecase.Update(id, input)
 	if err != nil {
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -149,37 +162,40 @@ func (ud *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
 	if r.Context().Value("isAuth") == false {
 		err := error.Unauthorized.New("User is unauthorized")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	password := &models.UpdatePasswordInput{}
+	input := map[string]string{}
 
-	err := json.NewDecoder(r.Body).Decode(password)
+	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
 		err := error.Wrap(err, "Decoding error during updating password")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	if password.NewPassword != password.ConfirmPassword {
-		err := error.BadPassword.New("Passwords do not match")
-		error.ErrorHandler(w, err)
+	password, ok := input["password"];
+	if !ok {
+		err := error.BadPassword.New("Enter your password")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	err = ud.userUsecase.UpdatePassword(id, password)
 	if err != nil {
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -189,30 +205,32 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
 	if r.Context().Value("isAuth") == false {
 		err := error.Unauthorized.New("User is unauthorized")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	err := r.ParseMultipartForm(5 * 1024 * 1025)
 	if err != nil {
 		err := error.Wrap(err, "Decoding error during updating password")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	file, _, err  := r.FormFile("image")
 	if err != nil {
-		err := error.Wrap(err, "Reading from form error")
-		error.ErrorHandler(w, err)
+		err := error.Wrap(err, "Reading image from form error")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -220,13 +238,13 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 	_, err = io.Copy(buffer, file)
 	if err != nil {
 		err := error.Wrap(err, "Coping byte form error")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	address, err := ud.userUsecase.UpdateAvatar(id, buffer)
 	if err != nil {
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 

@@ -1,6 +1,8 @@
 package models
 
-import "regexp"
+import (
+	"regexp"
+)
 
 type User struct {
 	Id                uint
@@ -13,30 +15,25 @@ type User struct {
 }
 
 type SignUpInput struct {
-	Email    string `json:"email"`
-	Login    string `json:"login"`
-	Password string `json:"password"`
+	Email    string `json:"email" valid:"email"`
+	Login    string `json:"login" valid:"alphanum"`
+	Password string `json:"password" valid:"length(6|100)"`
 }
 
 type SignInInput struct {
-	Login    string `json:"login"`
-	Password string `json:"password"`
+	Login    string `json:"login" valid:"alphanum"`
+	Password string `json:"password" valid:"length(6|100)"`
 }
 
 type UpdateInput struct {
-	Email string `json:"email,omitempty"`
-	Login string `json:"login,omitempty"`
-	About string `json:"about,omitempty"`
-}
-
-type UpdatePasswordInput struct {
-	NewPassword     string `json:"password,omitempty"`
-	ConfirmPassword string `json:"confirm,omitempty"`
+	Email string `json:"email" valid:"email,optional"`
+	Login string `json:"login" valid:"alphanum,optional"`
+	About string `json:"about" valid:"optional"`
 }
 
 type ResponseSettingsUser struct {
 	Email 	          string `json:"email,omitempty"`
-	Login             string `json:"login"`
+	Login             string `json:"login,omitempty"`
 	About             string `json:"about,omitempty"`
 	Avatar            string `json:"avatar,omitempty"`
 }

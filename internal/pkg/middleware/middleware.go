@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"context"
+	"fmt"
+	"math/rand"
 	"net/http"
 	sessions "pinterest/internal/pkg/session/usecase"
 )
@@ -19,6 +21,9 @@ func NewMiddleware(su *sessions.SessionUsecase) Middleware {
 func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
+		reqId := fmt.Sprintf("%016x", rand.Int())[:10]
+		fmt.Println(reqId)
+		ctx = context.WithValue(ctx, "ReqId", reqId)
 		cookie, err := r.Cookie("session_id")
 		if err != nil {
 			ctx = context.WithValue(ctx, "isAuth", false)

@@ -20,7 +20,7 @@ func NewUsecase(repo user.IRepository) *UserUsecase {
 }
 
 func (uu *UserUsecase) Create(input *models.SignUpInput) (uint, error) {
-	if !models.ValidateEmail(input.Email) {
+	/*if !models.ValidateEmail(input.Email) {
 		return 0, BadEmail.New("Email incorrect")
 	}
 
@@ -29,15 +29,16 @@ func (uu *UserUsecase) Create(input *models.SignUpInput) (uint, error) {
 	}
 
 	if !models.ValidatePassword(input.Password) {
+		fmt.Println("pass")
 		return 0, BadPassword.New("Password should be longer than 6 characters")
-	}
+	}*/
 
 	if err := uu.emailIsExist(input.Email); err != nil {
-		return 0, err
+		return 0, Wrap(err, "Creating new user error")
 	}
 
 	if err := uu.loginIsExist(input.Login); err != nil {
-		return 0, err
+		return 0, Wrap(err, "Creating new user error")
 	}
 
 	encryptedPassword, err := encryptPassword(input.Password)
@@ -52,68 +53,91 @@ func (uu *UserUsecase) Create(input *models.SignUpInput) (uint, error) {
 		Avatar:            "avatar.jpg",
 	}
 
-	return uu.repo.Add(user)
+	id, err := uu.repo.Add(user)
+	if err != nil {
+		return 0, Wrap(err, "Creating new user error")
+	}
+
+	return id, nil
 }
 
 func (uu *UserUsecase) GetById(id uint) (*models.User, error) {
-	return uu.repo.GetByID(id)
+	user, err := uu.repo.GetByID(id)
+	if err != nil {
+		return nil, Wrap(err, "Getting by id user error")
+	}
+
+	return user, nil
 }
 
 func (uu *UserUsecase) GetByLogin(login string) (*models.User, error) {
-	return uu.repo.GetByLogin(login)
+	user, err := uu.repo.GetByLogin(login)
+	if err != nil {
+		return nil, Wrap(err, "Getting by login user error")
+	}
+
+	return user, nil
+
 }
 
 func (uu *UserUsecase) Update(id uint, input *models.UpdateInput) error {
-	if !models.ValidateEmail(input.Email) {
+	/*if !models.ValidateEmail(input.Email) {
 		return BadEmail.New("Email incorrect")
 	}
 
 	if !models.ValidateLogin(input.Login) {
 		return BadLogin.New("Login incorrect")
-	}
-
-	if err := uu.emailIsExist(input.Email); err != nil {
-		return err
-	}
-
-	if err := uu.loginIsExist(input.Login); err != nil {
-		return err
-	}
-
+	}*/
 	user, err := uu.GetById(id)
 	if err != nil {
-		return err
+		return Wrap(err, "Updating user error")
 	}
 
-	user.Login = input.Login
-	user.Email = input.Email
+	if input.Email != "" {
+		if err := uu.emailIsExist(input.Email); err != nil {
+			return Wrap(err, "Updating user error")
+		}
+		user.Email = input.Email
+	}
+
+	if input.Login != "" {
+		if err := uu.loginIsExist(input.Login); err != nil {
+			return Wrap(err, "Updating user error")
+		}
+		user.Login = input.Login
+	}
+
 	user.About = input.About
 
-	return uu.repo.Update(user)
+	if err = uu.repo.Update(user); err != nil {
+		return Wrap(err, "Updating user error")
+	}
+
+	return nil
 }
 
-func (uu *UserUsecase) UpdatePassword(id uint, input *models.UpdatePasswordInput) error {
-	if input.NewPassword != input.ConfirmPassword {
-		return BadPassword.New("Passwords don't match")
-	}
-
-	if !models.ValidatePassword(input.NewPassword) {
+func (uu *UserUsecase) UpdatePassword(id uint, password string) error {
+	/*if !models.ValidatePassword(password) {
 		return BadPassword.New("Password should be longer than 6 characters")
-	}
+	}*/
 
-	encryptedPassword, err := encryptPassword(input.NewPassword)
+	encryptedPassword, err := encryptPassword(password)
 	if err != nil {
-		return err
+		return Wrapf(err, "Updating password error, id: %d", id)
 	}
 
 	user, err:= uu.repo.GetByID(id)
 	if err != nil {
-		return err
+		return Wrapf(err, "Updating password error, id: %d", id)
 	}
 
 	user.EncryptedPassword = encryptedPassword
 
-	return uu.repo.Update(user)
+	if err = uu.repo.Update(user); err != nil {
+		return Wrapf(err, "Updating password error,  id: %d", id)
+	}
+
+	return nil
 }
 
 func (uu *UserUsecase) UpdateAvatar(id uint, buffer *bytes.Buffer) (string, error) {
@@ -126,16 +150,24 @@ func (uu *UserUsecase) UpdateAvatar(id uint, buffer *bytes.Buffer) (string, erro
 
 	user, err:= uu.repo.GetByID(id)
 	if err != nil {
-		return "", err
+		return "", Wrapf(err, "Updating avatar error, id:%d", id)
 	}
 
 	user.Avatar = path
 
-	return "", uu.repo.Update(user)
+	if err = uu.repo.Update(user); err != nil {
+		return "", Wrap(err, "Updating avatar error")
+	}
+
+	return path, nil
 }
 
 func (uu *UserUsecase) Delete(id uint) error {
-	return uu.repo.Delete(id)
+	if err := uu.repo.Delete(id); err != nil {
+		return Wrap(err, "Deleting error")
+	}
+
+	return nil
 }
 
 func (uu *UserUsecase) ComparePassword(user *models.User, password string) error {
@@ -143,7 +175,7 @@ func (uu *UserUsecase) ComparePassword(user *models.User, password string) error
 		return nil
 	}
 
-	return Unauthorized.Newf("Incorrect password, id: %d", user.Id)
+	return BadPassword.Newf("Password is incorrect, id: %d", user.Id)
 }
 
 func (uu *UserUsecase) loginIsExist(login string) error {
@@ -152,7 +184,7 @@ func (uu *UserUsecase) loginIsExist(login string) error {
 		return LoginIsExist.Newf("User with login %s already exists", login)
 	}
 
-	if GetType(err) == NotFound {
+	if GetType(err) == BadLogin {
 		return nil
 	}
 
@@ -165,7 +197,7 @@ func (uu *UserUsecase) emailIsExist(email string) error {
 		return EmailIsExist.Newf("User with email %s already exists", email)
 	}
 
-	if GetType(err) == NotFound {
+	if GetType(err) == BadEmail {
 		return nil
 	}
 
@@ -175,7 +207,7 @@ func (uu *UserUsecase) emailIsExist(email string) error {
 func encryptPassword(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
 	if err != nil {
-		return "", Wrapf(err, "Internal error")
+		return "", Wrapf(err, "Error in during encrypting password")
 	}
 
 	return string(hash), nil

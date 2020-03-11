@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/asaskevich/govalidator"
 	"pinterest/internal/pkg/error"
 	"pinterest/internal/pkg/pin"
 	"pinterest/internal/pkg/response"
@@ -28,10 +29,19 @@ func NewHandler(usecase pin.IUsecase) *Handler {
 	}
 }
 
-func (ph *Handler) Add(w http.ResponseWriter, r *http.Request) {
+func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
 	if r.Context().Value("isAuth") == false {
 		err := error.Unauthorized.New("User is unauthorized")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	userId, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -39,13 +49,23 @@ func (ph *Handler) Add(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		error.ErrorHandler(w, err)
+		err = error.Wrap(err,"Decoding error during creation pin")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	id, err := ph.pinUsecase.Add(input)
+	_, err = govalidator.ValidateStruct(input)
 	if err != nil {
-		error.ErrorHandler(w, err)
+		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
+			"Name and description shouldn't be empty. " +
+			"Image should be base64")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	id, err := ph.pinUsecase.Create(input, userId)
+	if err != nil {
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -57,23 +77,25 @@ func (ph *Handler) Add(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
 	if r.Context().Value("isAuth") == false {
 		err := error.Unauthorized.New("User is unauthorized")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		err = error.BadRequest.Wrap(err, "Bad id when getting a pin")
-		error.ErrorHandler(w, err)
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id when getting a pin"), "Bad id")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	pin, err := ph.pinUsecase.GetById(uint(id))
 	if err != nil {
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 

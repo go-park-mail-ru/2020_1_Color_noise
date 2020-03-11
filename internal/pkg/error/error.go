@@ -3,6 +3,7 @@ package error
 import (
 	"fmt"
 	"github.com/pkg/errors"
+	"log"
 	"net/http"
 	"pinterest/internal/pkg/response"
 )
@@ -10,27 +11,22 @@ import (
 const(
 	NoType = ErrorType(iota)
 	BadRequest
-	NotFound
-	BadCookie
-	BadToken
+	PinNotFound
 	UserNotFound
 	BadLogin
-	LoginIsExist
-	BadEmail
-	EmailIsExist
 	BadPassword
+	BadEmail
+	LoginIsExist
+	EmailIsExist
 	Unauthorized
 	TooMuchSize
-	BadPin
-	DBError
-
-	//add any type you want
 )
 type ErrorType uint
 
 type Error struct {
 	errorType ErrorType
 	originalError error
+	message string
 }
 // Error returns the mssage of a customError
 func (error Error) Error() string {
@@ -42,34 +38,30 @@ func (e ErrorType) New(msg string) error {
 		originalError: New(msg),
 	}
 }
-// New creates a new customError with formatted message
+
 func (e ErrorType) Newf(msg string, args ...interface{}) error {
 	err := fmt.Errorf(msg, args...)
 	return Error{errorType: e, originalError: err}
 }
 
-// Wrap creates a new wrapped error
 func (e ErrorType) Wrap(err error, msg string) error {
 	return e.Wrapf(err, msg)
 }
 
-// Wrap creates a new wrapped error with formatted message
 func (e ErrorType) Wrapf(err error, msg string, args ...interface{}) error {
-	newErr := e.Wrapf(err, msg, args)
+	newErr := errors.Wrapf(err, msg, args)
 
 	return Error{errorType: e, originalError: newErr}
 }
 
 func New(msg string) error {
-	return Error{errorType: NoType, originalError: New(msg)}
+	return Error{errorType: NoType, originalError: errors.New(msg)}
 }
 
-// Newf creates a no type error with formatted message
 func Newf(msg string, args ...interface{}) error {
 	return Error{errorType: NoType, originalError: New(fmt.Sprintf(msg, args...))}
 }
 
-// Wrap wrans an error with a string
 func Wrap(err error, msg string) error {
 	return Wrapf(err, msg)
 }
@@ -81,6 +73,7 @@ func Wrapf(err error, msg string, args ...interface{}) error {
 		return Error{
 			errorType: customErr.errorType,
 			originalError: wrappedError,
+			message: customErr.message,
 		}
 	}
 
@@ -95,41 +88,51 @@ func GetType(err error) ErrorType {
 	return NoType
 }
 
+func WithMessage(err error, message string) error {
+	if customErr, ok := err.(Error); ok {
+		customErr.message = message
+		return customErr
+	}
+
+	return Error{errorType: NoType, originalError: err, message: message}
+}
+
 func ErrorHandler(w http.ResponseWriter, err error) {
 	var status int
 	var message string
-	switch err.(Error).errorType {
+
+	e, _ := err.(Error)
+	switch GetType(e) {
 	case BadRequest:
 		status = http.StatusBadRequest
-		message = err.Error()
-	case NotFound:
+		message = e.message
+	case UserNotFound:
 		status = http.StatusNotFound
-		message = err.Error()
-	/*case UserNotFound:
+		message = "User is not found"
+	case PinNotFound:
+		status = http.StatusNotFound
+		message = "Pin is not found"
+	case BadLogin, BadPassword:
 		status = http.StatusUnauthorized
-		message = err.Error()*/
-	case BadLogin:
-		status = http.StatusUnauthorized
-		message = err.Error()
-	case BadPassword:
-		status = http.StatusUnauthorized
-		message = err.Error()
-	case BadEmail:
-		status = http.StatusUnauthorized
-		message = err.Error()
+		message = "Login or password is incorrect"
 	case LoginIsExist:
 		status = http.StatusUnauthorized
-		message = err.Error()
+		message = "Change your login, login is already exist"
 	case EmailIsExist:
 		status = http.StatusUnauthorized
-		message = err.Error()
+		message = "Change your email, email is already exist"
 	case Unauthorized:
 		status = http.StatusUnauthorized
-		message = err.Error()
+		message = "User is unauthorized"
+	case TooMuchSize:
+		status = http.StatusUnauthorized
+		message = "Image size should be less than 10 MB"
 	default:
 		status = http.StatusInternalServerError
 		message = "Internal server error"
 	}
+
+	log.Println(err.Error())
 
 	response.Respond(w, status, map[string]string {
 		"error": message,
