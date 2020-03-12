@@ -2,8 +2,8 @@ package repository
 
 
 import (
-	"pinterest/internal/models"
-	. "pinterest/internal/pkg/error"
+	"2020_1_Color_noise/internal/models"
+	. "2020_1_Color_noise/internal/pkg/error"
 	"sync"
 )
 

@@ -1,12 +1,12 @@
 package usecase
 
 import (
+	"2020_1_Color_noise/internal/models"
+	. "2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/image"
+	"2020_1_Color_noise/internal/pkg/user"
 	"bytes"
 	"golang.org/x/crypto/bcrypt"
-	"pinterest/internal/models"
-	. "pinterest/internal/pkg/error"
-	"pinterest/internal/pkg/image"
-	"pinterest/internal/pkg/user"
 )
 
 type UserUsecase struct {

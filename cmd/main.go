@@ -2,19 +2,19 @@ package main
 
 import (
 	//"echo_example/user/usecase"
-	pinDeliveryHttp "pinterest/internal/pkg/pin/delivery/http"
-	pinRepo "pinterest/internal/pkg/pin/repository"
-	pinUsecase "pinterest/internal/pkg/pin/usecase"
+	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
+	pinRepo "2020_1_Color_noise/internal/pkg/pin/repository"
+	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
 
-	sessionDeliveryHttp "pinterest/internal/pkg/session/delivery/http"
-	sessionRepo "pinterest/internal/pkg/session/repository"
-	sessionUsecase "pinterest/internal/pkg/session/usecase"
+	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
+	sessionRepo "2020_1_Color_noise/internal/pkg/session/repository"
+	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
 
-	userDeliveryHttp "pinterest/internal/pkg/user/delivery/http"
-	userRepo "pinterest/internal/pkg/user/repository"
-	userUsecase "pinterest/internal/pkg/user/usecase"
+	userDeliveryHttp "2020_1_Color_noise/internal/pkg/user/delivery/http"
+	userRepo "2020_1_Color_noise/internal/pkg/user/repository"
+	userUsecase "2020_1_Color_noise/internal/pkg/user/usecase"
 
-	"pinterest/internal/pkg/middleware"
+	"2020_1_Color_noise/internal/pkg/middleware"
 
 	//"awesomeProject/internal/pkg/session/usecase"
 	"github.com/gorilla/mux"

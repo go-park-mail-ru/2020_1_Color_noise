@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
-	sessions "pinterest/internal/pkg/session/usecase"
+	sessions "2020_1_Color_noise/internal/pkg/session/usecase"
 )
 
 type Middleware struct {

@@ -5,7 +5,7 @@ import (
 	"github.com/pkg/errors"
 	"log"
 	"net/http"
-	"pinterest/internal/pkg/response"
+	"2020_1_Color_noise/internal/pkg/response"
 )
 
 const(

@@ -1,4 +1,4 @@
-module pinterest
+module 2020_1_Color_noise
 
 go 1.13
 

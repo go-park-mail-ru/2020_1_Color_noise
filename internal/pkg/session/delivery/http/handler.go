@@ -1,14 +1,13 @@
 package http
 
 import (
+	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/response"
+	"2020_1_Color_noise/internal/pkg/session"
+	"2020_1_Color_noise/internal/pkg/user"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"pinterest/internal/models"
-	"pinterest/internal/pkg/error"
-	"pinterest/internal/pkg/response"
-	"pinterest/internal/pkg/session"
-	"pinterest/internal/pkg/user"
 	"time"
 )
 
@@ -28,7 +27,6 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
 
 	if r.Context().Value("isAuth") == true {
-		fmt.Println("HHHHHHHHH")
 		response.Respond(w, http.StatusOK, map[string]string {
 			"message": "Ok",
 		})

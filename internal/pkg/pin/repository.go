@@ -1,7 +1,7 @@
 package pin
 
 import (
-	"pinterest/internal/models"
+	"2020_1_Color_noise/internal/models"
 )
 
 type IRepository interface {

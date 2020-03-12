@@ -1,17 +1,17 @@
 package http
 
 import (
+	"2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/pin"
+	"2020_1_Color_noise/internal/pkg/response"
 	"github.com/asaskevich/govalidator"
-	"pinterest/internal/pkg/error"
-	"pinterest/internal/pkg/pin"
-	"pinterest/internal/pkg/response"
 	"strconv"
 
 	"encoding/json"
 	"github.com/gorilla/mux"
 
+	"2020_1_Color_noise/internal/models"
 	"net/http"
-	"pinterest/internal/models"
 )
 
 type Result struct {

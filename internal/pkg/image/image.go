@@ -2,8 +2,8 @@ package image
 
 import (
 	"os"
-	. "pinterest/internal/pkg/error"
-	"pinterest/internal/pkg/utils"
+	. "2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/utils"
 )
 
 func SaveImage(b *[]byte) (string, error) {

@@ -1,10 +1,10 @@
 package session
 
 import (
-	"pinterest/internal/models"
-	. "pinterest/internal/pkg/error"
-	"pinterest/internal/pkg/session"
-	"pinterest/internal/pkg/utils"
+	"2020_1_Color_noise/internal/models"
+	. "2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/session"
+	"2020_1_Color_noise/internal/pkg/utils"
 )
 
 type SessionUsecase struct {

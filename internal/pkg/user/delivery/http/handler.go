@@ -1,16 +1,16 @@
 package http
 
 import (
+	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/response"
+	"2020_1_Color_noise/internal/pkg/session"
+	"2020_1_Color_noise/internal/pkg/user"
 	"bytes"
 	"encoding/json"
 	"github.com/asaskevich/govalidator"
 	"io"
 	"net/http"
-	"pinterest/internal/models"
-	"pinterest/internal/pkg/error"
-	"pinterest/internal/pkg/response"
-	"pinterest/internal/pkg/session"
-	"pinterest/internal/pkg/user"
 	"time"
 )
 

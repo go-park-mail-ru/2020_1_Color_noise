@@ -1,6 +1,6 @@
 package session
 
-import "pinterest/internal/models"
+import "2020_1_Color_noise/internal/models"
 
 type IUsecase interface {
 	CreateSession(id uint) (*models.Session, error)

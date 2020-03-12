@@ -1,11 +1,11 @@
 package usecase
 
 import (
+	"2020_1_Color_noise/internal/models"
+	. "2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/image"
+	"2020_1_Color_noise/internal/pkg/pin"
 	"encoding/base64"
-	"pinterest/internal/models"
-	. "pinterest/internal/pkg/error"
-	"pinterest/internal/pkg/image"
-	"pinterest/internal/pkg/pin"
 
 	//"golang.org/x/crypto/bcrypt"
 )

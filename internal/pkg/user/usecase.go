@@ -1,8 +1,8 @@
 package user
 
 import (
+	"2020_1_Color_noise/internal/models"
 	"bytes"
-	"pinterest/internal/models"
 )
 
 type IUsecase interface {

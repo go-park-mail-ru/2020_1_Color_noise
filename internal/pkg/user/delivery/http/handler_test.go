@@ -13,10 +13,10 @@ import (
 	//"fmt"
 	"io/ioutil"
 
+	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/user/mock"
 	//"io/ioutil"
 	"net/http/httptest"
-	"pinterest/internal/mock"
-	"pinterest/internal/models"
 
 	"strings"
 
