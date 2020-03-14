@@ -1,17 +1,17 @@
 package models
 
 type Pin struct {
-	Id          uint   `json:"id,omitempty"`
-	UserId      uint   `json:"user_id,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
+	Id          uint
+	UserId      uint
+	Name        string
+	Description string
 	Image       string
 }
 
 type InputPin struct {
 	Name        string `json:"name" valid:"required"`
 	Description string `json:"description" valid:"required"`
-	Image       []byte `json:"image" valid:"base64,required"`
+	Image       string `json:"image" valid:"datauri,required"`
 }
 
 type ResponsePin struct {

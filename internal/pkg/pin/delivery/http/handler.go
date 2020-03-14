@@ -104,6 +104,7 @@ func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
 		UserId:      pin.UserId,
 		Name:        pin.Name,
 		Description: pin.Description,
+		Image:       pin.Image,
 	}
 
 	response.Respond(w, http.StatusOK, resp)

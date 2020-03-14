@@ -1,9 +1,9 @@
 package image
 
 import (
-	"os"
 	. "2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/utils"
+	"os"
 )
 
 func SaveImage(b *[]byte) (string, error) {

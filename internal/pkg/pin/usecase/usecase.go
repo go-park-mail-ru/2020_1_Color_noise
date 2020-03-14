@@ -6,6 +6,7 @@ import (
 	"2020_1_Color_noise/internal/pkg/image"
 	"2020_1_Color_noise/internal/pkg/pin"
 	"encoding/base64"
+	"strings"
 
 	//"golang.org/x/crypto/bcrypt"
 )
@@ -21,19 +22,18 @@ func NewUsecase(repo pin.IRepository) *Usecase {
 }
 
 func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
-	length := base64.StdEncoding.EncodedLen(len(input.Image))
+	b64data := input.Image[strings.IndexByte(input.Image, ',')+1:]
+
+	length := base64.StdEncoding.EncodedLen(len(b64data))
 	if length > 10000000 {
 		return 0, Wrapf(TooMuchSize.New("Too much size image"), "Creating pin error, userId: %s", userId)
 	}
 
-	buffer := make([]byte, length)
-
-	l, err := base64.StdEncoding.Decode(buffer, input.Image)
+	buffer, err := base64.StdEncoding.DecodeString(b64data)
 	if err != nil {
 		err = Wrap(err, "Decoding base64")
 		return 0, Wrapf(err, "Creating pin error, userId: %s", userId)
 	}
-	buffer = buffer[:l]
 
 	name, err := image.SaveImage(&buffer)
 	if err != nil {
