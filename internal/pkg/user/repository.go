@@ -13,5 +13,7 @@ type IRepository interface {
 	UpdateDescription(id uint, description *string) error
 	UpdatePassword(id uint, encryptredPassword string) error
 	UpdateAvatar(id uint, path string) error
+	Follow(id uint, subId uint) error
+	Unfollow(id uint, subId uint) error
 	Delete(id uint) error
 }

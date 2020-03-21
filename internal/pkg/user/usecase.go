@@ -14,6 +14,8 @@ type IUsecase interface {
 	UpdatePassword(id uint, input *models.UpdatePasswordInput) error
 	UpdateAvatar(id uint, buffer *bytes.Buffer) (string, error)
 	Delete(id uint) error
+	Follow(id uint, subId uint) error
+	Unfollow(id uint, subId uint) error
 	ComparePassword(user *models.User, password string) error
 }
 

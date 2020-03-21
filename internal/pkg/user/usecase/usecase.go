@@ -43,7 +43,7 @@ func (uu *UserUsecase) Create(input *models.SignUpInput) (uint, error) {
 	*/
 	encryptedPassword, err := encryptPassword(input.Password)
 	if err != nil {
-		return 0, err
+		return 0, Wrap(err, "Creating new user error")
 	}
 
 	user := &models.User{
@@ -92,7 +92,7 @@ func (uu *UserUsecase) UpdateProfile(id uint, input *models.UpdateProfileInput) 
 func (uu *UserUsecase) UpdatePassword(id uint, input *models.UpdatePasswordInput) error {
 	encryptedPassword, err := encryptPassword(input.Password)
 	if err != nil {
-		return Wrapf(err, "Updating user password error, id: %d", id)
+		return Wrap(err, "Updating user password error")
 	}
 
 	err = uu.repo.UpdatePassword(id, encryptedPassword)
@@ -136,12 +136,28 @@ func (uu *UserUsecase) Delete(id uint) error {
 	return nil
 }
 
+func (uu *UserUsecase) Follow(id uint, subId uint) error {
+	if err := uu.repo.Follow(id, subId); err != nil {
+		return Wrap(err, "Following error")
+	}
+
+	return nil
+}
+
+func (uu *UserUsecase) Unfollow(id uint, subId uint) error {
+	if err := uu.repo.Unfollow(id, subId); err != nil {
+		return Wrap(err, "Unfollowing error")
+	}
+
+	return nil
+}
+
 func (uu *UserUsecase) ComparePassword(user *models.User, password string) error {
 	if bcrypt.CompareHashAndPassword([]byte(user.EncryptedPassword), []byte(password)) == nil {
 		return nil
 	}
 
-	return BadPassword.Newf("Password is incorrect, id: %d", user.Id)
+	return BadPassword.Newf("Password is incorrect")
 }
 
 /*

@@ -9,8 +9,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/asaskevich/govalidator"
+	"github.com/gorilla/mux"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -104,10 +106,44 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := models.ResponseUser{
-		Email:  user.Email,
-		Login:  user.Login,
-		About:  user.About,
-		Avatar: user.Avatar,
+		Email:  	   user.Email,
+		Login:  	   user.Login,
+		About:  	   user.About,
+		Avatar: 	   user.Avatar,
+		Pins:   	   user.Pins,
+		Desks:         user.Desks,
+		Subscribers:   user.Subscribers,
+		Subscriptions: user.Subscriptions,
+	}
+
+	response.Respond(w, http.StatusOK, resp)
+}
+
+func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting user"), "Bad id")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	user, err := ud.userUsecase.GetById(uint(id))
+	if err != nil {
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	resp := models.ResponseUser{
+		Login:  	   user.Login,
+		About:  	   user.About,
+		Avatar: 	   user.Avatar,
+		Pins:   	   user.Pins,
+		Desks:         user.Desks,
+		Subscribers:   user.Subscribers,
+		Subscriptions: user.Subscriptions,
 	}
 
 	response.Respond(w, http.StatusOK, resp)
@@ -270,6 +306,66 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 		"image": address,
 	})
 }
+
+func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
+	id, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	vars := mux.Vars(r)
+	subId, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during following"), "Bad id")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	err = ud.userUsecase.Follow(id, uint(subId))
+	if err != nil {
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	response.Respond(w, http.StatusCreated, map[string]string {
+		"message": "Ok",
+	})
+}
+
+func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
+	id, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	vars := mux.Vars(r)
+	subId, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during unfollowing"), "Bad id")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	err = ud.userUsecase.Unfollow(id, uint(subId))
+	if err != nil {
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	response.Respond(w, http.StatusOK, map[string]string {
+		"message": "Ok",
+	})
+}
+
+
 /*
 func (ud *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")

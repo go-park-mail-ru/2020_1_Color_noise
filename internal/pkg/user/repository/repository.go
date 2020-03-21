@@ -131,3 +131,11 @@ func (ur *Repository) Delete(id uint) error {
 
 	return UserNotFound.Newf("User to delete not found, id: %d", id)
 }
+
+func (ur *Repository) Follow(id uint, subId uint) error {
+	return nil
+}
+
+func (ur *Repository) Unfollow(id uint, subId uint) error {
+	return nil
+}
