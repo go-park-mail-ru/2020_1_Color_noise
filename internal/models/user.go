@@ -1,7 +1,7 @@
 package models
 
 import (
-	"regexp"
+	"time"
 )
 
 type User struct {
@@ -12,37 +12,44 @@ type User struct {
 	About             string
 	Avatar            string
 	Image			  []byte
+	Pins              []uint
+	Desks             []uint
+	CreatedAt         time.Time
 }
 
 type SignUpInput struct {
-	Email    string `json:"email" valid:"email"`
-	Login    string `json:"login" valid:"alphanum"`
+	Email    string `json:"email" valid:"email,length(0|50)"`
+	Login    string `json:"login" valid:"alphanum,length(0|20)"`
 	Password string `json:"password" valid:"length(6|100)"`
 }
 
 type SignInInput struct {
-	Login    string `json:"login" valid:"alphanum"`
+	Login    string `json:"login" valid:"alphanum,length(0|20)"`
 	Password string `json:"password" valid:"length(6|100)"`
 }
 
 type UpdateProfileInput struct {
-	Email string `json:"email" valid:"email,optional"`
-	Login string `json:"login" valid:"alphanum,optional"`
+	Email string `json:"email" valid:"email,length(0|50),optional"`
+	Login string `json:"login" valid:"alphanum,length(0|20),optional"`
 }
 
-type ResponseSettingsUser struct {
-	Email 	          string `json:"email,omitempty"`
-	Login             string `json:"login,omitempty"`
-	About             string `json:"about,omitempty"`
-	Avatar            string `json:"avatar,omitempty"`
+type UpdateDescriptionInput struct {
+	Description string `json:"description" valid:"length(0|1000)"`
+}
+
+type UpdatePasswordInput struct {
+	Password string `json:"password" valid:"length(6|70)"`
 }
 
 type ResponseUser struct {
+	Email 	          string `json:"email,omitempty"`
 	Login             string `json:"login"`
 	About             string `json:"about,omitempty"`
 	Avatar            string `json:"avatar,omitempty"`
+	Pins              []uint `json:"pins,omitempty"`
 }
 
+/*
 func ValidateEmail(email string) bool {
 	matched, _ := regexp.MatchString(`^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$`, email)
 	return matched
@@ -56,4 +63,5 @@ func ValidateLogin(login string) bool {
 func ValidatePassword(password string) bool {
 	return len(password) > 6
 }
+*/
 

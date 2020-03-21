@@ -47,8 +47,8 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
 			"Password should be longer than 6 characters and shorter 100. " +
-			"Login should be letters and numbers. " +
-			"Email should be like hello@example.com")
+			"Login should be letters and numbers, and shorter than 20 characters " +
+			"Email should be like hello@example.com and shorter than 50 characters.")
 		error.ErrorHandler(w, err)
 		return
 	}
@@ -103,7 +103,7 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := models.ResponseSettingsUser{
+	resp := models.ResponseUser{
 		Email:  user.Email,
 		Login:  user.Login,
 		About:  user.About,
@@ -113,7 +113,7 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	response.Respond(w, http.StatusOK, resp)
 }
 
-func (ud *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
 
 	id, ok := r.Context().Value("Id").(uint)
@@ -127,12 +127,59 @@ func (ud *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
-		err := error.Wrap(err,"Decoding error during updating user")
+		err := error.Wrap(err,"Decoding error during updating profile user")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	err = ud.userUsecase.Update(id, input)
+	_, err = govalidator.ValidateStruct(input)
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
+				"Login should be letters and numbers, shorter than 20 characters " +
+				"Email should be like hello@example.com and shorter than 50 characters")
+		error.ErrorHandler(w, err)
+		return
+	}
+
+	err = ud.userUsecase.UpdateProfile(id, input)
+	if err != nil {
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	response.Respond(w, http.StatusOK, map[string]string {
+		"message": "Ok",
+	})
+}
+
+func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
+	id, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	input := &models.UpdateDescriptionInput{}
+
+	err := json.NewDecoder(r.Body).Decode(input)
+	if err != nil {
+		err := error.Wrap(err,"Decoding error during updating description user")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	_, err = govalidator.ValidateStruct(input)
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
+			"Description should be shorter than 1000 characters.")
+		error.ErrorHandler(w, err)
+		return
+	}
+
+	err = ud.userUsecase.UpdateDescription(id, input)
 	if err != nil {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -153,7 +200,7 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	input := map[string]string{}
+	input := &models.UpdatePasswordInput{}
 
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
@@ -162,14 +209,15 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	password, ok := input["password"];
-	if !ok {
-		err := error.BadPassword.New("Enter your password")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+	_, err = govalidator.ValidateStruct(input)
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
+			"Password should be longer than 6 characters and shorter 100. ")
+		error.ErrorHandler(w, err)
 		return
 	}
 
-	err = ud.userUsecase.UpdatePassword(id, password)
+	err = ud.userUsecase.UpdatePassword(id, input)
 	if err != nil {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return

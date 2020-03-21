@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Pin struct {
 	Id          uint
 	UserId      uint
@@ -7,6 +9,7 @@ type Pin struct {
 	Name        string
 	Description string
 	Image       string
+	CreatedAt   time.Time
 }
 
 type InputPin struct {
@@ -19,6 +22,7 @@ type InputPin struct {
 type ResponsePin struct {
 	Id          uint   `json:"id,omitempty"`
 	UserId      uint   `json:"user_id,omitempty"`
+	DescId      uint   `json:"desc_id,omitempty"`
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 	Image       string `json:"image,omitempty"`
