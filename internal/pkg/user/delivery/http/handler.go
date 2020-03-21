@@ -34,12 +34,6 @@ func NewHandler(usecase user.IUsecase, sessionUsecase session.IUsecase) *Handler
 func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
-	if r.Context().Value("isAuth") == true {
-		response.Respond(w, http.StatusOK, map[string]string {
-			"message": "Ok",
-		})
-		return
-	}
 	input := &models.SignUpInput{}
 
 	err := json.NewDecoder(r.Body).Decode(input)
@@ -96,12 +90,6 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
 
-	if r.Context().Value("isAuth") == false {
-		err := error.Unauthorized.New("User is unauthorized")
-		error.ErrorHandler(w, err)
-		return
-	}
-
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
@@ -128,12 +116,6 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 func (ud *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
 
-	if r.Context().Value("isAuth") == false {
-		err := error.Unauthorized.New("User is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
-
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
@@ -141,7 +123,7 @@ func (ud *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	input := &models.UpdateInput{}
+	input := &models.UpdateProfileInput{}
 
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
@@ -163,12 +145,6 @@ func (ud *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
-
-	if r.Context().Value("isAuth") == false {
-		err := error.Unauthorized.New("User is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
@@ -206,12 +182,6 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
-
-	if r.Context().Value("isAuth") == false {
-		err := error.Unauthorized.New("User is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
 
 	err := r.ParseMultipartForm(5 * 1024 * 1025)
 	if err != nil {

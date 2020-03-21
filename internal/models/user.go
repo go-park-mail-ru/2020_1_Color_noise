@@ -25,10 +25,9 @@ type SignInInput struct {
 	Password string `json:"password" valid:"length(6|100)"`
 }
 
-type UpdateInput struct {
+type UpdateProfileInput struct {
 	Email string `json:"email" valid:"email,optional"`
 	Login string `json:"login" valid:"alphanum,optional"`
-	About string `json:"about" valid:"optional"`
 }
 
 type ResponseSettingsUser struct {

@@ -32,12 +32,6 @@ func NewHandler(usecase pin.IUsecase) *Handler {
 func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
 
-	if r.Context().Value("isAuth") == false {
-		err := error.Unauthorized.New("User is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
-
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
@@ -78,12 +72,6 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
-
-	if r.Context().Value("isAuth") == false {
-		err := error.Unauthorized.New("User is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])

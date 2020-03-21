@@ -1,11 +1,13 @@
 package middleware
 
 import (
+	"2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/response"
+	sessions "2020_1_Color_noise/internal/pkg/session/usecase"
 	"context"
 	"fmt"
 	"math/rand"
 	"net/http"
-	sessions "2020_1_Color_noise/internal/pkg/session/usecase"
 )
 
 type Middleware struct {
@@ -21,18 +23,22 @@ func NewMiddleware(su *sessions.SessionUsecase) Middleware {
 func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
+
 		reqId := fmt.Sprintf("%016x", rand.Int())[:10]
 		ctx = context.WithValue(ctx, "ReqId", reqId)
+
 		cookie, err := r.Cookie("session_id")
 		if err != nil {
-			ctx = context.WithValue(ctx, "isAuth", false)
+			unauthHandler(next, w, r.WithContext(ctx))
+			return
 		} else {
 			session, err := m.sessions.GetByCookie(cookie.Value)
 			if err != nil {
-				ctx = context.WithValue(ctx, "isAuth", false)
+				unauthHandler(next, w, r.WithContext(ctx))
+				return
 			} else {
-				ctx = context.WithValue(ctx, "isAuth", true)
 				ctx = context.WithValue(ctx, "Id", session.Id)
+				authHandler(next, w, r.WithContext(ctx))
 				//newToken := m.sessions.CreateToken()
 				//m.sessions.UpdateToken(session, newToken)
 
@@ -72,8 +78,30 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 
 			}
 		}
-		next.ServeHTTP(w, r.WithContext(ctx))
+		//next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func unauthHandler(next http.Handler, w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+	if (path == "/api/user" || path == "/api/auth") && r.Method == "POST" {
+		next.ServeHTTP(w, r)
+	} else {
+		err := error.Unauthorized.New("User is unauthorized")
+		reqId:= r.Context().Value("ReqId")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+	}
+}
+
+func authHandler(next http.Handler, w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+	if (path == "/api/user" || path == "/api/auth") && r.Method == "POST" {
+		response.Respond(w, http.StatusOK, map[string]string {
+			"message": "Ok",
+		})
+	} else {
+		next.ServeHTTP(w, r)
+	}
 }
 
 func (m *Middleware) CORSMiddleware(next http.Handler) http.Handler {

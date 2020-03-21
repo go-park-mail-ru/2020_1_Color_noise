@@ -26,13 +26,6 @@ func NewHandler(sessionUsecase session.IUsecase, userUsecase user.IUsecase) *Han
 func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
 
-	if r.Context().Value("isAuth") == true {
-		response.Respond(w, http.StatusOK, map[string]string {
-			"message": "Ok",
-		})
-		return
-	}
-
 	input := &models.SignUpInput{}
 
 	err := json.NewDecoder(r.Body).Decode(&input)
@@ -83,12 +76,6 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
-
-	if r.Context().Value("isAuth") == false {
-		err := error.Unauthorized.New("User is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
 
 	cookie, err := r.Cookie("session_id")
 	if err != nil {

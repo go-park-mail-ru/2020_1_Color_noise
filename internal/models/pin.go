@@ -3,12 +3,14 @@ package models
 type Pin struct {
 	Id          uint
 	UserId      uint
+	DeskId	    uint
 	Name        string
 	Description string
 	Image       string
 }
 
 type InputPin struct {
+	DeskId      int    `json:"desk_id" valid:"int"`
 	Name        string `json:"name" valid:"required"`
 	Description string `json:"description" valid:"required"`
 	Image       string `json:"image" valid:"datauri,required"`

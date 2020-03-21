@@ -80,7 +80,7 @@ func (uu *UserUsecase) GetByLogin(login string) (*models.User, error) {
 
 }
 
-func (uu *UserUsecase) Update(id uint, input *models.UpdateInput) error {
+func (uu *UserUsecase) Update(id uint, input *models.UpdateProfileInput) error {
 	/*if !models.ValidateEmail(input.Email) {
 		return BadEmail.New("Email incorrect")
 	}
@@ -107,7 +107,7 @@ func (uu *UserUsecase) Update(id uint, input *models.UpdateInput) error {
 		user.Login = input.Login
 	}
 
-	user.About = input.About
+	//user.About = input.About
 
 	if err = uu.repo.Update(user); err != nil {
 		return Wrap(err, "Updating user error")
