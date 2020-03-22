@@ -7,8 +7,6 @@ import (
 	"2020_1_Color_noise/internal/pkg/pin"
 	"encoding/base64"
 	"strings"
-
-	//"golang.org/x/crypto/bcrypt"
 )
 
 type Usecase struct {
@@ -42,12 +40,13 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 
 	pin := &models.Pin{
 		UserId:      userId,
+		BoardId:     input.BoardId,
 		Name:        input.Name,
 		Description: input.Description,
 		Image:       name,
 	}
 
-	id, err := pu.repo.Add(pin)
+	id, err := pu.repo.Create(pin)
 	if err != nil {
 		return 0, Wrapf(err, "Creating pin error, userId: %s", userId)
 	}
@@ -64,8 +63,8 @@ func (pu *Usecase) GetById(id uint) (*models.Pin, error) {
 	return pin, nil
 }
 
-func (pu *Usecase) GetByUserId(id uint) ([]*models.Pin, error) {
-	pins, err := pu.repo.GetByUserID(id)
+func (pu *Usecase) GetByUserId(id uint, start int, limit int) ([]*models.Pin, error) {
+	pins, err := pu.repo.GetByUserID(id, start, limit)
 	if err != nil {
 		return nil, Wrapf(err, "Getting pin by id error, pinId: %s", id)
 	}
@@ -73,8 +72,8 @@ func (pu *Usecase) GetByUserId(id uint) ([]*models.Pin, error) {
 	return pins, nil
 }
 
-func (pu *Usecase) GetByName(name string) ([]*models.Pin, error) {
-	pins, err := pu.repo.GetByName(name)
+func (pu *Usecase) GetByName(name string, start int, limit int) ([]*models.Pin, error) {
+	pins, err := pu.repo.GetByName(name, start, limit)
 	if err != nil {
 		return nil, Wrapf(err, "Getting pin by id error, name: %s", name)
 	}

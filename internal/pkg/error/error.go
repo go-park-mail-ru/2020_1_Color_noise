@@ -12,6 +12,7 @@ const(
 	NoType = ErrorType(iota)
 	BadRequest
 	PinNotFound
+	BoardNotFound
 	UserNotFound
 	BadLogin
 	BadPassword
@@ -112,6 +113,9 @@ func ErrorHandler(w http.ResponseWriter, err error) {
 	case PinNotFound:
 		status = http.StatusNotFound
 		message = "Pin is not found"
+	case BoardNotFound:
+		status = http.StatusNotFound
+		message = "Board is not found"
 	case BadLogin, BadPassword:
 		status = http.StatusUnauthorized
 		message = "Login or password is incorrect"

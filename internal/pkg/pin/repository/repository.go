@@ -19,7 +19,7 @@ func NewRepo() *Repository {
 	}
 }
 
-func (pr *Repository) Add(pin *models.Pin) (uint, error) {
+func (pr *Repository) Create(pin *models.Pin) (uint, error) {
 	pr.mu.Lock()
 	pin.Id = uint(len(pr.data) + 1)
 	pr.data = append(pr.data, pin)
@@ -38,32 +38,40 @@ func (pr *Repository) GetByID(id uint) (*models.Pin, error) {
 	return nil, PinNotFound.Newf("Pin not found, id: %d", id)
 }
 
-func (pr *Repository) GetByUserID(userId uint) ([]*models.Pin, error) {
+func (pr *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.Pin, error) {
 	var result []*models.Pin
-	for _, pin := range pr.data {
-		if pin.UserId == userId {
+	for i, pin := range pr.data {
+		if pin.UserId == userId && start >= i {
 			result = append(result, pin)
+
+			if limit == len(result){
+				break
+			}
 		}
 	}
 
-	if len(result) == 0 {
+	/*if len(result) == 0 {
 		return result, PinNotFound.Newf("Pins not found, userId: %d", userId)
-	}
+	}*/
 
 	return result, nil
 }
 
-func (pr *Repository) GetByName(name string) ([]*models.Pin, error) {
+func (pr *Repository) GetByName(name string,  start int, limit int) ([]*models.Pin, error) {
 	var result []*models.Pin
-	for _, pin := range pr.data {
-		if pin.Name == name {
+	for i, pin := range pr.data {
+		if pin.Name == name && start >= i {
 			result = append(result, pin)
+
+			if limit == len(result){
+				break
+			}
 		}
 	}
 
-	if len(result) == 0 {
+	/*if len(result) == 0 {
 		return result, PinNotFound.Newf("Pins not found, name: %d", name)
-	}
+	}*/
 
 	return result, nil
 }

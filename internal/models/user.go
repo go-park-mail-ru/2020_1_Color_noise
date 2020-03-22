@@ -12,10 +12,8 @@ type User struct {
 	About             string
 	Avatar            string
 	Image			  []byte
-	Pins              []uint
-	Desks             []uint
-	Subscriptions     []uint
-	Subscribers       []uint
+	Subscriptions     uint
+	Subscribers       uint
 	CreatedAt         time.Time
 }
 
@@ -44,14 +42,13 @@ type UpdatePasswordInput struct {
 }
 
 type ResponseUser struct {
+	Id                uint   `json:"id"`
 	Email 	          string `json:"email,omitempty"`
 	Login             string `json:"login"`
 	About             string `json:"about,omitempty"`
 	Avatar            string `json:"avatar,omitempty"`
-	Pins              []uint `json:"pins,omitempty"`
-	Desks             []uint `json:"desks,omitempty"`
-	Subscriptions     []uint `json:"subscriptions,omitempty"`
-	Subscribers       []uint `json:"subscribers,omitempty"`
+	Subscriptions     uint   `json:"subscriptions,omitempty"`
+	Subscribers       uint   `json:"subscribers,omitempty"`
 }
 
 /*

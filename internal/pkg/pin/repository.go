@@ -5,10 +5,10 @@ import (
 )
 
 type IRepository interface {
-	Add(pin *models.Pin) (uint, error)
+	Create(pin *models.Pin) (uint, error)
 	GetByID(id uint) (*models.Pin, error)
-	GetByUserID(userId uint) ([]*models.Pin, error)
-	GetByName(name string) ([]*models.Pin, error)
+	GetByUserID(userId uint, start int, limit int) ([]*models.Pin, error)
+	GetByName(name string, start int, limit int) ([]*models.Pin, error)
 	Update(pin *models.Pin) error
 	Delete(id uint) error
 }

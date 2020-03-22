@@ -106,12 +106,11 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := models.ResponseUser{
+		Id:            user.Id,
 		Email:  	   user.Email,
 		Login:  	   user.Login,
 		About:  	   user.About,
 		Avatar: 	   user.Avatar,
-		Pins:   	   user.Pins,
-		Desks:         user.Desks,
 		Subscribers:   user.Subscribers,
 		Subscriptions: user.Subscriptions,
 	}
@@ -140,8 +139,6 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 		Login:  	   user.Login,
 		About:  	   user.About,
 		Avatar: 	   user.Avatar,
-		Pins:   	   user.Pins,
-		Desks:         user.Desks,
 		Subscribers:   user.Subscribers,
 		Subscriptions: user.Subscriptions,
 	}

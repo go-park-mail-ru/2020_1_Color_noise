@@ -2,28 +2,25 @@ package models
 
 import "time"
 
-type Pin struct {
+type Board struct {
 	Id          uint
 	UserId      uint
-	BoardId	    uint
+	Pins	    []*Pin
 	Name        string
 	Description string
-	Image       string
 	CreatedAt   time.Time
 }
 
-type InputPin struct {
-	BoardId     uint   `json:"board_id" valid:"int"`
+type InputBoard struct {
 	Name        string `json:"name" valid:"length(0|60), required"`
 	Description string `json:"description" valid:"length(0|1000), required"`
-	Image       string `json:"image" valid:"datauri,required"`
 }
 
-type ResponsePin struct {
-	Id          uint   `json:"id,omitempty"`
+type ResponseBoard struct {
+	Id          uint   `json:"id"`
 	UserId      uint   `json:"user_id,omitempty"`
 	BoardId     uint   `json:"board_id,omitempty"`
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
-	Image       string `json:"image,omitempty"`
+	Pins        []*Pin `json:"pins,omitempty"`
 }

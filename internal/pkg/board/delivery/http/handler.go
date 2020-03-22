@@ -2,8 +2,8 @@ package http
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/board"
 	"2020_1_Color_noise/internal/pkg/error"
-	"2020_1_Color_noise/internal/pkg/pin"
 	"2020_1_Color_noise/internal/pkg/response"
 	"encoding/json"
 	"github.com/asaskevich/govalidator"
@@ -13,16 +13,16 @@ import (
 )
 
 type Handler struct {
-	pinUsecase pin.IUsecase
+	boardUsecase board.IUsecase
 }
 
-func NewHandler(usecase pin.IUsecase) *Handler {
+func NewHandler(usecase board.IUsecase) *Handler {
 	return &Handler{
-		pinUsecase: usecase,
+		boardUsecase: usecase,
 	}
 }
 
-func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
+func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
 
 	userId, ok := r.Context().Value("Id").(uint)
@@ -32,11 +32,11 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	input := &models.InputPin{}
+	input := &models.InputBoard{}
 
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		err = error.Wrap(err,"Decoding error during creation pin")
+		err = error.Wrap(err,"Decoding error during creation board")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -45,61 +45,59 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
 			"Name shouldn't be empty and longer 60 characters. " +
-			"Description shouldn't be empty and longer 1000 characters. " +
-			"Image should be base64")
+				"Description shouldn't be empty and longer 1000 characters.")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	id, err := ph.pinUsecase.Create(input, userId)
+	id, err := bh.boardUsecase.Create(input, userId)
 	if err != nil {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	resp := &models.ResponsePin{
+	resp := &models.ResponseBoard{
 		Id: id,
 	}
 
 	response.Respond(w, http.StatusCreated, resp)
 }
 
-func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
+func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting a pin"), "Bad id")
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting a board"), "Bad id")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	pin, err := ph.pinUsecase.GetById(uint(id))
+	board, err := bh.boardUsecase.GetById(uint(id))
 	if err != nil {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	resp := &models.ResponsePin{
-		Id:          pin.Id,
-		BoardId:     pin.BoardId,
-		UserId:      pin.UserId,
-		Name:        pin.Name,
-		Description: pin.Description,
-		Image:       pin.Image,
+	resp := &models.ResponseBoard{
+		Id:          board.Id,
+		UserId:      board.UserId,
+		Name:        board.Name,
+		Description: board.Description,
+		Pins:        board.Pins,
 	}
 
 	response.Respond(w, http.StatusOK, resp)
 }
 
-func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
+func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
 
 	vars := mux.Vars(r)
 	userId, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting pins for user"), "Bad id")
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id when in during getting a boards for user"), "Bad id")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -111,27 +109,25 @@ func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 		limit = 10
 	}
 
-	pins, err := ph.pinUsecase.GetByUserId(uint(userId), start, limit)
+	pins, err := bh.boardUsecase.GetByUserId(uint(userId), start, limit)
 	if err != nil {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	resp := make([]models.ResponsePin, limit)
+	resp := make([]models.ResponseBoard, limit)
 
-	for i, pin := range pins {
-		resp[i] = models.ResponsePin{
-			Id:          pin.Id,
-			BoardId:     pin.BoardId,
-			UserId:      pin.UserId,
-			Name:        pin.Name,
-			Description: pin.Description,
-			Image:       pin.Image,
+	for i, board := range pins {
+		resp[i] = models.ResponseBoard{
+			Id:          board.Id,
+			UserId:      board.UserId,
+			Name:        board.Name,
+			Description: board.Description,
+			Pins:        board.Pins,
 		}
 	}
 
 	response.Respond(w, http.StatusOK, resp)
-
 }
 
 /*
