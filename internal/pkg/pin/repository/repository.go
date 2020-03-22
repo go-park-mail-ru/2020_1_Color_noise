@@ -40,6 +40,15 @@ func (pr *Repository) GetByID(id uint) (*models.Pin, error) {
 
 func (pr *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.Pin, error) {
 	var result []*models.Pin
+
+	if start >= len(pr.data) {
+		start = 0
+	}
+
+	if limit >= (len(pr.data) - start) {
+		limit = len(pr.data)
+	}
+
 	for i, pin := range pr.data {
 		if pin.UserId == userId && start >= i {
 			result = append(result, pin)
@@ -59,6 +68,15 @@ func (pr *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.
 
 func (pr *Repository) GetByName(name string,  start int, limit int) ([]*models.Pin, error) {
 	var result []*models.Pin
+
+	if start >= len(pr.data) {
+		start = 0
+	}
+
+	if limit >= (len(pr.data) - start) {
+		limit = len(pr.data)
+	}
+
 	for i, pin := range pr.data {
 		if pin.Name == name && start >= i {
 			result = append(result, pin)

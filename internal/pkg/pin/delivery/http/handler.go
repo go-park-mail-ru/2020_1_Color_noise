@@ -117,17 +117,17 @@ func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := make([]models.ResponsePin, limit)
+	resp := make([]models.ResponsePin, 0)
 
-	for i, pin := range pins {
-		resp[i] = models.ResponsePin{
+	for _, pin := range pins {
+		resp = append(resp, models.ResponsePin{
 			Id:          pin.Id,
 			BoardId:     pin.BoardId,
 			UserId:      pin.UserId,
 			Name:        pin.Name,
 			Description: pin.Description,
 			Image:       pin.Image,
-		}
+		})
 	}
 
 	response.Respond(w, http.StatusOK, resp)

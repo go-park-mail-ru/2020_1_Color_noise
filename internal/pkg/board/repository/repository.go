@@ -40,6 +40,15 @@ func (br *Repository) GetByID(id uint) (*models.Board, error) {
 
 func (br *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.Board, error) {
 	var result []*models.Board
+
+	if start >= len(br.data) {
+		start = 0
+	}
+
+	if limit >= (len(br.data) - start) {
+		limit = len(br.data)
+	}
+
 	for i, board := range br.data {
 		if board.UserId == userId && start >= i {
 			result = append(result, board)
@@ -59,6 +68,15 @@ func (br *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.
 
 func (br *Repository) GetByName(name string,  start int, limit int) ([]*models.Board, error) {
 	var result []*models.Board
+
+	if start >= len(br.data) {
+		start = 0
+	}
+
+	if limit >= (len(br.data) - start) {
+		limit = len(br.data)
+	}
+
 	for i, board := range br.data {
 		if board.Name == name && start >= i {
 			result = append(result, board)

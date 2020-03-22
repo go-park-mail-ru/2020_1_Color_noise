@@ -16,6 +16,8 @@ type IUsecase interface {
 	Delete(id uint) error
 	Follow(id uint, subId uint) error
 	Unfollow(id uint, subId uint) error
+	GetSubscribers(id uint, start int, limit int) ([]*models.User, error)
+	GetSubscriptions(id uint, start int, limit int) ([]*models.User, error)
 	ComparePassword(user *models.User, password string) error
 }
 

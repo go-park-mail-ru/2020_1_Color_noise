@@ -15,5 +15,7 @@ type IRepository interface {
 	UpdateAvatar(id uint, path string) error
 	Follow(id uint, subId uint) error
 	Unfollow(id uint, subId uint) error
+	GetSubscribers(id uint, start int, limit int) ([]*models.User, error)
+	GetSubscriptions(id uint, start int, limit int) ([]*models.User, error)
 	Delete(id uint) error
 }

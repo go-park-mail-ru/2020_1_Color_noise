@@ -17,6 +17,8 @@ const(
 	BadLogin
 	BadPassword
 	BadEmail
+	FollowingIsAlreadyDone
+	FollowingIsNotYetDone
 	LoginIsExist
 	EmailIsExist
 	Unauthorized
@@ -131,6 +133,12 @@ func ErrorHandler(w http.ResponseWriter, err error) {
 	case TooMuchSize:
 		status = http.StatusUnauthorized
 		message = "Image size should be less than 10 MB"
+	case FollowingIsAlreadyDone:
+		status = http.StatusBadRequest
+		message = "Following is already done"
+	case FollowingIsNotYetDone:
+		status = http.StatusBadRequest
+		message = "Following is not yet done"
 	default:
 		status = http.StatusInternalServerError
 		message = "Internal server error"

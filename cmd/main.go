@@ -53,6 +53,8 @@ func main() {
 	r.HandleFunc("/api/user/settings/avatar", userDelivery.UploadAvatar).Methods("PUT")
 	r.HandleFunc("/api/user/following/{id:[0-9]+}", userDelivery.Follow).Methods("POST")
 	r.HandleFunc("/api/user/following/{id:[0-9]+}", userDelivery.Unfollow).Methods("DELETE")
+	r.HandleFunc("/api/user/subscriptions/{id:[0-9]+}", userDelivery.GetSubscribtions).Methods("GET")
+	r.HandleFunc("/api/user/subscribers/{id:[0-9]+}", userDelivery.GetSubscribers).Methods("GET")
 	//r.HandleFunc("/api/user", userDelivery.Delete).Methods("DELETE")
 	r.HandleFunc("/api/pin", pinDelivery.Create).Methods("POST")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.GetPin).Methods("GET")

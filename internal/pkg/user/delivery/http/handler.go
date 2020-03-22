@@ -8,6 +8,7 @@ import (
 	"2020_1_Color_noise/internal/pkg/user"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
 	"io"
@@ -136,6 +137,7 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := models.ResponseUser{
+		Id:            user.Id,
 		Login:  	   user.Login,
 		About:  	   user.About,
 		Avatar: 	   user.Avatar,
@@ -322,6 +324,13 @@ func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if id == uint(subId) {
+		err = error.WithMessage(error.BadRequest.New( "Bad id in during following user"),
+			"Your id and following id shoudn't match")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
 	err = ud.userUsecase.Follow(id, uint(subId))
 	if err != nil {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
@@ -351,6 +360,13 @@ func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if id == uint(subId) {
+		err = error.WithMessage(error.BadRequest.New("Bad id in during unfollowing user"),
+			"Your id and unfollowing id shoudn't match")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
 	err = ud.userUsecase.Unfollow(id, uint(subId))
 	if err != nil {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
@@ -360,6 +376,88 @@ func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
 	response.Respond(w, http.StatusOK, map[string]string {
 		"message": "Ok",
 	})
+}
+
+func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting subscribers for user"), "Bad id")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+
+	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = 10
+	}
+
+	users, err := uh.userUsecase.GetSubscribers(uint(id), start, limit)
+	if err != nil {
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	resp := make([]models.ResponseUser, 0)
+
+	for _, user := range users {
+		resp = append(resp, models.ResponseUser{
+			Id:            user.Id,
+			Login:  	   user.Login,
+			About:  	   user.About,
+			Avatar: 	   user.Avatar,
+			Subscribers:   user.Subscribers,
+			Subscriptions: user.Subscriptions,
+		})
+	}
+
+	response.Respond(w, http.StatusOK, resp)
+}
+
+func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting subscribtions for user"), "Bad id")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+
+	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
+	if err != nil {
+		limit = 10
+	}
+
+	fmt.Println(start, limit)
+
+	users, err := uh.userUsecase.GetSubscriptions(uint(id), start, limit)
+	if err != nil {
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	resp := make([]models.ResponseUser, 0)
+
+	for _, user := range users {
+		resp = append(resp, models.ResponseUser{
+			Id:            user.Id,
+			Login:  	   user.Login,
+			About:  	   user.About,
+			Avatar: 	   user.Avatar,
+			Subscribers:   user.Subscribers,
+			Subscriptions: user.Subscriptions,
+		})
+	}
+
+	response.Respond(w, http.StatusOK, resp)
 }
 
 

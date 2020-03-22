@@ -152,6 +152,24 @@ func (uu *UserUsecase) Unfollow(id uint, subId uint) error {
 	return nil
 }
 
+func (uu *UserUsecase) GetSubscribers(id uint, start int, limit int) ([]*models.User, error) {
+	users, err := uu.repo.GetSubscribers(id, start, limit)
+	if err != nil {
+		return users, Wrap(err, "Getting subscribers error")
+	}
+
+	return users, nil
+}
+
+func (uu *UserUsecase) GetSubscriptions(id uint, start int, limit int) ([]*models.User, error) {
+	users, err := uu.repo.GetSubscriptions(id, start, limit)
+	if err != nil {
+		return users, Wrap(err, "Getting subscriptions error")
+	}
+
+	return users, nil
+}
+
 func (uu *UserUsecase) ComparePassword(user *models.User, password string) error {
 	if bcrypt.CompareHashAndPassword([]byte(user.EncryptedPassword), []byte(password)) == nil {
 		return nil
