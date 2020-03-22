@@ -14,6 +14,16 @@ import (
 	userRepo "2020_1_Color_noise/internal/pkg/user/repository"
 	userUsecase "2020_1_Color_noise/internal/pkg/user/usecase"
 
+	boardDeliveryHttp "2020_1_Color_noise/internal/pkg/board/delivery/http"
+	boardRepo "2020_1_Color_noise/internal/pkg/board/repository"
+	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
+
+	commentDeliveryHttp "2020_1_Color_noise/internal/pkg/comment/delivery/http"
+	commentRepo "2020_1_Color_noise/internal/pkg/comment/repository"
+	commentUsecase "2020_1_Color_noise/internal/pkg/comment/usecase"
+
+	searchHandler "2020_1_Color_noise/internal/pkg/search"
+
 	"2020_1_Color_noise/internal/pkg/middleware"
 
 	//"awesomeProject/internal/pkg/session/usecase"
@@ -40,6 +50,16 @@ func main() {
 	pinUsecase := pinUsecase.NewUsecase(pinRepo)
 	pinDelivery := pinDeliveryHttp.NewHandler(pinUsecase)
 
+	boardRepo := boardRepo.NewRepo()
+	boardUsecase := boardUsecase.NewUsecase(boardRepo)
+	boardDelivery := boardDeliveryHttp.NewHandler(boardUsecase)
+
+	commentRepo := commentRepo.NewRepo()
+	commentUsecase := commentUsecase.NewUsecase(commentRepo)
+	commentDelivery := commentDeliveryHttp.NewHandler(commentUsecase)
+
+	searchHandler := searchHandler.NewHandler(commentUsecase, pinUsecase, userUsecase)
+
 	m := middleware.NewMiddleware(sessionUsecase)
 
 	r.HandleFunc("/api/auth", sessionDelivery.Login).Methods("POST")
@@ -59,6 +79,13 @@ func main() {
 	r.HandleFunc("/api/pin", pinDelivery.Create).Methods("POST")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.GetPin).Methods("GET")
 	r.HandleFunc("/api/pin/user/{id:[0-9]+}", pinDelivery.Fetch).Methods("GET")
+	r.HandleFunc("/api/board", boardDelivery.Create).Methods("POST")
+	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.GetBoard).Methods("GET")
+	r.HandleFunc("/api/board/user/{id:[0-9]+}", boardDelivery.Fetch).Methods("GET")
+	r.HandleFunc("/api/comment", commentDelivery.Create).Methods("POST")
+	r.HandleFunc("/api/comment/{id:[0-9]+}", commentDelivery.GetComment).Methods("GET")
+	r.HandleFunc("/api/comment/pin/{id:[0-9]+}", commentDelivery.Fetch).Methods("GET")
+	r.HandleFunc("/api/search", searchHandler.Search).Methods("GET")
 	//r.HandleFunc("/pin/{id}", pinDelivery.Update).Methods("PUT")
 	//r.HandleFunc("/pin/{id}", pinDelivery.DeletePin).Methods("DELETE")
 	r.Use(m.AuthMiddleware)

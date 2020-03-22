@@ -14,6 +14,7 @@ const(
 	PinNotFound
 	BoardNotFound
 	UserNotFound
+	CommentNotFound
 	BadLogin
 	BadPassword
 	BadEmail
@@ -115,6 +116,9 @@ func ErrorHandler(w http.ResponseWriter, err error) {
 	case PinNotFound:
 		status = http.StatusNotFound
 		message = "Pin is not found"
+	case CommentNotFound:
+		status = http.StatusNotFound
+		message = "Comment is not found"
 	case BoardNotFound:
 		status = http.StatusNotFound
 		message = "Board is not found"

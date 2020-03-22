@@ -25,12 +25,12 @@ func NewRepo() *Repository {
 }
 
 func (ur *Repository) Create(user *models.User) (uint, error) {
-	_, err := ur.GetByLogin(user.Login)
+	_, err := ur.checkLogin(user.Login)
 	if err == nil {
 		return 0, LoginIsExist.New("Repo: Error in during creating")
 	}
 
-	_, err = ur.GetByEmail(user.Email)
+	_, err = ur.checkEmail(user.Email)
 	if err == nil {
 		return 0, EmailIsExist.New("Repo: Error in during creating")
 	}
@@ -68,30 +68,69 @@ func (ur *Repository) GetByLogin(login string) (*models.User, error) {
 		}
 	}
 
-	return nil, BadLogin.Newf("User to get not found, login: %s", login)
+	return nil, UserNotFound.New("User is not found")
 }
 
-func (ur *Repository) GetByEmail(email string) (*models.User, error) {
+func (ur *Repository) Search(login string, start int, limit int) ([]*models.User, error) {
+	ur.mu.Lock()
+	defer ur.mu.Unlock()
+
+	if start >= len(ur.data) {
+		start = 0
+	}
+
+	if limit >= (len(ur.data) - start) {
+		limit = len(ur.data)
+	}
+
+	users := []*models.User{}
+	for i, user := range ur.data {
+		if user.Login == login && start >= i {
+			users = append(users, user)
+
+			if limit == len(users){
+				break
+			}
+		}
+	}
+
+	return users, nil
+}
+
+func (ur *Repository) checkLogin(login string) (uint, error) {
+	ur.mu.Lock()
+	defer ur.mu.Unlock()
+
+	for _, user := range ur.data {
+		if user.Login == login {
+			return user.Id, nil
+		}
+	}
+
+	return 0, BadLogin.Newf("User to get not found, login: %s", login)
+}
+
+func (ur *Repository) checkEmail(email string) (uint, error) {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
 
 	for _, user := range ur.data {
 		if user.Email == email {
-			return user, nil
+			return user.Id, nil
 		}
 	}
 
-	return nil, BadEmail.Newf("User to get not found, email: %s", email)
+	return 0, BadEmail.Newf("User to get not found, email: %s", email)
 }
 
 func (ur *Repository) UpdateProfile(id uint, email string, login string) error {
-	user, err := ur.GetByLogin(login)
-	if err == nil && user.Id != id {
+	userId, err := ur.checkLogin(login)
+	if err == nil && userId != id {
 		return LoginIsExist.New("Repo: Error in during updating profile")
 	}
 
-	user, err = ur.GetByEmail(email)
-	if err == nil && user.Id != id {
+	userId, err = ur.checkEmail(email)
+	if err == nil && userId != id {
 		return EmailIsExist.New("Repo: Error in during updating profile")
 	}
 

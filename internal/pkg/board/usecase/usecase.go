@@ -16,7 +16,7 @@ func NewUsecase(repo board.IRepository) *Usecase {
 	}
 }
 
-func (bu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
+func (bu *Usecase) Create(input *models.InputBoard, userId uint) (uint, error) {
 	board := &models.Board{
 		UserId:      userId,
 		Name:        input.Name,
