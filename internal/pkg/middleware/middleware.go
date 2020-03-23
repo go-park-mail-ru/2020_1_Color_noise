@@ -84,7 +84,7 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 
 func unauthHandler(next http.Handler, w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
-	if (path == "/api/user" || path == "/api/auth") && r.Method == "POST" {
+	if ((path == "/api/user" || path == "/api/auth") && r.Method == "POST") || (path == "/") {
 		next.ServeHTTP(w, r)
 	} else {
 		err := error.Unauthorized.New("User is unauthorized")
