@@ -89,8 +89,8 @@ func main() {
 	r.HandleFunc("/api/comment/pin/{id:[0-9]+}", commentDelivery.Fetch).Methods("GET")
 	r.HandleFunc("/api/search", searchHandler.Search).Methods("GET")
 
-	r.Use(m.AuthMiddleware)
 	r.Use(m.CORSMiddleware)
+	r.Use(m.AuthMiddleware)
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	srv := &http.Server{

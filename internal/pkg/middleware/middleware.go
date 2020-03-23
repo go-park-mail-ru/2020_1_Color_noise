@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"regexp"
 )
 
 type Middleware struct {
@@ -18,6 +19,21 @@ func NewMiddleware(su *sessions.SessionUsecase) Middleware {
 	return Middleware{
 		sessions: su,
 	}
+}
+
+var authMethods = map[string][]string{
+	"/api/auth":           []string{"DELETE"},
+	"/api/user":           []string{"GET", "PUT"},
+	"/api/user/following": []string{"POST", "DELETE"},
+	"/api/pin":            []string{"POST", "GET"},
+	"/api/board":          []string{"POST", "GET"},
+	"/api/comment":        []string{"POST", "GET"},
+	"/api/search":         []string{"POST", "GET"},
+}
+
+var unauthMethods = map[string][]string{
+	"/api/auth":           []string{"POST"},
+	"/api/user":           []string{"POST"},
 }
 
 func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
@@ -83,25 +99,43 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 }
 
 func unauthHandler(next http.Handler, w http.ResponseWriter, r *http.Request) {
-	path := r.URL.Path
-	if ((path == "/api/user" || path == "/api/auth") && r.Method == "POST") || (path == "/") {
-		next.ServeHTTP(w, r)
-	} else {
-		err := error.Unauthorized.New("User is unauthorized")
-		reqId:= r.Context().Value("ReqId")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+	for path, methods := range authMethods {
+		ok, err := regexp.MatchString(path, r.URL.Path)
+		if err != nil {
+			err := error.Wrap(err,"Error in AuthMiddleware")
+			reqId:= r.Context().Value("ReqId")
+			error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+			return
+		}
+
+		if ok {
+			for _, method := range  methods {
+				if method == r.Method {
+					err := error.Unauthorized.New("User is unauthorized")
+					reqId:= r.Context().Value("ReqId")
+					error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+					return
+				}
+			}
+		}
 	}
+	next.ServeHTTP(w, r)
 }
 
 func authHandler(next http.Handler, w http.ResponseWriter, r *http.Request) {
-	path := r.URL.Path
-	if (path == "/api/user" || path == "/api/auth") && r.Method == "POST" {
-		response.Respond(w, http.StatusOK, map[string]string {
-			"message": "Ok",
-		})
-	} else {
-		next.ServeHTTP(w, r)
+	for path,  methods := range unauthMethods{
+		if path == r.URL.Path {
+			for _,  method := range methods {
+				if method == r.Method {
+					response.Respond(w, http.StatusOK, map[string]string{
+						"message": "Ok",
+					})
+					return
+				}
+			}
+		}
 	}
+	next.ServeHTTP(w, r)
 }
 
 func (m *Middleware) CORSMiddleware(next http.Handler) http.Handler {
@@ -109,7 +143,7 @@ func (m *Middleware) CORSMiddleware(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Methods", "POST,PUT,DELETE,GET")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,X-CSRF-Token")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
-		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+		w.Header().Set("Access-Control-Allow-Origin", "*"/*r.Header.Get("Origin")*/)
 		if r.Method == http.MethodOptions {
 			return
 		}
