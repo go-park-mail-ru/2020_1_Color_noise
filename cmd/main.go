@@ -2,6 +2,7 @@ package main
 
 import (
 	//"echo_example/user/usecase"
+	config "2020_1_Color_noise/internal/pkg/config"
 	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
 	pinRepo "2020_1_Color_noise/internal/pkg/pin/repository"
 	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
@@ -26,6 +27,8 @@ import (
 
 func main() {
 	r := mux.NewRouter()
+
+	config.Start()
 
 	userRepo := userRepo.NewRepo()
 	userUsecase := userUsecase.NewUsecase(userRepo)
