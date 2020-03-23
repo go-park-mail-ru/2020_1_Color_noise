@@ -9,6 +9,8 @@ type IUsecase interface {
 	GetById(id uint) (*models.Pin, error)
 	GetByUserId(id uint, start int, limit int) ([]*models.Pin, error)
 	GetByName(name string, start int, limit int) ([]*models.Pin, error)
+	Update(input *models.UpdatePin, pinId uint, userId uint) error
+	Delete(pinId uint, userId uint) error
 }
 
 

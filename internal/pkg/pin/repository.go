@@ -10,5 +10,5 @@ type IRepository interface {
 	GetByUserID(userId uint, start int, limit int) ([]*models.Pin, error)
 	GetByName(name string, start int, limit int) ([]*models.Pin, error)
 	Update(pin *models.Pin) error
-	Delete(id uint) error
+	Delete(pinId uint, userId uint) error
 }

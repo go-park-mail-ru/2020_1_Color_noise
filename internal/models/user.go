@@ -11,9 +11,8 @@ type User struct {
 	EncryptedPassword string
 	About             string
 	Avatar            string
-	Image			  []byte
-	Subscriptions     uint
-	Subscribers       uint
+	Subscriptions     int
+	Subscribers       int
 	CreatedAt         time.Time
 }
 
@@ -47,8 +46,8 @@ type ResponseUser struct {
 	Login             string `json:"login"`
 	About             string `json:"about,omitempty"`
 	Avatar            string `json:"avatar,omitempty"`
-	Subscriptions     uint   `json:"subscriptions,omitempty"`
-	Subscribers       uint   `json:"subscribers,omitempty"`
+	Subscriptions     int    `json:"subscriptions"`
+	Subscribers       int    `json:"subscribers"`
 }
 
 /*
