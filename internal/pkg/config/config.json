@@ -1,8 +1,5 @@
 {
   "db": {
-    "host": "localhost",
-    "username": "hello",
-    "password": "none",
-    "port": "200"
+    "connect": "user=postgres password=password dbname=pinterest sslmode=disable"
   }
 }
