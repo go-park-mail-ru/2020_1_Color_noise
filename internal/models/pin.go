@@ -10,13 +10,20 @@ type Pin struct {
 	Description string
 	Image       string
 	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type InputPin struct {
 	BoardId     uint   `json:"board_id" valid:"int"`
-	Name        string `json:"name" valid:"length(0|60), required"`
+	Name        string `json:"name" valid:"length(1|60), required"`
 	Description string `json:"description" valid:"length(0|1000), required"`
 	Image       string `json:"image" valid:"datauri,required"`
+}
+
+type UpdatePin struct {
+	BoardId     uint   `json:"board_id" valid:"int"`
+	Name        string `json:"name" valid:"length(1|60), required"`
+	Description string `json:"description" valid:"length(0|1000), required"`
 }
 
 type ResponsePin struct {

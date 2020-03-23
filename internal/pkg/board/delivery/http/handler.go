@@ -91,6 +91,32 @@ func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 	response.Respond(w, http.StatusOK, resp)
 }
 
+func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
+	reqId:= r.Context().Value("ReqId")
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting a board"), "Bad id")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	board, err := bh.boardUsecase.GetById(uint(id))
+	if err != nil {
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	resp := &models.ResponseBoard{
+		Id:          board.Id,
+		Name:        board.Name,
+		Description: board.Description,
+	}
+
+	response.Respond(w, http.StatusOK, resp)
+}
+
 func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
 

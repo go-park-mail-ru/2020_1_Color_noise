@@ -79,6 +79,8 @@ func main() {
 	r.HandleFunc("/api/pin", pinDelivery.Create).Methods("POST")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.GetPin).Methods("GET")
 	r.HandleFunc("/api/pin/user/{id:[0-9]+}", pinDelivery.Fetch).Methods("GET")
+	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.Update).Methods("PUT")
+	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.Update).Methods("DELETE")
 	r.HandleFunc("/api/board", boardDelivery.Create).Methods("POST")
 	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.GetBoard).Methods("GET")
 	r.HandleFunc("/api/board/user/{id:[0-9]+}", boardDelivery.Fetch).Methods("GET")
@@ -86,8 +88,7 @@ func main() {
 	r.HandleFunc("/api/comment/{id:[0-9]+}", commentDelivery.GetComment).Methods("GET")
 	r.HandleFunc("/api/comment/pin/{id:[0-9]+}", commentDelivery.Fetch).Methods("GET")
 	r.HandleFunc("/api/search", searchHandler.Search).Methods("GET")
-	//r.HandleFunc("/pin/{id}", pinDelivery.Update).Methods("PUT")
-	//r.HandleFunc("/pin/{id}", pinDelivery.DeletePin).Methods("DELETE")
+
 	r.Use(m.AuthMiddleware)
 	r.Use(m.CORSMiddleware)
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))

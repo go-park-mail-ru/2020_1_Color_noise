@@ -19,13 +19,13 @@ func NewRepo() *Repository {
 	}
 }
 
-func (br *Repository) Create(pin *models.Board) (uint, error) {
+func (br *Repository) Create(board *models.Board) (uint, error) {
 	br.mu.Lock()
-	pin.Id = uint(len(br.data) + 1)
-	br.data = append(br.data, pin)
+	board.Id = uint(len(br.data) + 1)
+	br.data = append(br.data, board)
 	br.mu.Unlock()
 
-	return pin.Id, nil
+	return board.Id, nil
 }
 
 func (br *Repository) GetByID(id uint) (*models.Board, error) {

@@ -81,43 +81,28 @@ func (pu *Usecase) GetByName(name string, start int, limit int) ([]*models.Pin, 
 	return pins, nil
 }
 
-/*
-func (pu *PinUsecase) Update(id uint, pin *models.Pin) error {
-	pins, err := pu.pinRepo.GetByID(id)
+func (pu *Usecase) Update(input *models.UpdatePin, pinId uint, userId uint) error {
+	pin := &models.Pin{
+		Id:          pinId,
+		UserId:      userId,
+		BoardId:     input.BoardId,
+		Name:        input.Name,
+		Description: input.Description,
+	}
+
+	err := pu.repo.Update(pin)
 	if err != nil {
-		return err
+		return Wrap(err, "Updating pin error")
 	}
 
-	if len(pins) != 1 {
-		return fmt.Errorf("Pin not found")
-	}
-
-	if pin.Name != "" {
-		pins[0].Name = pin.Name
-	}
-
-	if pin.Description != "" {
-		pins[0].Description = pin.Description
-	}
-
-	_, err = pu.pinRepo.Update(id, pins[0])
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
-
-
-func (pu *PinUsecase) Delete(id uint) error {
-	status, err := pu.pinRepo.Delete(id)
+func (pu *Usecase) Delete(pinId uint, userId uint) error {
+	err := pu.repo.Delete(pinId, userId)
 	if err != nil {
-		return err
+		return Wrap(err, "Deleting pin error")
 	}
-	if !status {
-		return fmt.Errorf("Pin not found")
-	}
+
 	return nil
 }
-
-*/

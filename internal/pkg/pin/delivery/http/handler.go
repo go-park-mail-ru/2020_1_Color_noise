@@ -23,7 +23,7 @@ func NewHandler(usecase pin.IUsecase) *Handler {
 }
 
 func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
@@ -65,7 +65,7 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -94,7 +94,7 @@ func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	vars := mux.Vars(r)
 	userId, err := strconv.Atoi(vars["id"])
@@ -131,137 +131,82 @@ func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Respond(w, http.StatusOK, resp)
-
 }
 
-/*
+func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("ReqId")
 
-func (ph *PinHandler) UpdatePin(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	result := Result{}
-	body := map[string]interface{} {}
-
-	if r.Context().Value("isAuth") == false {
-		result.Status = "403"
-		body["error"] = "User not found"
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
+	userId, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+	pinId, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		result.Status = "500"
-		body["error"] = err.Error()
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during updating pin"), "Bad id")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	oldPin, err := ph.pinUsecase.Get(uint(id))
+	input := &models.UpdatePin{}
+
+	err = json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		result.Status = "500"
-		body["error"] = err.Error()
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
+		err = error.Wrap(err,"Decoding error during updating pin")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
+
+	_, err = govalidator.ValidateStruct(input)
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
+			"Name shouldn't be empty and longer 60 characters. " +
+				"Description shouldn't be empty and longer 1000 characters.")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	err = ph.pinUsecase.Update(input, uint(pinId), userId)
+	if err != nil {
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	response.Respond(w, http.StatusOK, map[string]string {
+		"message": "Ok",
+	})
+}
+
+
+func (ph *Handler) DeletePin(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("ReqId")
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
-		result.Status = "500"
-		body["error"] = "Internal error"
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
-		return
-	}
-
-	if userId != oldPin.UserId {
-		result.Status = "403"
-		body["error"] = "No access"
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
-		return
-	}
-
-
-	var pin = &models.Pin{
-		Name:    r.FormValue("name"),
-		Description: r.FormValue("description"),
-	}
-
-	err = ph.pinUsecase.Update(uint(id), pin)
-	if err != nil {
-		result.Status = "500"
-		body["error"] = err.Error()
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
-		return
-	}
-	result.Status = "200"
-	json.NewEncoder(w).Encode(result)
-}
-
-func (ph *PinHandler) DeletePin(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	result := Result{}
-	body := map[string]interface{} {}
-
-	if r.Context().Value("isAuth") == false {
-		result.Status = "403"
-		body["error"] = "User not found"
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+	pinId, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		result.Status = "400"
-		body["error"] = err.Error()
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during deleting pin"), "Bad id")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	pin, err := ph.pinUsecase.Get(uint(id))
+	err = ph.pinUsecase.Delete(uint(pinId), userId)
 	if err != nil {
-		result.Status = "500"
-		body["error"] = err.Error()
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	userId, ok := r.Context().Value("Id").(uint)
-	if !ok {
-		result.Status = "500"
-		body["error"] = "Internal error"
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
-		return
-	}
-
-	if userId != pin.UserId {
-		result.Status = "403"
-		body["error"] = "No access"
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
-		return
-	}
-
-	err = ph.pinUsecase.Delete(uint(id))
-	if err != nil {
-		result.Status = "500"
-		body["error"] = err.Error()
-		result.Body = body
-		json.NewEncoder(w).Encode(result)
-		return
-	}
-	result.Status = "200"
-	json.NewEncoder(w).Encode(result)
+	response.Respond(w, http.StatusOK, map[string]string {
+		"message": "Ok",
+	})
 }
 
-*/
