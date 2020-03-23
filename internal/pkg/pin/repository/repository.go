@@ -139,5 +139,5 @@ func (pr *Repository) Delete(pinId uint, userId uint) error {
 		}
 	}
 
-	return PinNotFound.Newf("Pin not found, id: %d", id)
+	return PinNotFound.Newf("Pin not found, id: %d", userId)
 }

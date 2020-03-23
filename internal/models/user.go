@@ -11,7 +11,6 @@ type User struct {
 	EncryptedPassword string
 	About             string
 	Avatar            string
-	Image			  []byte
 	Subscriptions     int
 	Subscribers       int
 	CreatedAt         time.Time
