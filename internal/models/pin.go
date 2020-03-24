@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type Pin struct {
 	Id          uint
@@ -33,4 +36,15 @@ type ResponsePin struct {
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 	Image       string `json:"image,omitempty"`
+}
+
+type DataBasePin struct {
+	Id          uint
+	UserId      uint
+	BoardId	    uint
+	Name        string
+	Description sql.NullString //не гарантируется, что есть описание
+	Image       string
+	CreatedAt   time.Time
+	UpdatedAt   sql.NullTime //не гарантируется, что пин был обновлен
 }
