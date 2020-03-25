@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type Board struct {
 	Id          uint
@@ -8,6 +11,14 @@ type Board struct {
 	Pins	    []*Pin
 	Name        string
 	Description string
+	CreatedAt   time.Time
+}
+
+type DataBaseBoard struct {
+	Id          uint
+	UserId      uint
+	Name        string
+	Description sql.NullString
 	CreatedAt   time.Time
 }
 

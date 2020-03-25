@@ -16,6 +16,17 @@ type Pin struct {
 	UpdatedAt   time.Time
 }
 
+type DataBasePin struct {
+	Id          uint
+	UserId      uint
+	BoardId	    uint
+	Name        string
+	Description sql.NullString //не гарантируется, что есть описание
+	Image       string
+	CreatedAt   time.Time
+	UpdatedAt   sql.NullTime //не гарантируется, что пин был обновлен
+}
+
 type InputPin struct {
 	BoardId     uint   `json:"board_id" valid:"int"`
 	Name        string `json:"name" valid:"length(1|60), required"`

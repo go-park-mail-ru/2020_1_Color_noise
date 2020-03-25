@@ -10,6 +10,14 @@ type Comment struct {
 	CreatedAt time.Time
 }
 
+type DataBaseComment struct {
+	Id        uint
+	UserId    uint
+	PinId     uint
+	Text      string
+	CreatedAt time.Time
+}
+
 type InputComment struct {
 	PinId     uint   `json:"pin_id" valid:"int"`
 	Text      string `json:"comment" valid:"length(1|2000), required"`

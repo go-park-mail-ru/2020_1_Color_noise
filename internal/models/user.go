@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -11,6 +12,18 @@ type User struct {
 	EncryptedPassword string
 	About             string
 	Avatar            string
+	Subscriptions     int
+	Subscribers       int
+	CreatedAt         time.Time
+}
+
+type DataBaseUser struct {
+	Id                uint
+	Email 	          string
+	Login             string
+	EncryptedPassword string
+	About             sql.NullString
+	Avatar            sql.NullString
 	Subscriptions     int
 	Subscribers       int
 	CreatedAt         time.Time
