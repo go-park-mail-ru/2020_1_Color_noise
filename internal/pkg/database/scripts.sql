@@ -14,6 +14,8 @@ CREATE DATABASE pinterest
 -- DROP TABLE IF EXISTS users CASCADE;
 -- DROP TABLE IF EXISTS pins CASCADE;
 -- DROP TABLE IF EXISTS boards CASCADE;
+-- DROP TABLE IF EXISTS subscriptions CASCADE;
+-- DROP TABLE IF EXISTS commentaries CASCADE;
 
 CREATE TABLE users(
 	id serial PRIMARY KEY,
@@ -45,3 +47,16 @@ CREATE TABLE pins (
 	created_at timestamp
 )
 
+CREATE TABLE subscriptions (
+	id serial PRIMARY KEY,
+	user_id int REFERENCES users(id) NOT NULL,
+	subscribed_at int REFERENCES users(id) NOT NULL
+)
+
+CREATE TABLE commentaries (
+	id serial PRIMARY KEY,
+	user_id int REFERENCES users(id) NOT NULL,
+	pin_id int REFERENCES pins(id) NOT NULL,
+	comment text NOT NULL,
+	created_at timestamp
+)
