@@ -2,11 +2,16 @@ package repository
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
+	"database/sql"
+	"log"
 	"sync"
+	"time"
 )
 
 type Repository struct {
+	bd            database.DBInterface
 	data          []*models.User
 	mu            *sync.Mutex
 	subscriptions map[uint][]uint
@@ -14,8 +19,9 @@ type Repository struct {
 	muSub         *sync.Mutex
 }
 
-func NewRepo() *Repository {
+func NewRepo(bd database.DBInterface) *Repository {
 	return &Repository{
+		bd:            bd,
 		data:          make([]*models.User, 0),
 		mu:            &sync.Mutex{},
 		subscriptions: make(map[uint][]uint),
@@ -36,62 +42,59 @@ func (ur *Repository) Create(user *models.User) (uint, error) {
 	}
 
 	ur.mu.Lock()
-	user.Id = uint(len(ur.data) + 1)
-	ur.data = append(ur.data, user)
+
+	var us = models.DataBaseUser{
+		Login:             user.Login,
+		Email:             user.Email,
+		EncryptedPassword: user.EncryptedPassword,
+		CreatedAt:         time.Now(),
+	}
+
+	id, er := ur.bd.CreateUser(us)
+	log.Print(id, er)
+
 	ur.mu.Unlock()
 
 	return user.Id, nil
 }
 
 func (ur *Repository) GetByID(id uint) (*models.User, error) {
+
 	ur.mu.Lock()
-	defer ur.mu.Unlock()
-
-	for _, user := range ur.data {
-		if user.Id == id {
-			user.Subscriptions = len(ur.subscriptions[id])
-			user.Subscribers = len(ur.subscribers[id])
-			return user, nil
-		}
+	var us = models.DataBaseUser{
+		Id: id,
 	}
+	user, err := ur.bd.GetUserById(us)
+	if err != nil {
+		return nil, UserNotFound.Newf("User to get not found, id: %d", id)
+	}
+	ur.mu.Unlock()
 
-	return nil, UserNotFound.Newf("User to get not found, id: %d", id)
+	return &user, err
 }
 
 func (ur *Repository) GetByLogin(login string) (*models.User, error) {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
 
-	for _, user := range ur.data {
-		if user.Login == login {
-			return user, nil
-		}
+	var us = models.DataBaseUser{
+		Login: login,
 	}
-
-	return nil, UserNotFound.New("User is not found")
+	user, err := ur.bd.GetUserByName(us)
+	if err != nil {
+		return nil, UserNotFound.New("User is not found")
+	}
+	return &user, err
 }
 
 func (ur *Repository) Search(login string, start int, limit int) ([]*models.User, error) {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
 
-	if start >= len(ur.data) {
-		start = 0
-	}
-
-	if limit >= (len(ur.data) - start) {
-		limit = len(ur.data)
-	}
-
-	users := []*models.User{}
-	for i, user := range ur.data {
-		if user.Login == login && start >= i {
-			users = append(users, user)
-
-			if limit == len(users){
-				break
-			}
-		}
+	var us = models.DataBaseUser{Login: login}
+	users, err := ur.bd.GetUserByLogin(us, limit, start) //START == OFFSETs
+	if err != nil {
+		return nil, err
 	}
 
 	return users, nil
@@ -101,26 +104,29 @@ func (ur *Repository) checkLogin(login string) (uint, error) {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
 
-	for _, user := range ur.data {
-		if user.Login == login {
-			return user.Id, nil
-		}
+	var us = models.DataBaseUser{
+		Login: login,
 	}
-
-	return 0, BadLogin.Newf("User to get not found, login: %s", login)
+	user, err := ur.bd.GetUserByName(us)
+	if err != nil {
+		return 0, BadLogin.Newf("User to get not found, login: %s", login)
+	}
+	return user.Id, err
 }
 
 func (ur *Repository) checkEmail(email string) (uint, error) {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
-
-	for _, user := range ur.data {
-		if user.Email == email {
-			return user.Id, nil
-		}
+	var us = models.DataBaseUser{
+		Email: email,
 	}
+	user, err := ur.bd.GetUserByEmail(us)
 
-	return 0, BadEmail.Newf("User to get not found, email: %s", email)
+	if err != nil {
+		return 0, BadEmail.Newf("User to get not found, email: %s", email)
+	}
+	return user.Id, err
+
 }
 
 func (ur *Repository) UpdateProfile(id uint, email string, login string) error {
@@ -137,99 +143,96 @@ func (ur *Repository) UpdateProfile(id uint, email string, login string) error {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
 
-	for i, user := range ur.data {
-		if user.Id == id {
-			ur.data[i].Email = email
-			ur.data[i].Login = login
-			return nil
-		}
+	var us = models.DataBaseUser{Id: id, Email: email, Login: login}
+	err = ur.bd.UpdateUser(us)
+	if err != nil {
+		return UserNotFound.Newf("User to update not found, id: %d", id)
 	}
-
-	return UserNotFound.Newf("User to update not found, id: %d", id)
+	return nil
 }
 
 func (ur *Repository) UpdateDescription(id uint, description *string) error {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
 
-	for i, user := range ur.data {
-		if user.Id == id {
-			ur.data[i].About = *description
-			return nil
-		}
-	}
+	var us = models.DataBaseUser{Id: id, About: struct {
+		String string
+		Valid  bool
+	}{String: *description, Valid: true}}
 
-	return UserNotFound.Newf("User to update not found, id: %d", id)
+	err := ur.bd.UpdateUserDescription(us)
+
+	if err != nil {
+		return UserNotFound.Newf("User to update not found, id: %d", id)
+	}
+	return nil
 }
 
 func (ur *Repository) UpdatePassword(id uint, encryptredPassword string) error {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
-	for i, user := range ur.data {
-		if user.Id == id {
-			ur.data[i].EncryptedPassword = encryptredPassword
-			return nil
-		}
-	}
 
-	return UserNotFound.Newf("User to update not found, id: %d", id)
+	var us = models.DataBaseUser{Id: id, EncryptedPassword: encryptredPassword}
+
+	err := ur.bd.UpdateUserPassword(us)
+
+	if err != nil {
+		return UserNotFound.Newf("User to update not found, id: %d", id)
+	}
+	return nil
 }
 
 func (ur *Repository) UpdateAvatar(id uint, path string) error {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
 
-	for i, user := range ur.data {
-		if user.Id == id {
-			ur.data[i].Avatar = path
-			return nil
-		}
-	}
+	var us = models.DataBaseUser{Id: id, Avatar: sql.NullString{
+		String: path,
+		Valid:  true,
+	}}
 
-	return UserNotFound.Newf("User to update not found, id: %d", id)
+	err := ur.bd.UpdateUserAvatar(us)
+
+	if err != nil {
+		return UserNotFound.Newf("User to update not found, id: %d", id)
+	}
+	return nil
 }
 
 func (ur *Repository) Delete(id uint) error {
 	ur.mu.Lock()
 	defer ur.mu.Unlock()
 
-	for i, user := range ur.data {
-		if user.Id == id {
-			newData := ur.data[:i]
-			for j := i + 1; j < len(ur.data); j++ {
-				newData = append(newData, ur.data[j])
-			}
-			ur.data = newData
-			return nil
-		}
-	}
+	var us = models.DataBaseUser{Id: id}
 
-	return UserNotFound.Newf("User to delete not found, id: %d", id)
+	err := ur.bd.DeleteUser(us)
+
+	if err != nil {
+		return UserNotFound.Newf("User to delete not found, id: %d", id)
+	}
+	return nil
 }
 
 func (ur *Repository) Follow(id uint, subId uint) error {
 	ur.muSub.Lock()
 	defer ur.muSub.Unlock()
 
-	_, err := ur.GetByID(subId)
+	_, err := ur.GetByID(id)
+	if err != nil {
+		return Wrapf(err, "Repo: incorrect user id, id", id)
+	}
+
+	_, err = ur.GetByID(subId)
+	if err != nil {
+		return Wrapf(err, "Repo: incorrect sub id, id", id)
+	}
+
+	err = ur.bd.Follow(id, subId)
 	if err != nil {
 		return Wrapf(err, "Repo: Error in during following, id", id)
 	}
 
-	subscriptions := ur.subscriptions[id]
-	for _, subscriptionId := range subscriptions {
-		if subId == subscriptionId {
-			return FollowingIsAlreadyDone.Newf("Repo: Error in during following, id: %d", id)
-		}
-	}
-
-	subscriptions = append(subscriptions, subId)
-	ur.subscriptions[id] = subscriptions
-
-	subscribers := ur.subscribers[subId]
-	subscribers = append(subscribers, id)
-	ur.subscribers[subId] = subscribers
-
+	//TODO: обновить
 	return nil
 }
 
@@ -237,93 +240,31 @@ func (ur *Repository) Unfollow(id uint, subId uint) error {
 	ur.muSub.Lock()
 	defer ur.muSub.Unlock()
 
-	_, err := ur.GetByID(subId)
-	if err != nil {
-		return Wrapf(err, "Repo: Error in during following, id", id)
-	}
-
-	subscriptions := ur.subscriptions[id]
-	for i, subscriptionId := range subscriptions {
-		if subId == subscriptionId {
-			newSubscriptions := subscriptions[:i]
-
-			for j := i + 1; j < len(subscriptions); j++ {
-				newSubscriptions = append(newSubscriptions , subscriptions[j])
-			}
-			ur.subscriptions[id] = newSubscriptions
-
-			subscribers := ur.subscribers[subId]
-			for k, subscriberId := range subscribers {
-				if id == subscriberId {
-					newSubscribers := subscribers[:k]
-
-					for m := k + 1; m < len(subscribers); m++ {
-						newSubscribers = append(newSubscribers , subscribers[m])
-					}
-					ur.subscribers[subId] = newSubscribers
-				}
-			}
-			return nil
-		}
-	}
-
-	return FollowingIsNotYetDone.Newf("Repo: Following is not yet done, id: %d", id)
-}
-
-func (ur *Repository) GetSubscribers(id uint, start int, limit int) ([]*models.User, error) {
 	_, err := ur.GetByID(id)
 	if err != nil {
-		return []*models.User{}, Wrapf(err, "Error in during unfollowing, id", id)
+		return Wrapf(err, "Repo: incorrect user id, id", id)
 	}
 
-	ur.muSub.Lock()
-	usersId := ur.subscribers[id]
-	ur.muSub.Unlock()
-
-	if start >= len(usersId) {
-		start = 0
-	}
-	usersId = usersId[start:]
-
-	if limit >= len(usersId) {
-		limit = len(usersId)
-	}
-	usersId = usersId[:limit]
-
-	users := make([]*models.User, len(usersId))
-	for i, id := range usersId {
-		user, _ := ur.GetByID(id)
-		users[i] = user
+	_, err = ur.GetByID(subId)
+	if err != nil {
+		return Wrapf(err, "Repo: incorrect sub id, id", id)
 	}
 
-	return users, nil
+	err = ur.bd.Unfollow(id, subId)
+	if err != nil {
+		return FollowingIsNotYetDone.Newf("Repo: Following is not yet done, id: %d", id)
+
+	}
+	//TODO: обновить
+	return nil
+
+}
+
+//TODO: переделать получение подписок
+func (ur *Repository) GetSubscribers(id uint, start int, limit int) ([]*models.User, error) {
+	return nil, nil
 }
 
 func (ur *Repository) GetSubscriptions(id uint, start int, limit int) ([]*models.User, error) {
-	_, err := ur.GetByID(id)
-	if err != nil {
-		return []*models.User{}, Wrapf(err, "Error in during unfollowing, id", id)
-	}
-
-	ur.muSub.Lock()
-	usersId := ur.subscriptions[id]
-	ur.muSub.Unlock()
-
-	if start >= len(usersId) {
-		start = 0
-	}
-	usersId = usersId[start:]
-
-	if limit >= len(usersId) {
-		limit = len(usersId)
-	}
-	usersId = usersId[:limit]
-
-	users := make([]*models.User, len(usersId))
-	for i, id := range usersId {
-		user, _ := ur.GetByID(id)
-		users[i] = user
-	}
-
-	return users, nil
+	return nil, nil
 }
