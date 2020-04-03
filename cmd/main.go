@@ -1,12 +1,10 @@
 package main
 
 import (
-	//"echo_example/user/usecase"
-	config "2020_1_Color_noise/internal/pkg/config"
+	"2020_1_Color_noise/internal/pkg/database"
 	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
 	pinRepo "2020_1_Color_noise/internal/pkg/pin/repository"
 	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
-
 	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
 	sessionRepo "2020_1_Color_noise/internal/pkg/session/repository"
 	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
@@ -38,9 +36,12 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	config.Start()
+	db := database.NewPgxDB()
+	if err := db.Open(); err != nil {
+		panic(err)
+	}
 
-	userRepo := userRepo.NewRepo()
+	userRepo := userRepo.NewRepo(db)
 	userUsecase := userUsecase.NewUsecase(userRepo)
 
 	sessionRepo := sessionRepo.NewRepo()
@@ -97,8 +98,8 @@ func main() {
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	srv := &http.Server{
-		Handler:      r,
-		Addr:         "127.0.0.1:8000",
+		Handler: r,
+		Addr:    "127.0.0.1:8000",
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
