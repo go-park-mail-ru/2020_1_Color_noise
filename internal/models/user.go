@@ -7,7 +7,7 @@ import (
 
 type User struct {
 	Id                uint
-	Email 	          string
+	Email             string
 	Login             string
 	EncryptedPassword string
 	About             string
@@ -19,7 +19,7 @@ type User struct {
 
 type DataBaseUser struct {
 	Id                uint
-	Email 	          string
+	Email             string
 	Login             string
 	EncryptedPassword string
 	About             sql.NullString
@@ -54,13 +54,13 @@ type UpdatePasswordInput struct {
 }
 
 type ResponseUser struct {
-	Id                uint   `json:"id"`
-	Email 	          string `json:"email,omitempty"`
-	Login             string `json:"login"`
-	About             string `json:"about,omitempty"`
-	Avatar            string `json:"avatar,omitempty"`
-	Subscriptions     int    `json:"subscriptions"`
-	Subscribers       int    `json:"subscribers"`
+	Id            uint   `json:"id"`
+	Email         string `json:"email,omitempty"`
+	Login         string `json:"login"`
+	About         string `json:"about,omitempty"`
+	Avatar        string `json:"avatar,omitempty"`
+	Subscriptions int    `json:"subscriptions"`
+	Subscribers   int    `json:"subscribers"`
 }
 
 /*
@@ -78,4 +78,3 @@ func ValidatePassword(password string) bool {
 	return len(password) > 6
 }
 */
-

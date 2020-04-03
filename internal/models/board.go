@@ -8,7 +8,7 @@ import (
 type Board struct {
 	Id          uint
 	UserId      uint
-	Pins	    []*Pin
+	Pins        []*Pin
 	Name        string
 	Description string
 	CreatedAt   time.Time
