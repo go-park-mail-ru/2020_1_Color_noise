@@ -50,7 +50,8 @@ CREATE TABLE pins (
 CREATE TABLE subscriptions (
 	id serial PRIMARY KEY,
 	user_id int REFERENCES users(id) NOT NULL,
-	subscribed_at int REFERENCES users(id) NOT NULL
+	subscribed_at int REFERENCES users(id) NOT NULL,
+	UNIQUE (user_id, subscribed_at)
 )
 
 CREATE TABLE commentaries (
