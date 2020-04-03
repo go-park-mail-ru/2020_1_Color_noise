@@ -25,6 +25,13 @@ func NewHandler(usecase comment.IUsecase) *Handler {
 func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
 
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Create comment: user is unauthorized")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
@@ -65,6 +72,13 @@ func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 func (ch *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
 
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Get comment: user is unauthorized")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -92,6 +106,13 @@ func (ch *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
 
 func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	reqId:= r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Fetch comment: user is unauthorized")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
 
 	vars := mux.Vars(r)
 	pinId, err := strconv.Atoi(vars["id"])

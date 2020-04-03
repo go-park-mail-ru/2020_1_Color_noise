@@ -48,7 +48,7 @@ type ResponsePin struct {
 	Description string `json:"description,omitempty"`
 	Image       string `json:"image,omitempty"`
 }
-
+/*
 type DataBasePin struct {
 	Id          uint
 	UserId      uint
@@ -58,4 +58,4 @@ type DataBasePin struct {
 	Image       string
 	CreatedAt   time.Time
 	UpdatedAt   sql.NullTime //не гарантируется, что пин был обновлен
-}
+}*/

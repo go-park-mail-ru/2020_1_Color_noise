@@ -25,6 +25,13 @@ func NewHandler(usecase pin.IUsecase) *Handler {
 func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Create pin: user is unauthorized")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
@@ -67,6 +74,13 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Get pin: user is unauthorized")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -95,6 +109,13 @@ func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
 
 func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Fetch pin: user is unauthorized")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
 
 	vars := mux.Vars(r)
 	userId, err := strconv.Atoi(vars["id"])
@@ -135,6 +156,13 @@ func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 
 func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Update pin: user is unauthorized")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
@@ -183,6 +211,13 @@ func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 func (ph *Handler) DeletePin(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Delete pin: user is unauthorized")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {

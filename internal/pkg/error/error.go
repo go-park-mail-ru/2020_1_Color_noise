@@ -25,6 +25,7 @@ const(
 	Unauthorized
 	TooMuchSize
 )
+
 type ErrorType uint
 
 type Error struct {

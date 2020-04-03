@@ -58,43 +58,27 @@ func (bu *Usecase) GetByName(name string, start int, limit int) ([]*models.Board
 	return boards, nil
 }
 
-/*
-func (pu *PinUsecase) Update(id uint, pin *models.Pin) error {
-	pins, err := pu.pinRepo.GetByID(id)
+func (pu *Usecase) Update(input *models.InputBoard, boardId uint) error {
+	board := &models.Board{
+		Id:          boardId,
+		Name:        input.Name,
+		Description: input.Description,
+	}
+
+	err := pu.repo.Update(board)
 	if err != nil {
-		return err
+		return Wrap(err, "Updating board error")
 	}
 
-	if len(pins) != 1 {
-		return fmt.Errorf("Pin not found")
-	}
-
-	if pin.Name != "" {
-		pins[0].Name = pin.Name
-	}
-
-	if pin.Description != "" {
-		pins[0].Description = pin.Description
-	}
-
-	_, err = pu.pinRepo.Update(id, pins[0])
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
-
-
-func (pu *PinUsecase) Delete(id uint) error {
-	status, err := pu.pinRepo.Delete(id)
+func (pu *Usecase) Delete(id uint) error {
+	err := pu.repo.Delete(id)
 	if err != nil {
-		return err
+		return Wrap(err, "Deleting board error")
 	}
-	if !status {
-		return fmt.Errorf("Pin not found")
-	}
+
 	return nil
 }
 
-*/

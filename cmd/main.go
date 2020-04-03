@@ -1,8 +1,6 @@
 package main
 
 import (
-	//"echo_example/user/usecase"
-	config "2020_1_Color_noise/internal/pkg/config"
 	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
 	pinRepo "2020_1_Color_noise/internal/pkg/pin/repository"
 	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
@@ -38,7 +36,7 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	config.Start()
+	//config.Start()
 
 	userRepo := userRepo.NewRepo()
 	userUsecase := userUsecase.NewUsecase(userRepo)
@@ -85,7 +83,10 @@ func main() {
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.Update).Methods("PUT")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.Update).Methods("DELETE")
 	r.HandleFunc("/api/board", boardDelivery.Create).Methods("POST")
+	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.Update).Methods("PUT")
+	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.Delete).Methods("DELETE")
 	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.GetBoard).Methods("GET")
+	r.HandleFunc("/api/board/name/user/{id:[0-9]+}", boardDelivery.GetBoard).Methods("GET")
 	r.HandleFunc("/api/board/user/{id:[0-9]+}", boardDelivery.Fetch).Methods("GET")
 	r.HandleFunc("/api/comment", commentDelivery.Create).Methods("POST")
 	r.HandleFunc("/api/comment/{id:[0-9]+}", commentDelivery.GetComment).Methods("GET")

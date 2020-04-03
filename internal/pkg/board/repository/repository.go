@@ -94,25 +94,26 @@ func (br *Repository) GetByName(name string,  start int, limit int) ([]*models.B
 	return result, nil
 }
 
-/*
-func (br *Repository) Update(pin *models.Board) error {
+
+func (br *Repository) Update(board *models.Board) error {
 	br.mu.Lock()
-	for i, oldPin := range br.data {
-		if oldPin.Id == pin.Id {
-			br.data[i] = pin
-			br.mu.Unlock()
+	defer br.mu.Unlock()
+	for i, oldBoard := range br.data {
+		if oldBoard.Id == board.Id {
+			br.data[i].Name = board.Name
+			br.data[i].Description = board.Description
 			return nil
 		}
 	}
-	br.mu.Unlock()
 
 	return BoardNotFound.Newf("Pin not found, id: %d", pin.Id)
 }
-*/
+
 
 
 func (br *Repository) Delete(id uint) error {
 	br.mu.Lock()
+	defer br.mu.Unlock()
 	for i, board := range br.data {
 		if board.Id == id {
 			newData := br.data[:i]
@@ -120,11 +121,9 @@ func (br *Repository) Delete(id uint) error {
 				newData = append(newData, br.data[j])
 			}
 			br.data = newData
-			br.mu.Unlock()
 			return nil
 		}
 	}
-	br.mu.Unlock()
 
 	return PinNotFound.Newf("Pin not found, id: %d", id)
 }
