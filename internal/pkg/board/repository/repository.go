@@ -1,130 +1,103 @@
 package repository
 
-
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
 	"sync"
 )
 
 type Repository struct {
-	data []*models.Board
-	mu   *sync.Mutex
+	db database.DBInterface
+	mu *sync.Mutex
 }
 
-func NewRepo() *Repository {
+func NewRepo(d database.DBInterface) *Repository {
 	return &Repository{
-		data: make([]*models.Board, 0),
-		mu:   &sync.Mutex{},
+		db: d,
+		mu: &sync.Mutex{},
 	}
 }
 
 func (br *Repository) Create(board *models.Board) (uint, error) {
 	br.mu.Lock()
-	board.Id = uint(len(br.data) + 1)
-	br.data = append(br.data, board)
-	br.mu.Unlock()
+	defer br.mu.Unlock()
 
-	return board.Id, nil
+	id, err := br.db.CreateBoard(models.GetDBoard(*board))
+	if err != nil {
+		return 0, BoardNotFound.Newf("board can not be created, err: ", err)
+	}
+
+	return id, nil
 }
 
 func (br *Repository) GetByID(id uint) (*models.Board, error) {
-	for _, board := range br.data {
-		if board.Id == id {
-			return board, nil
-		}
-	}
 
-	return nil, BoardNotFound.Newf("Pin not found, id: %d", id)
+	b := models.DataBaseBoard{
+		Id: id,
+	}
+	board, err := br.db.GetBoardById(b)
+	if err != nil {
+		return nil, BoardNotFound.Newf("Board not found, board id: %d", id)
+	}
+	return &board, err
 }
 
 func (br *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.Board, error) {
-	var result []*models.Board
-
-	if start >= len(br.data) {
-		start = 0
+	b := models.DataBaseBoard{
+		UserId: userId,
 	}
-
-	if limit >= (len(br.data) - start) {
-		limit = len(br.data)
+	boards, err := br.db.GetBoardsByUserId(b, start, limit)
+	if err != nil {
+		return nil, BoardNotFound.Newf("Boards not found, user_id: %d", userId)
 	}
-
-	for i, board := range br.data {
-		if board.UserId == userId && start >= i {
-			result = append(result, board)
-
-			if limit == len(result){
-				break
-			}
-		}
-	}
-
-	/*if len(result) == 0 {
-		return result, PinNotFound.Newf("Pins not found, userId: %d", userId)
-	}*/
-
-	return result, nil
+	return boards, err
 }
 
-func (br *Repository) GetByName(name string,  start int, limit int) ([]*models.Board, error) {
-	var result []*models.Board
-
-	if start >= len(br.data) {
-		start = 0
-	}
-
-	if limit >= (len(br.data) - start) {
-		limit = len(br.data)
-	}
-
-	for i, board := range br.data {
-		if board.Name == name && start >= i {
-			result = append(result, board)
-
-			if limit == len(result){
-				break
-			}
+func (br *Repository) GetByName(name string, start int, limit int) ([]*models.Board, error) {
+	//TODO: придумать проверку
+	/*
+		if start >= len(br.data) {
+			start = 0
 		}
+
+		if limit >= (len(br.data) - start) {
+			limit = len(br.data)
+		}
+	*/
+
+	b := models.DataBaseBoard{
+		Name: name,
 	}
-
-	/*if len(result) == 0 {
-		return result, PinNotFound.Newf("Pins not found, name: %d", name)
-	}*/
-
-	return result, nil
+	boards, err := br.db.GetBoardsByName(b, start, limit)
+	if err != nil {
+		return nil, BoardNotFound.Newf("Boards not found, name: ", name)
+	}
+	return boards, err
 }
 
-/*
-func (br *Repository) Update(pin *models.Board) error {
+func (br *Repository) Update(board *models.Board) error {
 	br.mu.Lock()
-	for i, oldPin := range br.data {
-		if oldPin.Id == pin.Id {
-			br.data[i] = pin
-			br.mu.Unlock()
-			return nil
-		}
+	defer br.mu.Unlock()
+
+	err := br.db.UpdateBoard(models.GetDBoard(*board))
+	if err != nil {
+		return BoardNotFound.Newf("Board not found, id: %d", board.Id)
 	}
-	br.mu.Unlock()
-
-	return BoardNotFound.Newf("Pin not found, id: %d", pin.Id)
+	return nil
 }
-*/
-
 
 func (br *Repository) Delete(id uint) error {
 	br.mu.Lock()
-	for i, board := range br.data {
-		if board.Id == id {
-			newData := br.data[:i]
-			for j := i + 1; j < len(br.data); j++ {
-				newData = append(newData, br.data[j])
-			}
-			br.data = newData
-			br.mu.Unlock()
-			return nil
-		}
-	}
-	br.mu.Unlock()
+	defer br.mu.Unlock()
 
-	return PinNotFound.Newf("Pin not found, id: %d", id)
+	d := models.DataBaseBoard{
+		Id: id,
+	}
+	err := br.db.DeleteBoard(d)
+	if err != nil {
+		return BoardNotFound.Newf("Board not found, id: %d", id)
+	}
+
+	return nil
 }

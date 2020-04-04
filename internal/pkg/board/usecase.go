@@ -10,6 +10,3 @@ type IUsecase interface {
 	GetByUserId(id uint, start int, limit int) ([]*models.Board, error)
 	GetByName(name string, start int, limit int) ([]*models.Board, error)
 }
-
-
-

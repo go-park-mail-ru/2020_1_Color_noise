@@ -7,7 +7,7 @@ import (
 )
 
 type Usecase struct {
-	repo  board.IRepository
+	repo board.IRepository
 }
 
 func NewUsecase(repo board.IRepository) *Usecase {
