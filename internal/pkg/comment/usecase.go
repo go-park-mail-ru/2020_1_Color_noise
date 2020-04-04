@@ -10,6 +10,3 @@ type IUsecase interface {
 	GetByPinId(id uint, start int, limit int) ([]*models.Comment, error)
 	GetByText(text string, start int, limit int) ([]*models.Comment, error)
 }
-
-
-
