@@ -5,8 +5,8 @@
 package mock
 
 import (
-	gomock "github.com/golang/mock/gomock"
 	models "2020_1_Color_noise/internal/models"
+	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
 

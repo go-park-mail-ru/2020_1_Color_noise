@@ -36,17 +36,17 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		err = error.Wrap(err,"Decoding error during creation pin")
+		err = error.Wrap(err, "Decoding error during creation pin")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	_, err = govalidator.ValidateStruct(input)
+	//_, err = govalidator.ValidateStruct(input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
-			"Name shouldn't be empty and longer 60 characters. " +
-			"Description shouldn't be empty and longer 1000 characters. " +
-			"Image should be base64")
+			"Name shouldn't be empty and longer 60 characters. "+
+				"Description shouldn't be empty and longer 1000 characters. "+
+				"Image should be base64")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -155,7 +155,7 @@ func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		err = error.Wrap(err,"Decoding error during updating pin")
+		err = error.Wrap(err, "Decoding error during updating pin")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -163,7 +163,7 @@ func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	_, err = govalidator.ValidateStruct(input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
-			"Name shouldn't be empty and longer 60 characters. " +
+			"Name shouldn't be empty and longer 60 characters. "+
 				"Description shouldn't be empty and longer 1000 characters.")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -175,11 +175,10 @@ func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, http.StatusOK, map[string]string {
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
-
 
 func (ph *Handler) DeletePin(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
@@ -205,8 +204,7 @@ func (ph *Handler) DeletePin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, http.StatusOK, map[string]string {
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
-
