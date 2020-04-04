@@ -14,12 +14,11 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type Result struct {
 	Status string      `json:"status"`
-	Body interface{} `json:"body,omitempty"`
+	Body   interface{} `json:"body,omitempty"`
 }
 
 type Handler struct {
@@ -29,7 +28,7 @@ type Handler struct {
 
 func NewHandler(usecase user.IUsecase, sessionUsecase session.IUsecase) *Handler {
 	return &Handler{
-		userUsecase: usecase,
+		userUsecase:    usecase,
 		sessionUsecase: sessionUsecase,
 	}
 }
@@ -41,7 +40,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
-		err = error.Wrap(err,"Decoding error during creation user")
+		err = error.Wrap(err, "Decoding error during creation user")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -49,9 +48,9 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	_, err = govalidator.ValidateStruct(input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
-			"Password should be longer than 6 characters and shorter 100. " +
-			"Login should be letters and numbers, and shorter than 20 characters " +
-			"Email should be like hello@example.com and shorter than 50 characters.")
+			"Password should be longer than 6 characters and shorter 100. "+
+				"Login should be letters and numbers, and shorter than 20 characters "+
+				"Email should be like hello@example.com and shorter than 50 characters.")
 		error.ErrorHandler(w, err)
 		return
 	}
@@ -62,36 +61,38 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := ud.sessionUsecase.CreateSession(id)
+	_, err = ud.sessionUsecase.CreateSession(id)
 	if err != nil {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
+	/*
+		cookie := &http.Cookie{
+			Name:     "session_id",
+			Value:    session.Cookie,
+			Expires:  time.Now().Add(1000 * time.Hour),
+			HttpOnly: true,
+			Domain:   r.Host,
+		}
 
-	cookie := &http.Cookie{
-		Name:    "session_id",
-		Value:   session.Cookie,
-		Expires: time.Now().Add(1000 * time.Hour),
-		HttpOnly: true,
-		Domain: r.Host,
-	}
+		token := &http.Cookie{
+			Name:    "csrf_token",
+			Value:   session.Token,
+			Expires: time.Now().Add(5 * time.Hour),
+			Domain:  r.Host,
+		}
 
-	token := &http.Cookie{
-		Name:    "csrf_token",
-		Value:   session.Token,
-		Expires: time.Now().Add(5 * time.Hour),
-		Domain: r.Host,
-	}
+		http.SetCookie(w, cookie)
+		http.SetCookie(w, token)
 
-	http.SetCookie(w, cookie)
-	http.SetCookie(w, token)
-	response.Respond(w, http.StatusCreated, map[string]string {
+	*/
+	response.Respond(w, http.StatusCreated, map[string]string{
 		"message": "Ok",
 	})
 }
 
 func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
@@ -108,10 +109,10 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	resp := models.ResponseUser{
 		Id:            user.Id,
-		Email:  	   user.Email,
-		Login:  	   user.Login,
-		About:  	   user.About,
-		Avatar: 	   user.Avatar,
+		Email:         user.Email,
+		Login:         user.Login,
+		About:         user.About,
+		Avatar:        user.Avatar,
 		Subscribers:   user.Subscribers,
 		Subscriptions: user.Subscriptions,
 	}
@@ -120,7 +121,7 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -138,9 +139,9 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 
 	resp := models.ResponseUser{
 		Id:            user.Id,
-		Login:  	   user.Login,
-		About:  	   user.About,
-		Avatar: 	   user.Avatar,
+		Login:         user.Login,
+		About:         user.About,
+		Avatar:        user.Avatar,
 		Subscribers:   user.Subscribers,
 		Subscriptions: user.Subscriptions,
 	}
@@ -149,7 +150,7 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
@@ -162,7 +163,7 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
-		err := error.Wrap(err,"Decoding error during updating profile user")
+		err := error.Wrap(err, "Decoding error during updating profile user")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -170,7 +171,7 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	_, err = govalidator.ValidateStruct(input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
-				"Login should be letters and numbers, shorter than 20 characters " +
+			"Login should be letters and numbers, shorter than 20 characters "+
 				"Email should be like hello@example.com and shorter than 50 characters")
 		error.ErrorHandler(w, err)
 		return
@@ -182,13 +183,13 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, http.StatusOK, map[string]string {
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
 
 func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
@@ -201,7 +202,7 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
-		err := error.Wrap(err,"Decoding error during updating description user")
+		err := error.Wrap(err, "Decoding error during updating description user")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -220,13 +221,13 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, http.StatusOK, map[string]string {
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
 
 func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
@@ -258,13 +259,13 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, http.StatusOK, map[string]string {
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
 
 func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	err := r.ParseMultipartForm(5 * 1024 * 1025)
 	if err != nil {
@@ -280,7 +281,7 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, _, err  := r.FormFile("image")
+	file, _, err := r.FormFile("image")
 	if err != nil {
 		err := error.Wrap(err, "Reading image from form error")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
@@ -307,7 +308,7 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
@@ -325,7 +326,7 @@ func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if id == uint(subId) {
-		err = error.WithMessage(error.BadRequest.New( "Bad id in during following user"),
+		err = error.WithMessage(error.BadRequest.New("Bad id in during following user"),
 			"Your id and following id shoudn't match")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -337,13 +338,13 @@ func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, http.StatusCreated, map[string]string {
+	response.Respond(w, http.StatusCreated, map[string]string{
 		"message": "Ok",
 	})
 }
 
 func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
@@ -373,13 +374,13 @@ func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, http.StatusOK, map[string]string {
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
 
 func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -407,9 +408,9 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 	for _, user := range users {
 		resp = append(resp, models.ResponseUser{
 			Id:            user.Id,
-			Login:  	   user.Login,
-			About:  	   user.About,
-			Avatar: 	   user.Avatar,
+			Login:         user.Login,
+			About:         user.About,
+			Avatar:        user.Avatar,
 			Subscribers:   user.Subscribers,
 			Subscriptions: user.Subscriptions,
 		})
@@ -419,7 +420,7 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -449,9 +450,9 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 	for _, user := range users {
 		resp = append(resp, models.ResponseUser{
 			Id:            user.Id,
-			Login:  	   user.Login,
-			About:  	   user.About,
-			Avatar: 	   user.Avatar,
+			Login:         user.Login,
+			About:         user.About,
+			Avatar:        user.Avatar,
 			Subscribers:   user.Subscribers,
 			Subscriptions: user.Subscriptions,
 		})
@@ -459,7 +460,6 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 
 	response.Respond(w, http.StatusOK, resp)
 }
-
 
 /*
 func (ud *Handler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -503,6 +503,3 @@ func (ud *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 */
-
-
-

@@ -10,7 +10,7 @@ import (
 )
 
 type UserUsecase struct {
-	repo  user.IRepository
+	repo user.IRepository
 }
 
 func NewUsecase(repo user.IRepository) *UserUsecase {

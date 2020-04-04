@@ -7,12 +7,10 @@ import (
 	"database/sql"
 	"log"
 	"sync"
-	"time"
 )
 
 type Repository struct {
 	bd            database.DBInterface
-	data          []*models.User
 	mu            *sync.Mutex
 	subscriptions map[uint][]uint
 	subscribers   map[uint][]uint
@@ -22,7 +20,6 @@ type Repository struct {
 func NewRepo(bd database.DBInterface) *Repository {
 	return &Repository{
 		bd:            bd,
-		data:          make([]*models.User, 0),
 		mu:            &sync.Mutex{},
 		subscriptions: make(map[uint][]uint),
 		subscribers:   make(map[uint][]uint),
@@ -42,25 +39,20 @@ func (ur *Repository) Create(user *models.User) (uint, error) {
 	}
 
 	ur.mu.Lock()
-
-	var us = models.DataBaseUser{
-		Login:             user.Login,
-		Email:             user.Email,
-		EncryptedPassword: user.EncryptedPassword,
-		CreatedAt:         time.Now(),
+	defer ur.mu.Unlock()
+	id, err := ur.bd.CreateUser(models.GetBUser(*user))
+	if err != nil {
+		return 0, UserNotFound.Newf("User can not be created")
 	}
 
-	id, er := ur.bd.CreateUser(us)
-	log.Print(id, er)
-
-	ur.mu.Unlock()
-
-	return user.Id, nil
+	return id, nil
 }
 
 func (ur *Repository) GetByID(id uint) (*models.User, error) {
 
 	ur.mu.Lock()
+	defer ur.mu.Unlock()
+
 	var us = models.DataBaseUser{
 		Id: id,
 	}
@@ -68,8 +60,6 @@ func (ur *Repository) GetByID(id uint) (*models.User, error) {
 	if err != nil {
 		return nil, UserNotFound.Newf("User to get not found, id: %d", id)
 	}
-	ur.mu.Unlock()
-
 	return &user, err
 }
 
@@ -80,6 +70,7 @@ func (ur *Repository) GetByLogin(login string) (*models.User, error) {
 	var us = models.DataBaseUser{
 		Login: login,
 	}
+	log.Print("login: ", us.Login)
 	user, err := ur.bd.GetUserByName(us)
 	if err != nil {
 		return nil, UserNotFound.New("User is not found")
@@ -92,7 +83,7 @@ func (ur *Repository) Search(login string, start int, limit int) ([]*models.User
 	defer ur.mu.Unlock()
 
 	var us = models.DataBaseUser{Login: login}
-	users, err := ur.bd.GetUserByLogin(us, limit, start) //START == OFFSETs
+	users, err := ur.bd.GetUserByLogin(us, limit, start) //START == OFFSET
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +149,10 @@ func (ur *Repository) UpdateDescription(id uint, description *string) error {
 	var us = models.DataBaseUser{Id: id, About: struct {
 		String string
 		Valid  bool
-	}{String: *description, Valid: true}}
+	}{
+		String: *description,
+		Valid:  true,
+	}}
 
 	err := ur.bd.UpdateUserDescription(us)
 
@@ -213,6 +207,7 @@ func (ur *Repository) Delete(id uint) error {
 	return nil
 }
 
+//TODO: update полсе подписок
 func (ur *Repository) Follow(id uint, subId uint) error {
 	ur.muSub.Lock()
 	defer ur.muSub.Unlock()
@@ -260,11 +255,20 @@ func (ur *Repository) Unfollow(id uint, subId uint) error {
 
 }
 
-//TODO: переделать получение подписок
 func (ur *Repository) GetSubscribers(id uint, start int, limit int) ([]*models.User, error) {
-	return nil, nil
+	var us = models.DataBaseUser{Id: id}
+	users, err := ur.bd.GetUserSubUsers(us)
+	if err != nil {
+		return nil, UserNotFound.Newf("User was not found, id", id)
+	}
+	return users, nil
 }
 
 func (ur *Repository) GetSubscriptions(id uint, start int, limit int) ([]*models.User, error) {
-	return nil, nil
+	var us = models.DataBaseUser{Id: id}
+	users, err := ur.bd.GetUserSupUsers(us)
+	if err != nil {
+		return nil, UserNotFound.Newf("User was not found, id", id)
+	}
+	return users, nil
 }
