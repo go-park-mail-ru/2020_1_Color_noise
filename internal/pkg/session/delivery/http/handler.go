@@ -12,25 +12,25 @@ import (
 )
 
 type Handler struct {
-	sessionUsecase  session.IUsecase
-	userUsecase  user.IUsecase
+	sessionUsecase session.IUsecase
+	userUsecase    user.IUsecase
 }
 
 func NewHandler(sessionUsecase session.IUsecase, userUsecase user.IUsecase) *Handler {
 	return &Handler{
 		sessionUsecase: sessionUsecase,
-		userUsecase: userUsecase,
+		userUsecase:    userUsecase,
 	}
 }
 
 func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	input := &models.SignUpInput{}
 
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		err := error.Wrap(err,"Decoding error during login")
+		err := error.Wrap(err, "Decoding error during login")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -53,43 +53,44 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cookie := &http.Cookie{
-		Name:    "session_id",
-		Value:   session.Cookie,
-		Expires: time.Now().Add(1000 * time.Hour),
+		Name:     "session_id",
+		Value:    session.Cookie,
+		Expires:  time.Now().Add(1000 * time.Hour),
 		HttpOnly: true,
-		Domain: r.Host,
+		Domain:   r.Host,
 	}
 
 	token := &http.Cookie{
 		Name:    "csrf_token",
 		Value:   session.Token,
 		Expires: time.Now().Add(5 * time.Hour),
-		Domain: r.Host,
+		Domain:  r.Host,
 	}
 
 	http.SetCookie(w, cookie)
 	http.SetCookie(w, token)
-	response.Respond(w, http.StatusOK, map[string]string {
+
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
 
 func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
-		err := error.Wrap(err,"Received bad cookie from context")
+		err := error.Wrap(err, "Received bad cookie from context")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 	/*
-	token, err := r.Cookie("token")
-	if err != nil {
-		err := error.Wrap(err,"Received bad token from context")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
+		token, err := r.Cookie("token")
+		if err != nil {
+			err := error.Wrap(err,"Received bad token from context")
+			error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+			return
+		}
 	*/
 	err = sh.sessionUsecase.Delete(cookie.Value)
 	if err != nil {
@@ -103,7 +104,7 @@ func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie)
 	//http.SetCookie(w, token)
 
-	response.Respond(w, http.StatusOK, map[string]string {
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
