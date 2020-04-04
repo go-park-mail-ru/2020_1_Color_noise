@@ -78,3 +78,46 @@ func ValidatePassword(password string) bool {
 	return len(password) > 6
 }
 */
+
+func GetUser(u DataBaseUser) User {
+	tmp := User{
+		Id:                u.Id,
+		Email:             u.Email,
+		Login:             u.Login,
+		EncryptedPassword: u.EncryptedPassword,
+		Subscriptions:     u.Subscriptions,
+		Subscribers:       u.Subscribers,
+		CreatedAt:         u.CreatedAt,
+	}
+
+	if u.Avatar.Valid {
+		tmp.Avatar = u.Avatar.String
+	}
+	if u.About.Valid {
+		tmp.About = u.Avatar.String
+	}
+
+	return tmp
+}
+
+func GetBUser(u User) DataBaseUser {
+	tmp := DataBaseUser{
+		Id:                u.Id,
+		Email:             u.Email,
+		Login:             u.Login,
+		EncryptedPassword: u.EncryptedPassword,
+		Subscriptions:     u.Subscriptions,
+		Subscribers:       u.Subscribers,
+		CreatedAt:         u.CreatedAt,
+	}
+
+	if u.Avatar != "" {
+		tmp.Avatar.String = u.Avatar
+		tmp.Avatar.Valid = true
+	}
+	if u.About != "" {
+		tmp.About.String = u.Avatar
+		tmp.About.Valid = true
+	}
+	return tmp
+}

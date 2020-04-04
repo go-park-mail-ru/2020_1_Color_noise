@@ -35,3 +35,32 @@ type ResponseBoard struct {
 	Description string `json:"description,omitempty"`
 	Pins        []*Pin `json:"pins,omitempty"`
 }
+
+func GetDBoard(board Board) DataBaseBoard {
+	tmp := DataBaseBoard{
+		Id:        board.Id,
+		UserId:    board.UserId,
+		Name:      board.Name,
+		CreatedAt: board.CreatedAt,
+	}
+
+	if board.Description != "" {
+		tmp.Description.Valid = true
+		tmp.Description.String = board.Description
+	}
+	return tmp
+}
+
+func GetBoard(board DataBaseBoard) Board {
+	tmp := Board{
+		Id:        board.Id,
+		UserId:    board.UserId,
+		Name:      board.Name,
+		CreatedAt: board.CreatedAt,
+	}
+
+	if board.Description.Valid {
+		tmp.Description = board.Description.String
+	}
+	return tmp
+}

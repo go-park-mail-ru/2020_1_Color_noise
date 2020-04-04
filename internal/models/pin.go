@@ -48,3 +48,44 @@ type ResponsePin struct {
 	Description string `json:"description,omitempty"`
 	Image       string `json:"image,omitempty"`
 }
+
+func GetPin(pin DataBasePin) Pin {
+	tmp := Pin{
+		Id:        pin.Id,
+		UserId:    pin.UserId,
+		BoardId:   pin.BoardId,
+		Name:      pin.Name,
+		Image:     pin.Image,
+		CreatedAt: pin.CreatedAt,
+	}
+
+	if pin.Description.Valid {
+		tmp.Description = pin.Description.String
+	}
+
+	if pin.UpdatedAt.Valid {
+		tmp.UpdatedAt = pin.UpdatedAt.Time
+	}
+	return tmp
+}
+
+func GetBPin(pin Pin) DataBasePin {
+	tmp := DataBasePin{
+		Id:        pin.Id,
+		UserId:    pin.UserId,
+		BoardId:   pin.BoardId,
+		Name:      pin.Name,
+		Image:     pin.Image,
+		CreatedAt: pin.CreatedAt,
+	}
+	if !pin.UpdatedAt.IsZero() {
+		tmp.UpdatedAt.Valid = true
+		tmp.UpdatedAt.Time = pin.UpdatedAt
+	}
+
+	if pin.Description != "" {
+		tmp.Description.Valid = true
+		tmp.Description.String = pin.Description
+	}
+	return tmp
+}

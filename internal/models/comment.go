@@ -30,3 +30,25 @@ type ResponseComment struct {
 	CreatedAt time.Time `json:"time"`
 	Text      string    `json:"comment"`
 }
+
+func GetBComment(c Comment) DataBaseComment {
+	tmp := DataBaseComment{
+		Id:        c.Id,
+		UserId:    c.UserId,
+		PinId:     c.PinId,
+		Text:      c.Text,
+		CreatedAt: c.CreatedAt,
+	}
+	return tmp
+}
+
+func GetComment(c DataBaseComment) Comment {
+	tmp := Comment{
+		Id:        c.Id,
+		UserId:    c.UserId,
+		PinId:     c.PinId,
+		Text:      c.Text,
+		CreatedAt: c.CreatedAt,
+	}
+	return tmp
+}
