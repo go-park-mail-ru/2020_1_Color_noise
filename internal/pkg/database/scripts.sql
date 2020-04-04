@@ -27,7 +27,16 @@ CREATE TABLE users(
 	subscriptions int,
 	subscribers int,
 	created_at TIMESTAMP NOT NULL
-)
+);
+
+CREATE TABLE sessions (
+	id int REFERENCES users(id) NOT NULL,
+	cookie text NOT NULL,
+	token text NOT NULL,
+	created_at timestamp NOT NULL,
+	deleting_at timestamp
+);
+
 
 CREATE TABLE boards(
 	id serial PRIMARY KEY,
@@ -35,7 +44,7 @@ CREATE TABLE boards(
 	name text NOT NULL,
 	description text,
 	created_at timestamp
-)
+);
 
 CREATE TABLE pins (
 	id serial PRIMARY KEY,
@@ -45,14 +54,14 @@ CREATE TABLE pins (
 	image text NOT NULL,
 	board_id int REFERENCES boards(id),
 	created_at timestamp
-)
+);
 
 CREATE TABLE subscriptions (
 	id serial PRIMARY KEY,
 	user_id int REFERENCES users(id) NOT NULL,
 	subscribed_at int REFERENCES users(id) NOT NULL,
 	UNIQUE (user_id, subscribed_at)
-)
+);
 
 CREATE TABLE commentaries (
 	id serial PRIMARY KEY,
@@ -60,4 +69,21 @@ CREATE TABLE commentaries (
 	pin_id int REFERENCES pins(id) NOT NULL,
 	comment text NOT NULL,
 	created_at timestamp
-)
+);
+
+/*
+CREATE FUNCTION new_desks() RETURNS trigger AS $trigger_bound$
+BEGIN
+	INSERT INTO boards(user_id, name, description, created_at)
+	VALUES(NEW.id, 'my pins', 'pins', NEW.created_at)
+	RETURNING NEW;
+END;
+$trigger_bound$
+LANGUAGE plpgsql;
+
+
+CREATE TRIGGER new_user_desk AFTER INSERT
+ON users
+EXECUTE FUNCTION new_desks();
+ */
+

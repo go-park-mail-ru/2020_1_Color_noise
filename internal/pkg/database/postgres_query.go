@@ -21,10 +21,10 @@ const (
 		"WHERE id = $3"
 	UpdateUserDesc = "UPDATE users SET " +
 		"about = $1 " +
-		"WHERE id = $2"
+		"WHERE id = $2 RETURNING id"
 	UpdateUserPs = "UPDATE users SET " +
 		"encrypted_password = $1 " +
-		"WHERE id = $2"
+		"WHERE id = $2  RETURNING id"
 	UpdateUserAv = "UPDATE users SET " +
 		"avatar = $1 " +
 		"WHERE id = $2"
@@ -33,6 +33,14 @@ const (
 	UserByLogin       = "SELECT * FROM users WHERE login = $1 LIMIT $2 OFFSET $3"
 	UserByLoginSearch = "SELECT * FROM users WHERE login = $1"
 	UserByEmail       = "SELECT * FROM users WHERE email = $1"
+	//кто подписан на пользователя
+	UserSubscribedUsers = "SELECT users.id, email, login, encrypted_password, about, avatar, subscriptions, subscribers, created_at  " +
+		" FROM users JOIN subscriptions ON users.ID = subscriptions.user_id" +
+		" WHERE subscribed_at = $1"
+	//на кого подписан сам пользователь
+	UserSubscriptionsUsers = "SELECT users.id, email, login, encrypted_password, about, avatar, subscriptions, subscribers, created_at  " +
+		" FROM users JOIN subscriptions ON users.ID = subscriptions.subscribed_at" +
+		" WHERE user_id = $1"
 	UserSubscribed    = "SELECT COUNT(subscribed_at) FROM subscriptions WHERE user_id = $1"
 	UserSubscriptions = "SELECT COUNT(user_id) FROM subscriptions WHERE subscribed_at = $1"
 	Follow            = "INSERT INTO subscriptions( user_id, subscribed_at) VALUES ($1, $2, $3);"
@@ -46,7 +54,9 @@ const (
 		"comment = $1, created_at = $2 " +
 		"WHERE id = $3"
 	DeleteComment = "DELETE FROM commentaries WHERE id = $1"
-	CommentByPin  = "SELECT * FROM commentaries WHERE pin_id = $1"
+	CommentById   = "SELECT * FROM commentaries WHERE id = $1"
+	CommentByText = "SELECT * FROM commentaries WHERE comment LIKE $1"
+	CommentByPin  = "SELECT * FROM commentaries WHERE pin_id = $1 LIMIT $2 OFFSET $3"
 )
 
 const (
@@ -57,6 +67,20 @@ const (
 		"WHERE id = $3"
 	DeleteBoard        = "DELETE FROM boards WHERE id = $1"
 	BoardById          = "SELECT * FROM boards WHERE id = $1"
-	BoardsByUserId     = "SELECT * FROM boards WHERE user_id = $1"
-	BoardsByNameSearch = "SELECT * FROM boards WHERE name = $1"
+	BoardsByUserId     = "SELECT * FROM boards WHERE user_id = $1 LIMIT $2 OFFSET $3"
+	BoardsByNameSearch = "SELECT * FROM boards WHERE name = $1 LIMIT $2 OFFSET $3"
+)
+
+const (
+	InsertSession = "INSERT INTO sessions(" +
+		"id, cookie, token, created_at, deleting_at)" +
+		" VALUES ($1, $2, $3, $4, $5) RETURNING 0;"
+
+	UpdateSession = "UPDATE sessions" +
+		" SET token= $1" +
+		" WHERE cookie = $2 RETURNING 0;"
+
+	DeleteSession = "DELETE FROM sessions WHERE cookie = $1 RETURNING 0;"
+
+	SessionByCookie = "SELECT * FROM sessions * WHERE cookie = $1; "
 )
