@@ -1,6 +1,12 @@
 package main
 
 import (
+	boardDeliveryHttp "2020_1_Color_noise/internal/pkg/board/delivery/http"
+	boardRepo "2020_1_Color_noise/internal/pkg/board/repository"
+	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
+	commentDeliveryHttp "2020_1_Color_noise/internal/pkg/comment/delivery/http"
+	commentRepo "2020_1_Color_noise/internal/pkg/comment/repository"
+	commentUsecase "2020_1_Color_noise/internal/pkg/comment/usecase"
 	"2020_1_Color_noise/internal/pkg/database"
 	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
 	pinRepo "2020_1_Color_noise/internal/pkg/pin/repository"
@@ -8,27 +14,15 @@ import (
 	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
 	sessionRepo "2020_1_Color_noise/internal/pkg/session/repository"
 	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
-
 	userDeliveryHttp "2020_1_Color_noise/internal/pkg/user/delivery/http"
 	userRepo "2020_1_Color_noise/internal/pkg/user/repository"
 	userUsecase "2020_1_Color_noise/internal/pkg/user/usecase"
 
-	boardDeliveryHttp "2020_1_Color_noise/internal/pkg/board/delivery/http"
-	boardRepo "2020_1_Color_noise/internal/pkg/board/repository"
-	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
-
-	commentDeliveryHttp "2020_1_Color_noise/internal/pkg/comment/delivery/http"
-	commentRepo "2020_1_Color_noise/internal/pkg/comment/repository"
-	commentUsecase "2020_1_Color_noise/internal/pkg/comment/usecase"
-
 	searchHandler "2020_1_Color_noise/internal/pkg/search"
 
 	"2020_1_Color_noise/internal/pkg/middleware"
-
-	//"awesomeProject/internal/pkg/session/usecase"
 	"github.com/gorilla/mux"
 	"log"
-	//"math/rand"
 	"net/http"
 	"time"
 )
@@ -44,21 +38,21 @@ func main() {
 	userRepo := userRepo.NewRepo(db)
 	userUsecase := userUsecase.NewUsecase(userRepo)
 
-	sessionRepo := sessionRepo.NewRepo()
+	sessionRepo := sessionRepo.NewRepo(db)
 	sessionUsecase := sessionUsecase.NewUsecase(sessionRepo)
 	sessionDelivery := sessionDeliveryHttp.NewHandler(sessionUsecase, userUsecase)
 
 	userDelivery := userDeliveryHttp.NewHandler(userUsecase, sessionUsecase)
 
-	pinRepo := pinRepo.NewRepo()
+	pinRepo := pinRepo.NewRepo(db)
 	pinUsecase := pinUsecase.NewUsecase(pinRepo)
 	pinDelivery := pinDeliveryHttp.NewHandler(pinUsecase)
 
-	boardRepo := boardRepo.NewRepo()
+	boardRepo := boardRepo.NewRepo(db)
 	boardUsecase := boardUsecase.NewUsecase(boardRepo)
 	boardDelivery := boardDeliveryHttp.NewHandler(boardUsecase)
 
-	commentRepo := commentRepo.NewRepo()
+	commentRepo := commentRepo.NewRepo(db)
 	commentUsecase := commentUsecase.NewUsecase(commentRepo)
 	commentDelivery := commentDeliveryHttp.NewHandler(commentUsecase)
 
@@ -84,9 +78,10 @@ func main() {
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.GetPin).Methods("GET")
 	r.HandleFunc("/api/pin/user/{id:[0-9]+}", pinDelivery.Fetch).Methods("GET")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.Update).Methods("PUT")
-	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.Update).Methods("DELETE")
+	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.DeletePin).Methods("DELETE")
 	r.HandleFunc("/api/board", boardDelivery.Create).Methods("POST")
 	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.GetBoard).Methods("GET")
+	//r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.DeleteBoard).Methods("DELETE")
 	r.HandleFunc("/api/board/user/{id:[0-9]+}", boardDelivery.Fetch).Methods("GET")
 	r.HandleFunc("/api/comment", commentDelivery.Create).Methods("POST")
 	r.HandleFunc("/api/comment/{id:[0-9]+}", commentDelivery.GetComment).Methods("GET")
