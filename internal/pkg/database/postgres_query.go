@@ -18,7 +18,7 @@ const (
 		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
 	UpdateUser = "UPDATE users SET " +
 		"email = $1, login = $2 " +
-		"WHERE id = $3"
+		"WHERE id = $3 RETURNING id"
 	UpdateUserDesc = "UPDATE users SET " +
 		"about = $1 " +
 		"WHERE id = $2 RETURNING id"
@@ -27,7 +27,7 @@ const (
 		"WHERE id = $2  RETURNING id"
 	UpdateUserAv = "UPDATE users SET " +
 		"avatar = $1 " +
-		"WHERE id = $2"
+		"WHERE id = $2 RETURNING id;"
 	DeleteUser        = "DELETE FROM users WHERE id = $1 CASCADE"
 	UserById          = "SELECT * FROM users WHERE id = $1"
 	UserByLogin       = "SELECT * FROM users WHERE login = $1 LIMIT $2 OFFSET $3"
