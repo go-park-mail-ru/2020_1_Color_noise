@@ -583,3 +583,63 @@ func (db *PgxDB) GetSessionByCookie(s models.DataBaseSession) (models.Session, e
 	}
 	return models.GetSession(session), nil
 }
+
+func (db *PgxDB) GetSubFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error){
+	var res []*models.Pin
+
+	row, err := db.dbPool.Query(Feed, user.Id, limit, start)
+	if err != nil {
+		return nil, err
+	}
+	for row.Next() {
+		var tmp models.DataBasePin
+		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt)
+		if ok != nil {
+			return nil, ok
+		}
+		p := models.GetPin(tmp)
+		res = append(res, &p)
+	}
+	return res, nil
+}
+
+func (db *PgxDB) GetMainFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error){
+	var res []*models.Pin
+
+	row, err := db.dbPool.Query(Main, user.Id, limit, start)
+	if err != nil {
+		return nil, err
+	}
+	for row.Next() {
+		var tmp models.DataBasePin
+		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt)
+		if ok != nil {
+			return nil, ok
+		}
+		p := models.GetPin(tmp)
+		res = append(res, &p)
+	}
+	return res, nil
+}
+
+func (db *PgxDB) GetRecFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error){
+	var res []*models.Pin
+
+	row, err := db.dbPool.Query(Recommendation, user.Id, limit, start)
+	if err != nil {
+		return nil, err
+	}
+	for row.Next() {
+		var tmp models.DataBasePin
+		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt)
+		if ok != nil {
+			return nil, ok
+		}
+		p := models.GetPin(tmp)
+		res = append(res, &p)
+	}
+	return res, nil
+}

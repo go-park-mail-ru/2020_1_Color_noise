@@ -55,4 +55,8 @@ type DBInterface interface {
 	GetBoardsByUserId(board models.DataBaseBoard, start, offset int) ([]*models.Board, error)
 	GetBoardsByName(board models.DataBaseBoard, start, offset int) ([]*models.Board, error)
 	GetBoardLastPin(board models.DataBaseBoard) (models.Pin, error)
+
+	GetSubFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
+	GetMainFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
+	GetRecFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
 }
