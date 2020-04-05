@@ -188,7 +188,8 @@ func (db *PgxDB) CreateUser(user models.DataBaseUser) (uint, error) {
 }
 
 func (db *PgxDB) UpdateUser(user models.DataBaseUser) error {
-	err := db.Exec(UpdateUser, user.Email, user.Login, user.Id)
+	id := 0
+	err := db.dbPool.QueryRow(UpdateUser, user.Email, user.Login, user.Id).Scan(&id)
 	if err != nil {
 		if pqError, ok := err.(pgx.PgError); ok {
 			switch pqError.Code {
