@@ -1,24 +1,31 @@
 package main
 
 import (
-
 	boardDeliveryHttp "2020_1_Color_noise/internal/pkg/board/delivery/http"
 	boardRepo "2020_1_Color_noise/internal/pkg/board/repository"
 	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
+
 	commentDeliveryHttp "2020_1_Color_noise/internal/pkg/comment/delivery/http"
 	commentRepo "2020_1_Color_noise/internal/pkg/comment/repository"
 	commentUsecase "2020_1_Color_noise/internal/pkg/comment/usecase"
+
 	"2020_1_Color_noise/internal/pkg/database"
 
 	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
 	pinRepo "2020_1_Color_noise/internal/pkg/pin/repository"
 	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
+
 	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
 	sessionRepo "2020_1_Color_noise/internal/pkg/session/repository"
 	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
+
 	userDeliveryHttp "2020_1_Color_noise/internal/pkg/user/delivery/http"
 	userRepo "2020_1_Color_noise/internal/pkg/user/repository"
 	userUsecase "2020_1_Color_noise/internal/pkg/user/usecase"
+
+	listDeliveryHttp "2020_1_Color_noise/internal/pkg/list/delivery/http"
+	listRepo "2020_1_Color_noise/internal/pkg/list/repository"
+	listUsecase "2020_1_Color_noise/internal/pkg/list/usecase"
 
 	searchHandler "2020_1_Color_noise/internal/pkg/search"
 
@@ -58,6 +65,10 @@ func main() {
 	commentUsecase := commentUsecase.NewUsecase(commentRepo)
 	commentDelivery := commentDeliveryHttp.NewHandler(commentUsecase)
 
+	listRepo := listRepo.NewRepo(db)
+	listUsecase := listUsecase.NewUsecase(listRepo)
+	listDelivery := listDeliveryHttp.NewHandler(listUsecase)
+
 	searchHandler := searchHandler.NewHandler(commentUsecase, pinUsecase, userUsecase)
 
 	m := middleware.NewMiddleware(sessionUsecase)
@@ -91,6 +102,9 @@ func main() {
 	r.HandleFunc("/api/comment/{id:[0-9]+}", commentDelivery.GetComment).Methods("GET")
 	r.HandleFunc("/api/comment/pin/{id:[0-9]+}", commentDelivery.Fetch).Methods("GET")
 	r.HandleFunc("/api/search", searchHandler.Search).Methods("GET")
+	r.HandleFunc("/api/list", listDelivery.GetMainList).Methods("GET")
+	r.HandleFunc("/api/list/sub", listDelivery.GetSubList).Methods("GET")
+	r.HandleFunc("/api/list/recommendation", listDelivery.GetRecommendationList).Methods("GET")
 
 	r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)

@@ -65,14 +65,14 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		Value:    session.Cookie,
 		Expires:  time.Now().Add(1000 * time.Hour),
 		HttpOnly: true,
-		Domain:   r.Host,
+		//Domain:   r.Host,
 	}
 
 	token := &http.Cookie{
 		Name:    "csrf_token",
 		Value:   session.Token,
 		Expires: time.Now().Add(5 * time.Hour),
-		Domain:  r.Host,
+		//Domain:  r.Host,
 	}
 
 	http.SetCookie(w, cookie)
