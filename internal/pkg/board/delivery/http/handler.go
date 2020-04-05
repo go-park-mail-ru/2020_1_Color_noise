@@ -100,6 +100,7 @@ func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 		Name:        board.Name,
 		Description: board.Description,
 		Pins:        board.Pins,
+		LastPin:     board.LastPin,
 	}
 
 	response.Respond(w, http.StatusOK, resp)
@@ -133,6 +134,7 @@ func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 		Id:          board.Id,
 		Name:        board.Name,
 		Description: board.Description,
+		LastPin:     board.LastPin,
 	}
 
 	response.Respond(w, http.StatusOK, resp)
@@ -178,6 +180,7 @@ func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 			Name:        board.Name,
 			Description: board.Description,
 			Pins:        board.Pins,
+			LastPin:     board.LastPin,
 		})
 	}
 

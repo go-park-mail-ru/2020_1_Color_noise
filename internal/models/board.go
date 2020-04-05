@@ -12,6 +12,7 @@ type Board struct {
 	Name        string
 	Description string
 	CreatedAt   time.Time
+	LastPin		Pin
 }
 
 type DataBaseBoard struct {
@@ -34,6 +35,7 @@ type ResponseBoard struct {
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 	Pins        []*Pin `json:"pins,omitempty"`
+	LastPin		Pin   `json:"last_pin,omitempty"`
 }
 
 func GetDBoard(board Board) DataBaseBoard {

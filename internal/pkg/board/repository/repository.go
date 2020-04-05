@@ -40,6 +40,12 @@ func (br *Repository) GetByID(id uint) (*models.Board, error) {
 	if err != nil {
 		return nil, BoardNotFound.Newf("Board not found, board id: %d", id)
 	}
+
+	pin, err := br.db.GetBoardLastPin(b)
+	if err == nil {
+		board.LastPin = pin
+	}
+
 	return &board, err
 }
 
@@ -47,10 +53,19 @@ func (br *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.
 	b := models.DataBaseBoard{
 		UserId: userId,
 	}
+
 	boards, err := br.db.GetBoardsByUserId(b, start, limit)
 	if err != nil {
 		return nil, BoardNotFound.Newf("Boards not found, user_id: %d", userId)
 	}
+
+	for _, board := range boards {
+		pin, err := br.db.GetBoardLastPin(b)
+		if err == nil {
+			board.LastPin = pin
+		}
+	}
+
 	return boards, err
 }
 
@@ -73,6 +88,14 @@ func (br *Repository) GetByName(name string, start int, limit int) ([]*models.Bo
 	if err != nil {
 		return nil, BoardNotFound.Newf("Boards not found, name: ", name)
 	}
+
+	for _, board := range boards {
+		pin, err := br.db.GetBoardLastPin(b)
+		if err == nil {
+			board.LastPin = pin
+		}
+	}
+
 	return boards, err
 }
 

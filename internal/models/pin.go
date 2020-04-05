@@ -47,6 +47,7 @@ type ResponsePin struct {
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 	Image       string `json:"image,omitempty"`
+
 }
 
 func GetPin(pin DataBasePin) Pin {
