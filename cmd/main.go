@@ -81,7 +81,7 @@ func main() {
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.GetPin).Methods("GET")
 	r.HandleFunc("/api/pin/user/{id:[0-9]+}", pinDelivery.Fetch).Methods("GET")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.Update).Methods("PUT")
-	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.Update).Methods("DELETE")
+	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.DeletePin).Methods("DELETE")
 	r.HandleFunc("/api/board", boardDelivery.Create).Methods("POST")
 	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.Update).Methods("PUT")
 	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.Delete).Methods("DELETE")
