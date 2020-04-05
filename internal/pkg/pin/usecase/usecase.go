@@ -3,7 +3,10 @@ package usecase
 import (
 	"2020_1_Color_noise/internal/models"
 	. "2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/image"
 	"2020_1_Color_noise/internal/pkg/pin"
+	"encoding/base64"
+	"strings"
 )
 
 type Usecase struct {
@@ -17,7 +20,7 @@ func NewUsecase(repo pin.IRepository) *Usecase {
 }
 
 func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
-	/*b64data := input.Image[strings.IndexByte(input.Image, ',')+1:]
+	b64data := input.Image[strings.IndexByte(input.Image, ',')+1:]
 
 	length := base64.StdEncoding.EncodedLen(len(b64data))
 	if length > 10000000 {
@@ -34,8 +37,7 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 	if err != nil {
 		return 0, Wrapf(err, "Creating pin error, userId: %s", userId)
 	}
-	*/
-	name := input.Image
+
 	pin := &models.Pin{
 		UserId:      userId,
 		BoardId:     input.BoardId,
