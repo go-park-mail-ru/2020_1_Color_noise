@@ -1,34 +1,30 @@
 package main
 
 import (
-	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
-	pinRepo "2020_1_Color_noise/internal/pkg/pin/repository"
-	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
-
-	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
-	sessionRepo "2020_1_Color_noise/internal/pkg/session/repository"
-	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
-
-	userDeliveryHttp "2020_1_Color_noise/internal/pkg/user/delivery/http"
-	userRepo "2020_1_Color_noise/internal/pkg/user/repository"
-	userUsecase "2020_1_Color_noise/internal/pkg/user/usecase"
 
 	boardDeliveryHttp "2020_1_Color_noise/internal/pkg/board/delivery/http"
 	boardRepo "2020_1_Color_noise/internal/pkg/board/repository"
 	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
-
 	commentDeliveryHttp "2020_1_Color_noise/internal/pkg/comment/delivery/http"
 	commentRepo "2020_1_Color_noise/internal/pkg/comment/repository"
 	commentUsecase "2020_1_Color_noise/internal/pkg/comment/usecase"
+	"2020_1_Color_noise/internal/pkg/database"
+
+	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
+	pinRepo "2020_1_Color_noise/internal/pkg/pin/repository"
+	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
+	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
+	sessionRepo "2020_1_Color_noise/internal/pkg/session/repository"
+	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
+	userDeliveryHttp "2020_1_Color_noise/internal/pkg/user/delivery/http"
+	userRepo "2020_1_Color_noise/internal/pkg/user/repository"
+	userUsecase "2020_1_Color_noise/internal/pkg/user/usecase"
 
 	searchHandler "2020_1_Color_noise/internal/pkg/search"
 
 	"2020_1_Color_noise/internal/pkg/middleware"
-
-	//"awesomeProject/internal/pkg/session/usecase"
 	"github.com/gorilla/mux"
 	"log"
-	//"math/rand"
 	"net/http"
 	"time"
 )
@@ -36,26 +32,29 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	//config.Start()
+	db := database.NewPgxDB()
+	if err := db.Open(); err != nil {
+		panic(err)
+	}
 
-	userRepo := userRepo.NewRepo()
+	userRepo := userRepo.NewRepo(db)
 	userUsecase := userUsecase.NewUsecase(userRepo)
 
-	sessionRepo := sessionRepo.NewRepo()
+	sessionRepo := sessionRepo.NewRepo(db)
 	sessionUsecase := sessionUsecase.NewUsecase(sessionRepo)
 	sessionDelivery := sessionDeliveryHttp.NewHandler(sessionUsecase, userUsecase)
 
 	userDelivery := userDeliveryHttp.NewHandler(userUsecase, sessionUsecase)
 
-	pinRepo := pinRepo.NewRepo()
+	pinRepo := pinRepo.NewRepo(db)
 	pinUsecase := pinUsecase.NewUsecase(pinRepo)
 	pinDelivery := pinDeliveryHttp.NewHandler(pinUsecase)
 
-	boardRepo := boardRepo.NewRepo()
+	boardRepo := boardRepo.NewRepo(db)
 	boardUsecase := boardUsecase.NewUsecase(boardRepo)
 	boardDelivery := boardDeliveryHttp.NewHandler(boardUsecase)
 
-	commentRepo := commentRepo.NewRepo()
+	commentRepo := commentRepo.NewRepo(db)
 	commentUsecase := commentUsecase.NewUsecase(commentRepo)
 	commentDelivery := commentDeliveryHttp.NewHandler(commentUsecase)
 
@@ -98,8 +97,8 @@ func main() {
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	srv := &http.Server{
-		Handler:      r,
-		Addr:         "127.0.0.1:8000",
+		Handler: r,
+		Addr:    "127.0.0.1:8000",
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,

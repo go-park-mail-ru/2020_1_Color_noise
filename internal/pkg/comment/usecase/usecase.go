@@ -7,7 +7,7 @@ import (
 )
 
 type Usecase struct {
-	repo  comment.IRepository
+	repo comment.IRepository
 }
 
 func NewUsecase(repo comment.IRepository) *Usecase {
@@ -18,9 +18,9 @@ func NewUsecase(repo comment.IRepository) *Usecase {
 
 func (cu *Usecase) Create(input *models.InputComment, userId uint) (uint, error) {
 	comment := &models.Comment{
-		UserId:      userId,
-		PinId:       input.PinId,
-		Text:        input.Text,
+		UserId: userId,
+		PinId:  input.PinId,
+		Text:   input.Text,
 	}
 
 	id, err := cu.repo.Create(comment)

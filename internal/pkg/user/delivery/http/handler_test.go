@@ -26,7 +26,7 @@ import (
 )
 
 type TestCase struct {
-	IsAuth	   bool
+	IsAuth     bool
 	ID         uint
 	GetID      string
 	Login      string
@@ -60,62 +60,62 @@ func TestAddUser(t *testing.T) {
 		TestCase{
 			IsAuth:     true,
 			ID:         2,
-			Login:		"login1",
-			Password:	"password1",
+			Login:      "login1",
+			Password:   "password1",
 			StatusCode: 200,
-			Response:   `{"status":"200","body":{"id":2}}
+			Response: `{"status":"200","body":{"id":2}}
 `,
 		},
 		TestCase{
 			IsAuth:     false,
 			ID:         1,
 			ErrAdd:     nil,
-			Login:		"login1",
-			Password:	"password1",
+			Login:      "login1",
+			Password:   "password1",
 			CookieName: "session_id",
 			Cookie:     "cookie",
 			TokenName:  "csrf_token",
 			Token:      "token",
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"200","body":{"id":1}}
+			Response: `{"status":"200","body":{"id":1}}
 `,
 		},
 		TestCase{
 			IsAuth:     false,
 			ID:         1,
 			ErrAdd:     fmt.Errorf("some error"),
-			Login:		"login1",
-			Password:	"password1",
+			Login:      "login1",
+			Password:   "password1",
 			CookieName: "session_id",
 			Cookie:     "cookie",
 			TokenName:  "csrf_token",
 			Token:      "token",
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"some error"}}
+			Response: `{"status":"500","body":{"error":"some error"}}
 `,
 		},
 		TestCase{
 			IsAuth:     false,
 			ID:         1,
 			ErrAdd:     nil,
-			Login:		"login1",
-			Password:	"password1",
+			Login:      "login1",
+			Password:   "password1",
 			CookieName: "session_id",
 			Cookie:     "cookie",
 			TokenName:  "csrf_token",
 			Token:      "token",
 			ErrSession: fmt.Errorf("some error"),
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"some error"}}
+			Response: `{"status":"500","body":{"error":"some error"}}
 `,
 		},
 	}
 
 	for caseNum, item := range cases {
 		r := httptest.NewRequest("POST", "/signup",
-			strings.NewReader("login=" + item.Login +"&password=" + item.Password))
+			strings.NewReader("login="+item.Login+"&password="+item.Password))
 		r.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
 		w := httptest.NewRecorder()
 		ctx := r.Context()
@@ -199,7 +199,7 @@ func TestGetUser(t *testing.T) {
 			IsAuth:     false,
 			GetID:      "2",
 			StatusCode: 200,
-			Response:   `{"status":"403","body":{"error":"User not found"}}
+			Response: `{"status":"403","body":{"error":"User not found"}}
 `,
 		},
 		TestCase{
@@ -207,7 +207,7 @@ func TestGetUser(t *testing.T) {
 			GetID:      "h",
 			ErrGet:     nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"Invalid id"}}
+			Response: `{"status":"500","body":{"error":"Invalid id"}}
 `,
 		},
 		TestCase{
@@ -215,25 +215,25 @@ func TestGetUser(t *testing.T) {
 			GetID:      "1",
 			ErrGet:     fmt.Errorf("some error"),
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"some error"}}
+			Response: `{"status":"500","body":{"error":"some error"}}
 `,
 		},
 		TestCase{
-			IsAuth:     true,
-			GetID:      "1",
-			User:		models.User{
-						Id: 1,
-						Login: "login1",
+			IsAuth: true,
+			GetID:  "1",
+			User: models.User{
+				Id:    1,
+				Login: "login1",
 			},
 			ErrGet:     nil,
 			StatusCode: 200,
-			Response:   `{"status":"200","body":{"user":{"id":1,"login":"login1"}}}
+			Response: `{"status":"200","body":{"user":{"id":1,"login":"login1"}}}
 `,
 		},
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("GET", "/profile/" + item.GetID,
+		r := httptest.NewRequest("GET", "/profile/"+item.GetID,
 			strings.NewReader(""))
 		r = mux.SetURLVars(r, map[string]string{"id": item.GetID})
 		w := httptest.NewRecorder()
@@ -278,10 +278,10 @@ func TestUpdateUser(t *testing.T) {
 		TestCase{
 			IsAuth:     false,
 			ID:         1,
-			Login:		"login1",
-			Email:	    "email1",
+			Login:      "login1",
+			Email:      "email1",
 			StatusCode: 200,
-			Response:   `{"status":"403","body":{"error":"User not found"}}
+			Response: `{"status":"403","body":{"error":"User not found"}}
 `,
 		},
 		TestCase{
@@ -289,108 +289,108 @@ func TestUpdateUser(t *testing.T) {
 			ID:         1,
 			GetID:      "h",
 			ErrAdd:     nil,
-			Login:		"login1",
-			Email:	    "email1",
+			Login:      "login1",
+			Email:      "email1",
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"Invalid id"}}
+			Response: `{"status":"500","body":{"error":"Invalid id"}}
 `,
 		},
 		TestCase{
-			IsAuth:     true,
-			ID:         1,
-			GetID:      "1",
-			ErrGet:     fmt.Errorf("some error"),
-			Login:		"login1",
-			Email:	    "email1",
-			User:		models.User{
-				Id: 1,
+			IsAuth: true,
+			ID:     1,
+			GetID:  "1",
+			ErrGet: fmt.Errorf("some error"),
+			Login:  "login1",
+			Email:  "email1",
+			User: models.User{
+				Id:    1,
 				Login: "login1",
 				Email: "email1",
 			},
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"Internal error"}}
+			Response: `{"status":"500","body":{"error":"Internal error"}}
 `,
 		},
 		TestCase{
-			IsAuth:     true,
-			ID:         1,
-			GetID:      "1",
-			ErrGet:     nil,
-			Login:		"login1",
-			Email:	    "email1",
-			User:		models.User{
-				Id: 1,
+			IsAuth: true,
+			ID:     1,
+			GetID:  "1",
+			ErrGet: nil,
+			Login:  "login1",
+			Email:  "email1",
+			User: models.User{
+				Id:    1,
 				Login: "login1",
 				Email: "email1",
 			},
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"Internal error"}}
+			Response: `{"status":"500","body":{"error":"Internal error"}}
 `,
 		},
 		TestCase{
-			IsAuth:     true,
-			ID:         1,
-			GetID:      "1",
-			ErrGet:     nil,
-			ContextID:  2,
-			Login:		"login1",
-			Email:	    "email1",
-			User:		models.User{
-				Id: 1,
+			IsAuth:    true,
+			ID:        1,
+			GetID:     "1",
+			ErrGet:    nil,
+			ContextID: 2,
+			Login:     "login1",
+			Email:     "email1",
+			User: models.User{
+				Id:    1,
 				Login: "login1",
 				Email: "email1",
 			},
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"Internal error"}}
+			Response: `{"status":"500","body":{"error":"Internal error"}}
 `,
 		},
 		TestCase{
-			IsAuth:     true,
-			ID:         1,
-			GetID:      "1",
-			ErrGet:     nil,
-			ContextID:  1,
-			ErrUpdate:  fmt.Errorf("some error"),
-			Login:		"login1",
-			Email:	    "email1",
-			User:		models.User{
-				Id: 1,
+			IsAuth:    true,
+			ID:        1,
+			GetID:     "1",
+			ErrGet:    nil,
+			ContextID: 1,
+			ErrUpdate: fmt.Errorf("some error"),
+			Login:     "login1",
+			Email:     "email1",
+			User: models.User{
+				Id:    1,
 				Login: "login1",
 				Email: "email1",
 			},
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"some error"}}
+			Response: `{"status":"500","body":{"error":"some error"}}
 `,
 		},
 		TestCase{
-			IsAuth:     true,
-			ID:         1,
-			GetID:      "1",
-			ErrGet:     nil,
-			ContextID:  1,
-			ErrUpdate:  nil,
-			Login:		"login1",
-			Email:	    "email1",
-			User:		models.User{
-				Id: 1,
+			IsAuth:    true,
+			ID:        1,
+			GetID:     "1",
+			ErrGet:    nil,
+			ContextID: 1,
+			ErrUpdate: nil,
+			Login:     "login1",
+			Email:     "email1",
+			User: models.User{
+				Id:    1,
 				Login: "login1",
 				Email: "email1",
 			},
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"200"}
+			Response: `{"status":"200"}
 `,
 		},
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("POST", "/profile/" + item.GetID,
-			strings.NewReader("login=" + item.Login +"&email=" + item.Email))
+		r := httptest.NewRequest("POST", "/profile/"+item.GetID,
+			strings.NewReader("login="+item.Login+"&email="+item.Email))
 		r = mux.SetURLVars(r, map[string]string{"id": item.GetID})
 		r.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
 		w := httptest.NewRecorder()
@@ -443,7 +443,7 @@ func TestDeleteUser(t *testing.T) {
 			ID:         1,
 			Cookie:     "cookie",
 			StatusCode: 200,
-			Response:   `{"status":"403","body":{"error":"User not found"}}
+			Response: `{"status":"403","body":{"error":"User not found"}}
 `,
 		},
 		TestCase{
@@ -451,15 +451,15 @@ func TestDeleteUser(t *testing.T) {
 			ID:         1,
 			GetID:      "h",
 			ErrAdd:     nil,
-			Login:		"login1",
-			Password:	"password1",
+			Login:      "login1",
+			Password:   "password1",
 			CookieName: "session_id",
 			Cookie:     "cookie",
 			TokenName:  "token",
 			Token:      "token",
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"Invalid id"}}
+			Response: `{"status":"500","body":{"error":"Invalid id"}}
 `,
 		},
 		TestCase{
@@ -471,14 +471,14 @@ func TestDeleteUser(t *testing.T) {
 			Cookie:     "cookie",
 			TokenName:  "token",
 			Token:      "token",
-			User:		models.User{
-				Id: 1,
+			User: models.User{
+				Id:    1,
 				Login: "login1",
 				Email: "email1",
 			},
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"some error"}}
+			Response: `{"status":"500","body":{"error":"some error"}}
 `,
 		},
 		TestCase{
@@ -490,14 +490,14 @@ func TestDeleteUser(t *testing.T) {
 			Cookie:     "cookie",
 			TokenName:  "token",
 			Token:      "token",
-			User:		models.User{
-				Id: 1,
+			User: models.User{
+				Id:    1,
 				Login: "login1",
 				Email: "email1",
 			},
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"Internal error"}}
+			Response: `{"status":"500","body":{"error":"Internal error"}}
 `,
 		},
 		TestCase{
@@ -510,14 +510,14 @@ func TestDeleteUser(t *testing.T) {
 			Cookie:     "cookie",
 			TokenName:  "token",
 			Token:      "token",
-			User:		models.User{
-				Id: 1,
+			User: models.User{
+				Id:    1,
 				Login: "login1",
 				Email: "email1",
 			},
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"Internal error"}}
+			Response: `{"status":"500","body":{"error":"Internal error"}}
 `,
 		},
 		TestCase{
@@ -531,14 +531,14 @@ func TestDeleteUser(t *testing.T) {
 			Token:      "token",
 			ContextID:  1,
 			ErrUpdate:  fmt.Errorf("some error"),
-			User:		models.User{
-				Id: 1,
+			User: models.User{
+				Id:    1,
 				Login: "login1",
 				Email: "email1",
 			},
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"500","body":{"error":"some error"}}
+			Response: `{"status":"500","body":{"error":"some error"}}
 `,
 		},
 		TestCase{
@@ -552,20 +552,20 @@ func TestDeleteUser(t *testing.T) {
 			Token:      "token",
 			ContextID:  1,
 			ErrUpdate:  nil,
-			User:		models.User{
-				Id: 1,
+			User: models.User{
+				Id:    1,
 				Login: "login1",
 				Email: "email1",
 			},
 			ErrSession: nil,
 			StatusCode: 200,
-			Response:   `{"status":"200"}
+			Response: `{"status":"200"}
 `,
 		},
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("DELETE", "/profile/" + item.GetID,
+		r := httptest.NewRequest("DELETE", "/profile/"+item.GetID,
 			strings.NewReader(""))
 		r = mux.SetURLVars(r, map[string]string{"id": item.GetID})
 		w := httptest.NewRecorder()
@@ -574,18 +574,18 @@ func TestDeleteUser(t *testing.T) {
 		ctx = context.WithValue(ctx, "Id", item.ContextID)
 		r = r.WithContext(ctx)
 		cookie := &http.Cookie{
-			Name:    item.CookieName,
-			Value:   item.Cookie,
-			Expires: time.Now().Add(10 * time.Hour),
+			Name:     item.CookieName,
+			Value:    item.Cookie,
+			Expires:  time.Now().Add(10 * time.Hour),
 			HttpOnly: true,
-			Domain: r.Host,
+			Domain:   r.Host,
 		}
 		token := &http.Cookie{
-			Name:    item.TokenName,
-			Value:   item.Token,
-			Expires: time.Now().Add(10 * time.Hour),
+			Name:     item.TokenName,
+			Value:    item.Token,
+			Expires:  time.Now().Add(10 * time.Hour),
 			HttpOnly: true,
-			Domain: r.Host,
+			Domain:   r.Host,
 		}
 		r.AddCookie(cookie)
 		r.AddCookie(token)
@@ -623,7 +623,3 @@ func TestDeleteUser(t *testing.T) {
 		}
 	}
 }
-
-
-
-

@@ -8,7 +8,7 @@ import (
 )
 
 type SessionUsecase struct {
-	repo  session.IRepository
+	repo session.IRepository
 }
 
 func NewUsecase(repo session.IRepository) *SessionUsecase {
@@ -22,9 +22,9 @@ func (su *SessionUsecase) CreateSession(id uint) (*models.Session, error) {
 	token := utils.RandStringRunes(30)
 
 	session := &models.Session{
-		Id: id,
+		Id:     id,
 		Cookie: cookie,
-		Token: token,
+		Token:  token,
 	}
 
 	if err := su.repo.Add(session); err != nil {
@@ -42,7 +42,7 @@ func (su *SessionUsecase) GetByCookie(cookie string) (*models.Session, error) {
 	return session, nil
 }
 
-func (su *SessionUsecase) UpdateToken(session *models.Session, token string) (error) {
+func (su *SessionUsecase) UpdateToken(session *models.Session, token string) error {
 	session.Token = token
 
 	if err := su.repo.Update(session); err != nil {

@@ -19,8 +19,8 @@ type DataBaseComment struct {
 }
 
 type InputComment struct {
-	PinId     uint   `json:"pin_id" valid:"int"`
-	Text      string `json:"comment" valid:"length(1|2000), required"`
+	PinId uint   `json:"pin_id" valid:"int"`
+	Text  string `json:"comment" valid:"length(1|2000), required"`
 }
 
 type ResponseComment struct {
@@ -31,3 +31,24 @@ type ResponseComment struct {
 	Text      string    `json:"comment"`
 }
 
+func GetBComment(c Comment) DataBaseComment {
+	tmp := DataBaseComment{
+		Id:        c.Id,
+		UserId:    c.UserId,
+		PinId:     c.PinId,
+		Text:      c.Text,
+		CreatedAt: c.CreatedAt,
+	}
+	return tmp
+}
+
+func GetComment(c DataBaseComment) Comment {
+	tmp := Comment{
+		Id:        c.Id,
+		UserId:    c.UserId,
+		PinId:     c.PinId,
+		Text:      c.Text,
+		CreatedAt: c.CreatedAt,
+	}
+	return tmp
+}

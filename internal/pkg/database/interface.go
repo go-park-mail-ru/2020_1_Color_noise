@@ -2,57 +2,57 @@ package database
 
 import (
 	"2020_1_Color_noise/internal/models"
-	"2020_1_Color_noise/internal/pkg/config"
-	"database/sql"
 )
 
 type DBInterface interface {
-	//соединиться
-	Open(config config.DataBaseConfig) error
-	//проверить
-	Ping() error
-	//закрыть соединение
+	Open() (err error)
+
 	Close() error
-	//выполнить что-то
-	Exec(query string, args ...interface{}) (sql.Result, error)
-	//получить выборку значений
-	Query(query string, args ...interface{}) (*sql.Rows, error)
-	//получить одно значение
-	QueryRow(query string, args ...interface{}) *sql.Row
-	//методы для пинов
-	CreatePin(pin models.DataBasePin) *sql.Row
-	UpdatePin(pin models.DataBasePin) (sql.Result, error)
-	DeletePin(pin models.DataBasePin) (sql.Result, error)
+	Ping() error
+	Exec(query string, args ...interface{}) error
+	Query(query string, args ...interface{}) error
 
-	GetPinById(pin models.DataBasePin) *sql.Row
-	GetPinsByUserId(pin models.DataBasePin) (*sql.Rows, error)
-	GetPinByName(pin models.DataBasePin) (*sql.Rows, error)
+	CreateSession(s models.DataBaseSession) error
+	DeleteSession(s models.DataBaseSession) error
+	UpdateSession(s models.DataBaseSession) error
+	GetSessionByCookie(s models.DataBaseSession) (models.Session, error)
 
-	//методы для пользователей
-	CreateUser(user models.DataBaseUser)  *sql.Row
-	UpdateUser(user models.DataBaseUser)  (sql.Result, error)
-	UpdateUserDescription(user models.DataBaseUser)  (sql.Result, error)
-	UpdateUserPassword(user models.DataBaseUser)  (sql.Result, error)
-	UpdateUserAvatar(user models.DataBaseUser)  (sql.Result, error)
-	DeleteUser (user models.DataBaseUser) (sql.Result, error)
-	GetUserById(user models.DataBaseUser) *sql.Row
-	GetUserByLogin(user models.DataBaseUser) *sql.Row
-	GetUserByName(user models.DataBaseUser) *sql.Row
-	GetUserSubscriptions(user models.DataBaseUser) (*sql.Rows, error)
-	GetUserSubscribers(user models.DataBaseUser) (*sql.Rows, error)
+	CreatePin(pin models.DataBasePin) (uint, error)
+	UpdatePin(pin models.DataBasePin) error
+	DeletePin(pin models.DataBasePin) error
+	GetPinById(pin models.DataBasePin) (models.Pin, error)
+	GetPinsByUserId(pin models.DataBasePin) ([]*models.Pin, error)
+	GetPinsByName(pin models.DataBasePin) ([]*models.Pin, error)
 
-	//методы для досок
-	CreateBoard(board models.DataBaseBoard)  *sql.Row
-	UpdateBoard(board models.DataBaseBoard)  (sql.Result, error)
-	DeleteBoard(board models.DataBaseBoard) (sql.Result, error)
-	GetBoardById(board models.DataBaseBoard) *sql.Row
-	GetBoardsByUserId(board models.DataBaseBoard) (*sql.Rows, error)
-	GetBoardsByName(board models.DataBaseBoard) (*sql.Rows, error)
+	CreateUser(user models.DataBaseUser) (uint, error)
+	UpdateUser(user models.DataBaseUser) error
+	UpdateUserDescription(user models.DataBaseUser) error
+	UpdateUserPassword(user models.DataBaseUser) error
+	UpdateUserAvatar(user models.DataBaseUser) error
+	DeleteUser(user models.DataBaseUser) error
+	GetUserById(user models.DataBaseUser) (models.User, error)
+	GetUserByLogin(user models.DataBaseUser, start int, limit int) ([]*models.User, error)
+	GetUserByName(user models.DataBaseUser) (models.User, error)
+	GetUserByEmail(user models.DataBaseUser) (models.User, error)
+	GetUserSubscriptions(user models.DataBaseUser) (models.User, error)
+	GetUserSubscribers(user models.DataBaseUser) (models.User, error)
+	GetUserSubUsers(user models.DataBaseUser) ([]*models.User, error)
+	GetUserSupUsers(user models.DataBaseUser) ([]*models.User, error)
+	Follow(who, whom uint) error
+	Unfollow(who, whom uint) error
 
-	//методы для комментариев
-	CreateComment(cm models.DataBaseComment)  *sql.Row
-	UpdateComment(cm models.DataBaseComment) (sql.Result, error)
-	DeleteComment(cm models.DataBaseComment) (sql.Result, error)
-	GetCommentsByPinId(cm models.DataBaseComment) (*sql.Rows, error)
+	CreateComment(cm models.DataBaseComment) (uint, error)
+	UpdateComment(cm models.DataBaseComment) error
+	DeleteComment(cm models.DataBaseComment) error
+	GetCommentById(cm models.DataBaseComment) (models.Comment, error)
+	GetCommentsByPinId(cm models.DataBaseComment, start int, limit int) ([]*models.Comment, error)
+	GetCommentsByText(cm models.DataBaseComment, start int, limit int) ([]*models.Comment, error)
+
+	CreateBoard(board models.DataBaseBoard) (uint, error)
+	UpdateBoard(board models.DataBaseBoard) error
+	DeleteBoard(board models.DataBaseBoard) error
+	GetBoardById(board models.DataBaseBoard) (models.Board, error)
+	GetBoardsByUserId(board models.DataBaseBoard, start, offset int) ([]*models.Board, error)
+	GetBoardsByName(board models.DataBaseBoard, start, offset int) ([]*models.Board, error)
+	GetBoardLastPin(board models.DataBaseBoard) (models.Pin, error)
 }
-

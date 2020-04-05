@@ -12,6 +12,3 @@ type IUsecase interface {
 	Update(input *models.UpdatePin, pinId uint, userId uint) error
 	Delete(pinId uint, userId uint) error
 }
-
-
-

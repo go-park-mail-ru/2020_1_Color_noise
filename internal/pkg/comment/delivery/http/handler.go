@@ -23,7 +23,7 @@ func NewHandler(usecase comment.IUsecase) *Handler {
 }
 
 func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
@@ -43,7 +43,7 @@ func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		err = error.Wrap(err,"Decoding error during creation comment")
+		err = error.Wrap(err, "Decoding error during creation comment")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -70,7 +70,7 @@ func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ch *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
@@ -105,7 +105,7 @@ func (ch *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
@@ -137,7 +137,7 @@ func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 
 	resp := make([]models.ResponseComment, 0)
 
-	for _, comment := range  comments {
+	for _, comment := range comments {
 		resp = append(resp, models.ResponseComment{
 			Id:        comment.Id,
 			UserId:    comment.UserId,

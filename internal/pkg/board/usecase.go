@@ -12,6 +12,3 @@ type IUsecase interface {
 	Update(input *models.InputBoard, id uint) error
 	Delete(id uint) error
 }
-
-
-

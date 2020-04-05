@@ -23,7 +23,7 @@ func NewHandler(usecase board.IUsecase) *Handler {
 }
 
 func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
@@ -43,7 +43,7 @@ func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		err = error.Wrap(err,"Decoding error during creation board")
+		err = error.Wrap(err, "Decoding error during creation board")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -51,7 +51,7 @@ func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	_, err = govalidator.ValidateStruct(input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
-			"Name shouldn't be empty and longer 60 characters. " +
+			"Name shouldn't be empty and longer 60 characters. "+
 				"Description shouldn't be empty and longer 1000 characters.")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -71,7 +71,7 @@ func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
@@ -106,7 +106,7 @@ func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 }
 
 func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
@@ -139,7 +139,7 @@ func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 }
 
 func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
@@ -171,7 +171,7 @@ func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 
 	resp := make([]models.ResponseBoard, 0)
 
-	for _, board := range  boards {
+	for _, board := range boards {
 		resp = append(resp, models.ResponseBoard{
 			Id:          board.Id,
 			UserId:      board.UserId,

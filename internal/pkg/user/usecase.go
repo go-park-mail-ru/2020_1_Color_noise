@@ -21,6 +21,3 @@ type IUsecase interface {
 	GetSubscriptions(id uint, start int, limit int) ([]*models.User, error)
 	ComparePassword(user *models.User, password string) error
 }
-
-
-

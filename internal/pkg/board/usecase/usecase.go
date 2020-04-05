@@ -7,7 +7,7 @@ import (
 )
 
 type Usecase struct {
-	repo  board.IRepository
+	repo board.IRepository
 }
 
 func NewUsecase(repo board.IRepository) *Usecase {
@@ -81,4 +81,3 @@ func (pu *Usecase) Delete(id uint) error {
 
 	return nil
 }
-

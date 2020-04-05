@@ -8,7 +8,7 @@ import (
 type Pin struct {
 	Id          uint
 	UserId      uint
-	BoardId	    uint
+	BoardId     uint
 	Name        string
 	Description string
 	Image       string
@@ -19,7 +19,7 @@ type Pin struct {
 type DataBasePin struct {
 	Id          uint
 	UserId      uint
-	BoardId	    uint
+	BoardId     uint
 	Name        string
 	Description sql.NullString //не гарантируется, что есть описание
 	Image       string
@@ -48,14 +48,44 @@ type ResponsePin struct {
 	Description string `json:"description,omitempty"`
 	Image       string `json:"image,omitempty"`
 }
-/*
-type DataBasePin struct {
-	Id          uint
-	UserId      uint
-	BoardId	    uint
-	Name        string
-	Description sql.NullString //не гарантируется, что есть описание
-	Image       string
-	CreatedAt   time.Time
-	UpdatedAt   sql.NullTime //не гарантируется, что пин был обновлен
-}*/
+
+func GetPin(pin DataBasePin) Pin {
+	tmp := Pin{
+		Id:        pin.Id,
+		UserId:    pin.UserId,
+		BoardId:   pin.BoardId,
+		Name:      pin.Name,
+		Image:     pin.Image,
+		CreatedAt: pin.CreatedAt,
+	}
+
+	if pin.Description.Valid {
+		tmp.Description = pin.Description.String
+	}
+
+	if pin.UpdatedAt.Valid {
+		tmp.UpdatedAt = pin.UpdatedAt.Time
+	}
+	return tmp
+}
+
+func GetBPin(pin Pin) DataBasePin {
+	tmp := DataBasePin{
+		Id:        pin.Id,
+		UserId:    pin.UserId,
+		BoardId:   pin.BoardId,
+		Name:      pin.Name,
+		Image:     pin.Image,
+		CreatedAt: pin.CreatedAt,
+	}
+	if !pin.UpdatedAt.IsZero() {
+		tmp.UpdatedAt.Valid = true
+		tmp.UpdatedAt.Time = pin.UpdatedAt
+	}
+
+	if pin.Description != "" {
+		tmp.Description.Valid = true
+		tmp.Description.String = pin.Description
+	}
+	return tmp
+}
