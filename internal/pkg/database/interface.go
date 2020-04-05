@@ -54,4 +54,5 @@ type DBInterface interface {
 	GetBoardById(board models.DataBaseBoard) (models.Board, error)
 	GetBoardsByUserId(board models.DataBaseBoard, start, offset int) ([]*models.Board, error)
 	GetBoardsByName(board models.DataBaseBoard, start, offset int) ([]*models.Board, error)
+	GetBoardLastPin(board models.DataBaseBoard) (models.Pin, error)
 }

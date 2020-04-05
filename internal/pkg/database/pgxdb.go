@@ -543,6 +543,18 @@ func (db *PgxDB) GetBoardsByName(board models.DataBaseBoard, start, limit int) (
 	return res, nil
 }
 
+func (db *PgxDB) GetBoardLastPin(board models.DataBaseBoard) (models.Pin, error) {
+	var res models.DataBasePin
+
+	row := db.dbPool.QueryRow(LastPin, board.Id)
+	err := row.Scan(&res.Id, &res.UserId, &res.Name, &res.Description, &res.Image, &res.BoardId, &res.CreatedAt)
+	if err != nil {
+		return models.Pin{}, err
+	}
+
+	return models.GetPin(res), nil
+}
+
 func (db *PgxDB) CreateSession(s models.DataBaseSession) error {
 	res := db.dbPool.QueryRow(InsertSession, s.Id, s.Cookie, s.Token, s.CreatedAt, s.DeletingAt)
 	var i int
