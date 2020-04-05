@@ -55,7 +55,7 @@ const (
 		"WHERE id = $3"
 	DeleteComment = "DELETE FROM commentaries WHERE id = $1"
 	CommentById   = "SELECT * FROM commentaries WHERE id = $1"
-	CommentByText = "SELECT * FROM commentaries WHERE comment LIKE $1"
+	CommentByText = "SELECT * FROM commentaries WHERE comment LIKE $1 LIMIT $2 OFFSET $3"
 	CommentByPin  = "SELECT * FROM commentaries WHERE pin_id = $1 LIMIT $2 OFFSET $3"
 )
 

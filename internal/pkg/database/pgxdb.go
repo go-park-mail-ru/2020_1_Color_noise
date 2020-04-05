@@ -153,7 +153,7 @@ func (db *PgxDB) GetPinsByUserId(pin models.DataBasePin) ([]*models.Pin, error) 
 func (db *PgxDB) GetPinsByName(pin models.DataBasePin) ([]*models.Pin, error) {
 	var res []*models.Pin
 
-	row, err := db.dbPool.Query(PinByName, pin.UserId)
+	row, err := db.dbPool.Query(PinByName, pin.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -303,7 +303,7 @@ func (db *PgxDB) GetUserByName(user models.DataBaseUser) (models.User, error) {
 func (db *PgxDB) GetUserByEmail(user models.DataBaseUser) (models.User, error) {
 	var res models.DataBaseUser
 
-	row := db.dbPool.QueryRow(UserByEmail, user.Id)
+	row := db.dbPool.QueryRow(UserByEmail, user.Email)
 	err := row.Scan(&res.Id, &res.Email, &res.Login, &res.EncryptedPassword,
 		&res.About, &res.Avatar, &res.Subscribers, &res.Subscriptions, &res.CreatedAt)
 
@@ -428,7 +428,7 @@ func (db *PgxDB) DeleteComment(cm models.DataBaseComment) error {
 
 func (db *PgxDB) GetCommentById(cm models.DataBaseComment) (models.Comment, error) {
 	var r models.Comment
-	row := db.dbPool.QueryRow(CommentById, cm.PinId)
+	row := db.dbPool.QueryRow(CommentById, cm.Id)
 
 	ok := row.Scan(&r.Id, &r.UserId, &r.PinId, &r.Text, &r.CreatedAt)
 	if ok != nil {
@@ -457,7 +457,7 @@ func (db *PgxDB) GetCommentsByPinId(cm models.DataBaseComment, start, limit int)
 
 func (db *PgxDB) GetCommentsByText(cm models.DataBaseComment, start, limit int) ([]*models.Comment, error) {
 	var res []*models.Comment
-	r, err := db.dbPool.Query(CommentByText, cm.PinId, limit, start)
+	r, err := db.dbPool.Query(CommentByText, cm.Text, limit, start)
 	if err != nil {
 		return nil, err
 	}
@@ -526,7 +526,7 @@ func (db *PgxDB) GetBoardsByUserId(board models.DataBaseBoard, start, limit int)
 
 func (db *PgxDB) GetBoardsByName(board models.DataBaseBoard, start, limit int) ([]*models.Board, error) {
 	var res []*models.Board
-	row, err := db.dbPool.Query(BoardsByNameSearch, board.UserId, limit, start)
+	row, err := db.dbPool.Query(BoardsByNameSearch, board.Name, limit, start)
 	if err != nil {
 		return nil, err
 	}
