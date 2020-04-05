@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"2020_1_Color_noise/internal/models"
-	"2020_1_Color_noise/internal/pkg/list"
 	. "2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/list"
 )
 
 type Usecase struct {
