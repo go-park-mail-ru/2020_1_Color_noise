@@ -27,6 +27,10 @@ import (
 	listRepo "2020_1_Color_noise/internal/pkg/list/repository"
 	listUsecase "2020_1_Color_noise/internal/pkg/list/usecase"
 
+	notificationsDeliveryHttp "2020_1_Color_noise/internal/pkg/notifications/delivery/http"
+	notificationsRepo "2020_1_Color_noise/internal/pkg/notifications/repository"
+	notificationsUsecase "2020_1_Color_noise/internal/pkg/notifications/usecase"
+
 	searchHandler "2020_1_Color_noise/internal/pkg/search"
 
 	"2020_1_Color_noise/internal/pkg/middleware"
@@ -69,12 +73,17 @@ func main() {
 	listUsecase := listUsecase.NewUsecase(listRepo)
 	listDelivery := listDeliveryHttp.NewHandler(listUsecase)
 
+	notificationsRepo := notificationsRepo.NewRepo(db)
+	notificationsUsecase := notificationsUsecase.NewUsecase(notificationsRepo)
+	notificationsDelivery := notificationsDeliveryHttp.NewHandler(notificationsUsecase)
+
 	searchHandler := searchHandler.NewHandler(commentUsecase, pinUsecase, userUsecase)
 
 	m := middleware.NewMiddleware(sessionUsecase)
 
 	r.HandleFunc("/api/auth", sessionDelivery.Login).Methods("POST")
 	r.HandleFunc("/api/auth", sessionDelivery.Logout).Methods("DELETE")
+
 	r.HandleFunc("/api/user", userDelivery.Create).Methods("POST")
 	r.HandleFunc("/api/user", userDelivery.GetUser).Methods("GET")
 	r.HandleFunc("/api/user/{id:[0-9]+}", userDelivery.GetOtherUser).Methods("GET")
@@ -87,24 +96,31 @@ func main() {
 	r.HandleFunc("/api/user/subscriptions/{id:[0-9]+}", userDelivery.GetSubscribtions).Methods("GET")
 	r.HandleFunc("/api/user/subscribers/{id:[0-9]+}", userDelivery.GetSubscribers).Methods("GET")
 	//r.HandleFunc("/api/user", userDelivery.Delete).Methods("DELETE")
+
 	r.HandleFunc("/api/pin", pinDelivery.Create).Methods("POST")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.GetPin).Methods("GET")
 	r.HandleFunc("/api/pin/user/{id:[0-9]+}", pinDelivery.Fetch).Methods("GET")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.Update).Methods("PUT")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.DeletePin).Methods("DELETE")
+
 	r.HandleFunc("/api/board", boardDelivery.Create).Methods("POST")
 	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.Update).Methods("PUT")
 	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.Delete).Methods("DELETE")
 	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.GetBoard).Methods("GET")
 	r.HandleFunc("/api/board/name/user/{id:[0-9]+}", boardDelivery.GetBoard).Methods("GET")
 	r.HandleFunc("/api/board/user/{id:[0-9]+}", boardDelivery.Fetch).Methods("GET")
+
 	r.HandleFunc("/api/comment", commentDelivery.Create).Methods("POST")
 	r.HandleFunc("/api/comment/{id:[0-9]+}", commentDelivery.GetComment).Methods("GET")
 	r.HandleFunc("/api/comment/pin/{id:[0-9]+}", commentDelivery.Fetch).Methods("GET")
+
 	r.HandleFunc("/api/search", searchHandler.Search).Methods("GET")
+
 	r.HandleFunc("/api/list", listDelivery.GetMainList).Methods("GET")
 	r.HandleFunc("/api/list/sub", listDelivery.GetSubList).Methods("GET")
 	r.HandleFunc("/api/list/recommendation", listDelivery.GetRecommendationList).Methods("GET")
+
+	r.HandleFunc("/api/notifications", notificationsDelivery.GetNotifications).Methods("GET")
 
 	r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)
