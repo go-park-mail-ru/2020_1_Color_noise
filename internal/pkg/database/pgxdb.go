@@ -608,7 +608,7 @@ func (db *PgxDB) GetSubFeed( user models.DataBaseUser, start, limit int) ([]*mod
 func (db *PgxDB) GetMainFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error){
 	var res []*models.Pin
 
-	row, err := db.dbPool.Query(Main, limit, start)
+	row, err := db.dbPool.Query(Main, limit)
 	if err != nil {
 		return nil, err
 	}
