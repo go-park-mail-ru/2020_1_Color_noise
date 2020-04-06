@@ -62,7 +62,7 @@ func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := &models.ResponseBoard{
+	resp := &models.ResponseComment{
 		Id: id,
 	}
 

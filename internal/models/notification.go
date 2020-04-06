@@ -6,6 +6,6 @@ type Notification struct {
 }
 
 type ResponseNotification struct {
-	User    User   `json:"user,omitempty"`
-	Message string `json:"message,omitempty"`
+	User    ResponseUser `json:"user,omitempty"`
+	Message string       `json:"message,omitempty"`
 }

@@ -27,8 +27,8 @@ type ResponseComment struct {
 	Id        uint      `json:"id,omitempty"`
 	UserId    uint      `json:"user_id,omitempty"`
 	PindId    uint      `json:"pin_id,omitempty"`
-	CreatedAt time.Time `json:"time"`
-	Text      string    `json:"comment"`
+	CreatedAt time.Time `json:"time,omitempty"`
+	Text      string    `json:"comment,omitempty"`
 }
 
 func GetBComment(c Comment) DataBaseComment {
