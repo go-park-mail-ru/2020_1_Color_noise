@@ -27,9 +27,9 @@ import (
 	listRepo "2020_1_Color_noise/internal/pkg/list/repository"
 	listUsecase "2020_1_Color_noise/internal/pkg/list/usecase"
 
-	notificationsDeliveryHttp "2020_1_Color_noise/internal/pkg/notifications/delivery/http"
+	/*notificationsDeliveryHttp "2020_1_Color_noise/internal/pkg/notifications/delivery/http"
 	notificationsRepo "2020_1_Color_noise/internal/pkg/notifications/repository"
-	notificationsUsecase "2020_1_Color_noise/internal/pkg/notifications/usecase"
+	notificationsUsecase "2020_1_Color_noise/internal/pkg/notifications/usecase"*/
 
 	searchHandler "2020_1_Color_noise/internal/pkg/search"
 
@@ -73,9 +73,9 @@ func main() {
 	listUsecase := listUsecase.NewUsecase(listRepo)
 	listDelivery := listDeliveryHttp.NewHandler(listUsecase)
 
-	notificationsRepo := notificationsRepo.NewRepo(db)
+	/*notificationsRepo := notificationsRepo.NewRepo(db)
 	notificationsUsecase := notificationsUsecase.NewUsecase(notificationsRepo)
-	notificationsDelivery := notificationsDeliveryHttp.NewHandler(notificationsUsecase)
+	notificationsDelivery := notificationsDeliveryHttp.NewHandler(notificationsUsecase)*/
 
 	searchHandler := searchHandler.NewHandler(commentUsecase, pinUsecase, userUsecase)
 
@@ -120,7 +120,7 @@ func main() {
 	r.HandleFunc("/api/list/sub", listDelivery.GetSubList).Methods("GET")
 	r.HandleFunc("/api/list/recommendation", listDelivery.GetRecommendationList).Methods("GET")
 
-	r.HandleFunc("/api/notifications", notificationsDelivery.GetNotifications).Methods("GET")
+	//r.HandleFunc("/api/notifications", notificationsDelivery.GetNotifications).Methods("GET")
 
 	r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)

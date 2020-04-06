@@ -63,7 +63,7 @@ func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
-		err := error.Unauthorized.New("Fetch boards: user is unauthorized")
+		err := error.Unauthorized.New("GetSubList: user is unauthorized")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -109,7 +109,7 @@ func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request)
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
-		err := error.Unauthorized.New("Fetch boards: user is unauthorized")
+		err := error.Unauthorized.New("GetRecommendationList: user is unauthorized")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
