@@ -23,6 +23,8 @@ func (cr *Repository) Create(comment *models.Comment) (uint, error) {
 	cr.mu.Lock()
 	defer cr.mu.Unlock()
 	id, err := cr.db.CreateComment(models.GetBComment(*comment))
+	comment.Id = id
+	_, _ = cr.db.PutNotifications(models.GetBComment(*comment))
 	if err != nil {
 		return 0, CommentNotFound.Newf("Comment can not be created, err:", err)
 	}
