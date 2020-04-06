@@ -617,7 +617,7 @@ func (db *PgxDB) GetMainFeed( user models.DataBaseUser, start, limit int) ([]*mo
 		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
 			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt)
 		if ok != nil {
-			return nil, ok
+			return res, ok
 		}
 		p := models.GetPin(tmp)
 		res = append(res, &p)
