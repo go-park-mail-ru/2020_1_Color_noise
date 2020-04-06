@@ -34,7 +34,7 @@ func (lr *Repository) GetSubList(id uint, start int, limit int) ([]*models.Pin, 
 	p := models.DataBaseUser{Id: id}
 	result, err := lr.db.GetSubFeed(p, limit, start)
 	if err != nil {
-		return result, PinNotFound.Newf("Pins not found, user id = %d", id)
+		return nil, nil
 	}
 
 	return result, nil
