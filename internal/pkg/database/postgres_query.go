@@ -92,5 +92,5 @@ const (
 		" FROM subscriptions JOIN pins ON subscriptions.subscribed_at = pins.user_id" +
 		" WHERE subscriptions.user_id = $ 1"
 	Main = "SELECT * FROM pins ORDER BY id ASC LIMIT $1 OFFSET $2;"
-	Recommendation = "SELECT * FROM pins ORDER BY id ASC LIMIT $1 OFFSET $2;"
+	Recommendation = "SELECT * FROM pins ORDER BY created_at DESC ASC LIMIT $1 OFFSET $2;"
 )
