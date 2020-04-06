@@ -91,6 +91,12 @@ const (
 	Feed = "SELECT pins.id, pins.user_id, name, description, image, board_id, created_at " +
 		" FROM subscriptions JOIN pins ON subscriptions.subscribed_at = pins.user_id" +
 		" WHERE subscriptions.user_id = $ 1"
-	Main = "SELECT * FROM pins ORDER BY id ASC LIMIT $1 OFFSET $2;"
-	Recommendation = "SELECT * FROM pins ORDER BY created_at DESC ASC LIMIT $1 OFFSET $2;"
+	Main = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1;"
+	Recommendation = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1 OFFSET $2;"
+)
+
+const (
+	GetNoti = "SELECT message, from_user_id FROM public.notifies WHERE user_id = $1;"
+	PutNoti = "INSERT INTO notifies(" +
+	"user_id, message, from_user_id, created_at) VALUES($1, $2, $3, $4) RETURNING id;"
 )

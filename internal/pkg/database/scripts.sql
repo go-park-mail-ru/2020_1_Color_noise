@@ -71,6 +71,14 @@ CREATE TABLE commentaries (
 	created_at timestamp
 );
 
+CREATE TABLE notifies (
+                          id serial PRIMARY KEY,
+                          user_id int REFERENCES users(id) NOT NULL,
+                          message text NOT NULL,
+                          from_user_id int REFERENCES users(id) NOT NULL,
+                          created_at timestamp
+);
+
 /*
 CREATE FUNCTION new_desks() RETURNS trigger AS $trigger_bound$
 BEGIN

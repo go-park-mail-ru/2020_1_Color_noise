@@ -59,4 +59,7 @@ type DBInterface interface {
 	GetSubFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
 	GetMainFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
 	GetRecFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
+
+	GetNotifications ( user models.DataBaseUser) ([]*models.Notification, error)
+	PutNotifications ( cm models.DataBaseComment) (uint, error)
 }
