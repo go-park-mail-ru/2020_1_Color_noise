@@ -41,7 +41,7 @@ func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.InputComment{}
 
-	err := json.NewDecoder(r.Body).Decode(&input)
+	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
 		err = error.Wrap(err, "Decoding error during creation comment")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
