@@ -25,12 +25,12 @@ func NewHandler(usecase comment.IUsecase) *Handler {
 func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
-	/*isAuth := r.Context().Value("IsAuth")
+	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Create comment: user is unauthorized")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
-	}*/
+	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
