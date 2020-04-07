@@ -40,7 +40,7 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 
 	pin := &models.Pin{
 		UserId:      userId,
-		BoardId:     input.BoardId,
+		BoardId:     uint(input.BoardId),
 		Name:        input.Name,
 		Description: input.Description,
 		Image:       name,
@@ -85,7 +85,7 @@ func (pu *Usecase) Update(input *models.UpdatePin, pinId uint, userId uint) erro
 	pin := &models.Pin{
 		Id:          pinId,
 		UserId:      userId,
-		BoardId:     input.BoardId,
+		BoardId:     uint(input.BoardId),
 		Name:        input.Name,
 		Description: input.Description,
 	}
