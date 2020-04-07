@@ -30,8 +30,8 @@ type DataBaseUser struct {
 }
 
 type SignUpInput struct {
-	Email    string `json:"email" valid:"email,length(0|50)"`
-	Login    string `json:"login" valid:"alphanum,length(0|20)"`
+	Email    string `json:"email" valid:"email,length(1|50)"`
+	Login    string `json:"login" valid:"alphanum,length(1|20)"`
 	Password string `json:"password" valid:"length(6|100)"`
 }
 

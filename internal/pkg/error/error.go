@@ -107,7 +107,7 @@ func ErrorHandler(w http.ResponseWriter, err error) {
 	var message string
 
 	e, _ := err.(Error)
-	switch GetType(e) {
+	switch GetType(err) {
 	case BadRequest:
 		status = http.StatusBadRequest
 		message = e.message
@@ -149,7 +149,7 @@ func ErrorHandler(w http.ResponseWriter, err error) {
 		message = "Internal server error"
 	}
 
-	log.Println(err.Error())
+	log.Println(e.Error())
 
 	response.Respond(w, status, map[string]string {
 		"error": message,

@@ -7,6 +7,7 @@ import (
 	"2020_1_Color_noise/internal/pkg/session"
 	"2020_1_Color_noise/internal/pkg/user"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -38,7 +39,7 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		err := error.Wrap(err, "Decoding error during login")
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during login"), "Wrong body of request")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -68,15 +69,16 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		//Domain:   r.Host,
 	}
 
-	token := &http.Cookie{
+	/*token := &http.Cookie{
 		Name:    "csrf_token",
 		Value:   session.Token,
 		Expires: time.Now().Add(5 * time.Hour),
 		//Domain:  r.Host,
-	}
+	}*/
 
 	http.SetCookie(w, cookie)
-	http.SetCookie(w, token)
+	//http.SetCookie(w, token)
+	fmt.Println(w)
 
 	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
@@ -117,6 +119,7 @@ func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	//token.Expires = time.Now().AddDate(0, 0, -1)
 
 	http.SetCookie(w, cookie)
+	fmt.Println(w)
 	//http.SetCookie(w, token)
 
 	response.Respond(w, http.StatusOK, map[string]string{
