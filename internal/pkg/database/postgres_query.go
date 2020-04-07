@@ -43,7 +43,7 @@ const (
 		" WHERE user_id = $1"
 	UserSubscribed    = "SELECT COUNT(subscribed_at) FROM subscriptions WHERE user_id = $1"
 	UserSubscriptions = "SELECT COUNT(user_id) FROM subscriptions WHERE subscribed_at = $1"
-	Follow            = "INSERT INTO subscriptions( user_id, subscribed_at) VALUES ($1, $2, $3) RETURNING id;"
+	Follow            = "INSERT INTO subscriptions( user_id, subscribed_at) VALUES ($1, $2) RETURNING id;"
 	Unfollow          = "DELETE FROM public.subscriptions WHERE user_id $1 = AND subscribed_at = $2 RETURNING 0;"
 )
 
