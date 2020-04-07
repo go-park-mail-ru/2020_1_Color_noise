@@ -22,7 +22,7 @@ func NewRepo(d database.DBInterface) *Repository {
 
 func (lr *Repository) GetMainList(start int, limit int) ([]*models.Pin, error) {
 	p := models.DataBaseUser{}
-	result, err := lr.db.GetMainFeed(p, limit, start)
+	result, err := lr.db.GetMainFeed(p, start, limit)
 	if err != nil {
 		return result, PinNotFound.Newf("Pins not found, err:", err)
 	}
@@ -32,7 +32,7 @@ func (lr *Repository) GetMainList(start int, limit int) ([]*models.Pin, error) {
 
 func (lr *Repository) GetSubList(id uint, start int, limit int) ([]*models.Pin, error) {
 	p := models.DataBaseUser{Id: id}
-	result, err := lr.db.GetSubFeed(p, limit, start)
+	result, err := lr.db.GetSubFeed(p, start, limit)
 	if err != nil {
 		return nil, nil
 	}
@@ -42,7 +42,7 @@ func (lr *Repository) GetSubList(id uint, start int, limit int) ([]*models.Pin, 
 
 func (lr *Repository) GetRecommendationList(id uint, start int, limit int) ([]*models.Pin, error) {
 	p := models.DataBaseUser{}
-	result, err := lr.db.GetRecFeed(p, limit, start)
+	result, err := lr.db.GetRecFeed(p, start, limit)
 	if err != nil {
 		return result, PinNotFound.Newf("Pins not found, user id = %d", id)
 	}

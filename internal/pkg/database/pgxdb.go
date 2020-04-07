@@ -316,7 +316,9 @@ func (db *PgxDB) GetUserByEmail(user models.DataBaseUser) (models.User, error) {
 
 func (db *PgxDB) Follow(who, whom uint) error {
 
-	_, err := db.dbPool.Exec(Follow, who, whom)
+	var id uint
+	row := db.dbPool.QueryRow(Follow, who, whom)
+	err := row.Scan(&id)
 	if err != nil {
 		return err
 	}
@@ -324,8 +326,9 @@ func (db *PgxDB) Follow(who, whom uint) error {
 }
 
 func (db *PgxDB) Unfollow(who, whom uint) error {
-
-	_, err := db.dbPool.Exec(Unfollow, who, whom)
+	var id uint
+	row := db.dbPool.QueryRow(Unfollow, who, whom)
+	err := row.Scan(&id)
 	if err != nil {
 		return err
 	}
@@ -617,7 +620,7 @@ func (db *PgxDB) GetMainFeed( user models.DataBaseUser, start, limit int) ([]*mo
 		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
 			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt)
 		if ok != nil {
-			return nil, ok
+			return res, ok
 		}
 		p := models.GetPin(tmp)
 		res = append(res, &p)
