@@ -14,6 +14,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type Handler struct {
@@ -43,7 +44,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
-		err = error.Wrap(err, "Decoding error during creation user")
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation user"), "Wrong body of request")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -64,31 +65,31 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = ud.sessionUsecase.CreateSession(id)
+	session, err := ud.sessionUsecase.CreateSession(id)
 	if err != nil {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
-	/*
-		cookie := &http.Cookie{
-			Name:     "session_id",
-			Value:    session.Cookie,
-			Expires:  time.Now().Add(1000 * time.Hour),
-			HttpOnly: true,
-			Domain:   r.Host,
-		}
 
-		token := &http.Cookie{
+	cookie := &http.Cookie{
+		Name:     "session_id",
+		Value:    session.Cookie,
+		Expires:  time.Now().Add(1000 * time.Hour),
+		HttpOnly: true,
+		//Domain:   r.Host,
+	}
+
+	/*	token := &http.Cookie{
 			Name:    "csrf_token",
 			Value:   session.Token,
 			Expires: time.Now().Add(5 * time.Hour),
-			Domain:  r.Host,
+			//Domain:  r.Host,
 		}
-
-		http.SetCookie(w, cookie)
-		http.SetCookie(w, token)
-
 	*/
+
+	http.SetCookie(w, cookie)
+	//http.SetCookie(w, token)
+
 	response.Respond(w, http.StatusCreated, map[string]string{
 		"message": "Ok",
 	})
@@ -187,7 +188,7 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
-		err := error.Wrap(err, "Decoding error during updating profile user")
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating profile user"), "Wrong body of request")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -233,7 +234,7 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
-		err := error.Wrap(err, "Decoding error during updating description user")
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating description user"), "Wrong body of request")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -267,7 +268,6 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
@@ -279,7 +279,7 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
-		err := error.Wrap(err, "Decoding error during updating password")
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating password user"), "Wrong body of request")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -287,7 +287,7 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	_, err = govalidator.ValidateStruct(input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
-			"Password should be longer than 6 characters and shorter 100. ")
+			"Password should be longer than 6 characters and shorter 100.")
 		error.ErrorHandler(w, err)
 		return
 	}

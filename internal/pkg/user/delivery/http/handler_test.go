@@ -1,20 +1,17 @@
 package http
 
 import (
-	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
-	"strconv"
-	"time"
-
-	//"fmt"
-
-	//"fmt"
-	"io/ioutil"
 
 	"2020_1_Color_noise/internal/models"
-	"2020_1_Color_noise/internal/pkg/user/mock"
+	. "2020_1_Color_noise/internal/pkg/error"
+	sessionMock "2020_1_Color_noise/internal/pkg/session/mock"
+	userMock "2020_1_Color_noise/internal/pkg/user/mock"
+	"context"
+	"io/ioutil"
 	//"io/ioutil"
 	"net/http/httptest"
 
@@ -25,601 +22,1336 @@ import (
 	//"time"
 )
 
-type TestCase struct {
+type TestCaseCreate struct {
 	IsAuth     bool
-	ID         uint
-	GetID      string
 	Login      string
 	Password   string
 	Email      string
-	ErrAdd     error
-	ErrGet     error
-	ErrUpdate  error
 	CookieName string
 	Cookie     string
 	TokenName  string
-	User       models.User
 	Token      string
-	ErrSession error
-	ContextID  uint
 	Response   string
-	StatusCode int
+	InputErr   bool
+	ValidErr   bool
+	CreateErr  bool
+	SessErr    bool
 }
 
-func TestAddUser(t *testing.T) {
+func TestHandler_Create(t *testing.T) {
 	t.Helper()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := mock.NewMockIUserUsecase(ctl)
-	mockSessionUsecase := mock.NewMockISessionUsecase(ctl)
+	mockUserUsecase := userMock.NewMockIUsecase(ctl)
+	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewUserDelivery(mockUserUsecase, mockSessionUsecase)
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
 
-	cases := []TestCase{
-		TestCase{
+	cases := []TestCaseCreate{
+		TestCaseCreate{
 			IsAuth:     true,
-			ID:         2,
-			Login:      "login1",
-			Password:   "password1",
-			StatusCode: 200,
-			Response: `{"status":"200","body":{"id":2}}
+			Response:	`{"status":200,"body":{"message":"Ok"}}
 `,
 		},
-		TestCase{
-			IsAuth:     false,
-			ID:         1,
-			ErrAdd:     nil,
-			Login:      "login1",
-			Password:   "password1",
-			CookieName: "session_id",
-			Cookie:     "cookie",
-			TokenName:  "csrf_token",
-			Token:      "token",
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"200","body":{"id":1}}
+		TestCaseCreate{
+			InputErr:   true,
+			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}
 `,
 		},
-		TestCase{
-			IsAuth:     false,
-			ID:         1,
-			ErrAdd:     fmt.Errorf("some error"),
-			Login:      "login1",
-			Password:   "password1",
-			CookieName: "session_id",
-			Cookie:     "cookie",
-			TokenName:  "csrf_token",
-			Token:      "token",
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"some error"}}
+		TestCaseCreate{
+			ValidErr:   true,
+			Response:	`{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}
 `,
+			Email: 		"helloexam.com",
+			Login:		"Login1",
+			Password:   "Password1",
 		},
-		TestCase{
-			IsAuth:     false,
-			ID:         1,
-			ErrAdd:     nil,
-			Login:      "login1",
-			Password:   "password1",
+		TestCaseCreate{
+			ValidErr:   true,
+			Response:	`{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}
+`,
+			Email: 		"hello@exam.com",
+			Login:		"",
+			Password:   "Password1",
+		},
+		TestCaseCreate{
+			ValidErr:   true,
+			Response:	`{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}
+`,
+			Email: 		"hello@exam.com",
+			Login:		"Login1",
+			Password:   "Passw",
+		},
+		TestCaseCreate{
+			CreateErr:   true,
+			Email: 		"hello@exam.com",
+			Login:		"Login1",
+			Password:   "Password",
+		},
+		TestCaseCreate{
+			SessErr:   true,
+			Email: 		"hello@exam.com",
+			Login:		"Login1",
+			Password:   "Password",
+		},
+		TestCaseCreate{
+			Email: 		"hello@exam.com",
+			Login:		"Login1",
+			Password:   "Password",
+			Response:	`{"status":201,"body":{"message":"Ok"}}
+`,
 			CookieName: "session_id",
 			Cookie:     "cookie",
-			TokenName:  "csrf_token",
-			Token:      "token",
-			ErrSession: fmt.Errorf("some error"),
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"some error"}}
-`,
+			//TokenName:  "csrf_token",
+			//Token:      "token",
 		},
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("POST", "/signup",
-			strings.NewReader("login="+item.Login+"&password="+item.Password))
-		r.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+		var r *http.Request
+		if item.InputErr == false {
+			r = httptest.NewRequest("POST", "/api/user",
+			strings.NewReader(fmt.Sprintf(`{"login":"%s", "email":"%s", "password":"%s"}`, item.Login, item.Email, item.Password)))
+		} else {
+			r = httptest.NewRequest("POST", "/api/user",
+				strings.NewReader(fmt.Sprintf(`{"login:"%s", "email":"%s", "password":"%s"}`, item.Login, item.Email, item.Password)))
+		}
+
+		r.Header.Set("Content-Type", "application/json")
+
 		w := httptest.NewRecorder()
+
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, "isAuth", item.IsAuth)
-		ctx = context.WithValue(ctx, "Id", item.ID)
+		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
 		r = r.WithContext(ctx)
 
-		if !item.IsAuth {
-			user := &models.User{
+		if !item.IsAuth && !item.InputErr && !item.ValidErr {
+
+			input := &models.SignUpInput{
+				Email:    item.Email,
 				Login:    item.Login,
 				Password: item.Password,
 			}
+
+			var err error = nil
+			if item.CreateErr {
+				err = NoType.New("")
+			}
+
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().Add(user).Return(item.ID, item.ErrAdd),
+				mockUserUsecase.EXPECT().Create(input).Return(uint(1), err),
 			)
 
-			if item.ErrAdd == nil {
+			if !item.CreateErr  {
 				session := &models.Session{
-					Id:     item.ID,
+					Id:     1,
 					Cookie: item.Cookie,
 					Token:  item.Token,
 				}
 
+				if item.SessErr {
+					err = NoType.New("")
+				}
+
 				gomock.InOrder(
-					mockSessionUsecase.EXPECT().CreateSession(item.ID).Return(session, item.ErrSession),
+					mockSessionUsecase.EXPECT().CreateSession(uint(1)).Return(session, err),
 				)
 			}
 		}
 
-		userDelivery.AddUser(w, r)
+		userDelivery.Create(w, r)
 
-		if w.Code != item.StatusCode {
-			t.Errorf("[%d] wrong StatusCode: got %d, expected %d",
-				caseNum, w.Code, item.StatusCode)
-		}
 		resp := w.Result()
 		body, _ := ioutil.ReadAll(resp.Body)
 		bodyStr := string(body)
-		if bodyStr != item.Response {
-			t.Errorf("[%d] wrong Response: got %+v, expected %+v",
-				caseNum, bodyStr, item.Response)
-		}
-		if !item.IsAuth && item.ErrSession == nil && item.ErrAdd == nil {
-			cookies := w.Result().Cookies()
-			if len(cookies) != 2 {
-				t.Errorf("[%d] No Cookie", caseNum)
-			}
-			if cookies[0].Name != item.CookieName {
-				t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
-					caseNum, cookies[0].Name, item.CookieName)
-			}
-			if cookies[0].Value != item.Cookie {
-				t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
-					caseNum, cookies[0].Value, item.Cookie)
+
+		if item.CreateErr || item.SessErr {
+			var output map[string]interface{}
+
+			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
+			if err != nil {
+				t.Fatalf("[%d] wrong decoding Response: got %+v, err: %v",
+					caseNum, bodyStr, err.Error())
 			}
 
-			if cookies[1].Name != item.TokenName {
-				t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
-					caseNum, cookies[1].Name, item.TokenName)
+			status, ok := output["status"]
+			if !ok {
+				t.Fatalf("[%d] wrong Response: got %+v - no status",
+					caseNum, bodyStr)
 			}
-			if cookies[1].Value != item.Token {
-				t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
-					caseNum, cookies[1].Value, item.Token)
+
+			if status == 200 || status == 201 {
+				t.Errorf("[%d] wrong status Response: got %+v, expected not success status",
+					caseNum, status)
+			}
+		} else {
+			if bodyStr != item.Response {
+				t.Errorf("[%d] wrong Response: got %+v, expected %+v",
+					caseNum, bodyStr, item.Response)
+			}
+
+			if !item.IsAuth && !item.InputErr && !item.ValidErr {
+				cookies := w.Result().Cookies()
+				if len(cookies) != 1 {
+					t.Fatalf("[%d] No Cookie", caseNum)
+				}
+
+				if cookies[0].Name != item.CookieName {
+					t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
+						caseNum, cookies[0].Name, item.CookieName)
+				}
+
+				if cookies[0].Value != item.Cookie {
+					t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
+						caseNum, cookies[0].Value, item.Cookie)
+				}
+
+				/*
+					if cookies[1].Name != item.TokenName {
+						t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
+							caseNum, cookies[1].Name, item.TokenName)
+					}
+
+					if cookies[1].Value != item.Token {
+						t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
+							caseNum, cookies[1].Value, item.Token)
+					}
+				*/
 			}
 		}
 	}
 }
 
-func TestGetUser(t *testing.T) {
+type TestCaseGetUser struct {
+	IsAuth   bool
+	User	 *models.User
+	Response string
+	IdErr    bool
+	GetErr   bool
+}
+
+func TestHandler_GetUser(t *testing.T) {
 	t.Helper()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := mock.NewMockIUserUsecase(ctl)
-	mockSessionUsecase := mock.NewMockISessionUsecase(ctl)
+	mockUserUsecase := userMock.NewMockIUsecase(ctl)
+	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewUserDelivery(mockUserUsecase, mockSessionUsecase)
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
 
-	cases := []TestCase{
-		TestCase{
+	cases := []TestCaseGetUser{
+		TestCaseGetUser{
 			IsAuth:     false,
-			GetID:      "2",
-			StatusCode: 200,
-			Response: `{"status":"403","body":{"error":"User not found"}}
+			User:       &models.User{},
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
-		TestCase{
+		TestCaseGetUser{
 			IsAuth:     true,
-			GetID:      "h",
-			ErrGet:     nil,
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"Invalid id"}}
+			IdErr:      true,
+			User:       &models.User{},
+			Response:	`{"status":500,"body":{"error":"Internal server error"}}
 `,
 		},
-		TestCase{
+		TestCaseGetUser{
 			IsAuth:     true,
-			GetID:      "1",
-			ErrGet:     fmt.Errorf("some error"),
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"some error"}}
-`,
+			GetErr:     true,
+			User:       &models.User{},
 		},
-		TestCase{
-			IsAuth: true,
-			GetID:  "1",
-			User: models.User{
-				Id:    1,
-				Login: "login1",
+		TestCaseGetUser{
+			IsAuth:     true,
+			User:       &models.User{
+				Id: 1,
+				Email:        "a@b.com",
+				Login:        "login",
+				About:         "about me",
+				Avatar:        "avatar.jpg",
+				Subscribers:   11000,
+				Subscriptions: 100,
 			},
-			ErrGet:     nil,
-			StatusCode: 200,
-			Response: `{"status":"200","body":{"user":{"id":1,"login":"login1"}}}
+			Response:	`{"status":200,"body":{"id":1,"email":"a@b.com","login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000}}
 `,
 		},
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("GET", "/profile/"+item.GetID,
-			strings.NewReader(""))
-		r = mux.SetURLVars(r, map[string]string{"id": item.GetID})
+		r := httptest.NewRequest("GET", "/api/user", strings.NewReader(""))
+
 		w := httptest.NewRecorder()
+
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, "isAuth", item.IsAuth)
+		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
+		if !item.IdErr{
+			ctx = context.WithValue(ctx, "Id", item.User.Id)
+		}
 		r = r.WithContext(ctx)
 
-		id, err := strconv.Atoi(item.GetID)
-		if item.IsAuth && err == nil {
+		if item.IsAuth && !item.IdErr {
+
+			var err error = nil
+			if item.GetErr {
+				err = NoType.New("")
+			}
+
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().GetById(uint(id)).Return(&item.User, item.ErrGet),
+				mockUserUsecase.EXPECT().GetById(item.User.Id).Return(item.User, err),
 			)
 		}
 
 		userDelivery.GetUser(w, r)
 
-		if w.Code != item.StatusCode {
-			t.Errorf("[%d] wrong StatusCode: got %d, expected %d",
-				caseNum, w.Code, item.StatusCode)
-		}
 		resp := w.Result()
 		body, _ := ioutil.ReadAll(resp.Body)
 		bodyStr := string(body)
-		if bodyStr != item.Response {
-			t.Errorf("[%d] wrong Response: got %+v, expected %+v",
-				caseNum, bodyStr, item.Response)
+
+		if item.GetErr {
+			var output map[string]interface{}
+
+			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
+			if err != nil {
+				t.Fatalf("[%d] wrong decoding Response: got %+v, err: %v",
+					caseNum, bodyStr, err.Error())
+			}
+
+			status, ok := output["status"]
+			if !ok {
+				t.Fatalf("[%d] wrong Response: got %+v - no status",
+					caseNum, bodyStr)
+			}
+
+			if status == 200 {
+				t.Errorf("[%d] wrong status Response: got %+v, expected not success status",
+					caseNum, status)
+			}
+		} else {
+			if bodyStr != item.Response {
+				t.Errorf("[%d] wrong Response: got %+v, expected %+v",
+					caseNum, bodyStr, item.Response)
+			}
 		}
 	}
 }
 
-func TestUpdateUser(t *testing.T) {
+func TestHandler_GetOtherUser(t *testing.T) {
 	t.Helper()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := mock.NewMockIUserUsecase(ctl)
-	mockSessionUsecase := mock.NewMockISessionUsecase(ctl)
+	mockUserUsecase := userMock.NewMockIUsecase(ctl)
+	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewUserDelivery(mockUserUsecase, mockSessionUsecase)
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
 
-	cases := []TestCase{
-		TestCase{
+	cases := []TestCaseGetUser{
+		TestCaseGetUser{
 			IsAuth:     false,
-			ID:         1,
-			Login:      "login1",
-			Email:      "email1",
-			StatusCode: 200,
-			Response: `{"status":"403","body":{"error":"User not found"}}
+			User:       &models.User{},
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
-		TestCase{
+		TestCaseGetUser{
 			IsAuth:     true,
-			ID:         1,
-			GetID:      "h",
-			ErrAdd:     nil,
-			Login:      "login1",
-			Email:      "email1",
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"Invalid id"}}
-`,
+			GetErr:     true,
+			User:       &models.User{},
 		},
-		TestCase{
-			IsAuth: true,
-			ID:     1,
-			GetID:  "1",
-			ErrGet: fmt.Errorf("some error"),
-			Login:  "login1",
-			Email:  "email1",
-			User: models.User{
-				Id:    1,
-				Login: "login1",
-				Email: "email1",
+		TestCaseGetUser{
+			IsAuth:     true,
+			User:       &models.User{
+				Id:           1,
+				Email:        "a@b.com",
+				Login:        "login",
+				About:         "about me",
+				Avatar:        "avatar.jpg",
+				Subscribers:   11000,
+				Subscriptions: 100,
 			},
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"Internal error"}}
-`,
-		},
-		TestCase{
-			IsAuth: true,
-			ID:     1,
-			GetID:  "1",
-			ErrGet: nil,
-			Login:  "login1",
-			Email:  "email1",
-			User: models.User{
-				Id:    1,
-				Login: "login1",
-				Email: "email1",
-			},
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"Internal error"}}
-`,
-		},
-		TestCase{
-			IsAuth:    true,
-			ID:        1,
-			GetID:     "1",
-			ErrGet:    nil,
-			ContextID: 2,
-			Login:     "login1",
-			Email:     "email1",
-			User: models.User{
-				Id:    1,
-				Login: "login1",
-				Email: "email1",
-			},
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"Internal error"}}
-`,
-		},
-		TestCase{
-			IsAuth:    true,
-			ID:        1,
-			GetID:     "1",
-			ErrGet:    nil,
-			ContextID: 1,
-			ErrUpdate: fmt.Errorf("some error"),
-			Login:     "login1",
-			Email:     "email1",
-			User: models.User{
-				Id:    1,
-				Login: "login1",
-				Email: "email1",
-			},
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"some error"}}
-`,
-		},
-		TestCase{
-			IsAuth:    true,
-			ID:        1,
-			GetID:     "1",
-			ErrGet:    nil,
-			ContextID: 1,
-			ErrUpdate: nil,
-			Login:     "login1",
-			Email:     "email1",
-			User: models.User{
-				Id:    1,
-				Login: "login1",
-				Email: "email1",
-			},
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"200"}
+			Response:	`{"status":200,"body":{"id":1,"login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000}}
 `,
 		},
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("POST", "/profile/"+item.GetID,
-			strings.NewReader("login="+item.Login+"&email="+item.Email))
-		r = mux.SetURLVars(r, map[string]string{"id": item.GetID})
-		r.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+		r := httptest.NewRequest("GET", "/api/user/", strings.NewReader(""))
+		r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.User.Id)})
+
 		w := httptest.NewRecorder()
+
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, "isAuth", item.IsAuth)
-		ctx = context.WithValue(ctx, "Id", item.ContextID)
+		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
+		if !item.IdErr{
+			ctx = context.WithValue(ctx, "Id", item.User.Id)
+		}
 		r = r.WithContext(ctx)
 
-		id, err := strconv.Atoi(item.GetID)
-		if item.IsAuth && err == nil {
+		if item.IsAuth && !item.IdErr {
+
+			var err error = nil
+			if item.GetErr {
+				err = NoType.New("")
+			}
+
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().GetById(uint(id)).Return(&item.User, item.ErrGet),
+				mockUserUsecase.EXPECT().GetById(item.User.Id).Return(item.User, err),
 			)
-			if item.ErrGet == nil && item.ContextID == item.ID && uint(id) == item.ID {
-				gomock.InOrder(
-					mockUserUsecase.EXPECT().Update(&item.User).Return(item.ErrUpdate),
-				)
+		}
+
+		userDelivery.GetOtherUser(w, r)
+
+		resp := w.Result()
+		body, _ := ioutil.ReadAll(resp.Body)
+		bodyStr := string(body)
+
+		if item.GetErr {
+			var output map[string]interface{}
+
+			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
+			if err != nil {
+				t.Fatalf("[%d] wrong decoding Response: got %+v, err: %v",
+					caseNum, bodyStr, err.Error())
+			}
+
+			status, ok := output["status"]
+			if !ok {
+				t.Fatalf("[%d] wrong Response: got %+v - no status",
+					caseNum, bodyStr)
+			}
+
+			if status == 200 {
+				t.Errorf("[%d] wrong status Response: got %+v, expected not success status",
+					caseNum, status)
+			}
+
+		} else {
+			if bodyStr != item.Response {
+				t.Errorf("[%d] wrong Response: got %+v, expected %+v",
+					caseNum, bodyStr, item.Response)
 			}
 		}
 
-		userDelivery.UpdateUser(w, r)
-
-		if w.Code != item.StatusCode {
-			t.Errorf("[%d] wrong StatusCode: got %d, expected %d",
-				caseNum, w.Code, item.StatusCode)
-		}
-		resp := w.Result()
-		body, _ := ioutil.ReadAll(resp.Body)
-		bodyStr := string(body)
-		if bodyStr != item.Response {
-			t.Errorf("[%d] wrong Response: got %+v, expected %+v",
-				caseNum, bodyStr, item.Response)
-		}
 	}
 }
 
-func TestDeleteUser(t *testing.T) {
+type TestCaseUpdateProfile struct {
+	IsAuth     bool
+	User       *models.User
+	Response   string
+	IdErr	   bool
+	InputErr   bool
+	ValidErr   bool
+	UpdateErr  bool
+}
+
+func TestHandler_UpdateProfile(t *testing.T) {
 	t.Helper()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := mock.NewMockIUserUsecase(ctl)
-	mockSessionUsecase := mock.NewMockISessionUsecase(ctl)
+	mockUserUsecase := userMock.NewMockIUsecase(ctl)
+	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewUserDelivery(mockUserUsecase, mockSessionUsecase)
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
 
-	cases := []TestCase{
-		TestCase{
+	cases := []TestCaseUpdateProfile{
+		TestCaseUpdateProfile{
 			IsAuth:     false,
-			ID:         1,
-			Cookie:     "cookie",
-			StatusCode: 200,
-			Response: `{"status":"403","body":{"error":"User not found"}}
+			User:       &models.User{},
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
-		TestCase{
+		TestCaseUpdateProfile{
 			IsAuth:     true,
-			ID:         1,
-			GetID:      "h",
-			ErrAdd:     nil,
-			Login:      "login1",
-			Password:   "password1",
-			CookieName: "session_id",
-			Cookie:     "cookie",
-			TokenName:  "token",
-			Token:      "token",
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"Invalid id"}}
+			IdErr:      true,
+			User:       &models.User{},
+			Response:	`{"status":500,"body":{"error":"Internal server error"}}
 `,
 		},
-		TestCase{
+		TestCaseUpdateProfile{
 			IsAuth:     true,
-			ID:         1,
-			GetID:      "1",
-			ErrGet:     fmt.Errorf("some error"),
-			CookieName: "session_id",
-			Cookie:     "cookie",
-			TokenName:  "token",
-			Token:      "token",
-			User: models.User{
-				Id:    1,
-				Login: "login1",
-				Email: "email1",
+			InputErr:   true,
+			User:       &models.User{},
+			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}
+`,
+		},
+		TestCaseUpdateProfile{
+			IsAuth:     true,
+			ValidErr:   true,
+			Response:	`{"status":400,"body":{"error":"Login should be letters and numbers, shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters"}}
+`,
+			User:       &models.User{
+				Email:  "helloexam.com",
+				Login:	 "Login1",
 			},
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"some error"}}
-`,
 		},
-		TestCase{
+		TestCaseUpdateProfile{
 			IsAuth:     true,
-			ID:         1,
-			GetID:      "1",
-			ErrGet:     nil,
-			CookieName: "session_id",
-			Cookie:     "cookie",
-			TokenName:  "token",
-			Token:      "token",
-			User: models.User{
-				Id:    1,
-				Login: "login1",
-				Email: "email1",
-			},
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"Internal error"}}
+			ValidErr:   true,
+			Response:	`{"status":400,"body":{"error":"Login should be letters and numbers, shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters"}}
 `,
-		},
-		TestCase{
-			IsAuth:     true,
-			ID:         1,
-			GetID:      "1",
-			ErrGet:     nil,
-			ContextID:  2,
-			CookieName: "session_id",
-			Cookie:     "cookie",
-			TokenName:  "token",
-			Token:      "token",
-			User: models.User{
-				Id:    1,
-				Login: "login1",
-				Email: "email1",
+			User:       &models.User{
+				Email:  "helloexam.com",
+				Login:		"",
 			},
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"Internal error"}}
-`,
 		},
-		TestCase{
+		TestCaseUpdateProfile{
 			IsAuth:     true,
-			ID:         1,
-			GetID:      "1",
-			ErrGet:     nil,
-			CookieName: "session_id",
-			Cookie:     "cookie",
-			TokenName:  "token",
-			Token:      "token",
-			ContextID:  1,
-			ErrUpdate:  fmt.Errorf("some error"),
-			User: models.User{
-				Id:    1,
-				Login: "login1",
-				Email: "email1",
+			UpdateErr:  true,
+			User:       &models.User{
+				Id:      1,
+				Email:  "hello@exam.com",
+				Login:		"login",
 			},
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"500","body":{"error":"some error"}}
-`,
 		},
-		TestCase{
+		TestCaseUpdateProfile{
 			IsAuth:     true,
-			ID:         1,
-			GetID:      "1",
-			ErrGet:     nil,
-			CookieName: "session_id",
-			Cookie:     "cookie",
-			TokenName:  "token",
-			Token:      "token",
-			ContextID:  1,
-			ErrUpdate:  nil,
-			User: models.User{
-				Id:    1,
-				Login: "login1",
-				Email: "email1",
+			User:       &models.User{
+				Id:      1,
+				Email:  "hello@exam.com",
+				Login:		"login",
 			},
-			ErrSession: nil,
-			StatusCode: 200,
-			Response: `{"status":"200"}
+			Response:	`{"status":200,"body":{"message":"Ok"}}
 `,
 		},
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("DELETE", "/profile/"+item.GetID,
+		var r *http.Request
+		if item.InputErr == false {
+			r = httptest.NewRequest("PUT", "/api/user/settings/profile",
+				strings.NewReader(fmt.Sprintf(`{"login":"%s", "email":"%s"}`, item.User.Login, item.User.Email)))
+		} else {
+			r = httptest.NewRequest("PUT", "/api/user/settings/profile",
+				strings.NewReader(fmt.Sprintf(`{"login:"%s", "email":"%s"}`, item.User.Login, item.User.Email)))
+		}
+
+		r.Header.Set("Content-Type", "application/json")
+
+		w := httptest.NewRecorder()
+
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
+		if !item.IdErr{
+			ctx = context.WithValue(ctx, "Id", item.User.Id)
+		}
+		r = r.WithContext(ctx)
+
+		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
+
+			input := &models.UpdateProfileInput{
+				Email:    item.User.Email,
+				Login:    item.User.Login,
+			}
+
+			var err error = nil
+			if item.UpdateErr {
+				err = NoType.New("")
+			}
+
+			gomock.InOrder(
+				mockUserUsecase.EXPECT().UpdateProfile(item.User.Id, input).Return(err),
+			)
+
+		}
+
+		userDelivery.UpdateProfile(w, r)
+
+		resp := w.Result()
+		body, _ := ioutil.ReadAll(resp.Body)
+		bodyStr := string(body)
+
+		if item.UpdateErr {
+			var output map[string]interface{}
+
+			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
+			if err != nil {
+				t.Fatalf("[%d] wrong decoding Response: got %+v, err: %v",
+					caseNum, bodyStr, err.Error())
+			}
+
+			status, ok := output["status"]
+			if !ok {
+				t.Fatalf("[%d] wrong Response: got %+v - no status",
+					caseNum, bodyStr)
+			}
+
+			if status == 200 {
+				t.Errorf("[%d] wrong status Response: got %+v, expected not success status",
+					caseNum, status)
+			}
+		} else {
+			if bodyStr != item.Response {
+				t.Errorf("[%d] wrong Response: got %+v, expected %+v",
+					caseNum, bodyStr, item.Response)
+			}
+		}
+	}
+}
+
+type TestCaseUpdateDescription struct {
+	IsAuth     bool
+	User       *models.User
+	Response   string
+	IdErr	   bool
+	InputErr   bool
+	ValidErr   bool
+	UpdateErr  bool
+}
+
+func TestHandler_UpdateDescription(t *testing.T) {
+	t.Helper()
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockUserUsecase := userMock.NewMockIUsecase(ctl)
+	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+
+	cases := []TestCaseUpdateDescription{
+		TestCaseUpdateDescription{
+			IsAuth:     false,
+			User:       &models.User{},
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+`,
+		},
+		TestCaseUpdateDescription{
+			IsAuth:     true,
+			IdErr:      true,
+			User:       &models.User{},
+			Response:	`{"status":500,"body":{"error":"Internal server error"}}
+`,
+		},
+		TestCaseUpdateDescription{
+			IsAuth:     true,
+			InputErr:   true,
+			User:       &models.User{},
+			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}
+`,
+		},
+		TestCaseUpdateDescription{
+			IsAuth:     true,
+			UpdateErr:  true,
+			User:       &models.User{
+				Id:      1,
+				About:   "about me",
+			},
+		},
+		TestCaseUpdateDescription{
+			IsAuth:     true,
+			User:       &models.User{
+				Id:      1,
+				About:   "about me",
+			},
+			Response:	`{"status":200,"body":{"message":"Ok"}}
+`,
+		},
+	}
+
+	for caseNum, item := range cases {
+		var r *http.Request
+		if item.InputErr == false {
+			r = httptest.NewRequest("PUT", "/api/user/settings/description",
+				strings.NewReader(fmt.Sprintf(`{"description":"%s"}`, item.User.About)))
+		} else {
+			r = httptest.NewRequest("PUT", "/api/user/settings/description",
+				strings.NewReader(fmt.Sprintf(`{"description:"%s"}`, item.User.About)))
+		}
+
+		r.Header.Set("Content-Type", "application/json")
+
+		w := httptest.NewRecorder()
+
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
+		if !item.IdErr{
+			ctx = context.WithValue(ctx, "Id", item.User.Id)
+		}
+		r = r.WithContext(ctx)
+
+		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
+
+			input := &models.UpdateDescriptionInput{
+				Description:    item.User.About,
+			}
+
+			var err error = nil
+			if item.UpdateErr {
+				err = NoType.New("")
+			}
+
+			gomock.InOrder(
+				mockUserUsecase.EXPECT().UpdateDescription(item.User.Id, input).Return(err),
+			)
+
+		}
+
+		userDelivery.UpdateDescription(w, r)
+
+		resp := w.Result()
+		body, _ := ioutil.ReadAll(resp.Body)
+		bodyStr := string(body)
+
+		if item.UpdateErr {
+			var output map[string]interface{}
+
+			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
+			if err != nil {
+				t.Fatalf("[%d] wrong decoding Response: got %+v, err: %v",
+					caseNum, bodyStr, err.Error())
+			}
+
+			status, ok := output["status"]
+			if !ok {
+				t.Fatalf("[%d] wrong Response: got %+v - no status",
+					caseNum, bodyStr)
+			}
+
+			if status == 200 {
+				t.Errorf("[%d] wrong status Response: got %+v, expected not success status",
+					caseNum, status)
+			}
+		} else {
+			if bodyStr != item.Response {
+				t.Errorf("[%d] wrong Response: got %+v, expected %+v",
+					caseNum, bodyStr, item.Response)
+			}
+		}
+
+	}
+}
+
+type TestCaseUpdatePassword struct {
+	IsAuth     bool
+	UserId     uint
+	Password   string
+	Response   string
+	IdErr	   bool
+	InputErr   bool
+	ValidErr   bool
+	UpdateErr  bool
+}
+
+func TestHandler_UpdatePassword(t *testing.T) {
+	t.Helper()
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockUserUsecase := userMock.NewMockIUsecase(ctl)
+	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+
+	cases := []TestCaseUpdatePassword{
+		TestCaseUpdatePassword{
+			IsAuth:     false,
+			UserId:     1,
+			Password:   "password",
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+`,
+		},
+		TestCaseUpdatePassword{
+			IsAuth:     true,
+			IdErr:      true,
+			UserId:     1,
+			Password:   "password",
+			Response:	`{"status":500,"body":{"error":"Internal server error"}}
+`,
+		},
+		TestCaseUpdatePassword{
+			IsAuth:     true,
+			InputErr:   true,
+			UserId:     1,
+			Password:   "password",
+			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}
+`,
+		},
+		TestCaseUpdatePassword{
+			IsAuth:     true,
+			ValidErr:   true,
+			Response:	`{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100."}}
+`,
+			UserId:     1,
+			Password:   "pas",
+		},
+		TestCaseUpdatePassword{
+			IsAuth:     true,
+			UpdateErr:  true,
+			UserId:       1,
+			Password:   "password",
+		},
+		TestCaseUpdatePassword{
+			IsAuth:     true,
+			UserId:       1,
+			Password:   "password",
+			Response:	`{"status":200,"body":{"message":"Ok"}}
+`,
+		},
+	}
+
+	for caseNum, item := range cases {
+		var r *http.Request
+		if item.InputErr == false {
+			r = httptest.NewRequest("PUT", "/api/user/settings/password",
+				strings.NewReader(fmt.Sprintf(`{"password":"%s"}`, item.Password)))
+		} else {
+			r = httptest.NewRequest("PUT", "/api/user/settings/password",
+				strings.NewReader(fmt.Sprintf(`{"password:"%s"}`, item.Password)))
+		}
+
+		r.Header.Set("Content-Type", "application/json")
+
+		w := httptest.NewRecorder()
+
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
+		if !item.IdErr{
+			ctx = context.WithValue(ctx, "Id", item.UserId)
+		}
+		r = r.WithContext(ctx)
+
+		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
+
+			input := &models.UpdatePasswordInput{
+				Password:    item.Password,
+			}
+
+			var err error = nil
+			if item.UpdateErr {
+				err = NoType.New("")
+			}
+
+			gomock.InOrder(
+				mockUserUsecase.EXPECT().UpdatePassword(uint(item.UserId), input).Return(err),
+			)
+
+		}
+
+		userDelivery.UpdatePassword(w, r)
+
+		resp := w.Result()
+		body, _ := ioutil.ReadAll(resp.Body)
+		bodyStr := string(body)
+
+		if item.UpdateErr {
+			var output map[string]interface{}
+
+			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
+			if err != nil {
+				t.Fatalf("[%d] wrong decoding Response: got %+v, err: %v",
+					caseNum, bodyStr, err.Error())
+			}
+
+			status, ok := output["status"]
+			if !ok {
+				t.Fatalf("[%d] wrong Response: got %+v - no status",
+					caseNum, bodyStr)
+			}
+
+			if status == 200 {
+				t.Errorf("[%d] wrong status Response: got %+v, expected not success status",
+					caseNum, status)
+			}
+		} else {
+			if bodyStr != item.Response {
+				t.Errorf("[%d] wrong Response: got %+v, expected %+v",
+					caseNum, bodyStr, item.Response)
+			}
+		}
+
+	}
+}
+
+type TestCaseFollow struct {
+	IsAuth     bool
+	UserId     uint
+	SubId      uint
+	Response   string
+	IdErr	   bool
+	BadIdErr   bool
+	SubIdErr   bool
+	FollowErr  bool
+}
+
+func TestHandler_Follow(t *testing.T) {
+	t.Helper()
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockUserUsecase := userMock.NewMockIUsecase(ctl)
+	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+
+	cases := []TestCaseFollow{
+		TestCaseFollow{
+			IsAuth:     false,
+			UserId:     1,
+			SubId:		2,
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+`,
+		},
+		TestCaseFollow{
+			IsAuth:     true,
+			IdErr:      true,
+			UserId:     1,
+			SubId:		2,
+			Response:	`{"status":500,"body":{"error":"Internal server error"}}
+`,
+		},
+		TestCaseFollow{
+			IsAuth:     true,
+			BadIdErr:   true,
+			UserId:     1,
+			SubId:		2,
+			Response:	`{"status":400,"body":{"error":"Bad id"}}
+`,
+		},
+		TestCaseFollow{
+			IsAuth:     true,
+			SubIdErr:  true,
+			UserId:     1,
+			SubId:		1,
+			Response:	`{"status":400,"body":{"error":"Your id and following id shoudn't match"}}
+`,
+		},
+		TestCaseFollow{
+			IsAuth:     true,
+			FollowErr:   true,
+			UserId:     1,
+			SubId:		2,
+		},
+		TestCaseFollow{
+			IsAuth:     true,
+			UserId:     1,
+			SubId:		2,
+			Response:	`{"status":201,"body":{"message":"Ok"}}
+`,
+		},
+	}
+
+	for caseNum, item := range cases {
+		r := httptest.NewRequest("POST", "/api/user/following/",
 			strings.NewReader(""))
-		r = mux.SetURLVars(r, map[string]string{"id": item.GetID})
+		if !item.BadIdErr {
+			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.SubId)})
+		} else {
+			r = mux.SetURLVars(r, map[string]string{"id": "h-6"})
+		}
+
+		//r.Header.Set("Content-Type", "application/json")
+
 		w := httptest.NewRecorder()
+
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, "isAuth", item.IsAuth)
-		ctx = context.WithValue(ctx, "Id", item.ContextID)
+		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
+		if !item.IdErr{
+			ctx = context.WithValue(ctx, "Id", item.UserId)
+		}
 		r = r.WithContext(ctx)
-		cookie := &http.Cookie{
-			Name:     item.CookieName,
-			Value:    item.Cookie,
-			Expires:  time.Now().Add(10 * time.Hour),
-			HttpOnly: true,
-			Domain:   r.Host,
-		}
-		token := &http.Cookie{
-			Name:     item.TokenName,
-			Value:    item.Token,
-			Expires:  time.Now().Add(10 * time.Hour),
-			HttpOnly: true,
-			Domain:   r.Host,
-		}
-		r.AddCookie(cookie)
-		r.AddCookie(token)
-		//http.Cookie(w, cookie)
 
-		id, err := strconv.Atoi(item.GetID)
-		if item.IsAuth && err == nil {
-			gomock.InOrder(
-				mockUserUsecase.EXPECT().GetById(uint(id)).Return(&item.User, item.ErrGet),
-			)
-			if item.ErrGet == nil && item.ContextID == item.ID && uint(id) == item.ID {
-				gomock.InOrder(
-					mockUserUsecase.EXPECT().Delete(uint(id)).Return(item.ErrUpdate),
-				)
-				if item.ErrUpdate == nil {
-					gomock.InOrder(
-						mockSessionUsecase.EXPECT().Delete("cookie").Return(item.ErrUpdate),
-					)
-				}
+		if item.IsAuth && !item.IdErr && !item.SubIdErr && !item.BadIdErr {
+
+			var err error = nil
+			if item.FollowErr {
+				err = NoType.New("")
 			}
+
+			gomock.InOrder(
+				mockUserUsecase.EXPECT().Follow(item.UserId, item.SubId).Return(err),
+			)
+
 		}
 
-		userDelivery.DeleteUser(w, r)
+		userDelivery.Follow(w, r)
 
-		if w.Code != item.StatusCode {
-			t.Errorf("[%d] wrong StatusCode: got %d, expected %d",
-				caseNum, w.Code, item.StatusCode)
-		}
 		resp := w.Result()
 		body, _ := ioutil.ReadAll(resp.Body)
 		bodyStr := string(body)
-		if bodyStr != item.Response {
-			t.Errorf("[%d] wrong Response: got %+v, expected %+v",
-				caseNum, bodyStr, item.Response)
+
+		if item.FollowErr {
+			var output map[string]interface{}
+
+			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
+			if err != nil {
+				t.Fatalf("[%d] wrong decoding Response: got %+v, err: %v",
+					caseNum, bodyStr, err.Error())
+			}
+
+			status, ok := output["status"]
+			if !ok {
+				t.Fatalf("[%d] wrong Response: got %+v - no status",
+					caseNum, bodyStr)
+			}
+
+			if status == 200 {
+				t.Errorf("[%d] wrong status Response: got %+v, expected not success status",
+					caseNum, status)
+			}
+
+		} else {
+			if bodyStr != item.Response {
+				t.Errorf("[%d] wrong Response: got %+v, expected %+v",
+					caseNum, bodyStr, item.Response)
+			}
 		}
+
 	}
 }
+
+func TestHandler_Unfollow(t *testing.T) {
+	t.Helper()
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockUserUsecase := userMock.NewMockIUsecase(ctl)
+	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+
+	cases := []TestCaseFollow{
+		TestCaseFollow{
+			IsAuth:     false,
+			UserId:     1,
+			SubId:		2,
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+`,
+		},
+		TestCaseFollow{
+			IsAuth:     true,
+			IdErr:      true,
+			UserId:     1,
+			SubId:		2,
+			Response:	`{"status":500,"body":{"error":"Internal server error"}}
+`,
+		},
+		TestCaseFollow{
+			IsAuth:     true,
+			BadIdErr:   true,
+			UserId:     1,
+			SubId:		2,
+			Response:	`{"status":400,"body":{"error":"Bad id"}}
+`,
+		},
+		TestCaseFollow{
+			IsAuth:     true,
+			SubIdErr:  true,
+			UserId:     1,
+			SubId:		1,
+			Response:	`{"status":400,"body":{"error":"Your id and unfollowing id shoudn't match"}}
+`,
+		},
+		TestCaseFollow{
+			IsAuth:     true,
+			FollowErr:   true,
+			UserId:     1,
+			SubId:		2,
+		},
+		TestCaseFollow{
+			IsAuth:     true,
+			UserId:     1,
+			SubId:		2,
+			Response:	`{"status":200,"body":{"message":"Ok"}}
+`,
+		},
+	}
+
+	for caseNum, item := range cases {
+		r := httptest.NewRequest("POST", "/api/user/unfollowing/",
+			strings.NewReader(""))
+		if !item.BadIdErr {
+			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.SubId)})
+		} else {
+			r = mux.SetURLVars(r, map[string]string{"id": "h-6"})
+		}
+
+		w := httptest.NewRecorder()
+
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
+		if !item.IdErr{
+			ctx = context.WithValue(ctx, "Id", item.UserId)
+		}
+		r = r.WithContext(ctx)
+
+		if item.IsAuth && !item.IdErr && !item.SubIdErr && !item.BadIdErr {
+
+			var err error = nil
+			if item.FollowErr {
+				err = NoType.New("")
+			}
+
+			gomock.InOrder(
+				mockUserUsecase.EXPECT().Unfollow(item.UserId, item.SubId).Return(err),
+			)
+
+		}
+
+		userDelivery.Unfollow(w, r)
+
+		resp := w.Result()
+		body, _ := ioutil.ReadAll(resp.Body)
+		bodyStr := string(body)
+
+		if item.FollowErr {
+			var output map[string]interface{}
+
+			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
+			if err != nil {
+				t.Fatalf("[%d] wrong decoding Response: got %+v, err: %v",
+					caseNum, bodyStr, err.Error())
+			}
+
+			status, ok := output["status"]
+			if !ok {
+				t.Fatalf("[%d] wrong Response: got %+v - no status",
+					caseNum, bodyStr)
+			}
+
+			if status == 200 || status == 201 {
+				t.Errorf("[%d] wrong status Response: got %+v, expected not success status",
+					caseNum, status)
+			}
+		} else {
+			if bodyStr != item.Response {
+				t.Errorf("[%d] wrong Response: got %+v, expected %+v",
+					caseNum, bodyStr, item.Response)
+			}
+		}
+
+	}
+}
+
+type TestCaseGet struct {
+	IsAuth     bool
+	UserId     uint
+	Response   string
+	GetErr     bool
+	Users      []*models.User
+}
+
+func TestHandler_GetSubscribers(t *testing.T) {
+	t.Helper()
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockUserUsecase := userMock.NewMockIUsecase(ctl)
+	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+
+	cases := []TestCaseGet{
+		TestCaseGet{
+			IsAuth:     false,
+			UserId:     1,
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+`,
+		},
+		TestCaseGet{
+			IsAuth:     true,
+			GetErr:     true,
+			UserId:     1,
+			Users:	    nil,
+		},
+		TestCaseGet{
+			IsAuth:     true,
+			UserId:     1,
+			Users:		[]*models.User{
+				&models.User{
+					Id:            2,
+					Login:         "login1",
+					About:         "about me",
+					Avatar:        "avatar.jpg",
+					Subscribers:   5,
+					Subscriptions: 1,
+				},
+				&models.User{
+					Id:            3,
+					Login:         "login2",
+					About:         "about me",
+					Avatar:        "avatar.jpg",
+					Subscribers:   6,
+					Subscriptions: 2,
+				},
+			},
+			Response:	`{"status":200,"body":[{"id":2,"login":"login1","about":"about me","avatar":"avatar.jpg","subscriptions":1,"subscribers":5},` +
+				`{"id":3,"login":"login2","about":"about me","avatar":"avatar.jpg","subscriptions":2,"subscribers":6}]}
+`,
+		},
+	}
+
+	for caseNum, item := range cases {
+		r := httptest.NewRequest("GET", fmt.Sprintf("/api/user/subscribers/%d/?start=1&limit=15", item.UserId),
+			strings.NewReader(""))
+		r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.UserId)})
+
+		//r.Header.Set("Content-Type", "application/json")
+
+		w := httptest.NewRecorder()
+
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
+		r = r.WithContext(ctx)
+
+		if item.IsAuth {
+
+			var err error = nil
+			if item.GetErr {
+				err = NoType.New("")
+			}
+
+			gomock.InOrder(
+				mockUserUsecase.EXPECT().GetSubscribers(item.UserId, 1, 15).Return(item.Users, err),
+			)
+
+		}
+
+		userDelivery.GetSubscribers(w, r)
+
+		resp := w.Result()
+		body, _ := ioutil.ReadAll(resp.Body)
+		bodyStr := string(body)
+
+		if item.GetErr {
+			var output map[string]interface{}
+
+			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
+			if err != nil {
+				t.Fatalf("[%d] wrong decoding Response: got %+v, err: %v",
+					caseNum, bodyStr, err.Error())
+			}
+
+			status, ok := output["status"]
+			if !ok {
+				t.Fatalf("[%d] wrong Response: got %+v - no status",
+					caseNum, bodyStr)
+			}
+
+			if status == 200 {
+				t.Errorf("[%d] wrong status Response: got %+v, expected not success status",
+					caseNum, status)
+			}
+
+		} else {
+			if bodyStr != item.Response {
+				t.Errorf("[%d] wrong Response: got %+v, expected %+v",
+					caseNum, bodyStr, item.Response)
+			}
+		}
+
+	}
+}
+
+func TestHandler_GetSubscriptions(t *testing.T) {
+	t.Helper()
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockUserUsecase := userMock.NewMockIUsecase(ctl)
+	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+
+	cases := []TestCaseGet{
+		TestCaseGet{
+			IsAuth:     false,
+			UserId:     1,
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+`,
+		},
+		TestCaseGet{
+			IsAuth:     true,
+			GetErr:     true,
+			UserId:     1,
+			Users:	    nil,
+		},
+		TestCaseGet{
+			IsAuth:     true,
+			UserId:     1,
+			Users:		[]*models.User{
+				&models.User{
+					Id:            2,
+					Login:         "login1",
+					About:         "about me",
+					Avatar:        "avatar.jpg",
+					Subscribers:   5,
+					Subscriptions: 1,
+				},
+				&models.User{
+					Id:            3,
+					Login:         "login2",
+					About:         "about me",
+					Avatar:        "avatar.jpg",
+					Subscribers:   6,
+					Subscriptions: 2,
+				},
+			},
+			Response:	`{"status":200,"body":[{"id":2,"login":"login1","about":"about me","avatar":"avatar.jpg","subscriptions":1,"subscribers":5},` +
+				`{"id":3,"login":"login2","about":"about me","avatar":"avatar.jpg","subscriptions":2,"subscribers":6}]}
+`,
+		},
+	}
+
+	for caseNum, item := range cases {
+		r := httptest.NewRequest("GET", fmt.Sprintf("/api/user/subscriptions/%d/?start=1&limit=15", item.UserId),
+			strings.NewReader(""))
+		r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.UserId)})
+
+		//r.Header.Set("Content-Type", "application/json")
+
+		w := httptest.NewRecorder()
+
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
+		r = r.WithContext(ctx)
+
+		if item.IsAuth {
+
+			var err error = nil
+			if item.GetErr {
+				err = NoType.New("")
+			}
+
+			gomock.InOrder(
+				mockUserUsecase.EXPECT().GetSubscribers(item.UserId, 1, 15).Return(item.Users, err),
+			)
+
+		}
+
+		userDelivery.GetSubscribers(w, r)
+
+		resp := w.Result()
+		body, _ := ioutil.ReadAll(resp.Body)
+		bodyStr := string(body)
+
+		if item.GetErr {
+			var output map[string]interface{}
+
+			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
+			if err != nil {
+				t.Fatalf("[%d] wrong decoding Response: got %+v, err: %v",
+					caseNum, bodyStr, err.Error())
+			}
+
+			status, ok := output["status"]
+			if !ok {
+				t.Fatalf("[%d] wrong Response: got %+v - no status",
+					caseNum, bodyStr)
+			}
+
+			if status == 200 {
+				t.Errorf("[%d] wrong status Response: got %+v, expected not success status",
+					caseNum, status)
+			}
+
+		} else {
+			if bodyStr != item.Response {
+				t.Errorf("[%d] wrong Response: got %+v, expected %+v",
+					caseNum, bodyStr, item.Response)
+			}
+		}
+
+	}
+}
+
+
