@@ -106,7 +106,7 @@ func main() {
 	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.Update).Methods("PUT")
 	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.Delete).Methods("DELETE")
 	r.HandleFunc("/api/board/{id:[0-9]+}", boardDelivery.GetBoard).Methods("GET")
-	r.HandleFunc("/api/board/name/user/{id:[0-9]+}", boardDelivery.GetBoard).Methods("GET")
+	r.HandleFunc("/api/board/name/user/{id:[0-9]+}", boardDelivery.GetNameBoard).Methods("GET")
 	r.HandleFunc("/api/board/user/{id:[0-9]+}", boardDelivery.Fetch).Methods("GET")
 
 	r.HandleFunc("/api/comment", commentDelivery.Create).Methods("POST")
