@@ -10,6 +10,7 @@ const (
 	PinById   = "SELECT * FROM pins WHERE id = $1"
 	PinByUser = "SELECT * FROM pins WHERE user_id = $1"
 	PinByName = "SELECT * FROM pins WHERE name = $1"
+	PinByBoard = "SELECT * FROM pins WHERE board_id = $1"
 )
 
 const (

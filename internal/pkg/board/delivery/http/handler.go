@@ -124,7 +124,7 @@ func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	board, err := bh.boardUsecase.GetById(uint(id))
+	board, err := bh.boardUsecase.GetByNameId(uint(id))
 	if err != nil {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return

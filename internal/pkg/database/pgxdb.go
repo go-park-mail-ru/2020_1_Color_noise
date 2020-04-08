@@ -170,6 +170,26 @@ func (db *PgxDB) GetPinsByName(pin models.DataBasePin) ([]*models.Pin, error) {
 	return res, nil
 }
 
+func (db *PgxDB) GetPinsByBoardID(board models.DataBaseBoard) ([]*models.Pin, error) {
+	var res []*models.Pin
+
+	row, err := db.dbPool.Query(PinByBoard, board.Id)
+	if err != nil {
+		return nil, err
+	}
+	for row.Next() {
+		var tmp models.DataBasePin
+		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt)
+		if ok != nil {
+			return nil, ok
+		}
+		p := models.GetPin(tmp)
+		res = append(res, &p)
+	}
+	return res, nil
+}
+
 func (db *PgxDB) CreateUser(user models.DataBaseUser) (uint, error) {
 	res := db.dbPool.QueryRow(InsertUser, user.Email, user.Login, user.EncryptedPassword, user.About,
 		user.Avatar, user.Subscribers, user.Subscriptions, time.Now())
@@ -549,7 +569,6 @@ func (db *PgxDB) GetBoardsByName(board models.DataBaseBoard, start, limit int) (
 
 func (db *PgxDB) GetBoardLastPin(board models.DataBaseBoard) (models.Pin, error) {
 	var res models.DataBasePin
-
 	row := db.dbPool.QueryRow(LastPin, board.Id)
 	err := row.Scan(&res.Id, &res.UserId, &res.Name, &res.Description, &res.Image, &res.BoardId, &res.CreatedAt)
 	if err != nil {
@@ -588,7 +607,7 @@ func (db *PgxDB) GetSessionByCookie(s models.DataBaseSession) (models.Session, e
 	return models.GetSession(session), nil
 }
 
-func (db *PgxDB) GetSubFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error){
+func (db *PgxDB) GetSubFeed(user models.DataBaseUser, start, limit int) ([]*models.Pin, error) {
 	var res []*models.Pin
 
 	row, err := db.dbPool.Query(Feed, user.Id, limit, start)
@@ -608,7 +627,7 @@ func (db *PgxDB) GetSubFeed( user models.DataBaseUser, start, limit int) ([]*mod
 	return res, nil
 }
 
-func (db *PgxDB) GetMainFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error){
+func (db *PgxDB) GetMainFeed(user models.DataBaseUser, start, limit int) ([]*models.Pin, error) {
 	var res []*models.Pin
 
 	row, err := db.dbPool.Query(Main, limit)
@@ -628,7 +647,7 @@ func (db *PgxDB) GetMainFeed( user models.DataBaseUser, start, limit int) ([]*mo
 	return res, nil
 }
 
-func (db *PgxDB) GetRecFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error){
+func (db *PgxDB) GetRecFeed(user models.DataBaseUser, start, limit int) ([]*models.Pin, error) {
 	var res []*models.Pin
 
 	row, err := db.dbPool.Query(Recommendation, limit, start)
@@ -648,7 +667,7 @@ func (db *PgxDB) GetRecFeed( user models.DataBaseUser, start, limit int) ([]*mod
 	return res, nil
 }
 
-func (db *PgxDB) GetNotifications( user models.DataBaseUser) ([]*models.Notification, error){
+func (db *PgxDB) GetNotifications(user models.DataBaseUser) ([]*models.Notification, error) {
 	var res []*models.Notification
 
 	row, err := db.dbPool.Query(GetNoti, user.Id)
@@ -669,11 +688,11 @@ func (db *PgxDB) GetNotifications( user models.DataBaseUser) ([]*models.Notifica
 	return res, nil
 }
 
-func (db *PgxDB) PutNotifications(com models.DataBaseComment) (uint, error){
+func (db *PgxDB) PutNotifications(com models.DataBaseComment) (uint, error) {
 
 	text := "new comment on your pin, pin №" + fmt.Sprint(com.PinId)
-	pin, _ := db.GetPinById(models.DataBasePin{Id:com.PinId})
-	res := db.dbPool.QueryRow(PutNoti, pin.UserId, text, com.UserId,  time.Now())
+	pin, _ := db.GetPinById(models.DataBasePin{Id: com.PinId})
+	res := db.dbPool.QueryRow(PutNoti, pin.UserId, text, com.UserId, time.Now())
 	var id uint
 	err := res.Scan(&id)
 	if err != nil {

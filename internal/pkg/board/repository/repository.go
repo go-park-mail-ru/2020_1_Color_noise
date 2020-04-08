@@ -4,6 +4,7 @@ import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
+	"log"
 	"sync"
 )
 
@@ -41,9 +42,10 @@ func (br *Repository) GetByID(id uint) (*models.Board, error) {
 		return nil, BoardNotFound.Newf("Board not found, board id: %d", id)
 	}
 
-	pin, err := br.db.GetBoardLastPin(b)
+	pins, err := br.db.GetPinsByBoardID(b)
+	log.Print(pins, err)
 	if err == nil {
-		board.LastPin = pin
+		board.Pins = pins
 	}
 
 	return &board, err
@@ -68,6 +70,24 @@ func (br *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.
 	}
 
 	return boards, err
+}
+
+func (br *Repository) GetByNameID(id uint) (*models.Board, error) {
+
+	b := models.DataBaseBoard{
+		Id: id,
+	}
+	board, err := br.db.GetBoardById(b)
+	if err != nil {
+		return nil, BoardNotFound.Newf("Board not found, board id: %d", id)
+	}
+
+	pin, err := br.db.GetBoardLastPin(b)
+	if err == nil {
+		board.LastPin = pin
+	}
+
+	return &board, err
 }
 
 func (br *Repository) GetByName(name string, start int, limit int) ([]*models.Board, error) {
