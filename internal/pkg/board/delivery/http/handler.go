@@ -94,13 +94,33 @@ func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	respPin := make([]*models.ResponsePin, 0)
+
+	for _, pin := range board.Pins {
+		respPin = append(respPin, &models.ResponsePin{
+			Id:          pin.Id,
+			BoardId:     pin.BoardId,
+			UserId:      pin.UserId,
+			Name:        pin.Name,
+			Description: pin.Description,
+			Image:       pin.Image,
+		})
+	}
+
 	resp := &models.ResponseBoard{
 		Id:          board.Id,
 		UserId:      board.UserId,
 		Name:        board.Name,
 		Description: board.Description,
-		Pins:        board.Pins,
-		LastPin:     &board.LastPin,
+		Pins:        respPin,
+		/*LastPin:     &models.ResponsePin{
+			Id:          board.LastPin.Id,
+			BoardId:     board.LastPin.BoardId,
+			UserId:      board.LastPin.UserId,
+			Name:        board.LastPin.Name,
+			Description: board.LastPin.Description,
+			Image:       board.LastPin.Image,
+		},*/
 	}
 
 	response.Respond(w, http.StatusOK, resp)
@@ -132,9 +152,17 @@ func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 
 	resp := &models.ResponseBoard{
 		Id:          board.Id,
+		UserId:      board.UserId,
 		Name:        board.Name,
 		Description: board.Description,
-		LastPin:     &board.LastPin,
+		LastPin:     &models.ResponsePin{
+			Id:          board.LastPin.Id,
+			BoardId:     board.LastPin.BoardId,
+			UserId:      board.LastPin.UserId,
+			Name:        board.LastPin.Name,
+			Description: board.LastPin.Description,
+			Image:       board.LastPin.Image,
+		},
 	}
 
 	response.Respond(w, http.StatusOK, resp)
@@ -179,8 +207,14 @@ func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 			UserId:      board.UserId,
 			Name:        board.Name,
 			Description: board.Description,
-			Pins:        board.Pins,
-			LastPin:     &board.LastPin,
+			LastPin:     &models.ResponsePin{
+				Id:          board.LastPin.Id,
+				BoardId:     board.LastPin.BoardId,
+				UserId:      board.LastPin.UserId,
+				Name:        board.LastPin.Name,
+				Description: board.LastPin.Description,
+				Image:       board.LastPin.Image,
+			},
 		})
 	}
 

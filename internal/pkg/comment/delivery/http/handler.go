@@ -43,7 +43,7 @@ func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
-		err = error.Wrap(err, "Decoding error during creation comment")
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation comment"), "Wrong body of request")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -98,7 +98,7 @@ func (ch *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
 		UserId:    comment.UserId,
 		PindId:    comment.PinId,
 		Text:      comment.Text,
-		CreatedAt: comment.CreatedAt,
+		CreatedAt: &comment.CreatedAt,
 	}
 
 	response.Respond(w, http.StatusOK, resp)
@@ -143,7 +143,7 @@ func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 			UserId:    comment.UserId,
 			PindId:    comment.PinId,
 			Text:      comment.Text,
-			CreatedAt: comment.CreatedAt,
+			CreatedAt: &comment.CreatedAt,
 		})
 	}
 

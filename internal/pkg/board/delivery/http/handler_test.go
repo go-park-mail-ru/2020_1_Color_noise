@@ -234,7 +234,6 @@ func TestHandler_GetBoard(t *testing.T) {
 		},
 		TestCaseGetBoard{
 			IsAuth:     true,
-			GetErr:     true,
 			Board:      &models.Board{
 				Id:          2,
 				UserId:      3,
@@ -354,7 +353,6 @@ func TestHandler_GetNameBoard(t *testing.T) {
 		},
 		TestCaseGetBoard{
 			IsAuth:     true,
-			GetErr:     true,
 			Board:      &models.Board{
 				Id:          2,
 				UserId:      3,
@@ -369,7 +367,7 @@ func TestHandler_GetNameBoard(t *testing.T) {
 						Image:       "image.jpg",
 				},
 			},
-			Response: `{"status":200,"body":{"id":2,"user_id":3,"name":"name","description":"desc","last_pin":{"id":1,"user_id":3,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"}}
+			Response: `{"status":200,"body":{"id":2,"user_id":3,"name":"name","description":"desc","last_pin":{"id":1,"user_id":3,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"}}}
 `,
 		},
 	}
@@ -482,7 +480,6 @@ func TestHandler_Fetch(t *testing.T) {
 		},
 		TestCaseFetch{
 			IsAuth:     true,
-			GetErr:     true,
 			UserId:     3,
 			Start:		1,
 			Limit:		15,
@@ -516,8 +513,8 @@ func TestHandler_Fetch(t *testing.T) {
 					},
 				},
 			},
-			Response: `{"status":200,"body":[{{"id":2,"user_id":3,"name":"name1","description":"desc1","last_pin":{"id":1,"user_id":3,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"},` +
-				`{"id":4,"user_id":3,"name":"name2","description":"desc2","last_pin":{"id":6,"user_id":3,"board_id":4,"name":"name2","description":"desc2","image":"image.jpg"}]}
+			Response: `{"status":200,"body":[{"id":2,"user_id":3,"name":"name1","description":"desc1","last_pin":{"id":1,"user_id":3,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"}},` +
+				`{"id":4,"user_id":3,"name":"name2","description":"desc2","last_pin":{"id":6,"user_id":3,"board_id":4,"name":"name2","description":"desc2","image":"image.jpg"}}]}
 `,
 		},
 	}

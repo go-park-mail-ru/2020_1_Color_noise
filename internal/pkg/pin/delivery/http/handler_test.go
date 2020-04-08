@@ -267,7 +267,6 @@ func TestHandler_GetPin(t *testing.T) {
 		},
 		TestCaseGetPin{
 			IsAuth:     true,
-			GetErr:     true,
 			Pin:        &models.Pin{
 				Id:          1,
 				BoardId:     2,
@@ -388,7 +387,6 @@ func TestHandler_Fetch(t *testing.T) {
 		},
 		TestCaseFetch{
 			IsAuth:     true,
-			GetErr:     true,
 			UserId:     1,
 			Start:		1,
 			Limit:		15,

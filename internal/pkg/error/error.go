@@ -1,11 +1,11 @@
 package error
 
 import (
+	"2020_1_Color_noise/internal/pkg/response"
 	"fmt"
 	"github.com/pkg/errors"
 	"log"
 	"net/http"
-	"2020_1_Color_noise/internal/pkg/response"
 )
 
 const(
@@ -24,6 +24,7 @@ const(
 	EmailIsExist
 	Unauthorized
 	TooMuchSize
+	SearchNotFound
 )
 
 type ErrorType uint
@@ -105,12 +106,15 @@ func WithMessage(err error, message string) error {
 func ErrorHandler(w http.ResponseWriter, err error) {
 	var status int
 	var message string
-
+	
 	e, _ := err.(Error)
 	switch GetType(err) {
 	case BadRequest:
 		status = http.StatusBadRequest
 		message = e.message
+	case SearchNotFound:
+		status = http.StatusNotFound
+		message = "Not found"
 	case UserNotFound:
 		status = http.StatusNotFound
 		message = "User is not found"
@@ -149,7 +153,7 @@ func ErrorHandler(w http.ResponseWriter, err error) {
 		message = "Internal server error"
 	}
 
-	log.Println(e.Error())
+	log.Println(err.Error())
 
 	response.Respond(w, status, map[string]string {
 		"error": message,
