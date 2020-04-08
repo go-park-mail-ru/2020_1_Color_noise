@@ -10,6 +10,7 @@ const (
 	PinById   = "SELECT * FROM pins WHERE id = $1"
 	PinByUser = "SELECT * FROM pins WHERE user_id = $1"
 	PinByName = "SELECT * FROM pins WHERE name = $1"
+	PinByBoard = "SELECT * FROM pins WHERE board_id = $1"
 )
 
 const (
@@ -70,7 +71,7 @@ const (
 	BoardsByUserId     = "SELECT * FROM boards WHERE user_id = $1 LIMIT $2 OFFSET $3"
 	BoardsByNameSearch = "SELECT * FROM boards WHERE name = $1 LIMIT $2 OFFSET $3"
 	LastPin            = "SELECT id, user_id, name, description, image, board_id, created_at " +
-		"FROM public.pins WHERE board_id = $1 ORDER BY created_at DESC LIMIT 1;"
+		"FROM pins WHERE board_id = $1 ORDER BY created_at DESC LIMIT 1;"
 )
 
 const (

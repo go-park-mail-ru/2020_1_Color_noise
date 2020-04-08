@@ -40,6 +40,15 @@ func (bu *Usecase) GetById(id uint) (*models.Board, error) {
 	return board, nil
 }
 
+func (bu *Usecase) GetByNameId(id uint) (*models.Board, error){
+	board, err := bu.repo.GetByNameID(id)
+	if err != nil {
+		return nil, Wrapf(err, "Getting board by id error, pinId: %s", id)
+	}
+
+	return board, nil
+}
+
 func (bu *Usecase) GetByUserId(id uint, start int, limit int) ([]*models.Board, error) {
 	boards, err := bu.repo.GetByUserID(id, start, limit)
 	if err != nil {
