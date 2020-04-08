@@ -43,12 +43,12 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		err = error.Wrap(err, "Decoding error during creation pin")
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation pin"), "Wrong body of request")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	//_, err = govalidator.ValidateStruct(input)
+	_, err = govalidator.ValidateStruct(input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
 			"Name shouldn't be empty and longer 60 characters. "+
@@ -183,6 +183,7 @@ func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation pin"), "Wrong body of request")
 		err = error.Wrap(err, "Decoding error during updating pin")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return

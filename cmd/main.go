@@ -123,7 +123,14 @@ func main() {
 
 	r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)
+
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+	/*r.PathPrefix("/subscriptions[/]+").Handler(http.FileServer(http.Dir("./static/")))
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))*/
 
 	srv := &http.Server{
 		Handler: r,

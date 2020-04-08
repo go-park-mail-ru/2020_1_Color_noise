@@ -4,13 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-
 	//"github.com/gorilla/mux"
 	"net/http"
 
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/board/mock"
 	. "2020_1_Color_noise/internal/pkg/error"
-	"2020_1_Color_noise/internal/pkg/pin/mock"
 	"context"
 	"io/ioutil"
 	//"io/ioutil"
@@ -26,7 +25,7 @@ import (
 type TestCaseCreate struct {
 	IsAuth     bool
 	UserId     uint
-	Pin		   *models.Pin
+	Board	   *models.Board
 	Response   string
 	IdErr      bool
 	InputErr   bool
@@ -39,117 +38,86 @@ func TestHandler_Create(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockPinUsecase := mock.NewMockIUsecase(ctl)
-	pinDelivery := NewHandler(mockPinUsecase)
+	mockBoardUsecase := mock.NewMockIUsecase(ctl)
+	boardDelivery := NewHandler(mockBoardUsecase)
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
-			Pin:        &models.Pin{},
+			Board:        &models.Board{},
 			IsAuth:     false,
+			UserId:     1,
 			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
 		TestCaseCreate{
 			IsAuth:     true,
 			IdErr:      true,
-			Pin:        &models.Pin{},
+			Board:      &models.Board{},
+			UserId:     1,
 			Response:	`{"status":500,"body":{"error":"Internal server error"}}
 `,
 		},
 		TestCaseCreate{
 			IsAuth:     true,
 			InputErr:   true,
-			Pin:        &models.Pin{},
+			UserId:     1,
+			Board:      &models.Board{},
 			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}
 `,
 		},
 		TestCaseCreate{
 			IsAuth:     true,
 			ValidErr:   true,
-			Pin:		&models.Pin{
+			UserId:     1,
+			Board:		&models.Board{
 				Name:	     "",
 				Description: "desc",
-				Image:		 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
-				"TUUH1ggDCwMADQ4NnwAAAFVJREFUGJWNkMEJADEIBEcbSDkXUnfSg" +
-				"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
-				"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
 			},
 			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
-				`Description shouldn't be empty and longer 1000 characters. `+
-				`Image should be base64"}}
+				`Description shouldn't be empty and longer 1000 characters."}}
 `,
 		},
 		TestCaseCreate{
 			IsAuth:     true,
 			ValidErr:   true,
-			Pin:		&models.Pin{
+			UserId:     1,
+			Board:		&models.Board{
 				Name:	     "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
 				Description: "desc",
-				Image:		 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
-					"TUUH1ggDCwMADQ4NnwAAAFVJREFUGJWNkMEJADEIBEcbSDkXUnfSg" +
-					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
-					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
 			},
 			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
-				`Description shouldn't be empty and longer 1000 characters. `+
-				`Image should be base64"}}
+				`Description shouldn't be empty and longer 1000 characters."}}
 `,
 		},
 		TestCaseCreate{
 			IsAuth:     true,
 			ValidErr:   true,
-			Pin:		&models.Pin{
+			UserId:     1,
+			Board:		&models.Board{
 				Name:	     "name",
 				Description: "",
-				Image:		 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
-					"TUUH1ggDCwMADQ4NnwAAAFVJREFUGJWNkMEJADEIBEcbSDkXUnfSg" +
-					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
-					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
 			},
 			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
-				`Description shouldn't be empty and longer 1000 characters. `+
-				`Image should be base64"}}
-`,
-		},
-		TestCaseCreate{
-			IsAuth:     true,
-			ValidErr:   true,
-			Pin:		&models.Pin{
-				Name:	     "name",
-				Description: "desc",
-				Image:		 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
-					"TUUH1ggDCwMADQ4NnwAAAFVJREFUGJWNkMEJADEIBEcbSDkXUnfSg" +
-					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
-					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII",
-			},
-			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
-				`Description shouldn't be empty and longer 1000 characters. `+
-				`Image should be base64"}}
+				`Description shouldn't be empty and longer 1000 characters."}}
 `,
 		},
 		TestCaseCreate{
 			IsAuth:     true,
 			CreateErr:   true,
-			Pin:		&models.Pin{
+			UserId:     1,
+			Board:		&models.Board{
 				Id:			 1,
 				Name:	     "name",
 				Description: "desc",
-				Image:		 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
-					"TUUH1ggDCwMADQ4NnwAAAFVJREFUGJWNkMEJADEIBEcbSDkXUnfSg" +
-					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
-					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
 			},
 		},
 		TestCaseCreate{
 			IsAuth:     true,
-			Pin:		&models.Pin{
+			UserId:     1,
+			Board:		&models.Board{
 				Id:			 1,
 				Name:	     "name",
 				Description: "desc",
-				Image:		 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
-					"TUUH1ggDCwMADQ4NnwAAAFVJREFUGJWNkMEJADEIBEcbSDkXUnfSg" +
-					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
-					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
 			},
 			Response:	`{"status":201,"body":{"id":1}}
 `,
@@ -159,11 +127,11 @@ func TestHandler_Create(t *testing.T) {
 	for caseNum, item := range cases {
 		var r *http.Request
 		if item.InputErr == false {
-			r = httptest.NewRequest("POST", "/api/pin",
-				strings.NewReader(fmt.Sprintf(`{"name":"%s", "description":"%s", "image":"%s"}`, item.Pin.Name, item.Pin.Description, item.Pin.Image)))
+			r = httptest.NewRequest("POST", "/api/board",
+				strings.NewReader(fmt.Sprintf(`{"name":"%s", "description":"%s"}`, item.Board.Name, item.Board.Description)))
 		} else {
 			r = httptest.NewRequest("POST", "/api/pin",
-				strings.NewReader(fmt.Sprintf(`{"name:"%s", "description":"%s", "image":"%s"}`, item.Pin.Name, item.Pin.Description, item.Pin.Image)))
+				strings.NewReader(fmt.Sprintf(`{"name:"%s", "description":"%s"}`, item.Board.Name, item.Board.Description)))
 		}
 
 		r.Header.Set("Content-Type", "application/json")
@@ -179,10 +147,9 @@ func TestHandler_Create(t *testing.T) {
 
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
 
-			input := &models.InputPin{
-				Name:        	item.Pin.Name,
-				Description:    item.Pin.Description,
-				Image:          item.Pin.Image,
+			input := &models.InputBoard{
+				Name:        	item.Board.Name,
+				Description:    item.Board.Description,
 			}
 
 			var err error = nil
@@ -191,11 +158,11 @@ func TestHandler_Create(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockPinUsecase.EXPECT().Create(input, item.UserId).Return(uint(item.Pin.Id), err),
+				mockBoardUsecase.EXPECT().Create(input, item.UserId).Return(uint(item.Board.Id), err),
 			)
 		}
 
-		pinDelivery.Create(w, r)
+		boardDelivery.Create(w, r)
 
 		resp := w.Result()
 		body, _ := ioutil.ReadAll(resp.Body)
@@ -229,62 +196,79 @@ func TestHandler_Create(t *testing.T) {
 	}
 }
 
-type TestCaseGetPin struct {
+type TestCaseGetBoard struct {
 	IsAuth     bool
 	UserId     uint
-	Pin		   *models.Pin
+	Board      *models.Board
 	Response   string
 	IdErr      bool
 	GetErr     bool
 }
 
-func TestHandler_GetPin(t *testing.T) {
+func TestHandler_GetBoard(t *testing.T) {
 	t.Helper()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockPinUsecase := mock.NewMockIUsecase(ctl)
-	pinDelivery := NewHandler(mockPinUsecase)
+	mockBoardUsecase := mock.NewMockIUsecase(ctl)
+	boardDelivery := NewHandler(mockBoardUsecase)
 
-	cases := []TestCaseGetPin{
-		TestCaseGetPin{
+	cases := []TestCaseGetBoard{
+		TestCaseGetBoard{
 			IsAuth:     false,
-			Pin:        &models.Pin{},
+			Board:       &models.Board{},
 			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
-		TestCaseGetPin{
+		TestCaseGetBoard{
 			IsAuth:     true,
 			IdErr:      true,
-			Pin:        &models.Pin{},
+			Board:       &models.Board{},
 			Response:	`{"status":400,"body":{"error":"Bad id"}}
 `,
 		},
-		TestCaseGetPin{
+		TestCaseGetBoard{
 			IsAuth:     true,
 			GetErr:     true,
-			Pin:        &models.Pin{},
+			Board:       &models.Board{},
 		},
-		TestCaseGetPin{
+		TestCaseGetBoard{
 			IsAuth:     true,
 			GetErr:     true,
-			Pin:        &models.Pin{
-				Id:          1,
-				BoardId:     2,
+			Board:      &models.Board{
+				Id:          2,
 				UserId:      3,
 				Name:        "name",
 				Description: "desc",
-				Image:       "image.jpg",
+				Pins:        []*models.Pin{
+					&models.Pin{
+						Id:          1,
+						BoardId:     2,
+						UserId:      3,
+						Name:        "name1",
+						Description: "desc1",
+						Image:       "image.jpg",
+					},
+					&models.Pin{
+						Id:          2,
+						BoardId:     2,
+						UserId:      3,
+						Name:        "name2",
+						Description: "desc2",
+						Image:       "image.jpg",
+					},
+				},
 			},
-			Response: `{"status":200,"body":{"id":1,"user_id":3,"board_id":2,"name":"name","description":"desc","image":"image.jpg"}}
+			Response: `{"status":200,"body":{"id":2,"user_id":3,"name":"name","description":"desc","pins":[{"id":1,"user_id":3,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"},` +
+				`{"id":2,"user_id":3,"board_id":2,"name":"name2","description":"desc2","image":"image.jpg"}]}}
 `,
 		},
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("GET", "/api/pin/", strings.NewReader(""))
+		r := httptest.NewRequest("GET", "/api/board/", strings.NewReader(""))
 		if !item.IdErr {
-			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.Pin.Id)})
+			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.Board.Id)})
 		} else {
 			r = mux.SetURLVars(r, map[string]string{"id": "j"})
 		}
@@ -303,11 +287,120 @@ func TestHandler_GetPin(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockPinUsecase.EXPECT().GetById(item.Pin.Id).Return(item.Pin, err),
+				mockBoardUsecase.EXPECT().GetById(item.Board.Id).Return(item.Board, err),
 			)
 		}
 
-		pinDelivery.GetPin(w, r)
+		boardDelivery.GetBoard(w, r)
+
+		resp := w.Result()
+		body, _ := ioutil.ReadAll(resp.Body)
+		bodyStr := string(body)
+
+		if item.GetErr {
+			var output map[string]interface{}
+
+			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
+			if err != nil {
+				t.Fatalf("[%d] wrong decoding Response: got %+v, err: %v",
+					caseNum, bodyStr, err.Error())
+			}
+
+			status, ok := output["status"]
+			if !ok {
+				t.Fatalf("[%d] wrong Response: got %+v - no status",
+					caseNum, bodyStr)
+			}
+
+			if status == 200 {
+				t.Errorf("[%d] wrong status Response: got %+v, expected not success status",
+					caseNum, status)
+			}
+		} else {
+			if bodyStr != item.Response {
+				t.Errorf("[%d] wrong Response: got %+v, expected %+v",
+					caseNum, bodyStr, item.Response)
+			}
+		}
+	}
+}
+
+func TestHandler_GetNameBoard(t *testing.T) {
+	t.Helper()
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	mockBoardUsecase := mock.NewMockIUsecase(ctl)
+	boardDelivery := NewHandler(mockBoardUsecase)
+
+	cases := []TestCaseGetBoard{
+		TestCaseGetBoard{
+			IsAuth:     false,
+			Board:       &models.Board{},
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+`,
+		},
+		TestCaseGetBoard{
+			IsAuth:     true,
+			IdErr:      true,
+			Board:       &models.Board{},
+			Response:	`{"status":400,"body":{"error":"Bad id"}}
+`,
+		},
+		TestCaseGetBoard{
+			IsAuth:     true,
+			GetErr:     true,
+			Board:       &models.Board{},
+		},
+		TestCaseGetBoard{
+			IsAuth:     true,
+			GetErr:     true,
+			Board:      &models.Board{
+				Id:          2,
+				UserId:      3,
+				Name:        "name",
+				Description: "desc",
+				LastPin:      models.Pin{
+						Id:          1,
+						BoardId:     2,
+						UserId:      3,
+						Name:        "name1",
+						Description: "desc1",
+						Image:       "image.jpg",
+				},
+			},
+			Response: `{"status":200,"body":{"id":2,"user_id":3,"name":"name","description":"desc","last_pin":{"id":1,"user_id":3,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"}}
+`,
+		},
+	}
+
+	for caseNum, item := range cases {
+		r := httptest.NewRequest("GET", "/api/board/name/user/", strings.NewReader(""))
+		if !item.IdErr {
+			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.Board.Id)})
+		} else {
+			r = mux.SetURLVars(r, map[string]string{"id": "j"})
+		}
+
+		w := httptest.NewRecorder()
+
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
+		r = r.WithContext(ctx)
+
+		if item.IsAuth && !item.IdErr {
+
+			var err error = nil
+			if item.GetErr {
+				err = NoType.New("")
+			}
+
+			gomock.InOrder(
+				mockBoardUsecase.EXPECT().GetById(item.Board.Id).Return(item.Board, err),
+			)
+		}
+
+		boardDelivery.GetNameBoard(w, r)
 
 		resp := w.Result()
 		body, _ := ioutil.ReadAll(resp.Body)
@@ -344,7 +437,7 @@ func TestHandler_GetPin(t *testing.T) {
 type TestCaseFetch struct {
 	IsAuth     bool
 	UserId     uint
-	Pins	   []*models.Pin
+	Boards	   []*models.Board
 	Response   string
 	IdErr      bool
 	GetErr     bool
@@ -352,18 +445,19 @@ type TestCaseFetch struct {
 	Limit 	   int
 }
 
+
 func TestHandler_Fetch(t *testing.T) {
 	t.Helper()
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockPinUsecase := mock.NewMockIUsecase(ctl)
-	pinDelivery := NewHandler(mockPinUsecase)
+	mockBoardUsecase := mock.NewMockIUsecase(ctl)
+	boardDelivery := NewHandler(mockBoardUsecase)
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
 			IsAuth:     false,
-			UserId:     1,
+			UserId:     3,
 			Start:		1,
 			Limit:		15,
 			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
@@ -372,7 +466,7 @@ func TestHandler_Fetch(t *testing.T) {
 		TestCaseFetch{
 			IsAuth:     true,
 			IdErr:		true,
-			UserId:     1,
+			UserId:     3,
 			Start:		1,
 			Limit:		15,
 			Response:	`{"status":400,"body":{"error":"Bad id"}}
@@ -381,43 +475,55 @@ func TestHandler_Fetch(t *testing.T) {
 		TestCaseFetch{
 			IsAuth:     true,
 			GetErr:     true,
-			UserId:     1,
+			UserId:     3,
 			Start:		1,
 			Limit:		15,
-			Pins:       nil,
+			Boards:     nil,
 		},
 		TestCaseFetch{
 			IsAuth:     true,
 			GetErr:     true,
-			UserId:     1,
+			UserId:     3,
 			Start:		1,
 			Limit:		15,
-			Pins:       []*models.Pin {
-				&models.Pin {
-					Id: 		 1,
-					BoardId:     2,
-					UserId:      1,
+			Boards:     []*models.Board {
+				&models.Board{
+					Id:          2,
+					UserId:      3,
 					Name:        "name1",
 					Description: "desc1",
-					Image:       "image.jpg",
+					LastPin:      models.Pin{
+						Id:          1,
+						BoardId:     2,
+						UserId:      3,
+						Name:        "name1",
+						Description: "desc1",
+						Image:       "image.jpg",
+					},
 				},
-				&models.Pin {
-					Id: 		 2,
-					BoardId:     5,
-					UserId:      1,
+				&models.Board{
+					Id:          4,
+					UserId:      3,
 					Name:        "name2",
 					Description: "desc2",
-					Image:       "image.jpg",
+					LastPin:      models.Pin{
+						Id:          6,
+						BoardId:     4,
+						UserId:      3,
+						Name:        "name2",
+						Description: "desc2",
+						Image:       "image.jpg",
+					},
 				},
 			},
-			Response: `{"status":200,"body":[{"id":1,"user_id":1,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"},` +
-				`{"id":2,"user_id":1,"board_id":5,"name":"name2","description":"desc2","image":"image.jpg"}]}
+			Response: `{"status":200,"body":[{{"id":2,"user_id":3,"name":"name1","description":"desc1","last_pin":{"id":1,"user_id":3,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"},` +
+				`{"id":4,"user_id":3,"name":"name2","description":"desc2","last_pin":{"id":6,"user_id":3,"board_id":4,"name":"name2","description":"desc2","image":"image.jpg"}]}
 `,
 		},
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("GET", fmt.Sprintf("/api/pin/user/%d/?start=%d&limit=%d",item.UserId, item.Start, item.Limit), strings.NewReader(""))
+		r := httptest.NewRequest("GET", fmt.Sprintf("/api/board/user/%d/?start=%d&limit=%d",item.UserId, item.Start, item.Limit), strings.NewReader(""))
 		if !item.IdErr {
 			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.UserId)})
 		} else {
@@ -438,11 +544,11 @@ func TestHandler_Fetch(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockPinUsecase.EXPECT().GetByUserId(uint(item.UserId), item.Start, item.Limit).Return(item.Pins, err),
+				mockBoardUsecase.EXPECT().GetByUserId(uint(item.UserId), item.Start, item.Limit).Return(item.Boards, err),
 			)
 		}
 
-		pinDelivery.Fetch(w, r)
+		boardDelivery.Fetch(w, r)
 
 		resp := w.Result()
 		body, _ := ioutil.ReadAll(resp.Body)
@@ -476,11 +582,10 @@ func TestHandler_Fetch(t *testing.T) {
 	}
 }
 
-
 type TestCaseUpdate struct {
 	IsAuth     bool
 	UserId     uint
-	Pin		   *models.Pin
+	Board	   *models.Board
 	Response   string
 	UserIdErr  bool
 	IdErr      bool
@@ -494,40 +599,44 @@ func TestHandler_Update(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockPinUsecase := mock.NewMockIUsecase(ctl)
-	pinDelivery := NewHandler(mockPinUsecase)
+	mockBoardUsecase := mock.NewMockIUsecase(ctl)
+	boardDelivery := NewHandler(mockBoardUsecase)
 
 	cases := []TestCaseUpdate{
 		TestCaseUpdate{
-			Pin:        &models.Pin{},
+			Board:      &models.Board{},
 			IsAuth:     false,
+			UserId:     1,
 			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
 		TestCaseUpdate{
 			IsAuth:     true,
 			UserIdErr:  true,
-			Pin:        &models.Pin{},
+			UserId:     1,
+			Board:      &models.Board{},
 		},
 		TestCaseUpdate{
 			IsAuth:     true,
 			IdErr:		true,
 			UserId:     1,
-			Pin:        &models.Pin{},
+			Board:      &models.Board{},
 			Response:	`{"status":400,"body":{"error":"Bad id"}}
 `,
 		},
 		TestCaseUpdate{
 			IsAuth:     true,
 			InputErr:   true,
-			Pin:        &models.Pin{},
+			UserId:     1,
+			Board:      &models.Board{},
 			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}
 `,
 		},
 		TestCaseUpdate{
 			IsAuth:     true,
 			ValidErr:   true,
-			Pin:		&models.Pin{
+			UserId:     1,
+			Board:      &models.Board{
 				Name:	     "",
 				Description: "desc",
 			},
@@ -538,7 +647,8 @@ func TestHandler_Update(t *testing.T) {
 		TestCaseUpdate{
 			IsAuth:     true,
 			ValidErr:   true,
-			Pin:		&models.Pin{
+			UserId:     1,
+			Board:      &models.Board{
 				Name:	     "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
 				Description: "desc",
 			},
@@ -549,7 +659,8 @@ func TestHandler_Update(t *testing.T) {
 		TestCaseUpdate{
 			IsAuth:     true,
 			ValidErr:   true,
-			Pin:		&models.Pin{
+			UserId:     1,
+			Board:      &models.Board{
 				Name:	     "name",
 				Description: "",
 			},
@@ -560,7 +671,8 @@ func TestHandler_Update(t *testing.T) {
 		TestCaseUpdate{
 			IsAuth:     true,
 			UpdateErr:  true,
-			Pin:		&models.Pin{
+			UserId:     1,
+			Board:      &models.Board{
 				Id:			 1,
 				Name:	     "name",
 				Description: "desc",
@@ -568,7 +680,8 @@ func TestHandler_Update(t *testing.T) {
 		},
 		TestCaseUpdate{
 			IsAuth:     true,
-			Pin:		&models.Pin{
+			UserId:     1,
+			Board:      &models.Board{
 				Id:			 1,
 				Name:	     "name",
 				Description: "desc",
@@ -581,15 +694,15 @@ func TestHandler_Update(t *testing.T) {
 	for caseNum, item := range cases {
 		var r *http.Request
 		if item.InputErr == false {
-			r = httptest.NewRequest("PUT", "/api/pin",
-				strings.NewReader(fmt.Sprintf(`{"name":"%s", "description":"%s"}`, item.Pin.Name, item.Pin.Description)))
+			r = httptest.NewRequest("PUT", "/api/board",
+				strings.NewReader(fmt.Sprintf(`{"name":"%s", "description":"%s"}`, item.Board.Name, item.Board.Description)))
 		} else {
-			r = httptest.NewRequest("PUT", "/api/pin",
-				strings.NewReader(fmt.Sprintf(`{"name:"%s", "description":"%s"}`, item.Pin.Name, item.Pin.Description)))
+			r = httptest.NewRequest("PUT", "/api/board",
+				strings.NewReader(fmt.Sprintf(`{"name:"%s", "description":"%s"}`, item.Board.Name, item.Board.Description)))
 		}
 
 		if !item.IdErr {
-			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.Pin.Id)})
+			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.Board.Id)})
 		} else {
 			r = mux.SetURLVars(r, map[string]string{"id": "j"})
 		}
@@ -607,9 +720,9 @@ func TestHandler_Update(t *testing.T) {
 
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr && !item.UserIdErr {
 
-			input := &models.UpdatePin{
-				Name:        	item.Pin.Name,
-				Description:    item.Pin.Description,
+			input := &models.InputBoard{
+				Name:        	item.Board.Name,
+				Description:    item.Board.Description,
 			}
 
 			var err error = nil
@@ -618,11 +731,11 @@ func TestHandler_Update(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockPinUsecase.EXPECT().Update(input, item.Pin.Id, item.UserId).Return(err),
+				mockBoardUsecase.EXPECT().Update(input, item.Board.Id, item.UserId).Return(err),
 			)
 		}
 
-		pinDelivery.Update(w, r)
+		boardDelivery.Update(w, r)
 
 		resp := w.Result()
 		body, _ := ioutil.ReadAll(resp.Body)
@@ -659,7 +772,7 @@ func TestHandler_Update(t *testing.T) {
 type TestCaseDelete struct {
 	IsAuth     bool
 	UserId     uint
-	PinId	   uint
+	BoardId	   uint
 	Response   string
 	UserIdErr  bool
 	IdErr      bool
@@ -671,8 +784,8 @@ func TestHandler_DeletePin(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockPinUsecase := mock.NewMockIUsecase(ctl)
-	pinDelivery := NewHandler(mockPinUsecase)
+	mockBoardUsecase := mock.NewMockIUsecase(ctl)
+	boardDelivery := NewHandler(mockBoardUsecase)
 
 	cases := []TestCaseDelete{
 		TestCaseDelete{
@@ -683,13 +796,13 @@ func TestHandler_DeletePin(t *testing.T) {
 		TestCaseDelete{
 			IsAuth:     true,
 			UserIdErr:  true,
-			PinId:      1,
+			BoardId:    1,
 			UserId:		1,
 		},
 		TestCaseDelete{
 			IsAuth:     true,
 			IdErr:		true,
-			PinId:      1,
+			BoardId:    1,
 			UserId:		1,
 			Response:	`{"status":400,"body":{"error":"Bad id"}}
 `,
@@ -697,12 +810,12 @@ func TestHandler_DeletePin(t *testing.T) {
 		TestCaseDelete{
 			IsAuth:     true,
 			DeleteErr:  true,
-			PinId:      1,
+			BoardId:    1,
 			UserId:		1,
 		},
 		TestCaseDelete{
 			IsAuth:     true,
-			PinId:      1,
+			BoardId:    1,
 			UserId:		1,
 			Response:	`{"status":200,"body":{"message":"Ok"}}
 `,
@@ -710,10 +823,10 @@ func TestHandler_DeletePin(t *testing.T) {
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("DELETE", fmt.Sprintf("/api/pin/%d", item.PinId), strings.NewReader(""))
+		r := httptest.NewRequest("DELETE", fmt.Sprintf("/api/board/%d", item.BoardId), strings.NewReader(""))
 
 		if !item.IdErr {
-			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.PinId)})
+			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.BoardId)})
 		} else {
 			r = mux.SetURLVars(r, map[string]string{"id": "j"})
 		}
@@ -737,11 +850,11 @@ func TestHandler_DeletePin(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockPinUsecase.EXPECT().Delete(item.PinId, item.UserId).Return(err),
+				mockBoardUsecase.EXPECT().Delete(item.BoardId, item.UserId).Return(err),
 			)
 		}
 
-		pinDelivery.DeletePin(w, r)
+		boardDelivery.Delete(w, r)
 
 		resp := w.Result()
 		body, _ := ioutil.ReadAll(resp.Body)

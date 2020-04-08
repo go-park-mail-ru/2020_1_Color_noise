@@ -58,9 +58,10 @@ func (bu *Usecase) GetByName(name string, start int, limit int) ([]*models.Board
 	return boards, nil
 }
 
-func (pu *Usecase) Update(input *models.InputBoard, boardId uint) error {
+func (pu *Usecase) Update(input *models.InputBoard, boardId uint, userId uint) error {
 	board := &models.Board{
 		Id:          boardId,
+		UserId:      userId,
 		Name:        input.Name,
 		Description: input.Description,
 	}
@@ -73,8 +74,8 @@ func (pu *Usecase) Update(input *models.InputBoard, boardId uint) error {
 	return nil
 }
 
-func (pu *Usecase) Delete(id uint) error {
-	err := pu.repo.Delete(id)
+func (pu *Usecase) Delete(id uint, userId uint) error {
+	err := pu.repo.Delete(id, userId)
 	if err != nil {
 		return Wrap(err, "Deleting board error")
 	}

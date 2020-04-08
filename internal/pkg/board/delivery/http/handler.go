@@ -43,7 +43,7 @@ func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		err = error.Wrap(err, "Decoding error during creation board")
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation board"), "Wrong body of request")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -100,7 +100,7 @@ func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 		Name:        board.Name,
 		Description: board.Description,
 		Pins:        board.Pins,
-		LastPin:     board.LastPin,
+		LastPin:     &board.LastPin,
 	}
 
 	response.Respond(w, http.StatusOK, resp)
@@ -134,7 +134,7 @@ func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 		Id:          board.Id,
 		Name:        board.Name,
 		Description: board.Description,
-		LastPin:     board.LastPin,
+		LastPin:     &board.LastPin,
 	}
 
 	response.Respond(w, http.StatusOK, resp)
@@ -180,7 +180,7 @@ func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 			Name:        board.Name,
 			Description: board.Description,
 			Pins:        board.Pins,
-			LastPin:     board.LastPin,
+			LastPin:     &board.LastPin,
 		})
 	}
 
@@ -197,10 +197,17 @@ func (bh *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userId, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id when in during updating boards"), "Bad id")
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id when in during getting boards for user"), "Bad id")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -209,7 +216,7 @@ func (bh *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		err = error.Wrap(err,"Decoding error during updating board")
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating board"), "Wrong body of request")
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -223,13 +230,13 @@ func (bh *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = bh.boardUsecase.Update(input, uint(id))
+	err = bh.boardUsecase.Update(input, uint(id), userId)
 	if err != nil {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	response.Respond(w, http.StatusCreated, map[string]string {
+	response.Respond(w, http.StatusOK, map[string]string {
 		"message": "Ok",
 	})
 }
@@ -244,6 +251,13 @@ func (bh *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userId, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -252,7 +266,7 @@ func (bh *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = bh.boardUsecase.Delete(uint(id))
+	err = bh.boardUsecase.Delete(uint(id), userId)
 	if err != nil {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return

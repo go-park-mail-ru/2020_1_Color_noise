@@ -112,9 +112,10 @@ func (br *Repository) Update(board *models.Board) error {
 
 
 
-func (br *Repository) Delete(id uint) error {
+func (br *Repository) Delete(id uint, userId uint) error {
 	d := models.DataBaseBoard{
-		Id: id,
+		Id: 		id,
+		UserId: userId,
 	}
 	err := br.db.DeleteBoard(d)
 	if err != nil {
