@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 
 	"2020_1_Color_noise/internal/models"
@@ -67,7 +68,7 @@ func TestHandler_Search(t *testing.T) {
 			Start:		1,
 			Limit:		15,
 		},
-		/*TestCaseSearch{
+		TestCaseSearch{
 			IsAuth:     true,
 			IsComment:	true,
 			UserId:     1,
@@ -168,9 +169,9 @@ func TestHandler_Search(t *testing.T) {
 			UserId:     1,
 			Start:		1,
 			Limit:		15,
-			Response:	`{"status":404,"body":{"error":"Pin is not found"}}
+			Response:	`{"status":404,"body":{"error":"Not found"}}
 `,
-		},*/
+		},
 	}
 
 	for caseNum, item := range cases {
@@ -214,6 +215,7 @@ func TestHandler_Search(t *testing.T) {
 			var err error = nil
 			if item.Err {
 				err = NoType.New("")
+				log.Println(err.Error())
 			}
 
 			gomock.InOrder(
