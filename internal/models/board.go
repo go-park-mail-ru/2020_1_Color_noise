@@ -29,12 +29,12 @@ type InputBoard struct {
 }
 
 type ResponseBoard struct {
-	Id          uint   `json:"id"`
-	UserId      uint   `json:"user_id,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Pins        []*Pin `json:"pins,omitempty"`
-	LastPin		*Pin    `json:"last_pin,omitempty"`
+	Id          uint           `json:"id"`
+	UserId      uint           `json:"user_id,omitempty"`
+	Name        string         `json:"name,omitempty"`
+	Description string         `json:"description,omitempty"`
+	Pins        []*ResponsePin `json:"pins,omitempty"`
+	LastPin		*ResponsePin   `json:"last_pin,omitempty"`
 }
 
 func GetDBoard(board Board) DataBaseBoard {

@@ -7,6 +7,7 @@ import (
 	"2020_1_Color_noise/internal/pkg/pin"
 	"2020_1_Color_noise/internal/pkg/response"
 	"2020_1_Color_noise/internal/pkg/user"
+	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -43,12 +44,13 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		limit = 10
 	}
-
+	fmt.Println(what, "here")
 	switch what {
 	case "comment":
 		comments, err := sh.commentUsecase.GetByText(description, start, limit)
 		if err != nil {
-			error.Wrap(err, "Error searching comments")
+			err = error.Wrap(err, "Error searching comments")
+			fmt.Println(err)
 			break
 		}
 
@@ -59,7 +61,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 				UserId:    comment.UserId,
 				PindId:    comment.PinId,
 				Text:      comment.Text,
-				CreatedAt: comment.CreatedAt,
+				CreatedAt: &comment.CreatedAt,
 			})
 		}
 
@@ -68,7 +70,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 	case "pin":
 		pins, err := sh.pinUsecase.GetByName(description, start, limit)
 		if err != nil {
-			error.Wrap(err, "Error searching pins")
+			err = error.Wrap(err, "Error searching pins")
 			break
 		}
 
@@ -89,7 +91,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 	case "user":
 		users, err := sh.userUsecase.Search(description, start, limit)
 		if err != nil {
-			error.Wrap(err, "Error searching users")
+			err = error.Wrap(err, "Error searching users")
 			break
 		}
 
@@ -108,8 +110,9 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		response.Respond(w, http.StatusOK, resp)
 		return
 	default:
-		err = error.WithMessage(error.BadRequest.New( "Bad id when in during searching"), "Bad parametr")
+		err = error.WithMessage(error.SearchNotFound.New( "Bad id when in during searching"), "Bad parametrs")
+		fmt.Println(err, "here")
 	}
-
+	fmt.Println(err, "here")
 	error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 }
