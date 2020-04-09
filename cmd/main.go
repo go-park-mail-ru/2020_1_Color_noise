@@ -5,6 +5,8 @@ import (
 	boardRepo "2020_1_Color_noise/internal/pkg/board/repository"
 	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
 
+	"2020_1_Color_noise/internal/pkg/config"
+
 	notificationsDeliveryHttp "2020_1_Color_noise/internal/pkg/notifications/delivery/http"
 	notificationsRepo "2020_1_Color_noise/internal/pkg/notifications/repository"
 	notificationsUsecase "2020_1_Color_noise/internal/pkg/notifications/usecase"
@@ -44,8 +46,14 @@ import (
 func main() {
 	r := mux.NewRouter()
 
+	c, err := config.GetDBConfing()
+	if err != nil {
+		panic(err)
+	}
+
+
 	db := database.NewPgxDB()
-	if err := db.Open(); err != nil {
+	if err := db.Open(c); err != nil {
 		panic(err)
 	}
 

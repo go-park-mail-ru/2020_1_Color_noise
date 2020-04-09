@@ -2,6 +2,7 @@ package database
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"fmt"
 	"testing"
 	"time"
@@ -15,7 +16,11 @@ type PinCase struct {
 }
 
 func TestPgxDB_CreatePin(t *testing.T) {
-	PDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	PDB.Open(c)
 
 	id, _ := PDB.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
@@ -54,7 +59,11 @@ func TestPgxDB_CreatePin(t *testing.T) {
 
 func TestPgxDB_DeletePin(t *testing.T) {
 
-	PDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	PDB.Open(c)
 
 	id, _ := PDB.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
@@ -109,7 +118,11 @@ func TestPgxDB_DeletePin(t *testing.T) {
 
 func TestPgxDB_UpdatePin(t *testing.T) {
 
-	PDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	PDB.Open(c)
 
 	id, _ := PDB.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
@@ -164,7 +177,11 @@ func TestPgxDB_UpdatePin(t *testing.T) {
 
 func TestPgxDB_GetPinById(t *testing.T) {
 
-	PDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	PDB.Open(c)
 
 	id, _ := PDB.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
@@ -205,7 +222,11 @@ func TestPgxDB_GetPinById(t *testing.T) {
 
 func TestPgxDB_GetPinsByUserId(t *testing.T) {
 
-	PDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	PDB.Open(c)
 
 	id, _ := PDB.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
@@ -242,7 +263,11 @@ func TestPgxDB_GetPinsByUserId(t *testing.T) {
 
 func TestPgxDB_GetPinsByName(t *testing.T) {
 
-	PDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	PDB.Open(c)
 
 	id, _ := PDB.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),

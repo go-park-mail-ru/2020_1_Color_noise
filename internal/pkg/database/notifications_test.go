@@ -2,6 +2,7 @@ package database
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"fmt"
 	"testing"
 	"time"
@@ -16,7 +17,11 @@ type NotiCase struct {
 }
 
 func TestPgxDB_PutNotifications(t *testing.T) {
-	NBD.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	NBD.Open(c)
 
 	id, _ := NBD.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),
@@ -65,7 +70,11 @@ func TestPgxDB_PutNotifications(t *testing.T) {
 }
 
 func TestPgxDB_GetNotifications(t *testing.T) {
-	NBD.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	NBD.Open(c)
 
 	id, _ := NBD.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),

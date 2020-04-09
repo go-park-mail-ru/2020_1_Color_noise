@@ -2,10 +2,11 @@ package database
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 )
 
 type DBInterface interface {
-	Open() (err error)
+	Open(c config.DataBaseConfig) (err error)
 
 	Close() error
 	Ping() error

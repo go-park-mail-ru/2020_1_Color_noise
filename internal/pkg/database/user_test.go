@@ -2,6 +2,7 @@ package database
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"fmt"
 	"testing"
 	"time"
@@ -16,7 +17,11 @@ type UserCreateTestCase struct {
 var dbTest = NewPgxDB()
 
 func TestUserCreate(t *testing.T) {
-	dbTest.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
 
 	login := fmt.Sprint(time.Now())
 
@@ -56,6 +61,12 @@ type UserDeleteTestCase struct {
 }
 
 func TestUserDelete(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
+
 	id, _ := dbTest.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})
@@ -97,6 +108,12 @@ type UserUpdateTestCase struct {
 }
 
 func TestUserUpdate(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
+
 	login := fmt.Sprint(time.Now())
 	id, _ := dbTest.CreateUser(models.DataBaseUser{
 		Login: login,
@@ -149,6 +166,12 @@ func TestUserUpdate(t *testing.T) {
 }
 
 func TestUpdateUserPassword(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
+
 	id, _ := dbTest.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})
@@ -184,6 +207,12 @@ func TestUpdateUserPassword(t *testing.T) {
 }
 
 func TestUpdateUserDescription(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
+
 	id, _ := dbTest.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})
@@ -224,6 +253,12 @@ func TestUpdateUserDescription(t *testing.T) {
 }
 
 func TestUpdateUserAvatar(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
+
 	id, _ := dbTest.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})
@@ -270,6 +305,12 @@ type UserSimpleSelectTestCase struct {
 }
 
 func TestGetUserById(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
+
 	id, _ := dbTest.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})
@@ -305,6 +346,11 @@ func TestGetUserById(t *testing.T) {
 }
 
 func TestGetUserByName(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
 
 	_, _ = dbTest.CreateUser(models.DataBaseUser{
 		Login: "testing",
@@ -341,6 +387,11 @@ func TestGetUserByName(t *testing.T) {
 }
 
 func TestGetUserByEmail(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
 
 	_, _ = dbTest.CreateUser(models.DataBaseUser{
 		Email: "email",
@@ -376,6 +427,11 @@ func TestGetUserByEmail(t *testing.T) {
 }
 
 func TestGetUserSubscriptions(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
 
 	cases := []UserSimpleSelectTestCase{
 		{
@@ -400,6 +456,12 @@ func TestGetUserSubscriptions(t *testing.T) {
 }
 
 func TestGetUserSubscribers(t *testing.T) {
+
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
 
 	cases := []UserSimpleSelectTestCase{
 		{
@@ -430,6 +492,11 @@ type UserSelectTestCase struct {
 }
 
 func TestGetUserSubUsers(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
 
 	cases := []UserSelectTestCase{
 		{
@@ -455,6 +522,12 @@ func TestGetUserSubUsers(t *testing.T) {
 
 func TestGetUserSupUsers(t *testing.T) {
 
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
+
 	cases := []UserSelectTestCase{
 		{
 			user:   models.DataBaseUser{},
@@ -478,6 +551,11 @@ func TestGetUserSupUsers(t *testing.T) {
 }
 
 func TestGetUserByLogin(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
 
 	_, _ = dbTest.CreateUser(models.DataBaseUser{
 		Login: "loginsearch",
@@ -513,29 +591,30 @@ func TestGetUserByLogin(t *testing.T) {
 }
 
 func TestPgxDB_Follow(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
 
 	id, _ := dbTest.CreateUser(models.DataBaseUser{
-		Email:             "create_board",
 		Login:             fmt.Sprint(time.Now()),
-		EncryptedPassword: "create_board",
-		Subscriptions:     0,
-		Subscribers:       0,
-		CreatedAt:         time.Time{},
 	})
 
 	sid, _ := dbTest.CreateUser(models.DataBaseUser{
-		Email:             "create_board",
 		Login:             fmt.Sprint(time.Now()),
-		EncryptedPassword: "create_board",
-		Subscriptions:     0,
-		Subscribers:       0,
-		CreatedAt:         time.Time{},
 	})
 
 	dbTest.Follow(id, sid)
 }
 
 func TestPgxDB_Unfollow(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	dbTest.Open(c)
+
 	id, _ := dbTest.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),
 	})
@@ -543,7 +622,6 @@ func TestPgxDB_Unfollow(t *testing.T) {
 	sid, _ := dbTest.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),
 	})
-
 
 	dbTest.Unfollow(id, sid)
 }

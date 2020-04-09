@@ -2,6 +2,7 @@ package database
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"fmt"
 	"testing"
 	"time"
@@ -15,7 +16,11 @@ type CommentCase struct {
 }
 
 func TestPgxDB_CreateComment(t *testing.T) {
-	CommentDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	CommentDB.Open(c)
 
 	id, _ := CommentDB.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
@@ -64,7 +69,11 @@ func TestPgxDB_CreateComment(t *testing.T) {
 }
 
 func TestPgxDB_UpdateComment(t *testing.T) {
-	CommentDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	CommentDB.Open(c)
 
 	id, _ := CommentDB.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
@@ -118,7 +127,11 @@ func TestPgxDB_UpdateComment(t *testing.T) {
 
 func TestPgxDB_DeleteComment(t *testing.T) {
 
-	CommentDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	CommentDB.Open(c)
 
 	id, _ := CommentDB.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
@@ -177,7 +190,11 @@ type SimpleCase struct {
 
 func TestPgxDB_GetCommentById(t *testing.T) {
 
-	CommentDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	CommentDB.Open(c)
 
 	id, _ := CommentDB.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
@@ -235,6 +252,12 @@ type ComplicatedCase struct {
 }
 
 func TestPgxDB_GetCommentsByPinId(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	CommentDB.Open(c)
+
 	id, _ := CommentDB.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})
@@ -286,6 +309,12 @@ func TestPgxDB_GetCommentsByPinId(t *testing.T) {
 }
 
 func TestPgxDB_GetCommentsByText(t *testing.T) {
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	CommentDB.Open(c)
+
 	cases := []ComplicatedCase{
 		{
 			in: models.DataBaseComment{

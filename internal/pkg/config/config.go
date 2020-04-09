@@ -13,42 +13,65 @@ var (
 )
 
 type DataBaseConfig struct {
-	//TODO: заменить на строчку подключения, хранить имя драйвера
-	ConnString string `json:"db.connect"`
-	MaxConns   int    `json:"db.maxconns"`
+	Host string `json:"host"`
+	Port int `json:"port"`
+	Database string `json:"database"`
+	User string `json:"user"`
+	Password string `json:"password"`
 }
 
-func configinit() {
+func GetDBConfing() (DataBaseConfig, error){
+	v := viper.New()
+	c := DataBaseConfig{}
 
-	CONFIG.SetConfigName("config")
-	CONFIG.AddConfigPath(".")
-	//TODO: добавить пути к конфигу
+	v.SetConfigName("config")
+	v.AddConfigPath(".")
 
-	err := CONFIG.ReadInConfig()
+	err := v.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %v \n", err))
 	}
 
-}
 
-func parseDbConfig(v *viper.Viper, config *DataBaseConfig) {
-	//обеспечивает
-	v.SetDefault("db.connect", "user=postgres password=password dbname=pinterest sslmode=disable")
-	v.SetDefault("db.maxconns", "20")
+	c.User = v.GetString("db.user")
+	c.Password = v.GetString("db.password")
+	c.Host = v.GetString("db.host")
+	c.Database = v.GetString("db.database")
+	c.Port = v.GetInt("db.port")
 
-	config.ConnString = v.GetString("db.connect")
-
-}
-
-func Start() {
-	CONFIG.SetConfigName("config")
-	CONFIG.AddConfigPath(".")
-
-	configinit()
-	parseDbConfig(CONFIG, &DB)
-
-	err := CONFIG.Unmarshal(&DB)
+	err = v.Unmarshal(&c)
 	if err != nil {
 		log.Fatalf("decoding problem: , %v", err)
 	}
+
+	return c, err
+}
+
+
+
+func GetTestConfing() (DataBaseConfig, error){
+	v := viper.New()
+	c := DataBaseConfig{}
+
+	v.SetConfigName("config")
+	v.AddConfigPath(".")
+
+	err := v.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("Fatal error config file: %v \n", err))
+	}
+
+
+	c.User = v.GetString("test.user")
+	c.Password = v.GetString("test.password")
+	c.Host = v.GetString("test.host")
+	c.Database = v.GetString("test.database")
+	c.Port = v.GetInt("test.port")
+
+	err = v.Unmarshal(&c)
+	if err != nil {
+		log.Fatalf("decoding problem: , %v", err)
+	}
+
+	return c, err
 }
