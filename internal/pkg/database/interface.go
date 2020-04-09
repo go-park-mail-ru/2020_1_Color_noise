@@ -9,8 +9,6 @@ type DBInterface interface {
 
 	Close() error
 	Ping() error
-	Exec(query string, args ...interface{}) error
-	Query(query string, args ...interface{}) error
 
 	CreateSession(s models.DataBaseSession) error
 	DeleteSession(s models.DataBaseSession) error
@@ -57,10 +55,10 @@ type DBInterface interface {
 	GetBoardsByName(board models.DataBaseBoard, start, offset int) ([]*models.Board, error)
 	GetBoardLastPin(board models.DataBaseBoard) (models.Pin, error)
 
-	GetSubFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
-	GetMainFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
-	GetRecFeed( user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
+	GetSubFeed(user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
+	GetMainFeed(user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
+	GetRecFeed(user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
 
-	GetNotifications ( user models.DataBaseUser) ([]*models.Notification, error)
-	PutNotifications ( cm models.DataBaseComment) (uint, error)
+	GetNotifications(user models.DataBaseUser) ([]*models.Notification, error)
+	PutNotifications(cm models.DataBaseComment) (uint, error)
 }
