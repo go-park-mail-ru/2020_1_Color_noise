@@ -20,9 +20,6 @@ func NewRepo(d database.DBInterface) *Repository {
 }
 
 func (sr *Repository) Add(session *models.Session) error {
-	sr.mu.Lock()
-	defer sr.mu.Unlock()
-
 	sr.db.CreateSession(models.GetBSession(*session))
 	return nil
 }
@@ -40,16 +37,11 @@ func (sr *Repository) GetByCookie(cookie string) (*models.Session, error) {
 }
 
 func (sr *Repository) Update(session *models.Session) error {
-	sr.mu.Lock()
-	defer sr.mu.Unlock()
 	_ = sr.db.UpdateSession(models.GetBSession(*session))
 	return nil
 }
 
 func (sr *Repository) Delete(cookie string) error {
-	sr.mu.Lock()
-	defer sr.mu.Unlock()
-
 	dbs := models.DataBaseSession{
 		Cookie: cookie,
 	}
