@@ -2,6 +2,7 @@ package repository
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"2020_1_Color_noise/internal/pkg/database"
 	"fmt"
 	"testing"
@@ -17,7 +18,11 @@ type FeedCase struct {
 }
 
 func TestRepository_GetMainList(t *testing.T) {
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	id, _ := db.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
@@ -52,7 +57,11 @@ func TestRepository_GetMainList(t *testing.T) {
 }
 
 func TestRepository_GetSubList(t *testing.T) {
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	id, _ := db.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
@@ -87,7 +96,11 @@ func TestRepository_GetSubList(t *testing.T) {
 }
 
 func TestRepository_GetSRecList(t *testing.T) {
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	id, _ := db.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
