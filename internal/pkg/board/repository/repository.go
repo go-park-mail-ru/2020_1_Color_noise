@@ -5,24 +5,19 @@ import (
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
 	"log"
-	"sync"
 )
 
 type Repository struct {
 	db database.DBInterface
-	mu *sync.Mutex
 }
 
 func NewRepo(d database.DBInterface) *Repository {
 	return &Repository{
 		db: d,
-		mu: &sync.Mutex{},
 	}
 }
 
 func (br *Repository) Create(board *models.Board) (uint, error) {
-	br.mu.Lock()
-	defer br.mu.Unlock()
 
 	id, err := br.db.CreateBoard(models.GetDBoard(*board))
 	if err != nil {
@@ -91,16 +86,6 @@ func (br *Repository) GetByNameID(id uint) (*models.Board, error) {
 }
 
 func (br *Repository) GetByName(name string, start int, limit int) ([]*models.Board, error) {
-	//TODO: придумать проверку
-	/*
-		if start >= len(br.data) {
-			start = 0
-		}
-
-		if limit >= (len(br.data) - start) {
-			limit = len(br.data)
-		}
-	*/
 
 	b := models.DataBaseBoard{
 		Name: name,
