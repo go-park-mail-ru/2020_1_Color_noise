@@ -7,6 +7,7 @@ import (
 	"2020_1_Color_noise/internal/pkg/pin"
 	"2020_1_Color_noise/internal/pkg/response"
 	"2020_1_Color_noise/internal/pkg/user"
+	"go.uber.org/zap"
 	"net/http"
 	"strconv"
 )
@@ -15,13 +16,15 @@ type Handler struct {
 	commentUsecase comment.IUsecase
 	pinUsecase     pin.IUsecase
 	userUsecase    user.IUsecase
+	logger         *zap.SugaredLogger
 }
 
-func NewHandler(commentUsecase comment.IUsecase, pinUsecase pin.IUsecase, userUsecase user.IUsecase) *Handler {
+func NewHandler(commentUsecase comment.IUsecase, pinUsecase pin.IUsecase, userUsecase user.IUsecase, logger  *zap.SugaredLogger) *Handler {
 	return &Handler{
 		commentUsecase: commentUsecase,
 		pinUsecase:     pinUsecase,
 		userUsecase:    userUsecase,
+		logger:         logger,
 	}
 }
 
@@ -31,7 +34,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Search: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -49,7 +52,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		comments, err := sh.commentUsecase.GetByText(description, start, limit)
 		if err != nil {
 			err = error.Wrap(err, "Error searching comments")
-			error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+			error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 			return
 		}
 
@@ -64,13 +67,13 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 			})
 		}
 
-		response.Respond(w, http.StatusOK, resp)
+		response.Respond(w, sh.logger, reqId, http.StatusOK, resp)
 		return
 	case "pin":
 		pins, err := sh.pinUsecase.GetByName(description, start, limit)
 		if err != nil {
 			err = error.Wrap(err, "Error searching pins")
-			error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+			error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 			return
 		}
 
@@ -86,13 +89,13 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 			})
 		}
 
-		response.Respond(w, http.StatusOK, resp)
+		response.Respond(w, sh.logger, reqId, http.StatusOK, resp)
 		return
 	case "user":
 		users, err := sh.userUsecase.Search(description, start, limit)
 		if err != nil {
 			err = error.Wrap(err, "Error searching users")
-			error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+			error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 			return
 		}
 
@@ -108,10 +111,10 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 			})
 		}
 
-		response.Respond(w, http.StatusOK, resp)
+		response.Respond(w, sh.logger, reqId, http.StatusOK, resp)
 		return
 	default:
 		err = error.WithMessage(error.SearchNotFound.New( "Bad id when in during searching"), "Bad parametrs")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 	}
 }

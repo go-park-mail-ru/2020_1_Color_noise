@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 
 	//"github.com/gorilla/mux"
 	"net/http"
@@ -39,8 +40,19 @@ func TestHandler_Create(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockCommentUsecase := mock.NewMockIUsecase(ctl)
-	commentDelivery := NewHandler(mockCommentUsecase)
+	commentDelivery := NewHandler(mockCommentUsecase, zap)
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
@@ -189,8 +201,19 @@ func TestHandler_GetComment(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockCommentUsecase := mock.NewMockIUsecase(ctl)
-	commentDelivery := NewHandler(mockCommentUsecase)
+	commentDelivery := NewHandler(mockCommentUsecase, zap)
 
 	cases := []TestCaseGetComment{
 		TestCaseGetComment{
@@ -300,8 +323,19 @@ func TestHandler_Fetch(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockCommentUsecase := mock.NewMockIUsecase(ctl)
-	commentDelivery := NewHandler(mockCommentUsecase)
+	commentDelivery := NewHandler(mockCommentUsecase, zap)
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{

@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/golang/mock/gomock"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -41,7 +42,18 @@ func TestHandler_Login(t *testing.T) {
 	mockUserUsecase := userMock.NewMockIUsecase(ctl)
 	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	sessionDelivery := NewHandler(mockSessionUsecase, mockUserUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	sessionDelivery := NewHandler(mockSessionUsecase, mockUserUsecase, zap)
 
 	cases := []TestCaseLogin{
 		TestCaseLogin{
@@ -239,7 +251,18 @@ func TestHandler_Logout(t *testing.T) {
 	mockUserUsecase := userMock.NewMockIUsecase(ctl)
 	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	sessionDelivery := NewHandler(mockSessionUsecase, mockUserUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	sessionDelivery := NewHandler(mockSessionUsecase, mockUserUsecase, zap)
 
 	cases := []TestCaseLogout{
 		TestCaseLogout{

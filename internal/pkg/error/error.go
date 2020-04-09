@@ -4,7 +4,7 @@ import (
 	"2020_1_Color_noise/internal/pkg/response"
 	"fmt"
 	"github.com/pkg/errors"
-	"log"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -103,7 +103,7 @@ func WithMessage(err error, message string) error {
 	return Error{errorType: NoType, originalError: err, message: message}
 }
 
-func ErrorHandler(w http.ResponseWriter, err error) {
+func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interface{}, err error) {
 	var status int
 	var message string
 
@@ -153,9 +153,13 @@ func ErrorHandler(w http.ResponseWriter, err error) {
 		message = "Internal server error"
 	}
 
-	log.Println(e.Error())
+	logger.Error(
+		zap.String("reqId:", fmt.Sprintf("%v", reqId)),
+		zap.String("error:", e.Error()),
+	)
 
-	response.Respond(w, status, map[string]string {
+
+	response.Respond(w, logger, reqId, status, map[string]string {
 		"error": message,
 	})
 }

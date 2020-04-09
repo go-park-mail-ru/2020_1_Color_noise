@@ -4,6 +4,7 @@ import (
 	boardDeliveryHttp "2020_1_Color_noise/internal/pkg/board/delivery/http"
 	boardRepo "2020_1_Color_noise/internal/pkg/board/repository"
 	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
+	"go.uber.org/zap"
 
 	"2020_1_Color_noise/internal/pkg/config"
 
@@ -51,44 +52,54 @@ func main() {
 		panic(err)
 	}
 
-
 	db := database.NewPgxDB()
 	if err := db.Open(c); err != nil {
 		panic(err)
 	}
+
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
 
 	userRepo := userRepo.NewRepo(db)
 	userUsecase := userUsecase.NewUsecase(userRepo)
 
 	sessionRepo := sessionRepo.NewRepo(db)
 	sessionUsecase := sessionUsecase.NewUsecase(sessionRepo)
-	sessionDelivery := sessionDeliveryHttp.NewHandler(sessionUsecase, userUsecase)
+	sessionDelivery := sessionDeliveryHttp.NewHandler(sessionUsecase, userUsecase, zap)
 
-	userDelivery := userDeliveryHttp.NewHandler(userUsecase, sessionUsecase)
+	userDelivery := userDeliveryHttp.NewHandler(userUsecase, sessionUsecase, zap)
 
 	pinRepo := pinRepo.NewRepo(db)
 	pinUsecase := pinUsecase.NewUsecase(pinRepo)
-	pinDelivery := pinDeliveryHttp.NewHandler(pinUsecase)
+	pinDelivery := pinDeliveryHttp.NewHandler(pinUsecase, zap)
 
 	boardRepo := boardRepo.NewRepo(db)
 	boardUsecase := boardUsecase.NewUsecase(boardRepo)
-	boardDelivery := boardDeliveryHttp.NewHandler(boardUsecase)
+	boardDelivery := boardDeliveryHttp.NewHandler(boardUsecase, zap)
 
 	commentRepo := commentRepo.NewRepo(db)
 	commentUsecase := commentUsecase.NewUsecase(commentRepo)
-	commentDelivery := commentDeliveryHttp.NewHandler(commentUsecase)
+	commentDelivery := commentDeliveryHttp.NewHandler(commentUsecase, zap)
 
 	listRepo := listRepo.NewRepo(db)
 	listUsecase := listUsecase.NewUsecase(listRepo)
-	listDelivery := listDeliveryHttp.NewHandler(listUsecase)
+	listDelivery := listDeliveryHttp.NewHandler(listUsecase, zap)
 
 	notificationsRepo := notificationsRepo.NewRepo(db)
 	notificationsUsecase := notificationsUsecase.NewUsecase(notificationsRepo)
-	notificationsDelivery := notificationsDeliveryHttp.NewHandler(notificationsUsecase)
+	notificationsDelivery := notificationsDeliveryHttp.NewHandler(notificationsUsecase, zap)
 
-	searchHandler := searchHandler.NewHandler(commentUsecase, pinUsecase, userUsecase)
+	searchHandler := searchHandler.NewHandler(commentUsecase, pinUsecase, userUsecase, zap)
 
-	m := middleware.NewMiddleware(sessionUsecase)
+	m := middleware.NewMiddleware(sessionUsecase, zap)
 
 	r.HandleFunc("/api/auth", sessionDelivery.Login).Methods("POST")
 	r.HandleFunc("/api/auth", sessionDelivery.Logout).Methods("DELETE")
@@ -131,6 +142,7 @@ func main() {
 
 	r.HandleFunc("/api/notifications", notificationsDelivery.GetNotifications).Methods("GET")
 
+	r.Use(m.AccessLogMiddleware)
 	r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)
 

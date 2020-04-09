@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"go.uber.org/zap"
+
 	//"github.com/gorilla/mux"
 	"net/http"
 
@@ -38,8 +40,19 @@ func TestHandler_Create(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockBoardUsecase := mock.NewMockIUsecase(ctl)
-	boardDelivery := NewHandler(mockBoardUsecase)
+	boardDelivery := NewHandler(mockBoardUsecase, zap)
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
@@ -210,8 +223,19 @@ func TestHandler_GetBoard(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockBoardUsecase := mock.NewMockIUsecase(ctl)
-	boardDelivery := NewHandler(mockBoardUsecase)
+	boardDelivery := NewHandler(mockBoardUsecase, zap)
 
 	cases := []TestCaseGetBoard{
 		TestCaseGetBoard{
@@ -329,8 +353,19 @@ func TestHandler_GetNameBoard(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockBoardUsecase := mock.NewMockIUsecase(ctl)
-	boardDelivery := NewHandler(mockBoardUsecase)
+	boardDelivery := NewHandler(mockBoardUsecase, zap)
 
 	cases := []TestCaseGetBoard{
 		TestCaseGetBoard{
@@ -449,8 +484,19 @@ func TestHandler_Fetch(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockBoardUsecase := mock.NewMockIUsecase(ctl)
-	boardDelivery := NewHandler(mockBoardUsecase)
+	boardDelivery := NewHandler(mockBoardUsecase, zap)
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
@@ -596,8 +642,19 @@ func TestHandler_Update(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockBoardUsecase := mock.NewMockIUsecase(ctl)
-	boardDelivery := NewHandler(mockBoardUsecase)
+	boardDelivery := NewHandler(mockBoardUsecase, zap)
 
 	cases := []TestCaseUpdate{
 		TestCaseUpdate{
@@ -781,8 +838,19 @@ func TestHandler_DeletePin(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockBoardUsecase := mock.NewMockIUsecase(ctl)
-	boardDelivery := NewHandler(mockBoardUsecase)
+	boardDelivery := NewHandler(mockBoardUsecase, zap)
 
 	cases := []TestCaseDelete{
 		TestCaseDelete{

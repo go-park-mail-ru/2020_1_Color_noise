@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 	"net/http"
 
 	"2020_1_Color_noise/internal/models"
@@ -46,7 +47,18 @@ func TestHandler_Create(t *testing.T) {
 	mockUserUsecase := userMock.NewMockIUsecase(ctl)
 	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
@@ -239,7 +251,18 @@ func TestHandler_GetUser(t *testing.T) {
 	mockUserUsecase := userMock.NewMockIUsecase(ctl)
 	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
 
 	cases := []TestCaseGetUser{
 		TestCaseGetUser{
@@ -342,7 +365,18 @@ func TestHandler_GetOtherUser(t *testing.T) {
 	mockUserUsecase := userMock.NewMockIUsecase(ctl)
 	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
 
 	cases := []TestCaseGetUser{
 		TestCaseGetUser{
@@ -451,7 +485,18 @@ func TestHandler_UpdateProfile(t *testing.T) {
 	mockUserUsecase := userMock.NewMockIUsecase(ctl)
 	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
 
 	cases := []TestCaseUpdateProfile{
 		TestCaseUpdateProfile{
@@ -606,7 +651,18 @@ func TestHandler_UpdateDescription(t *testing.T) {
 	mockUserUsecase := userMock.NewMockIUsecase(ctl)
 	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
 
 	cases := []TestCaseUpdateDescription{
 		TestCaseUpdateDescription{
@@ -740,7 +796,18 @@ func TestHandler_UpdatePassword(t *testing.T) {
 	mockUserUsecase := userMock.NewMockIUsecase(ctl)
 	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
 
 	cases := []TestCaseUpdatePassword{
 		TestCaseUpdatePassword{
@@ -881,7 +948,18 @@ func TestHandler_Follow(t *testing.T) {
 	mockUserUsecase := userMock.NewMockIUsecase(ctl)
 	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
 
 	cases := []TestCaseFollow{
 		TestCaseFollow{
@@ -1007,7 +1085,18 @@ func TestHandler_Unfollow(t *testing.T) {
 	mockUserUsecase := userMock.NewMockIUsecase(ctl)
 	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
 
 	cases := []TestCaseFollow{
 		TestCaseFollow{
@@ -1138,7 +1227,18 @@ func TestHandler_GetSubscribers(t *testing.T) {
 	mockUserUsecase := userMock.NewMockIUsecase(ctl)
 	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
 
 	cases := []TestCaseGet{
 		TestCaseGet{
@@ -1250,7 +1350,18 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 	mockUserUsecase := userMock.NewMockIUsecase(ctl)
 	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
 
 	cases := []TestCaseGet{
 		TestCaseGet{

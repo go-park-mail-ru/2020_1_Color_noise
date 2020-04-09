@@ -5,17 +5,20 @@ import (
 	"2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/notifications"
 	"2020_1_Color_noise/internal/pkg/response"
+	"go.uber.org/zap"
 	"net/http"
 	"strconv"
 )
 
 type Handler struct {
 	usecase notifications.IUsecase
+	logger  *zap.SugaredLogger
 }
 
-func NewHandler(usecase notifications.IUsecase) *Handler {
+func NewHandler(usecase notifications.IUsecase, logger  *zap.SugaredLogger) *Handler {
 	return &Handler{
 		usecase: usecase,
+		logger:  logger,
 	}
 }
 
@@ -25,14 +28,14 @@ func (nh *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("GetNotifacations: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -45,7 +48,7 @@ func (nh *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
 
 	notifications, err := nh.usecase.GetNotifications(id, start, limit)
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -65,5 +68,5 @@ func (nh *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, http.StatusOK, resp)
+	response.Respond(w, nh.logger, reqId, http.StatusOK, resp)
 }

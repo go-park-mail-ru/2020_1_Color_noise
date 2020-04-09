@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 
 	//"github.com/gorilla/mux"
 	"net/http"
@@ -39,8 +40,19 @@ func TestHandler_Create(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockPinUsecase := mock.NewMockIUsecase(ctl)
-	pinDelivery := NewHandler(mockPinUsecase)
+	pinDelivery := NewHandler(mockPinUsecase, zap)
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
@@ -243,8 +255,19 @@ func TestHandler_GetPin(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockPinUsecase := mock.NewMockIUsecase(ctl)
-	pinDelivery := NewHandler(mockPinUsecase)
+	pinDelivery := NewHandler(mockPinUsecase, zap)
 
 	cases := []TestCaseGetPin{
 		TestCaseGetPin{
@@ -356,8 +379,19 @@ func TestHandler_Fetch(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockPinUsecase := mock.NewMockIUsecase(ctl)
-	pinDelivery := NewHandler(mockPinUsecase)
+	pinDelivery := NewHandler(mockPinUsecase, zap)
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
@@ -492,8 +526,19 @@ func TestHandler_Update(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockPinUsecase := mock.NewMockIUsecase(ctl)
-	pinDelivery := NewHandler(mockPinUsecase)
+	pinDelivery := NewHandler(mockPinUsecase, zap)
 
 	cases := []TestCaseUpdate{
 		TestCaseUpdate{
@@ -669,8 +714,19 @@ func TestHandler_DeletePin(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockPinUsecase := mock.NewMockIUsecase(ctl)
-	pinDelivery := NewHandler(mockPinUsecase)
+	pinDelivery := NewHandler(mockPinUsecase, zap)
 
 	cases := []TestCaseDelete{
 		TestCaseDelete{

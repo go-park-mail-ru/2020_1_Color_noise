@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 
@@ -49,7 +50,18 @@ func TestHandler_Search(t *testing.T) {
 	mockPinUsecase := pinMock.NewMockIUsecase(ctl)
 	mockCommentUsecase := commentMock.NewMockIUsecase(ctl)
 
-	searchDelivery := NewHandler(mockCommentUsecase, mockPinUsecase, mockUserUsecase)
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
+	searchDelivery := NewHandler(mockCommentUsecase, mockPinUsecase, mockUserUsecase, zap)
 
 	cases := []TestCaseSearch{
 		TestCaseSearch{

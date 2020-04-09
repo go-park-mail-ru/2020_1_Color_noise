@@ -4,41 +4,29 @@ import (
 	sessions "2020_1_Color_noise/internal/pkg/session/usecase"
 	"context"
 	"fmt"
+	"go.uber.org/zap"
 	"math/rand"
 	"net/http"
+	"time"
 )
 
 type Middleware struct {
 	sessions *sessions.SessionUsecase
+	logger   *zap.SugaredLogger
 }
 
-func NewMiddleware(su *sessions.SessionUsecase) Middleware {
+func NewMiddleware(su *sessions.SessionUsecase, logger  *zap.SugaredLogger) Middleware {
 	return Middleware{
 		sessions: su,
+		logger:   logger,
 	}
-}
-
-var authMethods = map[string][]string{
-	"/api/auth":           []string{"DELETE"},
-	"/api/user":           []string{"GET", "PUT"},
-	"/api/user/following": []string{"POST", "DELETE"},
-	"/api/pin":            []string{"POST", "GET"},
-	"/api/board":          []string{"POST", "GET"},
-	"/api/comment":        []string{"POST", "GET"},
-	"/api/search":         []string{"POST", "GET"},
-}
-
-var unauthMethods = map[string][]string{
-	"/api/auth": []string{"POST"},
-	"/api/user": []string{"POST"},
 }
 
 func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
+		reqId := r.Context().Value("ReqId")
 
-		reqId := fmt.Sprintf("%016x", rand.Int())[:10]
-		ctx = context.WithValue(ctx, "ReqId", reqId)
+		ctx := r.Context()
 
 		cookie, err := r.Cookie("session_id")
 		if err != nil {
@@ -47,7 +35,15 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 			session, err := m.sessions.GetByCookie(cookie.Value)
 			if err != nil {
 				ctx = context.WithValue(ctx, "IsAuth", false)
+				m.logger.Info(r.URL.Path,
+					zap.String("reqId:", fmt.Sprintf("%v", reqId)),
+					zap.String("userId:", "unknown"),
+				)
 			} else {
+				m.logger.Info(
+					zap.String("reqId:", fmt.Sprintf("%v", reqId)),
+					zap.Uint("userId:", session.Id),
+				)
 				ctx = context.WithValue(ctx, "IsAuth", true)
 				ctx = context.WithValue(ctx, "Id", session.Id)
 				//newToken := m.sessions.CreateToken()
@@ -103,5 +99,24 @@ func (m *Middleware) CORSMiddleware(next http.Handler) http.Handler {
 			return
 		}
 		next.ServeHTTP(w, r)
+	})
+}
+
+func (m *Middleware) AccessLogMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		reqId := fmt.Sprintf("%016x", rand.Int())[:10]
+		ctx = context.WithValue(ctx, "ReqId", reqId)
+
+		start := time.Now()
+		next.ServeHTTP(w, r)
+		m.logger.Info(r.URL.Path,
+			zap.String("reqId:", reqId),
+			zap.String("method", r.Method),
+			zap.String("remote_addr", r.RemoteAddr),
+			zap.String("url", r.URL.Path),
+			zap.Time("start", start),
+			zap.Duration("work_time", time.Since(start)),
+		)
 	})
 }

@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"strconv"
@@ -20,12 +21,14 @@ import (
 type Handler struct {
 	userUsecase    user.IUsecase
 	sessionUsecase session.IUsecase
+	logger         *zap.SugaredLogger
 }
 
-func NewHandler(usecase user.IUsecase, sessionUsecase session.IUsecase) *Handler {
+func NewHandler(usecase user.IUsecase, sessionUsecase session.IUsecase, logger *zap.SugaredLogger) *Handler {
 	return &Handler{
 		userUsecase:    usecase,
 		sessionUsecase: sessionUsecase,
+		logger:			logger,
 	}
 }
 
@@ -34,7 +37,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth == true {
-		response.Respond(w, http.StatusOK, map[string]string{
+		response.Respond(w, ud.logger, reqId, http.StatusOK, map[string]string{
 			"message": "Ok",
 		})
 		return
@@ -45,7 +48,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation user"), "Wrong body of request")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -55,19 +58,19 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			"Password should be longer than 6 characters and shorter 100. "+
 				"Login should be letters and numbers, and shorter than 20 characters "+
 				"Email should be like hello@example.com and shorter than 50 characters.")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, ud.logger, reqId, err)
 		return
 	}
 
 	id, err := ud.userUsecase.Create(input)
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	session, err := ud.sessionUsecase.CreateSession(id)
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -90,7 +93,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie)
 	//http.SetCookie(w, token)
 
-	response.Respond(w, http.StatusCreated, map[string]string{
+	response.Respond(w, ud.logger, reqId, http.StatusCreated, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -101,20 +104,20 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get user: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	user, err := ud.userUsecase.GetById(uint(id))
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -128,7 +131,7 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		Subscriptions: user.Subscriptions,
 	}
 
-	response.Respond(w, http.StatusOK, resp)
+	response.Respond(w, ud.logger, reqId, http.StatusOK, resp)
 }
 
 func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
@@ -137,7 +140,7 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get other user: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -145,13 +148,13 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting user"), "Bad id")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	user, err := ud.userUsecase.GetById(uint(id))
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -164,7 +167,7 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 		Subscriptions: user.Subscriptions,
 	}
 
-	response.Respond(w, http.StatusOK, resp)
+	response.Respond(w, ud.logger, reqId, http.StatusOK, resp)
 }
 
 func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
@@ -173,14 +176,14 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Update user: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -189,7 +192,7 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating profile user"), "Wrong body of request")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -198,17 +201,17 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
 			"Login should be letters and numbers, shorter than 20 characters "+
 				"Email should be like hello@example.com and shorter than 50 characters")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, ud.logger, reqId, err)
 		return
 	}
 
 	err = ud.userUsecase.UpdateProfile(id, input)
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	response.Respond(w, http.StatusOK, map[string]string{
+	response.Respond(w, ud.logger, reqId, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -219,14 +222,14 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Update description of user: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -235,7 +238,7 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating description user"), "Wrong body of request")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -243,17 +246,17 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
 			"Description should be shorter than 1000 characters.")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, ud.logger, reqId, err)
 		return
 	}
 
 	err = ud.userUsecase.UpdateDescription(id, input)
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	response.Respond(w, http.StatusOK, map[string]string{
+	response.Respond(w, ud.logger, reqId, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -264,14 +267,14 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Update password of user: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -280,7 +283,7 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating password user"), "Wrong body of request")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -288,17 +291,17 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
 			"Password should be longer than 6 characters and shorter 100.")
-		error.ErrorHandler(w, err)
+		error.ErrorHandler(w, ud.logger, reqId, err)
 		return
 	}
 
 	err = ud.userUsecase.UpdatePassword(id, input)
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	response.Respond(w, http.StatusOK, map[string]string{
+	response.Respond(w, ud.logger, reqId, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -309,28 +312,28 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Upload avatar of user: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	err := r.ParseMultipartForm(5 * 1024 * 1025)
 	if err != nil {
 		err := error.Wrap(err, "Decoding error during updating password")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	file, _, err := r.FormFile("image")
 	if err != nil {
 		err := error.Wrap(err, "Reading image from form error")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -338,17 +341,17 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 	_, err = io.Copy(buffer, file)
 	if err != nil {
 		err := error.Wrap(err, "Coping byte form error")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	address, err := ud.userUsecase.UpdateAvatar(id, buffer)
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	response.Respond(w, http.StatusCreated, map[string]string{
+	response.Respond(w, ud.logger, reqId, http.StatusCreated, map[string]string{
 		"image": address,
 	})
 }
@@ -359,14 +362,14 @@ func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Following user: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -374,24 +377,24 @@ func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
 	subId, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during following"), "Bad id")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	if id == uint(subId) {
 		err = error.WithMessage(error.BadRequest.New("Bad id in during following user"),
 			"Your id and following id shoudn't match")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	err = ud.userUsecase.Follow(id, uint(subId))
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	response.Respond(w, http.StatusCreated, map[string]string{
+	response.Respond(w, ud.logger, reqId, http.StatusCreated, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -402,14 +405,14 @@ func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Unfollowing  user: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -417,24 +420,24 @@ func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
 	subId, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during unfollowing"), "Bad id")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	if id == uint(subId) {
 		err = error.WithMessage(error.BadRequest.New("Bad id in during unfollowing user"),
 			"Your id and unfollowing id shoudn't match")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	err = ud.userUsecase.Unfollow(id, uint(subId))
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	response.Respond(w, http.StatusOK, map[string]string{
+	response.Respond(w, ud.logger, reqId, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -445,7 +448,7 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get subscribers of user: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -453,7 +456,7 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting subscribers for user"), "Bad id")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -466,7 +469,7 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 
 	users, err := uh.userUsecase.GetSubscribers(uint(id), start, limit)
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -483,7 +486,7 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, http.StatusOK, resp)
+	response.Respond(w, uh.logger, reqId, http.StatusOK, resp)
 }
 
 func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
@@ -492,7 +495,7 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get subscribtions of user: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -500,7 +503,7 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting subscribtions for user"), "Bad id")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -515,7 +518,7 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 
 	users, err := uh.userUsecase.GetSubscriptions(uint(id), start, limit)
 	if err != nil {
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -532,7 +535,7 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, http.StatusOK, resp)
+	response.Respond(w, uh.logger, reqId, http.StatusOK, resp)
 }
 
 /*

@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"fmt"
+	"go.uber.org/zap"
 
 	"2020_1_Color_noise/internal/models"
 	. "2020_1_Color_noise/internal/pkg/error"
@@ -35,8 +36,19 @@ func TestHandler_GetSubList(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockListUsecase := mock.NewMockIUsecase(ctl)
-	listDelivery := NewHandler(mockListUsecase)
+	listDelivery := NewHandler(mockListUsecase, zap)
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
@@ -154,8 +166,19 @@ func TestHandler_GetRecommendationList(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockListUsecase := mock.NewMockIUsecase(ctl)
-	listDelivery := NewHandler(mockListUsecase)
+	listDelivery := NewHandler(mockListUsecase, zap)
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
@@ -273,8 +296,19 @@ func TestHandler_GetMainList(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	logger, err := zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+
+	zap := logger.Sugar().With(
+		zap.String("mode", "[access_log]"),
+		zap.String("logger", "ZAP"),
+	)
+
 	mockListUsecase := mock.NewMockIUsecase(ctl)
-	listDelivery := NewHandler(mockListUsecase)
+	listDelivery := NewHandler(mockListUsecase, zap)
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
