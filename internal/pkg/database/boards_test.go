@@ -2,6 +2,7 @@ package database
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"fmt"
 	"testing"
 	"time"
@@ -15,7 +16,11 @@ type BoardCase struct {
 }
 
 func TestPgxDB_CreateBoard(t *testing.T) {
-	BDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
@@ -51,7 +56,11 @@ func TestPgxDB_CreateBoard(t *testing.T) {
 }
 
 func TestPgxDB_DeleteBoard(t *testing.T) {
-	BDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),
@@ -88,7 +97,11 @@ func TestPgxDB_DeleteBoard(t *testing.T) {
 }
 
 func TestPgxDB_GetBoardById(t *testing.T) {
-	BDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),
@@ -126,7 +139,11 @@ func TestPgxDB_GetBoardById(t *testing.T) {
 }
 
 func TestPgxDB_GetBoardLastPin(t *testing.T) {
-	BDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),
@@ -168,7 +185,11 @@ func TestPgxDB_GetBoardLastPin(t *testing.T) {
 }
 
 func TestPgxDB_UpdateBoard(t *testing.T) {
-	BDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),
@@ -206,7 +227,11 @@ func TestPgxDB_UpdateBoard(t *testing.T) {
 }
 
 func TestPgxDB_GetBoardsByName(t *testing.T) {
-	BDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),
@@ -245,7 +270,11 @@ func TestPgxDB_GetBoardsByName(t *testing.T) {
 }
 
 func TestPgxDB_GetBoardsByUserId(t *testing.T) {
-	BDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),
@@ -286,7 +315,11 @@ func TestPgxDB_GetBoardsByUserId(t *testing.T) {
 }
 
 func TestPgxDB_GetPinsByBoardID(t *testing.T) {
-	BDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),

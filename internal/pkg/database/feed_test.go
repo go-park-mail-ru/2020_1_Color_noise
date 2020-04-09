@@ -2,6 +2,7 @@ package database
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"fmt"
 	"testing"
 	"time"
@@ -15,7 +16,12 @@ type FeedCase struct {
 }
 
 func TestPgxDB_GetMainFeed(t *testing.T) {
-	FBD.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	FBD.Open(c)
+
 	id, _ := FBD.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),
 	})
@@ -54,7 +60,12 @@ func TestPgxDB_GetMainFeed(t *testing.T) {
 }
 
 func TestPgxDB_GetRecFeed(t *testing.T) {
-	FBD.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	FBD.Open(c)
+
 	id, _ := FBD.CreateUser(models.DataBaseUser{
 		Email:             "update",
 		Login:             fmt.Sprint(time.Now()),
@@ -90,7 +101,12 @@ func TestPgxDB_GetRecFeed(t *testing.T) {
 }
 
 func TestPgxDB_GetSubFeed(t *testing.T) {
-	FBD.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	FBD.Open(c)
+
 	id, _ := FBD.CreateUser(models.DataBaseUser{
 		Login:             fmt.Sprint(time.Now()),
 	})

@@ -2,6 +2,7 @@ package database
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"database/sql"
 	"fmt"
 	"testing"
@@ -16,7 +17,11 @@ type SessionCase struct {
 }
 
 func TestPgxDB_CreateSession(t *testing.T) {
-	SDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	SDB.Open(c)
 	id, _ := SDB.CreateUser(models.DataBaseUser{
 		Email:             "create_board",
 		Login:             fmt.Sprint(time.Now()),
@@ -46,7 +51,12 @@ func TestPgxDB_CreateSession(t *testing.T) {
 }
 
 func TestPgxDB_DeleteSession(t *testing.T) {
-	SDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	SDB.Open(c)
+
 	id, _ := SDB.CreateUser(models.DataBaseUser{
 		Email:             "create_board",
 		Login:             fmt.Sprint(time.Now()),
@@ -77,7 +87,11 @@ func TestPgxDB_DeleteSession(t *testing.T) {
 }
 
 func TestPgxDB_UpdateSession(t *testing.T) {
-	SDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	SDB.Open(c)
 
 	id, _ := SDB.CreateUser(models.DataBaseUser{
 		Email:             "create_board",
@@ -116,7 +130,11 @@ func TestPgxDB_UpdateSession(t *testing.T) {
 }
 
 func TestPgxDB_GetSessionByCookie(t *testing.T) {
-	SDB.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	SDB.Open(c)
 
 	id, _ := SDB.CreateUser(models.DataBaseUser{
 		Email:             "create_board",

@@ -1,9 +1,11 @@
 package database
 
 import (
+	"2020_1_Color_noise/internal/pkg/config"
 	"errors"
 	"fmt"
 	"github.com/jackc/pgx"
+	"log"
 	"time"
 )
 
@@ -15,16 +17,14 @@ func NewPgxDB() *PgxDB {
 	return &PgxDB{}
 }
 
-func (db *PgxDB) Open() (err error) {
-	//TODO: брать из конфига
-	port := 5432
+func (db *PgxDB) Open(con config.DataBaseConfig) (err error) {
 
 	connConfig := pgx.ConnConfig{
-		Host:     "127.0.0.1",
-		Port:     uint16(port),
-		Database: "pinterest",
-		User:     "postgres",
-		Password: "password",
+		Host:    con.Host,
+		Port:     uint16(con.Port),
+		Database: con.Database,
+		User:     con.User,
+		Password: con.Password,
 	}
 
 	poolConfig := pgx.ConnPoolConfig{
@@ -40,6 +40,7 @@ func (db *PgxDB) Open() (err error) {
 
 	db.dbPool, err = pgx.NewConnPool(poolConfig)
 	if err != nil {
+		log.Print(err)
 		return fmt.Errorf("connection is not established")
 	}
 
