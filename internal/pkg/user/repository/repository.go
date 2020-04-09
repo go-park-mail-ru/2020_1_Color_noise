@@ -5,24 +5,15 @@ import (
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
 	"database/sql"
-	"sync"
 )
 
 type Repository struct {
 	bd            database.DBInterface
-	mu            *sync.Mutex
-	subscriptions map[uint][]uint
-	subscribers   map[uint][]uint
-	muSub         *sync.Mutex
 }
 
 func NewRepo(bd database.DBInterface) *Repository {
 	return &Repository{
 		bd:            bd,
-		mu:            &sync.Mutex{},
-		subscriptions: make(map[uint][]uint),
-		subscribers:   make(map[uint][]uint),
-		muSub:         &sync.Mutex{},
 	}
 }
 
