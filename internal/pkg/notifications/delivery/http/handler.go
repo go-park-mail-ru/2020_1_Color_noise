@@ -53,13 +53,13 @@ func (nh *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
 
 	for _, notification := range notifications {
 		resp = append(resp, models.ResponseNotification{
-			User:	 models.ResponseUser{
-				Id:	    notification.User.Id,
-				About:  notification.User.About,
-				Avatar: notification.User.Avatar,
-				Login:  notification.User.Login,
+			User: models.ResponseUser{
+				Id:            notification.User.Id,
+				About:         notification.User.About,
+				Avatar:        notification.User.Avatar,
+				Login:         notification.User.Login,
 				Subscriptions: notification.User.Subscriptions,
-				Subscribers: notification.User.Subscribers,
+				Subscribers:   notification.User.Subscribers,
 			},
 			Message: notification.Message,
 		})

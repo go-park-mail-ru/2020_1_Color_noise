@@ -14,7 +14,7 @@ func Respond(w http.ResponseWriter, status int, body interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	response := &Response{
 		Status: status,
-		Body: 	body,
+		Body:   body,
 	}
 
 	err := json.NewEncoder(w).Encode(response)
@@ -22,5 +22,3 @@ func Respond(w http.ResponseWriter, status int, body interface{}) {
 		return
 	}
 }
-
-

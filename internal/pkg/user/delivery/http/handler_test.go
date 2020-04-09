@@ -50,56 +50,56 @@ func TestHandler_Create(t *testing.T) {
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
-			IsAuth:     true,
-			Response:	`{"status":200,"body":{"message":"Ok"}}
+			IsAuth: true,
+			Response: `{"status":200,"body":{"message":"Ok"}}
 `,
 		},
 		TestCaseCreate{
-			InputErr:   true,
-			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}
+			InputErr: true,
+			Response: `{"status":400,"body":{"error":"Wrong body of request"}}
 `,
 		},
 		TestCaseCreate{
-			ValidErr:   true,
-			Response:	`{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}
+			ValidErr: true,
+			Response: `{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}
 `,
-			Email: 		"helloexam.com",
-			Login:		"Login1",
-			Password:   "Password1",
+			Email:    "helloexam.com",
+			Login:    "Login1",
+			Password: "Password1",
 		},
 		TestCaseCreate{
-			ValidErr:   true,
-			Response:	`{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}
+			ValidErr: true,
+			Response: `{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}
 `,
-			Email: 		"hello@exam.com",
-			Login:		"",
-			Password:   "Password1",
+			Email:    "hello@exam.com",
+			Login:    "",
+			Password: "Password1",
 		},
 		TestCaseCreate{
-			ValidErr:   true,
-			Response:	`{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}
+			ValidErr: true,
+			Response: `{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}
 `,
-			Email: 		"hello@exam.com",
-			Login:		"Login1",
-			Password:   "Passw",
+			Email:    "hello@exam.com",
+			Login:    "Login1",
+			Password: "Passw",
 		},
 		TestCaseCreate{
-			CreateErr:   true,
-			Email: 		"hello@exam.com",
-			Login:		"Login1",
-			Password:   "Password",
+			CreateErr: true,
+			Email:     "hello@exam.com",
+			Login:     "Login1",
+			Password:  "Password",
 		},
 		TestCaseCreate{
-			SessErr:   true,
-			Email: 		"hello@exam.com",
-			Login:		"Login1",
-			Password:   "Password",
+			SessErr:  true,
+			Email:    "hello@exam.com",
+			Login:    "Login1",
+			Password: "Password",
 		},
 		TestCaseCreate{
-			Email: 		"hello@exam.com",
-			Login:		"Login1",
-			Password:   "Password",
-			Response:	`{"status":201,"body":{"message":"Ok"}}
+			Email:    "hello@exam.com",
+			Login:    "Login1",
+			Password: "Password",
+			Response: `{"status":201,"body":{"message":"Ok"}}
 `,
 			CookieName: "session_id",
 			Cookie:     "cookie",
@@ -112,7 +112,7 @@ func TestHandler_Create(t *testing.T) {
 		var r *http.Request
 		if item.InputErr == false {
 			r = httptest.NewRequest("POST", "/api/user",
-			strings.NewReader(fmt.Sprintf(`{"login":"%s", "email":"%s", "password":"%s"}`, item.Login, item.Email, item.Password)))
+				strings.NewReader(fmt.Sprintf(`{"login":"%s", "email":"%s", "password":"%s"}`, item.Login, item.Email, item.Password)))
 		} else {
 			r = httptest.NewRequest("POST", "/api/user",
 				strings.NewReader(fmt.Sprintf(`{"login:"%s", "email":"%s", "password":"%s"}`, item.Login, item.Email, item.Password)))
@@ -143,7 +143,7 @@ func TestHandler_Create(t *testing.T) {
 				mockUserUsecase.EXPECT().Create(input).Return(uint(1), err),
 			)
 
-			if !item.CreateErr  {
+			if !item.CreateErr {
 				session := &models.Session{
 					Id:     1,
 					Cookie: item.Cookie,
@@ -225,7 +225,7 @@ func TestHandler_Create(t *testing.T) {
 
 type TestCaseGetUser struct {
 	IsAuth   bool
-	User	 *models.User
+	User     *models.User
 	Response string
 	IdErr    bool
 	GetErr   bool
@@ -243,35 +243,35 @@ func TestHandler_GetUser(t *testing.T) {
 
 	cases := []TestCaseGetUser{
 		TestCaseGetUser{
-			IsAuth:     false,
-			User:       &models.User{},
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+			IsAuth: false,
+			User:   &models.User{},
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
 		TestCaseGetUser{
-			IsAuth:     true,
-			IdErr:      true,
-			User:       &models.User{},
-			Response:	`{"status":500,"body":{"error":"Internal server error"}}
+			IsAuth: true,
+			IdErr:  true,
+			User:   &models.User{},
+			Response: `{"status":500,"body":{"error":"Internal server error"}}
 `,
 		},
 		TestCaseGetUser{
-			IsAuth:     true,
-			GetErr:     true,
-			User:       &models.User{},
+			IsAuth: true,
+			GetErr: true,
+			User:   &models.User{},
 		},
 		TestCaseGetUser{
-			IsAuth:     true,
-			User:       &models.User{
-				Id: 1,
-				Email:        "a@b.com",
-				Login:        "login",
+			IsAuth: true,
+			User: &models.User{
+				Id:            1,
+				Email:         "a@b.com",
+				Login:         "login",
 				About:         "about me",
 				Avatar:        "avatar.jpg",
 				Subscribers:   11000,
 				Subscriptions: 100,
 			},
-			Response:	`{"status":200,"body":{"id":1,"email":"a@b.com","login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000}}
+			Response: `{"status":200,"body":{"id":1,"email":"a@b.com","login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000}}
 `,
 		},
 	}
@@ -283,7 +283,7 @@ func TestHandler_GetUser(t *testing.T) {
 
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
-		if !item.IdErr{
+		if !item.IdErr {
 			ctx = context.WithValue(ctx, "Id", item.User.Id)
 		}
 		r = r.WithContext(ctx)
@@ -346,28 +346,28 @@ func TestHandler_GetOtherUser(t *testing.T) {
 
 	cases := []TestCaseGetUser{
 		TestCaseGetUser{
-			IsAuth:     false,
-			User:       &models.User{},
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+			IsAuth: false,
+			User:   &models.User{},
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
 		TestCaseGetUser{
-			IsAuth:     true,
-			GetErr:     true,
-			User:       &models.User{},
+			IsAuth: true,
+			GetErr: true,
+			User:   &models.User{},
 		},
 		TestCaseGetUser{
-			IsAuth:     true,
-			User:       &models.User{
-				Id:           1,
-				Email:        "a@b.com",
-				Login:        "login",
+			IsAuth: true,
+			User: &models.User{
+				Id:            1,
+				Email:         "a@b.com",
+				Login:         "login",
 				About:         "about me",
 				Avatar:        "avatar.jpg",
 				Subscribers:   11000,
 				Subscriptions: 100,
 			},
-			Response:	`{"status":200,"body":{"id":1,"login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000}}
+			Response: `{"status":200,"body":{"id":1,"login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000}}
 `,
 		},
 	}
@@ -380,7 +380,7 @@ func TestHandler_GetOtherUser(t *testing.T) {
 
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
-		if !item.IdErr{
+		if !item.IdErr {
 			ctx = context.WithValue(ctx, "Id", item.User.Id)
 		}
 		r = r.WithContext(ctx)
@@ -434,13 +434,13 @@ func TestHandler_GetOtherUser(t *testing.T) {
 }
 
 type TestCaseUpdateProfile struct {
-	IsAuth     bool
-	User       *models.User
-	Response   string
-	IdErr	   bool
-	InputErr   bool
-	ValidErr   bool
-	UpdateErr  bool
+	IsAuth    bool
+	User      *models.User
+	Response  string
+	IdErr     bool
+	InputErr  bool
+	ValidErr  bool
+	UpdateErr bool
 }
 
 func TestHandler_UpdateProfile(t *testing.T) {
@@ -455,62 +455,62 @@ func TestHandler_UpdateProfile(t *testing.T) {
 
 	cases := []TestCaseUpdateProfile{
 		TestCaseUpdateProfile{
-			IsAuth:     false,
-			User:       &models.User{},
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+			IsAuth: false,
+			User:   &models.User{},
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
 		TestCaseUpdateProfile{
-			IsAuth:     true,
-			IdErr:      true,
-			User:       &models.User{},
-			Response:	`{"status":500,"body":{"error":"Internal server error"}}
+			IsAuth: true,
+			IdErr:  true,
+			User:   &models.User{},
+			Response: `{"status":500,"body":{"error":"Internal server error"}}
 `,
 		},
 		TestCaseUpdateProfile{
-			IsAuth:     true,
-			InputErr:   true,
-			User:       &models.User{},
-			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}
+			IsAuth:   true,
+			InputErr: true,
+			User:     &models.User{},
+			Response: `{"status":400,"body":{"error":"Wrong body of request"}}
 `,
 		},
 		TestCaseUpdateProfile{
-			IsAuth:     true,
-			ValidErr:   true,
-			Response:	`{"status":400,"body":{"error":"Login should be letters and numbers, shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters"}}
+			IsAuth:   true,
+			ValidErr: true,
+			Response: `{"status":400,"body":{"error":"Login should be letters and numbers, shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters"}}
 `,
-			User:       &models.User{
-				Email:  "helloexam.com",
-				Login:	 "Login1",
+			User: &models.User{
+				Email: "helloexam.com",
+				Login: "Login1",
 			},
 		},
 		TestCaseUpdateProfile{
-			IsAuth:     true,
-			ValidErr:   true,
-			Response:	`{"status":400,"body":{"error":"Login should be letters and numbers, shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters"}}
+			IsAuth:   true,
+			ValidErr: true,
+			Response: `{"status":400,"body":{"error":"Login should be letters and numbers, shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters"}}
 `,
-			User:       &models.User{
-				Email:  "helloexam.com",
-				Login:		"",
+			User: &models.User{
+				Email: "helloexam.com",
+				Login: "",
 			},
 		},
 		TestCaseUpdateProfile{
-			IsAuth:     true,
-			UpdateErr:  true,
-			User:       &models.User{
-				Id:      1,
-				Email:  "hello@exam.com",
-				Login:		"login",
+			IsAuth:    true,
+			UpdateErr: true,
+			User: &models.User{
+				Id:    1,
+				Email: "hello@exam.com",
+				Login: "login",
 			},
 		},
 		TestCaseUpdateProfile{
-			IsAuth:     true,
-			User:       &models.User{
-				Id:      1,
-				Email:  "hello@exam.com",
-				Login:		"login",
+			IsAuth: true,
+			User: &models.User{
+				Id:    1,
+				Email: "hello@exam.com",
+				Login: "login",
 			},
-			Response:	`{"status":200,"body":{"message":"Ok"}}
+			Response: `{"status":200,"body":{"message":"Ok"}}
 `,
 		},
 	}
@@ -531,7 +531,7 @@ func TestHandler_UpdateProfile(t *testing.T) {
 
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
-		if !item.IdErr{
+		if !item.IdErr {
 			ctx = context.WithValue(ctx, "Id", item.User.Id)
 		}
 		r = r.WithContext(ctx)
@@ -539,8 +539,8 @@ func TestHandler_UpdateProfile(t *testing.T) {
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
 
 			input := &models.UpdateProfileInput{
-				Email:    item.User.Email,
-				Login:    item.User.Login,
+				Email: item.User.Email,
+				Login: item.User.Login,
 			}
 
 			var err error = nil
@@ -589,13 +589,13 @@ func TestHandler_UpdateProfile(t *testing.T) {
 }
 
 type TestCaseUpdateDescription struct {
-	IsAuth     bool
-	User       *models.User
-	Response   string
-	IdErr	   bool
-	InputErr   bool
-	ValidErr   bool
-	UpdateErr  bool
+	IsAuth    bool
+	User      *models.User
+	Response  string
+	IdErr     bool
+	InputErr  bool
+	ValidErr  bool
+	UpdateErr bool
 }
 
 func TestHandler_UpdateDescription(t *testing.T) {
@@ -610,40 +610,40 @@ func TestHandler_UpdateDescription(t *testing.T) {
 
 	cases := []TestCaseUpdateDescription{
 		TestCaseUpdateDescription{
-			IsAuth:     false,
-			User:       &models.User{},
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+			IsAuth: false,
+			User:   &models.User{},
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
 		TestCaseUpdateDescription{
-			IsAuth:     true,
-			IdErr:      true,
-			User:       &models.User{},
-			Response:	`{"status":500,"body":{"error":"Internal server error"}}
+			IsAuth: true,
+			IdErr:  true,
+			User:   &models.User{},
+			Response: `{"status":500,"body":{"error":"Internal server error"}}
 `,
 		},
 		TestCaseUpdateDescription{
-			IsAuth:     true,
-			InputErr:   true,
-			User:       &models.User{},
-			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}
+			IsAuth:   true,
+			InputErr: true,
+			User:     &models.User{},
+			Response: `{"status":400,"body":{"error":"Wrong body of request"}}
 `,
 		},
 		TestCaseUpdateDescription{
-			IsAuth:     true,
-			UpdateErr:  true,
-			User:       &models.User{
-				Id:      1,
-				About:   "about me",
+			IsAuth:    true,
+			UpdateErr: true,
+			User: &models.User{
+				Id:    1,
+				About: "about me",
 			},
 		},
 		TestCaseUpdateDescription{
-			IsAuth:     true,
-			User:       &models.User{
-				Id:      1,
-				About:   "about me",
+			IsAuth: true,
+			User: &models.User{
+				Id:    1,
+				About: "about me",
 			},
-			Response:	`{"status":200,"body":{"message":"Ok"}}
+			Response: `{"status":200,"body":{"message":"Ok"}}
 `,
 		},
 	}
@@ -664,7 +664,7 @@ func TestHandler_UpdateDescription(t *testing.T) {
 
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
-		if !item.IdErr{
+		if !item.IdErr {
 			ctx = context.WithValue(ctx, "Id", item.User.Id)
 		}
 		r = r.WithContext(ctx)
@@ -672,7 +672,7 @@ func TestHandler_UpdateDescription(t *testing.T) {
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
 
 			input := &models.UpdateDescriptionInput{
-				Description:    item.User.About,
+				Description: item.User.About,
 			}
 
 			var err error = nil
@@ -722,14 +722,14 @@ func TestHandler_UpdateDescription(t *testing.T) {
 }
 
 type TestCaseUpdatePassword struct {
-	IsAuth     bool
-	UserId     uint
-	Password   string
-	Response   string
-	IdErr	   bool
-	InputErr   bool
-	ValidErr   bool
-	UpdateErr  bool
+	IsAuth    bool
+	UserId    uint
+	Password  string
+	Response  string
+	IdErr     bool
+	InputErr  bool
+	ValidErr  bool
+	UpdateErr bool
 }
 
 func TestHandler_UpdatePassword(t *testing.T) {
@@ -744,47 +744,47 @@ func TestHandler_UpdatePassword(t *testing.T) {
 
 	cases := []TestCaseUpdatePassword{
 		TestCaseUpdatePassword{
-			IsAuth:     false,
-			UserId:     1,
-			Password:   "password",
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+			IsAuth:   false,
+			UserId:   1,
+			Password: "password",
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
 		TestCaseUpdatePassword{
-			IsAuth:     true,
-			IdErr:      true,
-			UserId:     1,
-			Password:   "password",
-			Response:	`{"status":500,"body":{"error":"Internal server error"}}
+			IsAuth:   true,
+			IdErr:    true,
+			UserId:   1,
+			Password: "password",
+			Response: `{"status":500,"body":{"error":"Internal server error"}}
 `,
 		},
 		TestCaseUpdatePassword{
-			IsAuth:     true,
-			InputErr:   true,
-			UserId:     1,
-			Password:   "password",
-			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}
+			IsAuth:   true,
+			InputErr: true,
+			UserId:   1,
+			Password: "password",
+			Response: `{"status":400,"body":{"error":"Wrong body of request"}}
 `,
 		},
 		TestCaseUpdatePassword{
-			IsAuth:     true,
-			ValidErr:   true,
-			Response:	`{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100."}}
+			IsAuth:   true,
+			ValidErr: true,
+			Response: `{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100."}}
 `,
-			UserId:     1,
-			Password:   "pas",
+			UserId:   1,
+			Password: "pas",
 		},
 		TestCaseUpdatePassword{
-			IsAuth:     true,
-			UpdateErr:  true,
-			UserId:       1,
-			Password:   "password",
+			IsAuth:    true,
+			UpdateErr: true,
+			UserId:    1,
+			Password:  "password",
 		},
 		TestCaseUpdatePassword{
-			IsAuth:     true,
-			UserId:       1,
-			Password:   "password",
-			Response:	`{"status":200,"body":{"message":"Ok"}}
+			IsAuth:   true,
+			UserId:   1,
+			Password: "password",
+			Response: `{"status":200,"body":{"message":"Ok"}}
 `,
 		},
 	}
@@ -805,7 +805,7 @@ func TestHandler_UpdatePassword(t *testing.T) {
 
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
-		if !item.IdErr{
+		if !item.IdErr {
 			ctx = context.WithValue(ctx, "Id", item.UserId)
 		}
 		r = r.WithContext(ctx)
@@ -813,7 +813,7 @@ func TestHandler_UpdatePassword(t *testing.T) {
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
 
 			input := &models.UpdatePasswordInput{
-				Password:    item.Password,
+				Password: item.Password,
 			}
 
 			var err error = nil
@@ -863,14 +863,14 @@ func TestHandler_UpdatePassword(t *testing.T) {
 }
 
 type TestCaseFollow struct {
-	IsAuth     bool
-	UserId     uint
-	SubId      uint
-	Response   string
-	IdErr	   bool
-	BadIdErr   bool
-	SubIdErr   bool
-	FollowErr  bool
+	IsAuth    bool
+	UserId    uint
+	SubId     uint
+	Response  string
+	IdErr     bool
+	BadIdErr  bool
+	SubIdErr  bool
+	FollowErr bool
 }
 
 func TestHandler_Follow(t *testing.T) {
@@ -885,47 +885,47 @@ func TestHandler_Follow(t *testing.T) {
 
 	cases := []TestCaseFollow{
 		TestCaseFollow{
-			IsAuth:     false,
-			UserId:     1,
-			SubId:		2,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+			IsAuth: false,
+			UserId: 1,
+			SubId:  2,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
 		TestCaseFollow{
-			IsAuth:     true,
-			IdErr:      true,
-			UserId:     1,
-			SubId:		2,
-			Response:	`{"status":500,"body":{"error":"Internal server error"}}
+			IsAuth: true,
+			IdErr:  true,
+			UserId: 1,
+			SubId:  2,
+			Response: `{"status":500,"body":{"error":"Internal server error"}}
 `,
 		},
 		TestCaseFollow{
-			IsAuth:     true,
-			BadIdErr:   true,
-			UserId:     1,
-			SubId:		2,
-			Response:	`{"status":400,"body":{"error":"Bad id"}}
+			IsAuth:   true,
+			BadIdErr: true,
+			UserId:   1,
+			SubId:    2,
+			Response: `{"status":400,"body":{"error":"Bad id"}}
 `,
 		},
 		TestCaseFollow{
-			IsAuth:     true,
-			SubIdErr:  true,
-			UserId:     1,
-			SubId:		1,
-			Response:	`{"status":400,"body":{"error":"Your id and following id shoudn't match"}}
+			IsAuth:   true,
+			SubIdErr: true,
+			UserId:   1,
+			SubId:    1,
+			Response: `{"status":400,"body":{"error":"Your id and following id shoudn't match"}}
 `,
 		},
 		TestCaseFollow{
-			IsAuth:     true,
-			FollowErr:   true,
-			UserId:     1,
-			SubId:		2,
+			IsAuth:    true,
+			FollowErr: true,
+			UserId:    1,
+			SubId:     2,
 		},
 		TestCaseFollow{
-			IsAuth:     true,
-			UserId:     1,
-			SubId:		2,
-			Response:	`{"status":201,"body":{"message":"Ok"}}
+			IsAuth: true,
+			UserId: 1,
+			SubId:  2,
+			Response: `{"status":201,"body":{"message":"Ok"}}
 `,
 		},
 	}
@@ -945,7 +945,7 @@ func TestHandler_Follow(t *testing.T) {
 
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
-		if !item.IdErr{
+		if !item.IdErr {
 			ctx = context.WithValue(ctx, "Id", item.UserId)
 		}
 		r = r.WithContext(ctx)
@@ -1011,47 +1011,47 @@ func TestHandler_Unfollow(t *testing.T) {
 
 	cases := []TestCaseFollow{
 		TestCaseFollow{
-			IsAuth:     false,
-			UserId:     1,
-			SubId:		2,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+			IsAuth: false,
+			UserId: 1,
+			SubId:  2,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
 		TestCaseFollow{
-			IsAuth:     true,
-			IdErr:      true,
-			UserId:     1,
-			SubId:		2,
-			Response:	`{"status":500,"body":{"error":"Internal server error"}}
+			IsAuth: true,
+			IdErr:  true,
+			UserId: 1,
+			SubId:  2,
+			Response: `{"status":500,"body":{"error":"Internal server error"}}
 `,
 		},
 		TestCaseFollow{
-			IsAuth:     true,
-			BadIdErr:   true,
-			UserId:     1,
-			SubId:		2,
-			Response:	`{"status":400,"body":{"error":"Bad id"}}
+			IsAuth:   true,
+			BadIdErr: true,
+			UserId:   1,
+			SubId:    2,
+			Response: `{"status":400,"body":{"error":"Bad id"}}
 `,
 		},
 		TestCaseFollow{
-			IsAuth:     true,
-			SubIdErr:  true,
-			UserId:     1,
-			SubId:		1,
-			Response:	`{"status":400,"body":{"error":"Your id and unfollowing id shoudn't match"}}
+			IsAuth:   true,
+			SubIdErr: true,
+			UserId:   1,
+			SubId:    1,
+			Response: `{"status":400,"body":{"error":"Your id and unfollowing id shoudn't match"}}
 `,
 		},
 		TestCaseFollow{
-			IsAuth:     true,
-			FollowErr:   true,
-			UserId:     1,
-			SubId:		2,
+			IsAuth:    true,
+			FollowErr: true,
+			UserId:    1,
+			SubId:     2,
 		},
 		TestCaseFollow{
-			IsAuth:     true,
-			UserId:     1,
-			SubId:		2,
-			Response:	`{"status":200,"body":{"message":"Ok"}}
+			IsAuth: true,
+			UserId: 1,
+			SubId:  2,
+			Response: `{"status":200,"body":{"message":"Ok"}}
 `,
 		},
 	}
@@ -1069,7 +1069,7 @@ func TestHandler_Unfollow(t *testing.T) {
 
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
-		if !item.IdErr{
+		if !item.IdErr {
 			ctx = context.WithValue(ctx, "Id", item.UserId)
 		}
 		r = r.WithContext(ctx)
@@ -1123,11 +1123,11 @@ func TestHandler_Unfollow(t *testing.T) {
 }
 
 type TestCaseGet struct {
-	IsAuth     bool
-	UserId     uint
-	Response   string
-	GetErr     bool
-	Users      []*models.User
+	IsAuth   bool
+	UserId   uint
+	Response string
+	GetErr   bool
+	Users    []*models.User
 }
 
 func TestHandler_GetSubscribers(t *testing.T) {
@@ -1142,21 +1142,21 @@ func TestHandler_GetSubscribers(t *testing.T) {
 
 	cases := []TestCaseGet{
 		TestCaseGet{
-			IsAuth:     false,
-			UserId:     1,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+			IsAuth: false,
+			UserId: 1,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
 		TestCaseGet{
-			IsAuth:     true,
-			GetErr:     true,
-			UserId:     1,
-			Users:	    nil,
+			IsAuth: true,
+			GetErr: true,
+			UserId: 1,
+			Users:  nil,
 		},
 		TestCaseGet{
-			IsAuth:     true,
-			UserId:     1,
-			Users:		[]*models.User{
+			IsAuth: true,
+			UserId: 1,
+			Users: []*models.User{
 				&models.User{
 					Id:            2,
 					Login:         "login1",
@@ -1174,7 +1174,7 @@ func TestHandler_GetSubscribers(t *testing.T) {
 					Subscriptions: 2,
 				},
 			},
-			Response:	`{"status":200,"body":[{"id":2,"login":"login1","about":"about me","avatar":"avatar.jpg","subscriptions":1,"subscribers":5},` +
+			Response: `{"status":200,"body":[{"id":2,"login":"login1","about":"about me","avatar":"avatar.jpg","subscriptions":1,"subscribers":5},` +
 				`{"id":3,"login":"login2","about":"about me","avatar":"avatar.jpg","subscriptions":2,"subscribers":6}]}
 `,
 		},
@@ -1254,21 +1254,21 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 
 	cases := []TestCaseGet{
 		TestCaseGet{
-			IsAuth:     false,
-			UserId:     1,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+			IsAuth: false,
+			UserId: 1,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
 		TestCaseGet{
-			IsAuth:     true,
-			GetErr:     true,
-			UserId:     1,
-			Users:	    nil,
+			IsAuth: true,
+			GetErr: true,
+			UserId: 1,
+			Users:  nil,
 		},
 		TestCaseGet{
-			IsAuth:     true,
-			UserId:     1,
-			Users:		[]*models.User{
+			IsAuth: true,
+			UserId: 1,
+			Users: []*models.User{
 				&models.User{
 					Id:            2,
 					Login:         "login1",
@@ -1286,7 +1286,7 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 					Subscriptions: 2,
 				},
 			},
-			Response:	`{"status":200,"body":[{"id":2,"login":"login1","about":"about me","avatar":"avatar.jpg","subscriptions":1,"subscribers":5},` +
+			Response: `{"status":200,"body":[{"id":2,"login":"login1","about":"about me","avatar":"avatar.jpg","subscriptions":1,"subscribers":5},` +
 				`{"id":3,"login":"login2","about":"about me","avatar":"avatar.jpg","subscriptions":2,"subscribers":6}]}
 `,
 		},
@@ -1353,5 +1353,3 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 
 	}
 }
-
-

@@ -34,7 +34,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth == true {
-		response.Respond(w, http.StatusOK, map[string]string {
+		response.Respond(w, http.StatusOK, map[string]string{
 			"message": "Ok",
 		})
 		return
@@ -312,7 +312,6 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
-
 
 	err := r.ParseMultipartForm(5 * 1024 * 1025)
 	if err != nil {

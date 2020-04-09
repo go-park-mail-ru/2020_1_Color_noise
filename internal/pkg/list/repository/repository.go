@@ -19,7 +19,6 @@ func NewRepo(d database.DBInterface) *Repository {
 	}
 }
 
-
 func (lr *Repository) GetMainList(start int, limit int) ([]*models.Pin, error) {
 	p := models.DataBaseUser{}
 	result, err := lr.db.GetMainFeed(p, start, limit)

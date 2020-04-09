@@ -29,8 +29,8 @@ var authMethods = map[string][]string{
 }
 
 var unauthMethods = map[string][]string{
-	"/api/auth":           []string{"POST"},
-	"/api/user":           []string{"POST"},
+	"/api/auth": []string{"POST"},
+	"/api/user": []string{"POST"},
 }
 
 func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
@@ -56,10 +56,23 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 				//http.SetCookie(w, token)
 
 				/*
-				if r.Method != http.MethodGet {
-					token := r.Header.Get("X-CSRF-Token")
-					if token != session.Token {
-						ctx = context.WithValue(ctx, "isAuth", false)
+					if r.Method != http.MethodGet {
+						token := r.Header.Get("X-CSRF-Token")
+						if token != session.Token {
+							ctx = context.WithValue(ctx, "isAuth", false)
+						} else {
+							ctx = context.WithValue(ctx, "isAuth", true)
+							ctx = context.WithValue(ctx, "Id", session.Id)
+							newToken := m.sessions.CreateToken()
+							m.sessions.UpdateToken(session, newToken)
+							token := &http.Cookie{
+								Name:    "csrf_token",
+								Value:    newToken,
+								Expires: time.Now().Add(10 * time.Hour),
+								Domain: r.Host,
+							}
+							http.SetCookie(w, token)
+						}
 					} else {
 						ctx = context.WithValue(ctx, "isAuth", true)
 						ctx = context.WithValue(ctx, "Id", session.Id)
@@ -72,20 +85,7 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 							Domain: r.Host,
 						}
 						http.SetCookie(w, token)
-					}
-				} else {
-					ctx = context.WithValue(ctx, "isAuth", true)
-					ctx = context.WithValue(ctx, "Id", session.Id)
-					newToken := m.sessions.CreateToken()
-					m.sessions.UpdateToken(session, newToken)
-					token := &http.Cookie{
-						Name:    "csrf_token",
-						Value:    newToken,
-						Expires: time.Now().Add(10 * time.Hour),
-						Domain: r.Host,
-					}
-					http.SetCookie(w, token)
-				}*/
+					}*/
 
 			}
 		}

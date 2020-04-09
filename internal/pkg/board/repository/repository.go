@@ -26,7 +26,7 @@ func (br *Repository) Create(board *models.Board) (uint, error) {
 
 	id, err := br.db.CreateBoard(models.GetDBoard(*board))
 	if err != nil {
-		return 0, BoardNotFound.Newf("board can not be created, err: ", err)
+		return 0, BoardNotFound.Newf("board can not be created, err: %v", err)
 	}
 
 	return id, nil
@@ -107,7 +107,7 @@ func (br *Repository) GetByName(name string, start int, limit int) ([]*models.Bo
 	}
 	boards, err := br.db.GetBoardsByName(b, start, limit)
 	if err != nil {
-		return nil, BoardNotFound.Newf("Boards not found, name: ", name)
+		return nil, BoardNotFound.Newf("Boards not found, name: %s", name)
 	}
 
 	for _, board := range boards {
@@ -121,8 +121,6 @@ func (br *Repository) GetByName(name string, start int, limit int) ([]*models.Bo
 	return boards, err
 }
 
-
-
 func (br *Repository) Update(board *models.Board) error {
 	err := br.db.UpdateBoard(models.GetDBoard(*board))
 	if err != nil {
@@ -131,12 +129,9 @@ func (br *Repository) Update(board *models.Board) error {
 	return nil
 }
 
-
-
-
 func (br *Repository) Delete(id uint, userId uint) error {
 	d := models.DataBaseBoard{
-		Id: 		id,
+		Id:     id,
 		UserId: userId,
 	}
 	err := br.db.DeleteBoard(d)

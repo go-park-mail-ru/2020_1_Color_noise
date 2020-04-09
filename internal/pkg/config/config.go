@@ -9,17 +9,16 @@ import (
 //набор переменных для подключения
 var (
 	CONFIG = viper.New()
-	DB DataBaseConfig
+	DB     DataBaseConfig
 )
-
 
 type DataBaseConfig struct {
 	//TODO: заменить на строчку подключения, хранить имя драйвера
 	ConnString string `json:"db.connect"`
-	MaxConns int `json:"db.maxconns"`
+	MaxConns   int    `json:"db.maxconns"`
 }
 
-func configinit()  {
+func configinit() {
 
 	CONFIG.SetConfigName("config")
 	CONFIG.AddConfigPath(".")

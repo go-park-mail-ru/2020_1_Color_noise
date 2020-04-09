@@ -24,4 +24,3 @@ func (nu *Usecase) GetNotifications(id uint, start int, limit int) ([]*models.No
 
 	return notifications, nil
 }
-
