@@ -19,7 +19,7 @@ func NewUsecase(repo notifications.IRepository) *Usecase {
 func (nu *Usecase) GetNotifications(id uint, start int, limit int) ([]*models.Notification, error) {
 	notifications, err := nu.repo.GetNotifications(id, start, limit)
 	if err != nil {
-		return nil, Wrapf(err, "GetNotifications by id error, pinId: %s", id)
+		return nil, Wrapf(err, "GetNotifications by id error, pinId: %d", id)
 	}
 
 	return notifications, nil

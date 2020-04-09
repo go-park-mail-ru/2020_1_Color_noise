@@ -56,11 +56,11 @@ func TestHandler_GetById(t *testing.T) {
 		}
 
 		if item.ErrFunc == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 		if item.ErrFunc != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 	}
@@ -110,11 +110,11 @@ func TestHandler_GetByLogin(t *testing.T) {
 		}
 
 		if item.ErrFunc == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 		if item.ErrFunc != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 	}
@@ -185,15 +185,15 @@ func TestHandler_Search(t *testing.T) {
 
 		user, err := userUsecase.Search(item.Login, item.Start, item.Limit)
 		if !reflect.DeepEqual(user, item.UserExp) {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Users: got %+v, expected %+v",
 				caseNum, user, item.UserExp)
 		}
 		if item.ErrFunc == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 		if item.ErrFunc != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 	}
@@ -289,11 +289,11 @@ func TestHandler_UpdateDescription(t *testing.T) {
 
 		err := userUsecase.UpdateDescription(item.UserId, item.Desc)
 		if item.ErrFunc == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 		if item.ErrFunc != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 	}
@@ -326,11 +326,11 @@ func TestHandler_Delete(t *testing.T) {
 
 		err := userUsecase.Delete(item.UserId)
 		if item.ErrFunc == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 		if item.ErrFunc != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 	}
@@ -371,11 +371,11 @@ func TestHandler_Follow(t *testing.T) {
 
 		err := userUsecase.Follow(item.UserId, item.SubId)
 		if item.ErrFunc == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 		if item.ErrFunc != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 	}
@@ -410,11 +410,11 @@ func TestHandler_Unfollow(t *testing.T) {
 
 		err := userUsecase.Unfollow(item.UserId, item.SubId)
 		if item.ErrFunc == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 		if item.ErrFunc != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 	}
@@ -482,15 +482,15 @@ func TestHandler_GetSubscribers(t *testing.T) {
 
 		users, err := userUsecase.GetSubscribers(item.UserId, item.Start, item.Limit)
 		if !reflect.DeepEqual(users, item.UserExp) {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Users: got %+v, expected %+v",
 				caseNum, users, item.UserExp)
 		}
 		if item.ErrFunc == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 		if item.ErrFunc != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 	}
@@ -549,15 +549,15 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 
 		users, err := userUsecase.GetSubscriptions(item.UserId, item.Start, item.Limit)
 		if !reflect.DeepEqual(users, item.UserExp) {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Users: got %+v, expected %+v",
 				caseNum, users, item.UserExp)
 		}
 		if item.ErrFunc == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 		if item.ErrFunc != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 	}
@@ -600,11 +600,11 @@ func TestHandler_ComparePassword(t *testing.T) {
 
 		err := userUsecase.ComparePassword(item.User, item.Pass)
 		if item.Err == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.Err)
 		}
 		if item.Err != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.Err)
 		}
 	}

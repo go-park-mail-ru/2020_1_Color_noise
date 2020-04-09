@@ -53,16 +53,16 @@ func TestHandler_GetByCookie(t *testing.T) {
 
 		sess, err := sessionUsecase.GetByCookie(item.Cookie)
 		if !reflect.DeepEqual(sess, item.SessExp) {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Session: got %+v, expected %+v",
 				caseNum, sess, item.SessExp)
 		}
 
 		if item.ErrFunc == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 		if item.ErrFunc != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 	}
@@ -109,11 +109,11 @@ func TestHandler_UpdateToken(t *testing.T) {
 
 		err := sessionUsecase.UpdateToken(item.Sess, item.Token)
 		if item.ErrFunc == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 		if item.ErrFunc != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 	}
@@ -146,11 +146,11 @@ func TestHandler_Delete(t *testing.T) {
 
 		err := sessionUsecase.Delete(item.Cookie)
 		if item.ErrFunc == nil && err != nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 		if item.ErrFunc != nil && err == nil {
-			t.Errorf("[%d] wrong User: got %+v, expected %+v",
+			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)
 		}
 	}

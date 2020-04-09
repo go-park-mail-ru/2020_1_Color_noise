@@ -24,18 +24,18 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 
 	length := base64.StdEncoding.EncodedLen(len(b64data))
 	if length > 10000000 {
-		return 0, Wrapf(TooMuchSize.New("Too much size image"), "Creating pin error, userId: %s", userId)
+		return 0, Wrapf(TooMuchSize.New("Too much size image"), "Creating pin error, userId: %d", userId)
 	}
 
 	buffer, err := base64.StdEncoding.DecodeString(b64data)
 	if err != nil {
 		err = Wrap(err, "Decoding base64")
-		return 0, Wrapf(err, "Creating pin error, userId: %s", userId)
+		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
 	name, err := image.SaveImage(&buffer)
 	if err != nil {
-		return 0, Wrapf(err, "Creating pin error, userId: %s", userId)
+		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
 	pin := &models.Pin{
@@ -48,7 +48,7 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 
 	id, err := pu.repo.Create(pin)
 	if err != nil {
-		return 0, Wrapf(err, "Creating pin error, userId: %s", userId)
+		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
 	return id, nil
@@ -57,7 +57,7 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 func (pu *Usecase) GetById(id uint) (*models.Pin, error) {
 	pin, err := pu.repo.GetByID(id)
 	if err != nil {
-		return nil, Wrapf(err, "Getting pin by id error, pinId: %s", id)
+		return nil, Wrapf(err, "Getting pin by id error, pinId: %d", id)
 	}
 
 	return pin, nil
@@ -66,7 +66,7 @@ func (pu *Usecase) GetById(id uint) (*models.Pin, error) {
 func (pu *Usecase) GetByUserId(id uint, start int, limit int) ([]*models.Pin, error) {
 	pins, err := pu.repo.GetByUserID(id, start, limit)
 	if err != nil {
-		return nil, Wrapf(err, "Getting pin by id error, pinId: %s", id)
+		return nil, Wrapf(err, "Getting pin by id error, pinId: %d", id)
 	}
 
 	return pins, nil
