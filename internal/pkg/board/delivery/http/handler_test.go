@@ -394,7 +394,7 @@ func TestHandler_GetNameBoard(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockBoardUsecase.EXPECT().GetById(item.Board.Id).Return(item.Board, err),
+				mockBoardUsecase.EXPECT().GetByNameId(item.Board.Id).Return(item.Board, err),
 			)
 		}
 

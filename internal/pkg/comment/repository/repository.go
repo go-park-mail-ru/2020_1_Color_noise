@@ -26,7 +26,7 @@ func (cr *Repository) Create(comment *models.Comment) (uint, error) {
 	comment.Id = id
 	_, _ = cr.db.PutNotifications(models.GetBComment(*comment))
 	if err != nil {
-		return 0, CommentNotFound.Newf("Comment can not be created, err %v:", err)
+		return 0, CommentNotFound.Wrap( err, "Comment can not be created")
 	}
 	return id, nil
 }
@@ -93,7 +93,7 @@ func (cr *Repository) Update(comment *models.Comment) error {
 
 	err := cr.db.UpdateComment(models.GetBComment(*comment))
 	if err != nil {
-		return CommentNotFound.Newf("Comment can not be updared, err %v:", err)
+		return CommentNotFound.Wrap(err, "Comment can not be updared")
 	}
 	return nil
 }

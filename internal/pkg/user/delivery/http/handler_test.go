@@ -1313,12 +1313,12 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().GetSubscribers(item.UserId, 1, 15).Return(item.Users, err),
+				mockUserUsecase.EXPECT().GetSubscriptions(item.UserId, 1, 15).Return(item.Users, err),
 			)
 
 		}
 
-		userDelivery.GetSubscribers(w, r)
+		userDelivery.GetSubscribtions(w, r)
 
 		resp := w.Result()
 		body, _ := ioutil.ReadAll(resp.Body)

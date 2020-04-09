@@ -7,7 +7,6 @@ import (
 	"2020_1_Color_noise/internal/pkg/pin"
 	"2020_1_Color_noise/internal/pkg/response"
 	"2020_1_Color_noise/internal/pkg/user"
-	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -44,14 +43,14 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		limit = 10
 	}
-	fmt.Println(what, "here")
+
 	switch what {
 	case "comment":
 		comments, err := sh.commentUsecase.GetByText(description, start, limit)
 		if err != nil {
 			err = error.Wrap(err, "Error searching comments")
-			fmt.Println(err)
-			break
+			error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+			return
 		}
 
 		resp := make([]models.ResponseComment, 0)
@@ -71,7 +70,8 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		pins, err := sh.pinUsecase.GetByName(description, start, limit)
 		if err != nil {
 			err = error.Wrap(err, "Error searching pins")
-			break
+			error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+			return
 		}
 
 		resp := make([]models.ResponsePin, 0)
@@ -92,7 +92,8 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		users, err := sh.userUsecase.Search(description, start, limit)
 		if err != nil {
 			err = error.Wrap(err, "Error searching users")
-			break
+			error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+			return
 		}
 
 		resp := make([]models.ResponseUser, 0)
@@ -111,8 +112,6 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	default:
 		err = error.WithMessage(error.SearchNotFound.New( "Bad id when in during searching"), "Bad parametrs")
-		fmt.Println(err, "here")
+		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 	}
-	fmt.Println(err, "here")
-	error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
 }

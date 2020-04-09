@@ -4,7 +4,9 @@ import (
 	boardDeliveryHttp "2020_1_Color_noise/internal/pkg/board/delivery/http"
 	boardRepo "2020_1_Color_noise/internal/pkg/board/repository"
 	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
+
 	"2020_1_Color_noise/internal/pkg/config"
+
 	notificationsDeliveryHttp "2020_1_Color_noise/internal/pkg/notifications/delivery/http"
 	notificationsRepo "2020_1_Color_noise/internal/pkg/notifications/repository"
 	notificationsUsecase "2020_1_Color_noise/internal/pkg/notifications/usecase"
@@ -34,6 +36,7 @@ import (
 	searchHandler "2020_1_Color_noise/internal/pkg/search"
 
 	"2020_1_Color_noise/internal/pkg/middleware"
+
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"

@@ -25,7 +25,7 @@ func (bu *Usecase) Create(input *models.InputBoard, userId uint) (uint, error) {
 
 	id, err := bu.repo.Create(board)
 	if err != nil {
-		return 0, Wrapf(err, "Creating board error, userId: %s", userId)
+		return 0, Wrapf(err, "Creating board error, userId: %d", userId)
 	}
 
 	return id, nil
@@ -34,7 +34,7 @@ func (bu *Usecase) Create(input *models.InputBoard, userId uint) (uint, error) {
 func (bu *Usecase) GetById(id uint) (*models.Board, error) {
 	board, err := bu.repo.GetByID(id)
 	if err != nil {
-		return nil, Wrapf(err, "Getting board by id error, pinId: %s", id)
+		return nil, Wrapf(err, "Getting board by id error, pinId: %d", id)
 	}
 
 	return board, nil
@@ -43,7 +43,7 @@ func (bu *Usecase) GetById(id uint) (*models.Board, error) {
 func (bu *Usecase) GetByNameId(id uint) (*models.Board, error) {
 	board, err := bu.repo.GetByNameID(id)
 	if err != nil {
-		return nil, Wrapf(err, "Getting board by id error, pinId: %s", id)
+		return nil, Wrapf(err, "Getting board by id error, pinId: %d", id)
 	}
 
 	return board, nil
@@ -52,7 +52,7 @@ func (bu *Usecase) GetByNameId(id uint) (*models.Board, error) {
 func (bu *Usecase) GetByUserId(id uint, start int, limit int) ([]*models.Board, error) {
 	boards, err := bu.repo.GetByUserID(id, start, limit)
 	if err != nil {
-		return nil, Wrapf(err, "Getting board by id error, pinId: %s", id)
+		return nil, Wrapf(err, "Getting board by id error, pinId: %d", id)
 	}
 
 	return boards, nil

@@ -25,7 +25,7 @@ func (cu *Usecase) Create(input *models.InputComment, userId uint) (uint, error)
 
 	id, err := cu.repo.Create(comment)
 	if err != nil {
-		return 0, Wrapf(err, "Creating comment error, userId: %s", userId)
+		return 0, Wrapf(err, "Creating comment error, userId: %d", userId)
 	}
 
 	return id, nil
@@ -34,7 +34,7 @@ func (cu *Usecase) Create(input *models.InputComment, userId uint) (uint, error)
 func (cu *Usecase) GetById(id uint) (*models.Comment, error) {
 	comment, err := cu.repo.GetByID(id)
 	if err != nil {
-		return nil, Wrapf(err, "Getting comment by id error, pinId: %s", id)
+		return nil, Wrapf(err, "Getting comment by id error, pinId: %d", id)
 	}
 
 	return comment, nil
@@ -43,7 +43,7 @@ func (cu *Usecase) GetById(id uint) (*models.Comment, error) {
 func (cu *Usecase) GetByPinId(id uint, start int, limit int) ([]*models.Comment, error) {
 	comments, err := cu.repo.GetByPinID(id, start, limit)
 	if err != nil {
-		return nil, Wrapf(err, "Getting comment by id error, pinId: %s", id)
+		return nil, Wrapf(err, "Getting comment by id error, pinId: %d", id)
 	}
 
 	return comments, nil

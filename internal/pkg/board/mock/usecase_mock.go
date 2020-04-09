@@ -63,6 +63,21 @@ func (mr *MockIUsecaseMockRecorder) GetById(id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockIUsecase)(nil).GetById), id)
 }
 
+// GetByNameId mocks base method
+func (m *MockIUsecase) GetByNameId(id uint) (*models.Board, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByNameId", id)
+	ret0, _ := ret[0].(*models.Board)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByNameId indicates an expected call of GetByNameId
+func (mr *MockIUsecaseMockRecorder) GetByNameId(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByNameId", reflect.TypeOf((*MockIUsecase)(nil).GetByNameId), id)
+}
+
 // GetByUserId mocks base method
 func (m *MockIUsecase) GetByUserId(id uint, start, limit int) ([]*models.Board, error) {
 	m.ctrl.T.Helper()
