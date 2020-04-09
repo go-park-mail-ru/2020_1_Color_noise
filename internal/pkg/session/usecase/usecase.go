@@ -1,4 +1,4 @@
-package session
+package usecase
 
 import (
 	"2020_1_Color_noise/internal/models"
@@ -37,7 +37,7 @@ func (su *SessionUsecase) CreateSession(id uint) (*models.Session, error) {
 func (su *SessionUsecase) GetByCookie(cookie string) (*models.Session, error) {
 	session, err := su.repo.GetByCookie(cookie)
 	if err != nil {
-		return nil, Wrapf(err, "Getting session by cookie error, cookie: %d", cookie)
+		return nil, Wrapf(err, "Getting session by cookie error, cookie: %s", cookie)
 	}
 	return session, nil
 }
@@ -54,7 +54,7 @@ func (su *SessionUsecase) UpdateToken(session *models.Session, token string) err
 
 func (su *SessionUsecase) Delete(cookie string) error {
 	if err := su.repo.Delete(cookie); err != nil {
-		return Wrapf(err, "Deleting session error, cookie: %d", cookie)
+		return Wrapf(err, "Deleting session error, cookie: %s", cookie)
 	}
 
 	return nil

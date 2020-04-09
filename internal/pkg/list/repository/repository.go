@@ -24,7 +24,7 @@ func (lr *Repository) GetMainList(start int, limit int) ([]*models.Pin, error) {
 	p := models.DataBaseUser{}
 	result, err := lr.db.GetMainFeed(p, start, limit)
 	if err != nil {
-		return result, PinNotFound.Newf("Pins not found, err:", err)
+		return result, PinNotFound.Wrap(err,"Pins not found")
 	}
 
 	return result, nil

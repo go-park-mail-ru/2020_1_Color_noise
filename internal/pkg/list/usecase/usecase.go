@@ -28,7 +28,7 @@ func (lu *Usecase) GetMainList(start int, limit int) ([]*models.Pin, error) {
 func (lu *Usecase) GetSubList(id uint, start int, limit int) ([]*models.Pin, error) {
 	pins, err := lu.repo.GetSubList(id, start, limit)
 	if err != nil {
-		return nil, Wrapf(err, "GetSubList by id error, pinId: %s", id)
+		return nil, Wrapf(err, "GetSubList by id error, pinId: %d", id)
 	}
 
 	return pins, nil
@@ -37,7 +37,7 @@ func (lu *Usecase) GetSubList(id uint, start int, limit int) ([]*models.Pin, err
 func (lu *Usecase) GetRecommendationList(id uint, start int, limit int) ([]*models.Pin, error) {
 	pins, err := lu.repo.GetRecommendationList(id, start, limit)
 	if err != nil {
-		return nil, Wrapf(err, "GetRecommendationList by id error, pinId: %s", id)
+		return nil, Wrapf(err, "GetRecommendationList by id error, pinId: %d", id)
 	}
 
 	return pins, nil
