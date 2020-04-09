@@ -4,18 +4,15 @@ import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
-	"sync"
 )
 
 type Repository struct {
 	db database.DBInterface
-	mu *sync.Mutex
 }
 
 func NewRepo(d database.DBInterface) *Repository {
 	return &Repository{
 		db: d,
-		mu: &sync.Mutex{},
 	}
 }
 

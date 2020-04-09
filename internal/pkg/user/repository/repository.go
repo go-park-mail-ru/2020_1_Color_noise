@@ -5,24 +5,15 @@ import (
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
 	"database/sql"
-	"sync"
 )
 
 type Repository struct {
 	bd            database.DBInterface
-	mu            *sync.Mutex
-	subscriptions map[uint][]uint
-	subscribers   map[uint][]uint
-	muSub         *sync.Mutex
 }
 
 func NewRepo(bd database.DBInterface) *Repository {
 	return &Repository{
 		bd:            bd,
-		mu:            &sync.Mutex{},
-		subscriptions: make(map[uint][]uint),
-		subscribers:   make(map[uint][]uint),
-		muSub:         &sync.Mutex{},
 	}
 }
 
@@ -37,8 +28,6 @@ func (ur *Repository) Create(user *models.User) (uint, error) {
 		return 0, EmailIsExist.New("Repo: Error in during creating")
 	}
 
-	ur.mu.Lock()
-	defer ur.mu.Unlock()
 	id, err := ur.bd.CreateUser(models.GetBUser(*user))
 	if err != nil {
 		return 0, UserNotFound.Newf("User can not be created")
@@ -48,9 +37,6 @@ func (ur *Repository) Create(user *models.User) (uint, error) {
 }
 
 func (ur *Repository) GetByID(id uint) (*models.User, error) {
-
-	ur.mu.Lock()
-	defer ur.mu.Unlock()
 
 	var us = models.DataBaseUser{
 		Id: id,
@@ -63,9 +49,6 @@ func (ur *Repository) GetByID(id uint) (*models.User, error) {
 }
 
 func (ur *Repository) GetByLogin(login string) (*models.User, error) {
-	ur.mu.Lock()
-	defer ur.mu.Unlock()
-
 	var us = models.DataBaseUser{
 		Login: login,
 	}
@@ -77,8 +60,6 @@ func (ur *Repository) GetByLogin(login string) (*models.User, error) {
 }
 
 func (ur *Repository) Search(login string, start int, limit int) ([]*models.User, error) {
-	ur.mu.Lock()
-	defer ur.mu.Unlock()
 
 	var us = models.DataBaseUser{Login: login}
 	users, err := ur.bd.GetUserByLogin(us, limit, start) //START == OFFSET
@@ -90,9 +71,6 @@ func (ur *Repository) Search(login string, start int, limit int) ([]*models.User
 }
 
 func (ur *Repository) checkLogin(login string) (uint, error) {
-	ur.mu.Lock()
-	defer ur.mu.Unlock()
-
 	var us = models.DataBaseUser{
 		Login: login,
 	}
@@ -104,8 +82,6 @@ func (ur *Repository) checkLogin(login string) (uint, error) {
 }
 
 func (ur *Repository) checkEmail(email string) (uint, error) {
-	ur.mu.Lock()
-	defer ur.mu.Unlock()
 	var us = models.DataBaseUser{
 		Email: email,
 	}
@@ -129,9 +105,6 @@ func (ur *Repository) UpdateProfile(id uint, email string, login string) error {
 		return EmailIsExist.New("Repo: Error in during updating profile")
 	}
 
-	ur.mu.Lock()
-	defer ur.mu.Unlock()
-
 	var us = models.DataBaseUser{Id: id, Email: email, Login: login}
 	err = ur.bd.UpdateUser(us)
 	if err != nil {
@@ -141,9 +114,6 @@ func (ur *Repository) UpdateProfile(id uint, email string, login string) error {
 }
 
 func (ur *Repository) UpdateDescription(id uint, description *string) error {
-	ur.mu.Lock()
-	defer ur.mu.Unlock()
-
 	var us = models.DataBaseUser{Id: id, About: struct {
 		String string
 		Valid  bool
@@ -161,9 +131,6 @@ func (ur *Repository) UpdateDescription(id uint, description *string) error {
 }
 
 func (ur *Repository) UpdatePassword(id uint, encryptredPassword string) error {
-	ur.mu.Lock()
-	defer ur.mu.Unlock()
-
 	var us = models.DataBaseUser{Id: id, EncryptedPassword: encryptredPassword}
 
 	err := ur.bd.UpdateUserPassword(us)
@@ -175,9 +142,6 @@ func (ur *Repository) UpdatePassword(id uint, encryptredPassword string) error {
 }
 
 func (ur *Repository) UpdateAvatar(id uint, path string) error {
-	ur.mu.Lock()
-	defer ur.mu.Unlock()
-
 	var us = models.DataBaseUser{Id: id, Avatar: sql.NullString{
 		String: path,
 		Valid:  true,
@@ -192,9 +156,6 @@ func (ur *Repository) UpdateAvatar(id uint, path string) error {
 }
 
 func (ur *Repository) Delete(id uint) error {
-	ur.mu.Lock()
-	defer ur.mu.Unlock()
-
 	var us = models.DataBaseUser{Id: id}
 
 	err := ur.bd.DeleteUser(us)
@@ -207,9 +168,6 @@ func (ur *Repository) Delete(id uint) error {
 
 //TODO: update полсе подписок
 func (ur *Repository) Follow(id uint, subId uint) error {
-	ur.muSub.Lock()
-	defer ur.muSub.Unlock()
-
 	_, err := ur.GetByID(id)
 	if err != nil {
 		return err
@@ -230,9 +188,6 @@ func (ur *Repository) Follow(id uint, subId uint) error {
 }
 
 func (ur *Repository) Unfollow(id uint, subId uint) error {
-	ur.muSub.Lock()
-	defer ur.muSub.Unlock()
-
 	_, err := ur.GetByID(id)
 	if err != nil {
 		return err
