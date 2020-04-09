@@ -1,4 +1,4 @@
-package config
+package _020_1_Color_noise
 
 import (
 	"fmt"
@@ -18,37 +18,26 @@ type DataBaseConfig struct {
 	MaxConns   int    `json:"db.maxconns"`
 }
 
-func configinit() {
 
-	CONFIG.SetConfigName("config")
-	CONFIG.AddConfigPath(".")
-	//TODO: добавить пути к конфигу
+func GetDBConfing() (DataBaseConfig, error){
+	v := viper.New()
+	c := DataBaseConfig{}
 
-	err := CONFIG.ReadInConfig()
+	v.SetConfigName("config")
+	v.AddConfigPath(".")
+
+	err := v.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %v \n", err))
 	}
 
-}
-
-func parseDbConfig(v *viper.Viper, config *DataBaseConfig) {
-	//обеспечивает
-	v.SetDefault("db.connect", "user=postgres password=password dbname=pinterest sslmode=disable")
-	v.SetDefault("db.maxconns", "20")
-
-	config.ConnString = v.GetString("db.connect")
-
-}
-
-func Start() {
-	CONFIG.SetConfigName("config")
-	CONFIG.AddConfigPath(".")
-
-	configinit()
-	parseDbConfig(CONFIG, &DB)
-
-	err := CONFIG.Unmarshal(&DB)
+	c.ConnString = v.GetString("db.connects")
+	err = v.Unmarshal(&c)
 	if err != nil {
 		log.Fatalf("decoding problem: , %v", err)
 	}
+
+	return c, err
 }
+
+

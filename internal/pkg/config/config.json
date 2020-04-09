@@ -1,5 +1,0 @@
-{
-  "db": {
-    "connect": "user=postgres password=password dbname=pinterest sslmode=disable"
-  }
-}
