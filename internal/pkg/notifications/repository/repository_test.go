@@ -2,6 +2,7 @@ package repository
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"2020_1_Color_noise/internal/pkg/database"
 	"fmt"
 	"testing"
@@ -17,7 +18,11 @@ type NotiCase struct {
 }
 
 func TestRepository_GetNotifications(t *testing.T) {
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	id, _ := db.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),

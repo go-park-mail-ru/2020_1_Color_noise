@@ -2,6 +2,7 @@ package repository
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"2020_1_Color_noise/internal/pkg/database"
 	"fmt"
 	"testing"
@@ -18,7 +19,11 @@ type Case struct {
 
 func TestRepository_Add(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	cases := []Case{
 		{
@@ -58,7 +63,11 @@ func TestRepository_Add(t *testing.T) {
 
 func TestRepository_Delete(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	cases := []Case{
 		{
@@ -90,7 +99,11 @@ func TestRepository_Delete(t *testing.T) {
 
 func TestRepository_Update(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	cases := []Case{
 		{
@@ -122,7 +135,11 @@ func TestRepository_Update(t *testing.T) {
 
 func TestRepository_GetByCookie(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	cases := []Case{
 		{

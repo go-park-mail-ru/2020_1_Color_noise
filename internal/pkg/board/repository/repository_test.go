@@ -2,6 +2,7 @@ package repository
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"2020_1_Color_noise/internal/pkg/database"
 	"fmt"
 	"testing"
@@ -17,7 +18,11 @@ type Case struct {
 }
 
 func TestRepository_Create(t *testing.T) {
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 	id, _ := db.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})
@@ -52,7 +57,11 @@ func TestRepository_Create(t *testing.T) {
 
 func TestRepository_Delete(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 	id, _ := db.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})
@@ -89,7 +98,11 @@ func TestRepository_Delete(t *testing.T) {
 
 func TestRepository_Update(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 	id, _ := db.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})
@@ -125,7 +138,11 @@ func TestRepository_Update(t *testing.T) {
 }
 
 func TestRepository_GetByID(t *testing.T) {
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 	id, _ := db.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})
@@ -162,7 +179,11 @@ func TestRepository_GetByID(t *testing.T) {
 
 func TestRepository_GetByUserID(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 	id, _ := db.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})
@@ -192,7 +213,11 @@ func TestRepository_GetByUserID(t *testing.T) {
 }
 
 func TestRepository_GetByName(t *testing.T) {
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 	id, _ := db.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})
@@ -223,7 +248,11 @@ func TestRepository_GetByName(t *testing.T) {
 }
 
 func TestRepository_GetByNameID(t *testing.T) {
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 	id, _ := db.CreateUser(models.DataBaseUser{
 		Login: fmt.Sprint(time.Now()),
 	})

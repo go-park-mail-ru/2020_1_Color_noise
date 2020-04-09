@@ -2,6 +2,7 @@ package repository
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"2020_1_Color_noise/internal/pkg/database"
 	"fmt"
 	"testing"
@@ -23,7 +24,11 @@ type FollowCase struct {
 }
 
 func TestRepository_Create(t *testing.T) {
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	login := fmt.Sprint(time.Now())
 	cases := []UserCase{
@@ -63,7 +68,11 @@ func TestRepository_Create(t *testing.T) {
 
 func TestRepository_Delete(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 	id, _ := repo.Create(&models.User{
 		Login: fmt.Sprint(time.Now()),
 		Email: "email@mail.com",
@@ -99,7 +108,11 @@ func TestRepository_Delete(t *testing.T) {
 
 func TestRepository_UpdateProfile(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	login := fmt.Sprint(time.Now())
 	cases := []UserCase{
@@ -141,9 +154,11 @@ func TestRepository_UpdateProfile(t *testing.T) {
 }
 
 func TestRepository_UpdateAvatar(t *testing.T) {
-	db.Open()
-
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	login := fmt.Sprint(time.Now())
 	cases := []UserCase{
@@ -185,10 +200,11 @@ func TestRepository_UpdateAvatar(t *testing.T) {
 }
 
 func TestRepository_UpdateDescription(t *testing.T) {
-
-	db.Open()
-
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	login := fmt.Sprint(time.Now())
 	cases := []UserCase{
@@ -232,9 +248,11 @@ func TestRepository_UpdateDescription(t *testing.T) {
 
 func TestRepository_UpdatePassword(t *testing.T) {
 
-	db.Open()
-
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	login := fmt.Sprint(time.Now())
 	cases := []UserCase{
@@ -279,7 +297,11 @@ func TestRepository_UpdatePassword(t *testing.T) {
 
 func TestRepository_Follow(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	login := fmt.Sprint(time.Now())
 	cases := []FollowCase{
@@ -321,7 +343,11 @@ func TestRepository_Follow(t *testing.T) {
 func TestRepository_Unfollow(t *testing.T) {
 
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 
 	login := fmt.Sprint(time.Now())
@@ -364,7 +390,11 @@ func TestRepository_Unfollow(t *testing.T) {
 
 func TestRepository_GetByID(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	login := fmt.Sprint(time.Now())
 	cases := []UserCase{
@@ -413,7 +443,11 @@ func TestRepository_GetByID(t *testing.T) {
 
 func TestRepository_GetByLogin(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	login := fmt.Sprint(time.Now())
 	cases := []UserCase{
@@ -470,7 +504,11 @@ func TestRepository_GetSubscriptions(t *testing.T) {
 
 func TestRepository_Search(t *testing.T) {
 
-	db.Open()
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
 	login := fmt.Sprint(time.Now())
 	cases := []UserCase{
