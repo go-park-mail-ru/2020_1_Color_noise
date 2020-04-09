@@ -2,36 +2,36 @@ package main
 
 import (
 	boardDeliveryHttp "2020_1_Color_noise/internal/pkg/board/delivery/http"
-	boardRepo "2020_1_Color_noise/internal/pkg/board/repository"
+	boardRepository "2020_1_Color_noise/internal/pkg/board/repository"
 	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
 	"go.uber.org/zap"
 
 	"2020_1_Color_noise/internal/pkg/config"
 
 	notificationsDeliveryHttp "2020_1_Color_noise/internal/pkg/notifications/delivery/http"
-	notificationsRepo "2020_1_Color_noise/internal/pkg/notifications/repository"
+	notificationsRepository "2020_1_Color_noise/internal/pkg/notifications/repository"
 	notificationsUsecase "2020_1_Color_noise/internal/pkg/notifications/usecase"
 
 	commentDeliveryHttp "2020_1_Color_noise/internal/pkg/comment/delivery/http"
-	commentRepo "2020_1_Color_noise/internal/pkg/comment/repository"
+	commentRepository "2020_1_Color_noise/internal/pkg/comment/repository"
 	commentUsecase "2020_1_Color_noise/internal/pkg/comment/usecase"
 
 	"2020_1_Color_noise/internal/pkg/database"
 
 	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
-	pinRepo "2020_1_Color_noise/internal/pkg/pin/repository"
+	pinRepository "2020_1_Color_noise/internal/pkg/pin/repository"
 	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
 
 	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
-	sessionRepo "2020_1_Color_noise/internal/pkg/session/repository"
+	sessionRepository "2020_1_Color_noise/internal/pkg/session/repository"
 	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
 
 	userDeliveryHttp "2020_1_Color_noise/internal/pkg/user/delivery/http"
-	userRepo "2020_1_Color_noise/internal/pkg/user/repository"
+	userRepository "2020_1_Color_noise/internal/pkg/user/repository"
 	userUsecase "2020_1_Color_noise/internal/pkg/user/usecase"
 
 	listDeliveryHttp "2020_1_Color_noise/internal/pkg/list/delivery/http"
-	listRepo "2020_1_Color_noise/internal/pkg/list/repository"
+	listRepository "2020_1_Color_noise/internal/pkg/list/repository"
 	listUsecase "2020_1_Color_noise/internal/pkg/list/usecase"
 
 	searchHandler "2020_1_Color_noise/internal/pkg/search"
@@ -68,38 +68,38 @@ func main() {
 		zap.String("logger", "ZAP"),
 	)
 
-	userRepo := userRepo.NewRepo(db)
-	userUsecase := userUsecase.NewUsecase(userRepo)
+	userRepo := userRepository.NewRepo(db)
+	userUse := userUsecase.NewUsecase(userRepo)
 
-	sessionRepo := sessionRepo.NewRepo(db)
-	sessionUsecase := sessionUsecase.NewUsecase(sessionRepo)
-	sessionDelivery := sessionDeliveryHttp.NewHandler(sessionUsecase, userUsecase, zap)
+	sessionRepo := sessionRepository.NewRepo(db)
+	sessionUse := sessionUsecase.NewUsecase(sessionRepo)
+	sessionDelivery := sessionDeliveryHttp.NewHandler(sessionUse, userUse, zap)
 
-	userDelivery := userDeliveryHttp.NewHandler(userUsecase, sessionUsecase, zap)
+	userDelivery := userDeliveryHttp.NewHandler(userUse, sessionUse, zap)
 
-	pinRepo := pinRepo.NewRepo(db)
-	pinUsecase := pinUsecase.NewUsecase(pinRepo)
-	pinDelivery := pinDeliveryHttp.NewHandler(pinUsecase, zap)
+	pinRepo := pinRepository.NewRepo(db)
+	pinUse := pinUsecase.NewUsecase(pinRepo)
+	pinDelivery := pinDeliveryHttp.NewHandler(pinUse, zap)
 
-	boardRepo := boardRepo.NewRepo(db)
-	boardUsecase := boardUsecase.NewUsecase(boardRepo)
-	boardDelivery := boardDeliveryHttp.NewHandler(boardUsecase, zap)
+	boardRepo := boardRepository.NewRepo(db)
+	boardUse := boardUsecase.NewUsecase(boardRepo)
+	boardDelivery := boardDeliveryHttp.NewHandler(boardUse, zap)
 
-	commentRepo := commentRepo.NewRepo(db)
-	commentUsecase := commentUsecase.NewUsecase(commentRepo)
-	commentDelivery := commentDeliveryHttp.NewHandler(commentUsecase, zap)
+	commentRepo := commentRepository.NewRepo(db)
+	commentUse := commentUsecase.NewUsecase(commentRepo)
+	commentDelivery := commentDeliveryHttp.NewHandler(commentUse, zap)
 
-	listRepo := listRepo.NewRepo(db)
-	listUsecase := listUsecase.NewUsecase(listRepo)
-	listDelivery := listDeliveryHttp.NewHandler(listUsecase, zap)
+	listRepo := listRepository.NewRepo(db)
+	listUse := listUsecase.NewUsecase(listRepo)
+	listDelivery := listDeliveryHttp.NewHandler(listUse, zap)
 
-	notificationsRepo := notificationsRepo.NewRepo(db)
-	notificationsUsecase := notificationsUsecase.NewUsecase(notificationsRepo)
-	notificationsDelivery := notificationsDeliveryHttp.NewHandler(notificationsUsecase, zap)
+	notificationsRepo := notificationsRepository.NewRepo(db)
+	notificationsUse := notificationsUsecase.NewUsecase(notificationsRepo)
+	notificationsDelivery := notificationsDeliveryHttp.NewHandler(notificationsUse, zap)
 
-	searchHandler := searchHandler.NewHandler(commentUsecase, pinUsecase, userUsecase, zap)
+	search := searchHandler.NewHandler(commentUse, pinUse, userUse, zap)
 
-	m := middleware.NewMiddleware(sessionUsecase, zap)
+	m := middleware.NewMiddleware(sessionUse, zap)
 
 	r.HandleFunc("/api/auth", sessionDelivery.Login).Methods("POST")
 	r.HandleFunc("/api/auth", sessionDelivery.Logout).Methods("DELETE")
@@ -134,7 +134,7 @@ func main() {
 	r.HandleFunc("/api/comment/{id:[0-9]+}", commentDelivery.GetComment).Methods("GET")
 	r.HandleFunc("/api/comment/pin/{id:[0-9]+}", commentDelivery.Fetch).Methods("GET")
 
-	r.HandleFunc("/api/search", searchHandler.Search).Methods("GET")
+	r.HandleFunc("/api/search", search.Search).Methods("GET")
 
 	r.HandleFunc("/api/list", listDelivery.GetMainList).Methods("GET")
 	r.HandleFunc("/api/list/sub", listDelivery.GetSubList).Methods("GET")
