@@ -5,7 +5,6 @@ import (
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
 	"database/sql"
-	"log"
 	"sync"
 )
 
@@ -70,7 +69,6 @@ func (ur *Repository) GetByLogin(login string) (*models.User, error) {
 	var us = models.DataBaseUser{
 		Login: login,
 	}
-	log.Print("login: ", us.Login)
 	user, err := ur.bd.GetUserByName(us)
 	if err != nil {
 		return nil, UserNotFound.New("User is not found")
@@ -214,17 +212,17 @@ func (ur *Repository) Follow(id uint, subId uint) error {
 
 	_, err := ur.GetByID(id)
 	if err != nil {
-		return Wrapf(err, "Repo: incorrect user id, id", id)
+		return err
 	}
 
 	_, err = ur.GetByID(subId)
 	if err != nil {
-		return Wrapf(err, "Repo: incorrect sub id, id", id)
+		return err
 	}
 
 	err = ur.bd.Follow(id, subId)
 	if err != nil {
-		return Wrapf(err, "Repo: Error in during following, id", id)
+		return err
 	}
 
 	//TODO: обновить
@@ -237,17 +235,17 @@ func (ur *Repository) Unfollow(id uint, subId uint) error {
 
 	_, err := ur.GetByID(id)
 	if err != nil {
-		return Wrapf(err, "Repo: incorrect user id, id", id)
+		return err
 	}
 
 	_, err = ur.GetByID(subId)
 	if err != nil {
-		return Wrapf(err, "Repo: incorrect sub id, id", id)
+		return err
 	}
 
 	err = ur.bd.Unfollow(id, subId)
 	if err != nil {
-		return FollowingIsNotYetDone.Newf("Repo: Following is not yet done, id: %d", id)
+		return err
 
 	}
 	//TODO: обновить
@@ -259,7 +257,7 @@ func (ur *Repository) GetSubscribers(id uint, start int, limit int) ([]*models.U
 	var us = models.DataBaseUser{Id: id}
 	users, err := ur.bd.GetUserSubUsers(us)
 	if err != nil {
-		return nil, UserNotFound.Newf("User was not found, id", id)
+		return nil, UserNotFound.Newf("User was not found, id %d", id)
 	}
 	return users, nil
 }
@@ -268,7 +266,7 @@ func (ur *Repository) GetSubscriptions(id uint, start int, limit int) ([]*models
 	var us = models.DataBaseUser{Id: id}
 	users, err := ur.bd.GetUserSupUsers(us)
 	if err != nil {
-		return nil, UserNotFound.Newf("User was not found, id", id)
+		return nil, UserNotFound.Newf("User was not found, id %d", id)
 	}
 	return users, nil
 }
