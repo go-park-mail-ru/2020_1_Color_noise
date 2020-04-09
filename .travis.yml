@@ -1,0 +1,15 @@
+language: go
+
+go: "1.13"
+
+env: GO111MODULE=on
+
+notifications:
+  email: false
+
+before_script:
+  - git checkout develop
+  - go mod tidy
+
+script:
+  - go test ./...
