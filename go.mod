@@ -3,6 +3,7 @@ module 2020_1_Color_noise
 go 1.13
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.4.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/gofrs/uuid v3.2.0+incompatible // indirect

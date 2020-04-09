@@ -4,7 +4,6 @@ import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
-	"log"
 	"sync"
 )
 
@@ -26,7 +25,7 @@ func (pr *Repository) Create(pin *models.Pin) (uint, error) {
 	id, err := pr.db.CreatePin(models.GetBPin(*pin))
 
 	if err != nil {
-		return 0, PinNotFound.Newf("Pin can not be created, err: ", err)
+		return 0, PinNotFound.Newf("Pin can not be created, err: %v", err)
 	}
 
 	return id, err
@@ -85,7 +84,7 @@ func (pr *Repository) GetByName(name string, start int, limit int) ([]*models.Pi
 	p := models.DataBasePin{Name: name}
 	result, err := pr.db.GetPinsByName(p)
 	if err != nil {
-		return result, PinNotFound.Newf("Pins not found, user id = %d", name)
+		return result, PinNotFound.Newf("Pins not found, user id = %s", name)
 	}
 
 	return result, nil
@@ -96,7 +95,6 @@ func (pr *Repository) Update(pin *models.Pin) error {
 	defer pr.mu.Unlock()
 
 	err := pr.db.UpdatePin(models.GetBPin(*pin))
-	log.Print(err)
 	if err != nil {
 		return PinNotFound.Newf("Pin not found, id: %d", pin.Id)
 	}
@@ -113,7 +111,6 @@ func (pr *Repository) Delete(pinId uint, userId uint) error {
 	}
 
 	err := pr.db.DeletePin(p)
-	log.Print(err)
 	if err != nil {
 		return PinNotFound.Newf("Pin not found, id: %d", pinId)
 	}

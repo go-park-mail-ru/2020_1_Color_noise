@@ -21,14 +21,14 @@ type TestCaseLogin struct {
 	IsAuth     bool
 	Login      string
 	Password   string
-	User 	   *models.User
+	User       *models.User
 	CookieName string
 	Cookie     string
 	TokenName  string
 	Token      string
 	Response   string
 	InputErr   bool
-	GetErr	   bool
+	GetErr     bool
 	CompareErr bool
 	CreateErr  bool
 }
@@ -45,48 +45,48 @@ func TestHandler_Login(t *testing.T) {
 
 	cases := []TestCaseLogin{
 		TestCaseLogin{
-			IsAuth:     true,
-			Response:	`{"status":200,"body":{"message":"Ok"}}
+			IsAuth: true,
+			Response: `{"status":200,"body":{"message":"Ok"}}
 `,
 		},
 		TestCaseLogin{
-			InputErr:   true,
-			Login:		"Login1",
-			Password:   "Password1",
-			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}
+			InputErr: true,
+			Login:    "Login1",
+			Password: "Password1",
+			Response: `{"status":400,"body":{"error":"Wrong body of request"}}
 `,
 		},
 		TestCaseLogin{
-			GetErr:      true,
-			User:		&models.User{
-				Id:	1,
+			GetErr: true,
+			User: &models.User{
+				Id: 1,
 			},
-			Login:		"Login1",
-			Password:   "Password1",
+			Login:    "Login1",
+			Password: "Password1",
 		},
 		TestCaseLogin{
 			CompareErr: true,
-			User:		&models.User{
-				Id:	1,
+			User: &models.User{
+				Id: 1,
 			},
-			Login:		"Login1",
-			Password:   "Password1",
+			Login:    "Login1",
+			Password: "Password1",
 		},
 		TestCaseLogin{
-			CreateErr:   true,
-			User:		&models.User{
-				Id:	1,
+			CreateErr: true,
+			User: &models.User{
+				Id: 1,
 			},
-			Login:		"Login1",
-			Password:   "Password1",
+			Login:    "Login1",
+			Password: "Password1",
 		},
 		TestCaseLogin{
-			User:		&models.User{
-				Id:	1,
+			User: &models.User{
+				Id: 1,
 			},
-			Login:		"Login1",
-			Password:   "Password",
-			Response:	`{"status":200,"body":{"message":"Ok"}}
+			Login:    "Login1",
+			Password: "Password",
+			Response: `{"status":200,"body":{"message":"Ok"}}
 `,
 			CookieName: "session_id",
 			Cookie:     "cookie",
@@ -129,7 +129,7 @@ func TestHandler_Login(t *testing.T) {
 				mockUserUsecase.EXPECT().GetByLogin(input.Login).Return(item.User, err),
 			)
 
-			if !item.GetErr  {
+			if !item.GetErr {
 				if item.CompareErr {
 					err = NoType.New("")
 				}
@@ -231,7 +231,6 @@ type TestCaseLogout struct {
 	DeleteErr  bool
 }
 
-
 func TestHandler_Logout(t *testing.T) {
 	t.Helper()
 	ctl := gomock.NewController(t)
@@ -244,20 +243,20 @@ func TestHandler_Logout(t *testing.T) {
 
 	cases := []TestCaseLogout{
 		TestCaseLogout{
-			IsAuth:     false,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
+			IsAuth: false,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
 `,
 		},
 		TestCaseLogout{
-			IsAuth:     true,
-			CookieErr:  true,
+			IsAuth:    true,
+			CookieErr: true,
 		},
 		TestCaseLogout{
-			DeleteErr:  true,
+			DeleteErr: true,
 		},
 		TestCaseLogout{
-			IsAuth:     true,
-			Response:	`{"status":200,"body":{"message":"Ok"}}
+			IsAuth: true,
+			Response: `{"status":200,"body":{"message":"Ok"}}
 `,
 			CookieName: "session_id",
 			Cookie:     "cookie",
@@ -267,7 +266,7 @@ func TestHandler_Logout(t *testing.T) {
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("DELETE", "/api/auth",strings.NewReader(""))
+		r := httptest.NewRequest("DELETE", "/api/auth", strings.NewReader(""))
 
 		r.Header.Set("Content-Type", "application/json")
 

@@ -10,7 +10,7 @@ func SaveImage(b *[]byte) (string, error) {
 	name := utils.RandStringRunes(30) + ".jpg"
 	path := "static/" + name
 	file, err := os.Create(path)
-	if err != nil{
+	if err != nil {
 		return "", Wrap(err, "Creating image error")
 	}
 

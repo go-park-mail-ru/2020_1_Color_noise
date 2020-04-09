@@ -105,7 +105,7 @@ func (cr *Repository) Delete(id uint) error {
 	c := models.DataBaseComment{Id: id}
 	err := cr.db.UpdateComment(c)
 	if err != nil {
-		return CommentNotFound.Newf("Comment can not be updared, err:", err)
+		return CommentNotFound.Newf("Comment can not be updared, err %v:", err)
 	}
 	return nil
 }

@@ -29,7 +29,7 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth == true {
-		response.Respond(w, http.StatusOK, map[string]string {
+		response.Respond(w, http.StatusOK, map[string]string{
 			"message": "Ok",
 		})
 		return

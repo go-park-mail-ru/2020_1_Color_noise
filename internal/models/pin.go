@@ -28,14 +28,14 @@ type DataBasePin struct {
 }
 
 type InputPin struct {
-	BoardId     int   `json:"board_id" valid:"int"`
+	BoardId     int    `json:"board_id" valid:"int"`
 	Name        string `json:"name" valid:"length(1|60), required"`
 	Description string `json:"description" valid:"length(1|1000), required"`
 	Image       string `json:"image" valid:"datauri,required"`
 }
 
 type UpdatePin struct {
-	BoardId     int   `json:"board_id" valid:"int"`
+	BoardId     int    `json:"board_id" valid:"int"`
 	Name        string `json:"name" valid:"length(1|60), required"`
 	Description string `json:"description" valid:"length(1|1000), required"`
 }
@@ -47,7 +47,6 @@ type ResponsePin struct {
 	Name        string `json:"name,omitempty"`
 	Description string `json:"description,omitempty"`
 	Image       string `json:"image,omitempty"`
-
 }
 
 func GetPin(pin DataBasePin) Pin {

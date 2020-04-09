@@ -6,10 +6,10 @@ const (
 	UpdatePin = "UPDATE pins SET " +
 		"name = $1, description = $2, board_id = $3 " +
 		"WHERE id = $4"
-	DeletePin = "DELETE from pins WHERE id = $1"
-	PinById   = "SELECT * FROM pins WHERE id = $1"
-	PinByUser = "SELECT * FROM pins WHERE user_id = $1"
-	PinByName = "SELECT * FROM pins WHERE name = $1"
+	DeletePin  = "DELETE from pins WHERE id = $1"
+	PinById    = "SELECT * FROM pins WHERE id = $1"
+	PinByUser  = "SELECT * FROM pins WHERE user_id = $1"
+	PinByName  = "SELECT * FROM pins WHERE name = $1"
 	PinByBoard = "SELECT * FROM pins WHERE board_id = $1"
 )
 
@@ -29,7 +29,7 @@ const (
 	UpdateUserAv = "UPDATE users SET " +
 		"avatar = $1 " +
 		"WHERE id = $2 RETURNING id;"
-	DeleteUser        = "DELETE FROM users WHERE id = $1 CASCADE"
+	DeleteUser        = "DELETE FROM users WHERE id = $1;"
 	UserById          = "SELECT * FROM users WHERE id = $1"
 	UserByLogin       = "SELECT * FROM users WHERE login = $1 LIMIT $2 OFFSET $3"
 	UserByLoginSearch = "SELECT * FROM users WHERE login = $1"
@@ -91,13 +91,13 @@ const (
 const (
 	Feed = "SELECT pins.id, pins.user_id, name, description, image, board_id, created_at " +
 		" FROM subscriptions JOIN pins ON subscriptions.subscribed_at = pins.user_id" +
-		" WHERE subscriptions.user_id = $ 1"
-	Main = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1;"
+		" WHERE subscriptions.user_id = $1  ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
+	Main           = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1;"
 	Recommendation = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1 OFFSET $2;"
 )
 
 const (
-	GetNoti = "SELECT message, from_user_id FROM public.notifies WHERE user_id = $1;"
+	GetNoti = "SELECT message, from_user_id FROM notifies WHERE user_id = $1;"
 	PutNoti = "INSERT INTO notifies(" +
-	"user_id, message, from_user_id, created_at) VALUES($1, $2, $3, $4) RETURNING id;"
+		"user_id, message, from_user_id, created_at) VALUES($1, $2, $3, $4) RETURNING id;"
 )
