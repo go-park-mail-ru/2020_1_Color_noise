@@ -32,7 +32,7 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth == true {
-		response.Respond(w, sh.logger, reqId, http.StatusOK, map[string]string{
+		response.Respond(w, http.StatusOK, map[string]string{
 			"message": "Ok",
 		})
 		return
@@ -83,7 +83,7 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	//http.SetCookie(w, token)
 	fmt.Println(w)
 
-	response.Respond(w, sh.logger, reqId, http.StatusOK, map[string]string{
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -125,7 +125,7 @@ func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(w)
 	//http.SetCookie(w, token)
 
-	response.Respond(w, sh.logger, reqId, http.StatusOK, map[string]string{
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }

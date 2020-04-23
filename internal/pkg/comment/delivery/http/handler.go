@@ -69,7 +69,7 @@ func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		Id: id,
 	}
 
-	response.Respond(w, ch.logger, reqId, http.StatusCreated, resp)
+	response.Respond(w, http.StatusCreated, resp)
 }
 
 func (ch *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
@@ -104,7 +104,7 @@ func (ch *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
 		CreatedAt: &comment.CreatedAt,
 	}
 
-	response.Respond(w, ch.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
@@ -150,5 +150,5 @@ func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, ch.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }

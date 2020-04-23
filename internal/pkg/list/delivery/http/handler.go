@@ -58,7 +58,7 @@ func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, lh.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
@@ -104,7 +104,7 @@ func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, lh.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request) {
@@ -150,5 +150,5 @@ func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request)
 		})
 	}
 
-	response.Respond(w, lh.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }

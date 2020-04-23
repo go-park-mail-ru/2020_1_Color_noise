@@ -68,5 +68,5 @@ func (nh *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, nh.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }

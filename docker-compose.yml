@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+
+  main:
+
+    build: .
+
+    ports:
+      - 8000:8000
+
+    depends_on:
+      - database
+
+
+  database:
+
+    build: ./internal/pkg/database
+
+    ports:
+      - 5432:5432

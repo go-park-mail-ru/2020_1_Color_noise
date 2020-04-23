@@ -4,24 +4,29 @@ import (
 	boardDeliveryHttp "2020_1_Color_noise/internal/pkg/board/delivery/http"
 	boardRepository "2020_1_Color_noise/internal/pkg/board/repository"
 	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
-	"go.uber.org/zap"
-
-	"2020_1_Color_noise/internal/pkg/config"
-
-	notificationsDeliveryHttp "2020_1_Color_noise/internal/pkg/notifications/delivery/http"
-	notificationsRepository "2020_1_Color_noise/internal/pkg/notifications/repository"
-	notificationsUsecase "2020_1_Color_noise/internal/pkg/notifications/usecase"
 
 	commentDeliveryHttp "2020_1_Color_noise/internal/pkg/comment/delivery/http"
 	commentRepository "2020_1_Color_noise/internal/pkg/comment/repository"
 	commentUsecase "2020_1_Color_noise/internal/pkg/comment/usecase"
 
+	"2020_1_Color_noise/internal/pkg/config"
 	"2020_1_Color_noise/internal/pkg/database"
+
+	listDeliveryHttp "2020_1_Color_noise/internal/pkg/list/delivery/http"
+	listRepository "2020_1_Color_noise/internal/pkg/list/repository"
+	listUsecase "2020_1_Color_noise/internal/pkg/list/usecase"
+
+	"2020_1_Color_noise/internal/pkg/middleware"
+
+	notificationsDeliveryHttp "2020_1_Color_noise/internal/pkg/notifications/delivery/http"
+	notificationsRepository "2020_1_Color_noise/internal/pkg/notifications/repository"
+	notificationsUsecase "2020_1_Color_noise/internal/pkg/notifications/usecase"
 
 	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
 	pinRepository "2020_1_Color_noise/internal/pkg/pin/repository"
 	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
 
+	searchHandler "2020_1_Color_noise/internal/pkg/search"
 	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
 	sessionRepository "2020_1_Color_noise/internal/pkg/session/repository"
 	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
@@ -30,13 +35,7 @@ import (
 	userRepository "2020_1_Color_noise/internal/pkg/user/repository"
 	userUsecase "2020_1_Color_noise/internal/pkg/user/usecase"
 
-	listDeliveryHttp "2020_1_Color_noise/internal/pkg/list/delivery/http"
-	listRepository "2020_1_Color_noise/internal/pkg/list/repository"
-	listUsecase "2020_1_Color_noise/internal/pkg/list/usecase"
-
-	searchHandler "2020_1_Color_noise/internal/pkg/search"
-
-	"2020_1_Color_noise/internal/pkg/middleware"
+	"go.uber.org/zap"
 
 	"github.com/gorilla/mux"
 	"log"
@@ -51,6 +50,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+
+	c.User = "postgres"
+	c.Password = "password"
 
 	db := database.NewPgxDB()
 	if err := db.Open(c); err != nil {

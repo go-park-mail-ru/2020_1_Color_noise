@@ -37,7 +37,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth == true {
-		response.Respond(w, ud.logger, reqId, http.StatusOK, map[string]string{
+		response.Respond(w, http.StatusOK, map[string]string{
 			"message": "Ok",
 		})
 		return
@@ -93,7 +93,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie)
 	//http.SetCookie(w, token)
 
-	response.Respond(w, ud.logger, reqId, http.StatusCreated, map[string]string{
+	response.Respond(w, http.StatusCreated, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -131,7 +131,7 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		Subscriptions: user.Subscriptions,
 	}
 
-	response.Respond(w, ud.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
@@ -167,7 +167,7 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 		Subscriptions: user.Subscriptions,
 	}
 
-	response.Respond(w, ud.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
@@ -211,7 +211,7 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, ud.logger, reqId, http.StatusOK, map[string]string{
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -256,7 +256,7 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, ud.logger, reqId, http.StatusOK, map[string]string{
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -301,7 +301,7 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, ud.logger, reqId, http.StatusOK, map[string]string{
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -351,7 +351,7 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, ud.logger, reqId, http.StatusCreated, map[string]string{
+	response.Respond(w, http.StatusCreated, map[string]string{
 		"image": address,
 	})
 }
@@ -394,7 +394,7 @@ func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, ud.logger, reqId, http.StatusCreated, map[string]string{
+	response.Respond(w, http.StatusCreated, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -437,7 +437,7 @@ func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, ud.logger, reqId, http.StatusOK, map[string]string{
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -486,7 +486,7 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, uh.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
@@ -535,7 +535,7 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, uh.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 /*

@@ -67,7 +67,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 			})
 		}
 
-		response.Respond(w, sh.logger, reqId, http.StatusOK, resp)
+		response.Respond(w, http.StatusOK, resp)
 		return
 	case "pin":
 		pins, err := sh.pinUsecase.GetByName(description, start, limit)
@@ -89,7 +89,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 			})
 		}
 
-		response.Respond(w, sh.logger, reqId, http.StatusOK, resp)
+		response.Respond(w, http.StatusOK, resp)
 		return
 	case "user":
 		users, err := sh.userUsecase.Search(description, start, limit)
@@ -111,7 +111,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 			})
 		}
 
-		response.Respond(w, sh.logger, reqId, http.StatusOK, resp)
+		response.Respond(w, http.StatusOK, resp)
 		return
 	default:
 		err = error.WithMessage(error.SearchNotFound.New( "Bad id when in during searching"), "Bad parametrs")

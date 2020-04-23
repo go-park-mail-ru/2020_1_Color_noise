@@ -159,7 +159,7 @@ func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interf
 	)
 
 
-	response.Respond(w, logger, reqId, status, map[string]string {
+	response.Respond(w, status, map[string]string {
 		"error": message,
 	})
 }

@@ -71,7 +71,7 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		Id: id,
 	}
 
-	response.Respond(w, ph.logger, reqId, http.StatusCreated, resp)
+	response.Respond(w, http.StatusCreated, resp)
 }
 
 func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +107,7 @@ func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
 		Image:       pin.Image,
 	}
 
-	response.Respond(w, ph.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
@@ -154,7 +154,7 @@ func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, ph.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
@@ -207,7 +207,7 @@ func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, ph.logger, reqId, http.StatusOK, map[string]string{
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
@@ -243,7 +243,7 @@ func (ph *Handler) DeletePin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, ph.logger, reqId, http.StatusOK, map[string]string{
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }

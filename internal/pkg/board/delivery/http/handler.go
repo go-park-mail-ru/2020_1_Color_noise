@@ -70,7 +70,7 @@ func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		Id: id,
 	}
 
-	response.Respond(w, bh.logger, reqId, http.StatusCreated, resp)
+	response.Respond(w, http.StatusCreated, resp)
 }
 
 func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
@@ -126,7 +126,7 @@ func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 		},*/
 	}
 
-	response.Respond(w, bh.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
@@ -168,7 +168,7 @@ func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	response.Respond(w, bh.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
@@ -221,7 +221,7 @@ func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, bh.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (bh *Handler) Update(w http.ResponseWriter, r *http.Request) {
@@ -273,7 +273,7 @@ func (bh *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, bh.logger, reqId, http.StatusOK, map[string]string {
+	response.Respond(w, http.StatusOK, map[string]string {
 		"message": "Ok",
 	})
 }
@@ -309,7 +309,7 @@ func (bh *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, bh.logger, reqId, http.StatusOK, map[string]string {
+	response.Respond(w, http.StatusOK, map[string]string {
 		"message": "Ok",
 	})
 }
