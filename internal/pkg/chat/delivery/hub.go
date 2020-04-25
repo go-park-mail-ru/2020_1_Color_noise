@@ -44,6 +44,14 @@ func (h *Hub) Run() {
 				close(client.send)
 				delete(h.clients, client.userId)
 			}
+
+			client = h.clients[message.SendUser.Id]
+			select {
+			case client.send <- message:
+			default:
+				close(client.send)
+				delete(h.clients, client.userId)
+			}
 		}
 	}
 }
