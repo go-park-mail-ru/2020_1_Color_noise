@@ -2,7 +2,7 @@ version: "3"
 
 services:
 
-  main:
+  backend:
 
     build: .
 
@@ -19,3 +19,16 @@ services:
 
     ports:
       - 5432:5432
+
+  nginx:
+    image: nginx:1.15.3
+
+    links:
+      - backend:backend
+
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./static:/var/www/html
+
+    ports:
+      - 80:80
