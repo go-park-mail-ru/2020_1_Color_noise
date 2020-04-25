@@ -1,5 +1,9 @@
 package chat
 
-type IRepository interface {
+import "2020_1_Color_noise/internal/models"
 
+type IRepository interface {
+	AddMessage(userSentId uint, userRecviredId uint, message string) (*models.Message, error)
+	GetUsers(userId uint, start int, limit int) ([]*models.User, error)
+	GetMessages(userId uint, start int, limit int) ([]*models.Message, error)
 }
