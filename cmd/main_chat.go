@@ -67,7 +67,7 @@ func main() {
 	})
 
 	r.Use(m.AccessLogMiddleware)
-	r.Use(m.CORSMiddleware)
+	//r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)
 
 	/*err = http.ListenAndServe(":8002", nil)
