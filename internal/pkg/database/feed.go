@@ -28,7 +28,7 @@ func (db *PgxDB) GetSubFeed(user models.DataBaseUser, start, limit int) ([]*mode
 func (db *PgxDB) GetMainFeed(user models.DataBaseUser, start, limit int) ([]*models.Pin, error) {
 	var res []*models.Pin
 
-	row, err := db.dbPool.Query(Main, limit)
+	row, err := db.dbPool.Query(Main, limit, start)
 	if err != nil {
 		return nil, errors.New("db problem")
 	}
