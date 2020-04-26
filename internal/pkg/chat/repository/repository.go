@@ -26,16 +26,16 @@ func (rp *Repository) AddMessage(userSentId uint, userReceivedId uint, message s
 
 func (rp *Repository) GetUsers(userId uint, start int, limit int) ([]*models.User, error) {
 	//получить чаты
-	users, err := rp.GetUsers(userId, start, limit)
+	users, err := rp.db.GetUsers(userId, start, limit)
 	if err != nil {
 		return nil, UserNotFound.Newf("User not found, err: %v", err)
 	}
 	return users, nil
 }
 
-func (rp *Repository) GetMessages(userId uint, start int, limit int) ([]*models.Message, error) {
+func (rp *Repository) GetMessages(userId uint, otherId uint, start int, limit int) ([]*models.Message, error) {
 	//получить сообщения
-	msg, err := rp.GetMessages(userId, start, limit)
+	msg, err := rp.db.GetMessages(userId, otherId, start, limit)
 	if err != nil {
 		return nil, UserNotFound.Newf("User not found, err: %v", err)
 	}
