@@ -38,8 +38,8 @@ func (u *Usecase) GetUsers(userId uint, start int, limit int) ([]*models.User, e
 	return users, nil
 }
 
-func (u *Usecase) GetMessages(userId uint, start int, limit int) ([]*models.Message, error) {
-	messages, err := u.repo.GetMessages(userId, start, limit)
+func (u *Usecase) GetMessages(userId uint, otherId uint, start int, limit int) ([]*models.Message, error) {
+	messages, err := u.repo.GetMessages(userId, otherId,start, limit)
 	if err != nil {
 		return nil, NoType.Wrap(err, "GetMessages error")
 	}
