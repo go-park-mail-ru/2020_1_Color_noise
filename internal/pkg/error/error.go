@@ -41,7 +41,7 @@ func (error Error) Error() string {
 // New creates a new customError
 func (e ErrorType) New(msg string) error {
 	return Error{errorType: e,
-		originalError: New(msg),
+		originalError: fmt.Errorf(msg),
 	}
 }
 
@@ -155,7 +155,7 @@ func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interf
 
 	logger.Error(
 		zap.String("reqId:", fmt.Sprintf("%v", reqId)),
-		zap.String("error:", e.Error()),
+		zap.String("error:", err.Error()),
 	)
 
 

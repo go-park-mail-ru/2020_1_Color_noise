@@ -4,9 +4,9 @@ import (
 	"2020_1_Color_noise/internal/pkg/config"
 	"2020_1_Color_noise/internal/pkg/database"
 	"2020_1_Color_noise/internal/pkg/middleware"
-
 	sessionRepository "2020_1_Color_noise/internal/pkg/session/repository"
 	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
+	"log"
 
 	chatDeliveryHttp "2020_1_Color_noise/internal/pkg/chat/delivery/http"
 	chatRepository "2020_1_Color_noise/internal/pkg/chat/repository"
@@ -14,11 +14,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
-	"log"
 	"net/http"
 
 	"2020_1_Color_noise/internal/pkg/chat/delivery"
-
 )
 
 func main() {
@@ -62,8 +60,9 @@ func main() {
 	m := middleware.NewMiddleware(sessionUse, zap)
 
 	r.HandleFunc("/api/chat/users", chatDelivery.GetUsers).Methods("GET")
-	r.HandleFunc("/api/chat/messages", chatDelivery.GetMessages).Methods("GET")
-	r.HandleFunc("/api/chat", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/chat/messages/{id:[0-9]+}", chatDelivery.GetMessages).Methods("GET")
+	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+
 		delivery.ServeWs(hub, w, r)
 	})
 
@@ -71,7 +70,12 @@ func main() {
 	r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)
 
-	err = http.ListenAndServe(":8000", nil)
+	/*err = http.ListenAndServe(":8002", nil)
+
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
+	}*/
+	err = http.ListenAndServe(":8002", r)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

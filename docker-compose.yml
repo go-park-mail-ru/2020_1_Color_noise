@@ -12,11 +12,12 @@ services:
       - ../static:/static
       - ../storage:/storage
 
-    ports:
-      - 8001:8000
+    network_mode: host
+    #ports:
+     # - 8000:8000
 
-    depends_on:
-      - database
+    #depends_on:
+     # - database
 
   chat:
 
@@ -28,30 +29,29 @@ services:
       - ../static:/static
       - ../storage:/storage
 
-    ports:
-      - 8002:8000
+    network_mode: host
+    #ports:
+     # - 8000:8000
 
-    depends_on:
-      - database
+    #depends_on:
+     # - database
 
 
-  database:
+  #database:
 
-    build:
-      context: .
-      dockerfile: ./build/db.Dockerfile
+   # build:
+    #  context: .
+     # dockerfile: ./build/db.Dockerfile
 
-    volumes:
-      - /var/lib/postgresql/10/main:/var/lib/postgresql/10/main
-
-    ports:
-      - 5432:5432
+    #ports:
+     # - 5432:5432
 
   nginx:
     image: nginx:1.15.3
 
     links:
       - main:main
+      - chat:chat
 
     volumes:
       - ./nginx:/etc/nginx/conf.d
