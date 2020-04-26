@@ -13,7 +13,7 @@ services:
       - ../storage:/storage
 
     ports:
-      - 8000:8000
+      - 8001:8000
 
     depends_on:
       - database
@@ -22,14 +22,14 @@ services:
 
     build:
       context: .
-      dockerfile: build/chat.Dockerfile
+      dockerfile: ./build/chat.Dockerfile
 
     volumes:
       - ../static:/static
       - ../storage:/storage
 
     ports:
-      - 8001:8000
+      - 8002:8000
 
     depends_on:
       - database
@@ -40,6 +40,9 @@ services:
     build:
       context: .
       dockerfile: ./build/db.Dockerfile
+
+    volumes:
+      - /var/lib/postgresql/10/main:/var/lib/postgresql/10/main
 
     ports:
       - 5432:5432

@@ -52,7 +52,7 @@ func main() {
 	hub := delivery.NewHub()
 	go hub.Run()
 
-	chatRepo := chatRepository.NewRepo(db)
+	chatRepo := chatRepository.NewRepository(db)
 	chatUse := chatUsecase.NewUsecase(chatRepo)
 	chatDelivery := chatDeliveryHttp.NewHandler(chatUse, zap)
 
