@@ -102,6 +102,6 @@ func (db *PgxDB) GetUsers(userId uint, start int, limit int) ([]*models.User, er
 		receiver, _ := db.GetUserById(models.GetBUser(tmp))
 		res = append(res, &receiver)
 	}
-	
+
 	return res, nil
 }
