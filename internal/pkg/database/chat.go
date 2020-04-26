@@ -34,7 +34,7 @@ func (db *PgxDB) AddMessage(sid, rid int, msg string) (*models.Message, error) {
 	return &ms, nil
 }
 
-func (db *PgxDB) GetMessages(userId uint, start int, limit int) ([]*models.Message, error) {
+func (db *PgxDB) GetMessages(userId, otherId uint, start int, limit int) ([]*models.Message, error) {
 
 	var res []*models.Message
 
@@ -43,7 +43,12 @@ func (db *PgxDB) GetMessages(userId uint, start int, limit int) ([]*models.Messa
 		return nil, err
 	}
 
-	row, err := db.dbPool.Query(GetMsg, sender.Id, limit, start)
+	receiver, err := db.GetUserById(models.DataBaseUser{Id: uint(otherId)})
+	if err != nil {
+		return nil, err
+	}
+
+	row, err := db.dbPool.Query(GetMsg, sender.Id, receiver.Id, limit, start)
 
 	if err != nil {
 		return nil, err
@@ -51,18 +56,22 @@ func (db *PgxDB) GetMessages(userId uint, start int, limit int) ([]*models.Messa
 
 	for row.Next() {
 		var tmp models.Message
-		var s int
-		var r int
+		var author uint
 
-		ok := row.Scan(&s, &r, &tmp.Message, &tmp.CreatedAt)
+		ok := row.Scan(&author, &tmp.Message, &tmp.CreatedAt)
 		if ok != nil {
 			return res, nil
 		}
-		sender, _ := db.GetUserById(models.DataBaseUser{Id: uint(s)})
-		receiver, _ := db.GetUserById(models.DataBaseUser{Id: uint(r)})
 
-		tmp.SendUser = &sender
-		tmp.RecUser = &receiver
+		if author == sender.Id {
+			tmp.SendUser = &sender
+			tmp.RecUser = &receiver
+		} else {
+			tmp.SendUser = &receiver
+			tmp.RecUser = &sender
+		}
+
+
 		res = append(res, &tmp)
 	}
 
@@ -93,6 +102,6 @@ func (db *PgxDB) GetUsers(userId uint, start int, limit int) ([]*models.User, er
 		receiver, _ := db.GetUserById(models.GetBUser(tmp))
 		res = append(res, &receiver)
 	}
-
+	
 	return res, nil
 }

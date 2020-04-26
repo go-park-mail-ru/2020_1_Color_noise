@@ -64,4 +64,6 @@ type DBInterface interface {
 	PutNotifications(cm models.DataBaseComment) (uint, error)
 
 	AddMessage(send, rec int, mess string) (*models.Message, error)
+	GetMessages(userId, otherId uint, start int, limit int) ([]*models.Message, error)
+	GetUsers(userId uint, start int, limit int) ([]*models.User, error)
 }
