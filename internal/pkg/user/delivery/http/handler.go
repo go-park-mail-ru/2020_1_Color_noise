@@ -104,7 +104,7 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get user: user is unauthorized")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf( err,"request id: %s", reqId))
 		return
 	}
 

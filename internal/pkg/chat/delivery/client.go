@@ -3,7 +3,6 @@ package delivery
 import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/chat"
-
 	"log"
 	"net/http"
 	"time"
@@ -128,8 +127,17 @@ func (c *Client) writePump() {
 
 // serveWs handles websocket requests from the peer.
 func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		log.Println("User is unauthorized, reqId: ", reqId)
+		return
+	}
+
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
+		log.Println("UserId is not found, reqId: ", reqId)
 		return
 	}
 
