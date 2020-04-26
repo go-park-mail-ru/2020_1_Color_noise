@@ -8,7 +8,7 @@ import (
 
 func SaveImage(b *[]byte) (string, error) {
 	name := utils.RandStringRunes(30) + ".jpg"
-	path := "static/" + name
+	path := "storage/" + name
 	file, err := os.Create(path)
 	if err != nil {
 		return "", Wrap(err, "Creating image error")

@@ -23,21 +23,20 @@ func NewHandler(usecase chat.IUsecase, logger *zap.SugaredLogger) *Handler {
 	}
 }
 
-func (ph *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
+func (ch *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Fetch users for chat: user is unauthorized")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	vars := mux.Vars(r)
-	userId, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting users for chat"), "Bad id")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+	userId, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -48,9 +47,9 @@ func (ph *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 		limit = 10
 	}
 
-	users, err := ph.usecase.GetUsers(uint(userId), start, limit)
+	users, err := ch.usecase.GetUsers(uint(userId), start, limit)
 	if err != nil {
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -70,21 +69,28 @@ func (ph *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	response.Respond(w, http.StatusOK, resp)
 }
 
-func (ph *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
+func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Fetch messages for chat: user is unauthorized")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	userId, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	vars := mux.Vars(r)
-	userId, err := strconv.Atoi(vars["id"])
+	otherId, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting messages for chat"), "Bad id")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -95,9 +101,9 @@ func (ph *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 		limit = 10
 	}
 
-	messages, err := ph.usecase.GetMessages(uint(userId), start, limit)
+	messages, err := ch.usecase.GetMessages(userId, uint(otherId), start, limit)
 	if err != nil {
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 

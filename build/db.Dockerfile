@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y postgresql-$PGVER
 
 USER postgres
 
-COPY scripts.sql scripts.sql
+COPY build/scripts.sql scripts.sql
 
 RUN service postgresql start &&\
     psql -U postgres -c "ALTER USER postgres PASSWORD 'password';" &&\

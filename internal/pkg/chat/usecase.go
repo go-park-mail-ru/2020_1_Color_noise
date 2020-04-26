@@ -7,5 +7,5 @@ import (
 type IUsecase interface {
 	AddMessage(userSentId uint, input *models.InputMessage) (*models.Message, error)
 	GetUsers(userId uint, start int, limit int) ([]*models.User, error)
-	GetMessages(userId uint, start int, limit int) ([]*models.Message, error)
+	GetMessages(userId uint, otherId uint, start int, limit int) ([]*models.Message, error)
 }

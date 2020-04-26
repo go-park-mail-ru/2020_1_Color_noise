@@ -6,18 +6,18 @@ ENV GO111MODULE=on
 
 WORKDIR /app
 
-COPY go.mod .
-COPY go.sum .
+COPY ../go.mod .
+COPY ../go.sum .
 RUN go mod tidy
 
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main -i cmd/main.go
+COPY .. .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main -i cmd/main_chat.go
 
 
 FROM alpine
 WORKDIR /app
 
-COPY --from=builder app/main .
+COPY --from=builder app/main_chat .
 COPY --from=builder app/config.json .
 
-CMD sleep 10 && ./main
+CMD sleep 10 && ./main_chat

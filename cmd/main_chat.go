@@ -71,7 +71,7 @@ func main() {
 	r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)
 
-	err = http.ListenAndServe("127.0.0.1:8000", nil)
+	err = http.ListenAndServe(":8000", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

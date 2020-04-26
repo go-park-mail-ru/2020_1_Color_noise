@@ -2,9 +2,15 @@ version: "3"
 
 services:
 
-  backend:
+  main:
 
-    build: .
+    build:
+      context: .
+      dockerfile: build/main.Dockerfile
+
+    volumes:
+      - ../static:/static
+      - ../storage:/storage
 
     ports:
       - 8000:8000
@@ -12,10 +18,28 @@ services:
     depends_on:
       - database
 
+  chat:
+
+    build:
+      context: .
+      dockerfile: build/chat.Dockerfile
+
+    volumes:
+      - ../static:/static
+      - ../storage:/storage
+
+    ports:
+      - 8001:8000
+
+    depends_on:
+      - database
+
 
   database:
 
-    build: ./internal/pkg/database
+    build:
+      context: .
+      dockerfile: ./build/db.Dockerfile
 
     ports:
       - 5432:5432
@@ -24,11 +48,12 @@ services:
     image: nginx:1.15.3
 
     links:
-      - backend:backend
+      - main:main
 
     volumes:
       - ./nginx:/etc/nginx/conf.d
-      - ./static:/var/www/html
+      - ../static:/static
+      - ../storage:/storage
 
     ports:
       - 80:80
