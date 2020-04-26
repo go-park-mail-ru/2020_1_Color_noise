@@ -3,8 +3,8 @@ package http
 import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/chat"
-	"2020_1_Color_noise/internal/pkg/response"
 	"2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/response"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"net/http"
@@ -16,10 +16,10 @@ type Handler struct {
 	logger  *zap.SugaredLogger
 }
 
-func NewHandler(usecase chat.IUsecase , logger *zap.SugaredLogger) *Handler {
+func NewHandler(usecase chat.IUsecase, logger *zap.SugaredLogger) *Handler {
 	return &Handler{
 		usecase: usecase,
-		logger:			logger,
+		logger:  logger,
 	}
 }
 
@@ -121,7 +121,7 @@ func (ph *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 				Subscribers:   message.RecUser.Subscribers,
 				Subscriptions: message.RecUser.Subscriptions,
 			},
-			Message: message.Message,
+			Message:   message.Message,
 			CreatedAt: message.CreatedAt,
 		})
 	}

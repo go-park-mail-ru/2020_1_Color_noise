@@ -30,7 +30,7 @@ var (
 	space   = []byte{' '}
 )
 
-var upgrader = websocket.Upgrader {
+var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 }
@@ -39,13 +39,13 @@ var upgrader = websocket.Upgrader {
 type Client struct {
 	userId uint
 
-	hub    *Hub
+	hub *Hub
 
 	// The websocket connection.
-	conn   *websocket.Conn
+	conn *websocket.Conn
 
 	// Buffered channel of outbound messages.
-	send    chan *models.Message
+	send chan *models.Message
 
 	usecase chat.IUsecase
 }
@@ -104,15 +104,15 @@ func (c *Client) writePump() {
 				return
 			}
 
-			response := &models.ResponseMessage {
+			response := &models.ResponseMessage{
 				SendUser: &models.ResponseUser{
-					Id:    message.SendUser.Id,
-					Login: message.SendUser.Login,
-					About: message.SendUser.About,
+					Id:     message.SendUser.Id,
+					Login:  message.SendUser.Login,
+					About:  message.SendUser.About,
 					Avatar: message.SendUser.Avatar,
 				},
 
-				Message:   message.Message,
+				Message: message.Message,
 
 				CreatedAt: message.CreatedAt,
 			}

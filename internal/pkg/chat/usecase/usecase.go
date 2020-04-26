@@ -18,6 +18,7 @@ func NewUsecase(repo chat.IRepository) *Usecase {
 
 func (u *Usecase) AddMessage(userSentId uint, input *models.InputMessage) (*models.Message, error) {
 	message, err := u.repo.AddMessage(userSentId, input.UserRecviredId, input.Message)
+
 	if err != nil {
 		return nil, NoType.Wrap(err, "AddMessge error")
 	}
@@ -45,4 +46,3 @@ func (u *Usecase) GetMessages(userId uint, start int, limit int) ([]*models.Mess
 
 	return messages, nil
 }
-

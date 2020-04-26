@@ -1,6 +1,5 @@
 package delivery
 
-
 import "2020_1_Color_noise/internal/models"
 
 type Hub struct {
