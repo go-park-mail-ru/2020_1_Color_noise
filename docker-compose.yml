@@ -41,9 +41,6 @@ services:
       context: .
       dockerfile: ./build/db.Dockerfile
 
-    environment:
-      PGDATA: /var/lib/postgresql/data/pgdat
-
     volumes:
       - /var/lib/postgresql/10/main:/var/lib/postgresql/10/main
 
