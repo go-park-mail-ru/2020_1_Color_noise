@@ -22,7 +22,7 @@ services:
 
     build:
       context: .
-      dockerfile: build/chat.Dockerfile
+      dockerfile: ./build/chat.Dockerfile
 
     volumes:
       - ../static:/static
