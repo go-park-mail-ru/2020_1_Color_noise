@@ -101,3 +101,13 @@ const (
 	PutNoti = "INSERT INTO notifies(" +
 		"user_id, message, from_user_id, created_at) VALUES($1, $2, $3, $4) RETURNING id;"
 )
+
+const (
+	AddChat  = "INSERT INTO chats(sender_id, receiver_id) VALUES ($1, $2) RETURNING id;"
+	GetChats = "SELECT receiver_id FROM chats WHERE sender_id = $1 LIMIT $2 OFFSET $3;"
+
+	AddMsg = "INSERT INTO public.chat_messages(sender_id, receiver_id, message, created_at) " +
+		"VALUES ($1, $2, $3, $4);"
+	GetMsg = "SELECT sender_id, receiver_id, message FROM chat_messages " +
+		" WHERE sender_id = $1 AND receiver_id = $2 ORDER BY created_at DESC LIMIT $3 OFFSET $4;"
+)

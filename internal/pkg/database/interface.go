@@ -62,4 +62,6 @@ type DBInterface interface {
 
 	GetNotifications(user models.DataBaseUser) ([]*models.Notification, error)
 	PutNotifications(cm models.DataBaseComment) (uint, error)
+
+	AddMessage(send, rec int, mess string) (*models.Message, error)
 }
