@@ -13,7 +13,7 @@ services:
       - ../storage:/storage
 
     ports:
-      - 8000:8000
+      - 8001:8000
 
     depends_on:
       - database
@@ -29,7 +29,7 @@ services:
       - ../storage:/storage
 
     ports:
-      - 8001:8000
+      - 8002:8000
 
     depends_on:
       - database
