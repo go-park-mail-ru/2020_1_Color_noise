@@ -17,8 +17,8 @@ services:
     #ports:
      # - 8000:8000
 
-    depends_on:
-      - database
+    #depends_on:
+     # - database
 
   chat:
 
@@ -30,8 +30,8 @@ services:
     #ports:
      # - 8000:8000
 
-    depends_on:
-      - database
+    #depends_on:
+     # - database
 
 
   #database:
