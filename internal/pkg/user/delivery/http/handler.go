@@ -13,6 +13,8 @@ import (
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"io"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -82,13 +84,13 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		//Domain:   r.Host,
 	}
 
-	/*	token := &http.Cookie{
+	token := &http.Cookie{
 			Name:    "csrf_token",
 			Value:   session.Token,
 			Expires: time.Now().Add(5 * time.Hour),
 			//Domain:  r.Host,
-		}
-	*/
+	}
+
 
 	resp := models.ResponseUser{
 		Id:            user.Id,
@@ -100,12 +102,31 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, cookie)
-	//http.SetCookie(w, token)
+	http.SetCookie(w, token)
 
 	response.Respond(w, http.StatusCreated, resp)
 }
 
 func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
+	files, err := ioutil.ReadDir("./")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, f := range files {
+		fmt.Println(f.Name())
+	}
+
+	files, err = ioutil.ReadDir("../storage")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, f := range files {
+		fmt.Println(f.Name())
+	}
+
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")

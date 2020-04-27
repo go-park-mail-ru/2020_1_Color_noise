@@ -1,4 +1,4 @@
-version: "3"
+version: "3.3"
 
 services:
 
@@ -9,14 +9,16 @@ services:
       dockerfile: build/main.Dockerfile
 
     volumes:
-      - ../storage:/storage
+      - type: bind
+        source: ../storage
+        target: /storage
 
     network_mode: host
     #ports:
      # - 8000:8000
 
-   # depends_on:
-    #  - database
+    depends_on:
+      - database
 
   chat:
 
@@ -28,18 +30,18 @@ services:
     #ports:
      # - 8000:8000
 
-  #  depends_on:
- #     - database
+    depends_on:
+      - database
 
 
-#  database:
+  database:
 
-    #build:
-      #context: .
-      #dockerfile: ./build/db.Dockerfile
+    build:
+      context: .
+      dockerfile: ./build/db.Dockerfile
 
-   #ports:
-      #- 5432:5432
+    ports:
+      - 5432:5432
 
   nginx:
     image: nginx:1.15.3
