@@ -113,5 +113,5 @@ const (
 		"VALUES ($1, $2, $3, $4) RETURNING 0;"
 	GetMsg = "SELECT sender_id, message, created_at FROM chat_messages " +
 		" WHERE sender_id = $1 AND receiver_id = $2 OR sender_id = $2 AND receiver_id = $1 " +
-		"ORDER BY created_at DESC LIMIT $3 OFFSET $4;"
+		"ORDER BY created_at ASC LIMIT $3 OFFSET $4;"
 )
