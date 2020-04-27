@@ -62,13 +62,13 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := ud.userUsecase.Create(input)
+	user, err := ud.userUsecase.Create(input)
 	if err != nil {
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	session, err := ud.sessionUsecase.CreateSession(id)
+	session, err := ud.sessionUsecase.CreateSession(user.Id)
 	if err != nil {
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -90,12 +90,19 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		}
 	*/
 
+	resp := models.ResponseUser{
+		Id:            user.Id,
+		Login:         user.Login,
+		About:         user.About,
+		Avatar:        user.Avatar,
+		Subscribers:   user.Subscribers,
+		Subscriptions: user.Subscriptions,
+	}
+
 	http.SetCookie(w, cookie)
 	//http.SetCookie(w, token)
 
-	response.Respond(w, http.StatusCreated, map[string]string{
-		"message": "Ok",
-	})
+	response.Respond(w, http.StatusCreated, resp)
 }
 
 func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {

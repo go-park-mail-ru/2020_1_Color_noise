@@ -19,10 +19,10 @@ func NewUsecase(repo user.IRepository) *UserUsecase {
 	}
 }
 
-func (uu *UserUsecase) Create(input *models.SignUpInput) (uint, error) {
+func (uu *UserUsecase) Create(input *models.SignUpInput) (*models.User, error) {
 	encryptedPassword, err := encryptPassword(input.Password)
 	if err != nil {
-		return 0, Wrap(err, "Creating new user error")
+		return nil, Wrap(err, "Creating new user error")
 	}
 
 	user := &models.User{
@@ -32,12 +32,12 @@ func (uu *UserUsecase) Create(input *models.SignUpInput) (uint, error) {
 		Avatar:            "avatar.jpg",
 	}
 
-	id, err := uu.repo.Create(user)
+	user, err = uu.repo.Create(user)
 	if err != nil {
-		return 0, Wrap(err, "Creating new user error")
+		return nil, Wrap(err, "Creating new user error")
 	}
 
-	return id, nil
+	return user, nil
 }
 
 func (uu *UserUsecase) GetById(id uint) (*models.User, error) {
