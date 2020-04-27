@@ -80,10 +80,10 @@ func (db *PgxDB) GetUserById(user models.DataBaseUser) (models.User, error) {
 	return models.GetUser(res), nil
 }
 
-func (db *PgxDB) GetUserByLogin(user models.DataBaseUser, start int, offset int) ([]*models.User, error) {
+func (db *PgxDB) GetUserByLogin(user models.DataBaseUser, start int, limit int) ([]*models.User, error) {
 
 	var users []*models.User
-	row, err := db.dbPool.Query(UserByLoginSearch, user.Login)
+	row, err := db.dbPool.Query(UserByLogin, user.Login, limit, start)
 
 	if err != nil {
 		return nil, errors.New("db error")
