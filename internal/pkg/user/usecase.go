@@ -6,7 +6,7 @@ import (
 )
 
 type IUsecase interface {
-	Create(input *models.SignUpInput) (uint, error)
+	Create(input *models.SignUpInput) (*models.User, error)
 	GetById(id uint) (*models.User, error)
 	UpdateProfile(id uint, input *models.UpdateProfileInput) error
 	UpdateDescription(id uint, input *models.UpdateDescriptionInput) error

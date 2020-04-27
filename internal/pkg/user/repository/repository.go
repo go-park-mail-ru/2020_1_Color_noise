@@ -17,23 +17,25 @@ func NewRepo(bd database.DBInterface) *Repository {
 	}
 }
 
-func (ur *Repository) Create(user *models.User) (uint, error) {
+func (ur *Repository) Create(user *models.User) (*models.User, error){
 	_, err := ur.checkLogin(user.Login)
 	if err == nil {
-		return 0, LoginIsExist.New("Repo: Error in during creating")
+		return nil, LoginIsExist.New("Repo: Error in during creating")
 	}
 
 	_, err = ur.checkEmail(user.Email)
 	if err == nil {
-		return 0, EmailIsExist.New("Repo: Error in during creating")
+		return nil, EmailIsExist.New("Repo: Error in during creating")
 	}
 
 	id, err := ur.bd.CreateUser(models.GetBUser(*user))
 	if err != nil {
-		return 0, UserNotFound.Newf("User can not be created")
+		return nil, UserNotFound.Newf("User can not be created")
 	}
 
-	return id, nil
+	user.Id = id
+
+	return user, nil
 }
 
 func (ur *Repository) GetByID(id uint) (*models.User, error) {
