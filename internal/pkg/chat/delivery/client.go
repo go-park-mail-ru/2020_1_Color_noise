@@ -3,6 +3,10 @@ package delivery
 import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/chat"
+	e "2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/response"
+	"fmt"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 	"time"
@@ -70,6 +74,7 @@ func (c *Client) readPump() {
 
 		message, err := c.usecase.AddMessage(c.userId, input)
 		if err != nil {
+			log.Println(err)
 			break
 		}
 
@@ -98,7 +103,7 @@ func (c *Client) writePump() {
 				return
 			}
 
-			response := &models.ResponseMessage{
+			resp := &models.ResponseMessage{
 				SendUser: &models.ResponseUser{
 					Id:     message.SendUser.Id,
 					Login:  message.SendUser.Login,
@@ -111,7 +116,12 @@ func (c *Client) writePump() {
 				CreatedAt: message.CreatedAt,
 			}
 
-			err := c.conn.WriteJSON(response)
+			result := response.Response {
+				Status: 200,
+				Body: resp,
+			}
+
+			err := c.conn.WriteJSON(result)
 			if err != nil {
 				return
 			}
@@ -126,30 +136,36 @@ func (c *Client) writePump() {
 }
 
 // serveWs handles websocket requests from the peer.
-func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+func ServeWs(hub *Hub, logger  *zap.SugaredLogger, usecase chat.IUsecase, w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
-		log.Println("User is unauthorized, reqId: ", reqId)
+		//log.Println("User is unauthorized, reqId: ", reqId)
+		err := e.Unauthorized.New("Chatting: user is unauthorized")
+		e.ErrorHandler(w, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
-		log.Println("UserId is not found, reqId: ", reqId)
+		err := e.NoType.New("Received bad id from context")
+		e.ErrorHandler(w, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
+
 
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		err := e.NoType.New("Check origin error, chat")
+		e.ErrorHandler(w, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	client := &Client{userId: userId, hub: hub, conn: conn, send: make(chan *models.Message)}
+	client := &Client{userId: userId, hub: hub, conn: conn, send: make(chan *models.Message), usecase: usecase}
 	client.hub.register <- client
+	fmt.Println("client ", client)
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
 	go client.writePump()
