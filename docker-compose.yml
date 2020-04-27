@@ -9,7 +9,6 @@ services:
       dockerfile: build/main.Dockerfile
 
     volumes:
-      - ../static:/static
       - ../storage:/storage
 
     network_mode: host
@@ -26,7 +25,6 @@ services:
       dockerfile: ./build/chat.Dockerfile
 
     volumes:
-      - ../static:/static
       - ../storage:/storage
 
     network_mode: host
