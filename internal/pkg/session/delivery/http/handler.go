@@ -82,15 +82,15 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		Subscriptions: user.Subscriptions,
 	}
 
-	/*token := &http.Cookie{
+	token := &http.Cookie{
 		Name:    "csrf_token",
 		Value:   session.Token,
 		Expires: time.Now().Add(5 * time.Hour),
 		//Domain:  r.Host,
-	}*/
+	}
 
 	http.SetCookie(w, cookie)
-	//http.SetCookie(w, token)
+	http.SetCookie(w, token)
 	fmt.Println(w)
 
 	response.Respond(w, http.StatusOK, resp)

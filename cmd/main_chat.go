@@ -61,7 +61,7 @@ func main() {
 
 	r.HandleFunc("/api/chat/users", chatDelivery.GetUsers).Methods("GET")
 	r.HandleFunc("/api/chat/messages/{id:[0-9]+}", chatDelivery.GetMessages).Methods("GET")
-	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/api/chat/ws", func(w http.ResponseWriter, r *http.Request) {
 
 		delivery.ServeWs(hub, zap, chatUse, w, r)
 	})
