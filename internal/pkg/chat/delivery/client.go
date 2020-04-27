@@ -105,10 +105,21 @@ func (c *Client) writePump() {
 
 			resp := &models.ResponseMessage{
 				SendUser: &models.ResponseUser{
-					Id:     message.SendUser.Id,
-					Login:  message.SendUser.Login,
-					About:  message.SendUser.About,
-					Avatar: message.SendUser.Avatar,
+					Id:            message.SendUser.Id,
+					Login:         message.SendUser.Login,
+					About:         message.SendUser.About,
+					Avatar:        message.SendUser.Avatar,
+					Subscribers:   message.SendUser.Subscribers,
+					Subscriptions: message.SendUser.Subscriptions,
+				},
+
+				RecUser: &models.ResponseUser{
+					Id:            message.SendUser.Id,
+					Login:         message.SendUser.Login,
+					About:         message.SendUser.About,
+					Avatar:        message.SendUser.Avatar,
+					Subscribers:   message.SendUser.Subscribers,
+					Subscriptions: message.SendUser.Subscriptions,
 				},
 
 				Message: message.Message,

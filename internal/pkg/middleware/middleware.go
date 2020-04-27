@@ -29,6 +29,7 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 		ctx := r.Context()
 
 		cookie, err := r.Cookie("session_id")
+		 fmt.Println("cookie ", cookie)
 		if err != nil {
 			ctx = context.WithValue(ctx, "IsAuth", false)
 		} else {

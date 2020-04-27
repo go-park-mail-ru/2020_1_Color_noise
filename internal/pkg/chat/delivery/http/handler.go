@@ -107,10 +107,10 @@ func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := make([]models.ResponseMessages, 0)
+	resp := make([]models.ResponseMessage, 0)
 
 	for _, message := range messages {
-		resp = append(resp, models.ResponseMessages{
+		resp = append(resp, models.ResponseMessage{
 			SendUser: &models.ResponseUser{
 				Id:            message.SendUser.Id,
 				Login:         message.SendUser.Login,

@@ -14,13 +14,8 @@ type InputMessage struct {
 	Message        string `json:"message" valid:"string"`
 }
 
-type ResponseMessage struct {
-	SendUser  *ResponseUser `json:"user_send"`
-	Message   string        `json:"message"`
-	CreatedAt time.Time     `json:"created_at"`
-}
 
-type ResponseMessages struct {
+type ResponseMessage struct {
 	SendUser  *ResponseUser `json:"user_send"`
 	RecUser   *ResponseUser `json:"user_rec"`
 	Message   string        `json:"message"`

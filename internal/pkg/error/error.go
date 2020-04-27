@@ -132,10 +132,10 @@ func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interf
 		message = "Login or password is incorrect"
 	case LoginIsExist:
 		status = http.StatusUnauthorized
-		message = "Change your login, login is already exist"
+		message = "login"
 	case EmailIsExist:
 		status = http.StatusUnauthorized
-		message = "Change your email, email is already exist"
+		message = "email"
 	case Unauthorized:
 		status = http.StatusUnauthorized
 		message = "User is unauthorized"
