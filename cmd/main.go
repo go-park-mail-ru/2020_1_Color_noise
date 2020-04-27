@@ -145,7 +145,7 @@ func main() {
 	r.HandleFunc("/api/notifications", notificationsDelivery.GetNotifications).Methods("GET")
 
 	r.Use(m.AccessLogMiddleware)
-	r.Use(m.CORSMiddleware)
+	//r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)
 
 	/*r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))*/

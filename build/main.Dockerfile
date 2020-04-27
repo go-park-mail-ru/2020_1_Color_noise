@@ -16,6 +16,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main -i cmd/main.go
 
 FROM alpine
 WORKDIR /app
+RUN mkdir storage
 
 COPY --from=builder app/main .
 COPY --from=builder app/config.json .

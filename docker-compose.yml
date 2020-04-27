@@ -9,7 +9,6 @@ services:
       dockerfile: build/main.Dockerfile
 
     volumes:
-      - ../static:/static
       - ../storage:/storage
 
     network_mode: host
@@ -26,7 +25,6 @@ services:
       dockerfile: ./build/chat.Dockerfile
 
     volumes:
-      - ../static:/static
       - ../storage:/storage
 
     network_mode: host
@@ -49,9 +47,10 @@ services:
   nginx:
     image: nginx:1.15.3
 
-    links:
-      - main:main
-      - chat:chat
+    #links:
+    #  - main:main
+    #  - chat:chat
+    network_mode: host
 
     volumes:
       - ./nginx:/etc/nginx/conf.d
