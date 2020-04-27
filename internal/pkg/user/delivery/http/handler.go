@@ -99,6 +99,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")

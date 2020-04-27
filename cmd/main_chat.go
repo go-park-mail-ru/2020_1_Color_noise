@@ -63,7 +63,7 @@ func main() {
 	r.HandleFunc("/api/chat/messages/{id:[0-9]+}", chatDelivery.GetMessages).Methods("GET")
 	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 
-		delivery.ServeWs(hub, w, r)
+		delivery.ServeWs(hub, zap, chatUse, w, r)
 	})
 
 	r.Use(m.AccessLogMiddleware)
@@ -75,7 +75,7 @@ func main() {
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}*/
-	err = http.ListenAndServe(":8002", r)
+	err = http.ListenAndServe("127.0.0.1:8002", r)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

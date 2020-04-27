@@ -1,10 +1,12 @@
 package delivery
 
-import "2020_1_Color_noise/internal/models"
+import (
+	"2020_1_Color_noise/internal/models"
+)
 
 type Hub struct {
 	// Registered clients.
-	clients map[uint]*Client
+	clients map[*Client]bool
 
 	// Inbound messages from the clients.
 	broadcast chan *models.Message
@@ -21,7 +23,7 @@ func NewHub() *Hub {
 		broadcast:  make(chan *models.Message),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
-		clients:    make(map[uint]*Client),
+		clients:    make(map[*Client]bool),
 	}
 }
 
@@ -29,27 +31,22 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case client := <-h.register:
-			h.clients[client.userId] = client
+			h.clients[client] = true
 		case client := <-h.unregister:
-			if _, ok := h.clients[client.userId]; ok {
-				delete(h.clients, client.userId)
+			if _, ok := h.clients[client]; ok {
+				delete(h.clients, client)
 				close(client.send)
 			}
 		case message := <-h.broadcast:
-			client := h.clients[message.RecUser.Id]
-			select {
-			case client.send <- message:
-			default:
-				close(client.send)
-				delete(h.clients, client.userId)
-			}
-
-			client = h.clients[message.SendUser.Id]
-			select {
-			case client.send <- message:
-			default:
-				close(client.send)
-				delete(h.clients, client.userId)
+			for client := range h.clients {
+				if client.userId == message.SendUser.Id || client.userId == message.RecUser.Id {
+					select {
+					case client.send <- message:
+					default:
+						close(client.send)
+						delete(h.clients, client)
+					}
+				}
 			}
 		}
 	}
