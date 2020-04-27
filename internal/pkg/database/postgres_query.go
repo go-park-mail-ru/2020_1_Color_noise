@@ -106,7 +106,7 @@ const (
 
 const (
 	AddChat  = "INSERT INTO chats(sender_id, receiver_id) VALUES ($1, $2) RETURNING id;"
-	GetChats = "SELECT receiver_id FROM chat_messages WHERE sender_id = $1" +
+	GetChats = "SELECT receiver_id FROM chat_messages WHERE sender_id = $1 OR receiver_id = $1 " +
 		" GROUP BY receiver_id LIMIT $2 OFFSET $3;"
 
 	AddMsg = "INSERT INTO public.chat_messages(sender_id, receiver_id, message, created_at) " +

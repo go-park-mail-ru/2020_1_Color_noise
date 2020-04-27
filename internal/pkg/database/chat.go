@@ -94,13 +94,22 @@ func (db *PgxDB) GetUsers(userId uint, start int, limit int) ([]*models.User, er
 	}
 
 	for row.Next() {
-		var tmp models.User
-		ok := row.Scan(&tmp.Id)
+		var send models.User
+		var receive models.User
+		ok := row.Scan(&send.Id, &receive.Id)
 		if ok != nil {
 			return res, nil
 		}
-		receiver, _ := db.GetUserById(models.GetBUser(tmp))
-		res = append(res, &receiver)
+
+		//если мы написали
+		if send.Id == sender.Id {
+			receiver, _ := db.GetUserById(models.GetBUser(receive))
+			res = append(res, &receiver)
+		} else {
+			//если нам написали
+			receiver, _ := db.GetUserById(models.GetBUser(send))
+			res = append(res, &receiver)
+		}
 	}
 
 	return res, nil
