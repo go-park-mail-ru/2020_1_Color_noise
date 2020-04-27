@@ -9,7 +9,7 @@ const (
 	DeletePin  = "DELETE from pins WHERE id = $1"
 	PinById    = "SELECT * FROM pins WHERE id = $1"
 	PinByUser  = "SELECT * FROM pins WHERE user_id = $1"
-	PinByName  = "SELECT * FROM pins WHERE name = $1"
+	PinByName  = "SELECT * FROM pins WHERE LOWER(name) = LOWER($1);"
 	PinByBoard = "SELECT * FROM pins WHERE board_id = $1"
 )
 
@@ -31,7 +31,9 @@ const (
 		"WHERE id = $2 RETURNING id;"
 	DeleteUser        = "DELETE FROM users WHERE id = $1;"
 	UserById          = "SELECT * FROM users WHERE id = $1"
-	UserByLogin       = "SELECT * FROM users WHERE login = $1 LIMIT $2 OFFSET $3"
+	//это поиск
+	UserByLogin       = "SELECT * FROM users WHERE LOWER(login) = LOWER($1) LIMIT $2 OFFSET $3"
+	//это точный поиск
 	UserByLoginSearch = "SELECT * FROM users WHERE login = $1"
 	UserByEmail       = "SELECT * FROM users WHERE email = $1"
 	//кто подписан на пользователя
@@ -111,5 +113,5 @@ const (
 		"VALUES ($1, $2, $3, $4) RETURNING 0;"
 	GetMsg = "SELECT sender_id, message, created_at FROM chat_messages " +
 		" WHERE sender_id = $1 AND receiver_id = $2 OR sender_id = $2 AND receiver_id = $1 " +
-		"ORDER BY created_at DESC LIMIT $3 OFFSET $4;"
+		"ORDER BY created_at ASC LIMIT $3 OFFSET $4;"
 )
