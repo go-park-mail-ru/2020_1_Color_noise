@@ -72,6 +72,16 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		//Domain:   r.Host,
 	}
 
+	resp := models.ResponseUser{
+		Id:            user.Id,
+		Email:         user.Email,
+		Login:         user.Login,
+		About:         user.About,
+		Avatar:        user.Avatar,
+		Subscribers:   user.Subscribers,
+		Subscriptions: user.Subscriptions,
+	}
+
 	/*token := &http.Cookie{
 		Name:    "csrf_token",
 		Value:   session.Token,
@@ -83,9 +93,7 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	//http.SetCookie(w, token)
 	fmt.Println(w)
 
-	response.Respond(w, http.StatusOK, map[string]string{
-		"message": "Ok",
-	})
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {

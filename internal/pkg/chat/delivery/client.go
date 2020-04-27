@@ -111,6 +111,13 @@ func (c *Client) writePump() {
 					Avatar: message.SendUser.Avatar,
 				},
 
+				RecUser: &models.ResponseUser{
+					Id:     message.RecUser.Id,
+					Login:  message.RecUser.Login,
+					About:  message.RecUser.About,
+					Avatar: message.RecUser.Avatar,
+				},
+
 				Message: message.Message,
 
 				CreatedAt: message.CreatedAt,
