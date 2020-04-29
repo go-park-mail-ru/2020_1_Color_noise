@@ -27,8 +27,10 @@ import (
 	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
 
 	searchHandler "2020_1_Color_noise/internal/pkg/search"
+
+	sesionDeliveryGRPC "2020_1_Color_noise/internal/pkg/session"
 	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
-	sessionRepository "2020_1_Color_noise/internal/pkg/session/repository"
+	sessionRepo "2020_1_Color_noise/internal/pkg/session/repository/rpcRepo"
 	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
 
 	userDeliveryHttp "2020_1_Color_noise/internal/pkg/user/delivery/http"
@@ -36,6 +38,8 @@ import (
 	userUsecase "2020_1_Color_noise/internal/pkg/user/usecase"
 
 	"go.uber.org/zap"
+
+	"google.golang.org/grpc"
 
 	"github.com/gorilla/mux"
 	"log"
@@ -59,6 +63,17 @@ func main() {
 		panic(err)
 	}
 
+	grcpConn, err := grpc.Dial(
+		"127.0.0.1:8003",
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatalf("cant connect to grpc")
+	}
+	defer grcpConn.Close()
+
+	sessManager := sesionDeliveryGRPC.NewAuthCheckerClient(grcpConn)
+
 	logger, err := zap.NewProduction()
 	if err != nil {
 		panic(err)
@@ -73,7 +88,7 @@ func main() {
 	userRepo := userRepository.NewRepo(db)
 	userUse := userUsecase.NewUsecase(userRepo)
 
-	sessionRepo := sessionRepository.NewRepo(db)
+	sessionRepo := sessionRepo.NewRepo(sessManager)
 	sessionUse := sessionUsecase.NewUsecase(sessionRepo)
 	sessionDelivery := sessionDeliveryHttp.NewHandler(sessionUse, userUse, zap)
 

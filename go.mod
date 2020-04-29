@@ -7,6 +7,7 @@ require (
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/gofrs/uuid v3.2.0+incompatible // indirect
 	github.com/golang/mock v1.4.0
+	github.com/golang/protobuf v1.4.0
 	github.com/gorilla/mux v1.7.4
 	github.com/gorilla/websocket v1.4.0
 	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect
@@ -18,4 +19,7 @@ require (
 	github.com/spf13/viper v1.6.2
 	go.uber.org/zap v1.10.0
 	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d
+	golang.org/x/net v0.0.0-20190522155817-f3200d17e092
+	google.golang.org/grpc v1.29.1
+	google.golang.org/protobuf v1.21.0
 )

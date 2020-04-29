@@ -11,13 +11,13 @@ COPY go.sum .
 RUN go mod tidy
 
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main -i cmd/main/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o auth -i cmd/auth/auth.go
 
 
 FROM alpine
 WORKDIR /app
 
-COPY --from=builder app/main .
+COPY --from=builder app/auth .
 COPY --from=builder app/config.json .
 
-CMD sleep 15 && ./main
+CMD sleep 10 && ./auth

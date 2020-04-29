@@ -1,4 +1,4 @@
-package repository
+package repo
 
 import (
 	"2020_1_Color_noise/internal/models"
@@ -7,7 +7,7 @@ import (
 )
 
 type Repository struct {
-	db database.DBInterface
+	db  database.DBInterface
 }
 
 func NewRepo(d database.DBInterface) *Repository {

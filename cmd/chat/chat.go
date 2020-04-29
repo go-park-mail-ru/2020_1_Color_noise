@@ -4,7 +4,7 @@ import (
 	"2020_1_Color_noise/internal/pkg/config"
 	"2020_1_Color_noise/internal/pkg/database"
 	"2020_1_Color_noise/internal/pkg/middleware"
-	sessionRepository "2020_1_Color_noise/internal/pkg/session/repository"
+	"2020_1_Color_noise/internal/pkg/session/repository/Repo"
 	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
 	"log"
 
@@ -54,7 +54,7 @@ func main() {
 	chatUse := chatUsecase.NewUsecase(chatRepo)
 	chatDelivery := chatDeliveryHttp.NewHandler(chatUse, zap)
 
-	sessionRepo := sessionRepository.NewRepo(db)
+	sessionRepo := repo.NewRepo(db)
 	sessionUse := sessionUsecase.NewUsecase(sessionRepo)
 
 	m := middleware.NewMiddleware(sessionUse, zap)

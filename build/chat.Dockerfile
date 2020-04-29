@@ -11,7 +11,7 @@ COPY go.sum .
 RUN go mod tidy
 
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main_chat -i cmd/main_chat.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main_chat -i cmd/chat/chat.go
 
 
 FROM alpine

@@ -20,6 +20,24 @@ services:
     #depends_on:
      # - database
 
+  auth:
+
+    build:
+      context: .
+      dockerfile: build/auth.Dockerfile
+
+    volumes:
+      - type: bind
+        source: ../storage
+        target: /storage
+
+    network_mode: host
+      #ports:
+      # - 8000:8000
+
+    depends_on:
+     - database
+
   chat:
 
     build:
@@ -30,18 +48,18 @@ services:
     #ports:
      # - 8000:8000
 
-    #depends_on:
-     # - database
+    depends_on:
+      - database
 
 
-  #database:
+  database:
 
-   # build:
-      #context: .
-     # dockerfile: ./build/db.Dockerfile
+    build:
+      context: .
+      dockerfile: ./build/db.Dockerfile
 
-    #ports:
-    #  - 5432:5432
+    ports:
+      - 5432:5432
 
   nginx:
     image: nginx:1.15.3
