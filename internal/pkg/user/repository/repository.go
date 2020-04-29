@@ -64,7 +64,7 @@ func (ur *Repository) GetByLogin(login string) (*models.User, error) {
 func (ur *Repository) Search(login string, start int, limit int) ([]*models.User, error) {
 
 	var us = models.DataBaseUser{Login: login}
-	users, err := ur.bd.GetUserByLogin(us, limit, start) //START == OFFSET
+	users, err := ur.bd.GetUserByLogin(us, start, limit) //START == OFFSET
 	if err != nil {
 		return nil, err
 	}

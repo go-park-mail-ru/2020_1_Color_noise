@@ -2,6 +2,7 @@ package database
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"sort"
 	"time"
 )
 
@@ -81,35 +82,36 @@ func (db *PgxDB) GetMessages(userId, otherId uint, start int, limit int) ([]*mod
 func (db *PgxDB) GetUsers(userId uint, start int, limit int) ([]*models.User, error) {
 
 	var res []*models.User
+	var ids []int
 
 	sender, err := db.GetUserById(models.DataBaseUser{Id: uint(userId)})
 	if err != nil {
 		return nil, err
 	}
-
 	row, err := db.dbPool.Query(GetChats, sender.Id, limit, start)
-
 	if err != nil {
 		return nil, err
 	}
-
 	for row.Next() {
 		var send models.User
 		var receive models.User
 		ok := row.Scan(&send.Id, &receive.Id)
+
 		if ok != nil {
 			return res, nil
 		}
-
 		//если мы написали
-		if send.Id == sender.Id {
+		if send.Id == sender.Id && sort.SearchInts(ids, int(send.Id)) == len(ids) {
 			receiver, _ := db.GetUserById(models.GetBUser(receive))
 			res = append(res, &receiver)
-		} else {
+			ids = append(ids, int(send.Id))
+		} else if sort.SearchInts(ids, int(send.Id)) == len(ids){
 			//если нам написали
 			receiver, _ := db.GetUserById(models.GetBUser(send))
 			res = append(res, &receiver)
+			ids = append(ids, int(receive.Id))
 		}
+		sort.Ints(ids)
 	}
 
 	return res, nil
