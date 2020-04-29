@@ -1,7 +1,7 @@
 package response
 
 import (
-	"encoding/json"
+	"github.com/mailru/easyjson"
 	"net/http"
 )
 
@@ -17,8 +17,6 @@ func Respond(w http.ResponseWriter, status int, body interface{}) {
 		Body:   body,
 	}
 
-	err := json.NewEncoder(w).Encode(response)
-	if err != nil {
-		return
-	}
+	easyjson.MarshalToHTTPResponseWriter(response, w)
+	return
 }

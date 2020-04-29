@@ -7,10 +7,10 @@ import (
 	"2020_1_Color_noise/internal/pkg/session"
 	"2020_1_Color_noise/internal/pkg/user"
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
+	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 	"io"
 	"io/ioutil"
@@ -47,7 +47,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.SignUpInput{}
 
-	err := json.NewDecoder(r.Body).Decode(input)
+	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation user"), "Wrong body of request")
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
@@ -217,7 +217,7 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.UpdateProfileInput{}
 
-	err := json.NewDecoder(r.Body).Decode(input)
+	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating profile user"), "Wrong body of request")
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
@@ -263,7 +263,7 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.UpdateDescriptionInput{}
 
-	err := json.NewDecoder(r.Body).Decode(input)
+	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating description user"), "Wrong body of request")
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
@@ -308,7 +308,7 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.UpdatePasswordInput{}
 
-	err := json.NewDecoder(r.Body).Decode(input)
+	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating password user"), "Wrong body of request")
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
