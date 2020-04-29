@@ -55,6 +55,7 @@ func GetTestConfing() (DataBaseConfig, error){
 
 	v.SetConfigName("config")
 	v.AddConfigPath(".")
+	v.AddConfigPath("../../../../.")
 
 	err := v.ReadInConfig()
 	if err != nil {
