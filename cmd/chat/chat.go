@@ -5,8 +5,6 @@ import (
 	"2020_1_Color_noise/internal/pkg/database"
 	"2020_1_Color_noise/internal/pkg/middleware"
 	"2020_1_Color_noise/internal/pkg/proto/session"
-	"2020_1_Color_noise/internal/pkg/proto/user"
-	sessionDeliveryGrpc "2020_1_Color_noise/internal/pkg/session/delivery/grpc"
 	"google.golang.org/grpc"
 	"log"
 
@@ -49,17 +47,6 @@ func main() {
 
 	sessManager := session.NewAuthSeviceClient(grcpSessionConn)
 
-	grcpUserConn, err := grpc.Dial(
-		"127.0.0.1:8004",
-		grpc.WithInsecure(),
-	)
-	if err != nil {
-		log.Fatalf("cant connect to userService")
-	}
-	defer grcpUserConn.Close()
-
-	userService := user.NewUserServiveClient(grcpUserConn)
-
 	logger, err := zap.NewProduction()
 	if err != nil {
 		panic(err)
@@ -79,7 +66,7 @@ func main() {
 	chatDelivery := chatDeliveryHttp.NewHandler(chatUse, zap)
 
 
-	m := middleware.NewMiddleware(sessionUse, zap)
+	m := middleware.NewMiddleware(sessManager, zap)
 
 	r.HandleFunc("/api/chat/users", chatDelivery.GetUsers).Methods("GET")
 	r.HandleFunc("/api/chat/messages/{id:[0-9]+}", chatDelivery.GetMessages).Methods("GET")

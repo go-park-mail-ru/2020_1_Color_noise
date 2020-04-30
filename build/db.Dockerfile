@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV PGVER 10
 ENV POSTGRES_HOST /var/run/postgresql/
 ENV POSTGRES_PORT 5432
-ENV POSTGRES_DB pinterest
+ENV POSTGRES_DB test
 ENV POSTGRES_USER postgres
 ENV POSTGRES_PASSWORD password
 
@@ -20,8 +20,8 @@ COPY build/scripts.sql scripts.sql
 
 RUN service postgresql start &&\
     psql -U postgres -c "ALTER USER postgres PASSWORD 'password';" &&\
-    psql -U postgres -c 'CREATE DATABASE "pinterest";' &&\
-    psql -U postgres -d pinterest -a -f scripts.sql &&\
+    psql -U postgres -c 'CREATE DATABASE "test";' &&\
+    psql -U postgres -d test -a -f scripts.sql &&\
     service postgresql stop
 
 #COPY config/pg_hba.conf /etc/postgresql/$PGVER/main/pg_hba.conf
