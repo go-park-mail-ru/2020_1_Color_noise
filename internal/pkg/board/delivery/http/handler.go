@@ -4,6 +4,7 @@ import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/board"
 	"2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/metric"
 	"2020_1_Color_noise/internal/pkg/response"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
@@ -26,19 +27,22 @@ func NewHandler(usecase board.IUsecase, logger *zap.SugaredLogger) *Handler {
 }
 
 func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
+
+	path := "/api/board/post"
+	metric.Increase()
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Create board: user is unauthorized")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -48,7 +52,7 @@ func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation board"), "Wrong body of request")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -57,13 +61,13 @@ func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
 			"Name shouldn't be empty and longer 60 characters. "+
 				"Description shouldn't be empty and longer 1000 characters.")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
 	id, err := bh.boardUsecase.Create(input, userId)
 	if err != nil {
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -71,16 +75,18 @@ func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		Id: id,
 	}
 
-	response.Respond(w, http.StatusCreated, resp)
+	response.Respond(w, http.StatusCreated, resp, path)
 }
 
 func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
+	path := "/api/board/id/get"
+	metric.Increase()
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get board: user is unauthorized")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -88,13 +94,13 @@ func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting a board"), "Bad id")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
 	board, err := bh.boardUsecase.GetById(uint(id))
 	if err != nil {
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -127,16 +133,18 @@ func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 		},*/
 	}
 
-	response.Respond(w, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp, path)
 }
 
 func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
+	path := "/api/board/name/user/"
+	metric.Increase()
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get name of board: user is unauthorized")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -144,13 +152,13 @@ func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting a board"), "Bad id")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
 	board, err := bh.boardUsecase.GetByNameId(uint(id))
 	if err != nil {
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -169,16 +177,18 @@ func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	response.Respond(w, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp, path)
 }
 
 func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
+	path := "/api/board/user/get"
+	metric.Increase()
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Fetch boards: user is unauthorized")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -186,7 +196,7 @@ func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id when in during getting boards for user"), "Bad id")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -199,7 +209,7 @@ func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 
 	boards, err := bh.boardUsecase.GetByUserId(uint(id), start, limit)
 	if err != nil {
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -222,23 +232,25 @@ func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp, path)
 }
 
 func (bh *Handler) Update(w http.ResponseWriter, r *http.Request) {
+	path := "/api/board/put"
+	metric.Increase()
 	reqId:= r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Update board: user is unauthorized")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -246,7 +258,7 @@ func (bh *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id when in during getting boards for user"), "Bad id")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -255,7 +267,7 @@ func (bh *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	err = easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating board"), "Wrong body of request")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -264,35 +276,37 @@ func (bh *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
 			"Name shouldn't be empty and longer 60 characters. " +
 				"Description shouldn't be empty and longer 1000 characters.")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
 	err = bh.boardUsecase.Update(input, uint(id), userId)
 	if err != nil {
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
 	response.Respond(w, http.StatusOK, map[string]string {
 		"message": "Ok",
-	})
+	}, path)
 }
 
 func (bh *Handler) Delete(w http.ResponseWriter, r *http.Request) {
+	path := "/api/board/delete"
+	metric.Increase()
 	reqId:= r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get board: user is unauthorized")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -300,17 +314,17 @@ func (bh *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting a board"), "Bad id")
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
 	err = bh.boardUsecase.Delete(uint(id), userId)
 	if err != nil {
-		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
 	response.Respond(w, http.StatusOK, map[string]string {
 		"message": "Ok",
-	})
+	}, path)
 }

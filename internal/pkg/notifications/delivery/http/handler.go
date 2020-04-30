@@ -3,6 +3,7 @@ package http
 import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/metric"
 	"2020_1_Color_noise/internal/pkg/notifications"
 	"2020_1_Color_noise/internal/pkg/response"
 	"go.uber.org/zap"
@@ -23,19 +24,21 @@ func NewHandler(usecase notifications.IUsecase, logger  *zap.SugaredLogger) *Han
 }
 
 func (nh *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
+	path := "/api/notifications/get"
+	metric.Increase()
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("GetNotifacations: user is unauthorized")
-		error.ErrorHandler(w, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -48,7 +51,7 @@ func (nh *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
 
 	notifications, err := nh.usecase.GetNotifications(id, start, limit)
 	if err != nil {
-		error.ErrorHandler(w, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -68,5 +71,5 @@ func (nh *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp, path)
 }
