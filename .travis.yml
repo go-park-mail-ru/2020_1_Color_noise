@@ -13,4 +13,5 @@ before_script:
   - go mod tidy
 
 script:
+  - sleep 15
   - go test ./...
