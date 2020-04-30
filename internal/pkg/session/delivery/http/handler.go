@@ -6,7 +6,7 @@ import (
 	authService "2020_1_Color_noise/internal/pkg/proto/session"
 	userService "2020_1_Color_noise/internal/pkg/proto/user"
 	"2020_1_Color_noise/internal/pkg/response"
-	"encoding/json"
+	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 	"net/http"
 	"time"
@@ -39,7 +39,7 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.SignUpInput{}
 
-	err := json.NewDecoder(r.Body).Decode(&input)
+	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during login"), "Wrong body of request")
 		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
