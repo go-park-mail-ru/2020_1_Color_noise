@@ -3,6 +3,7 @@ package http
 import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/metric"
 	authService "2020_1_Color_noise/internal/pkg/proto/session"
 	userService "2020_1_Color_noise/internal/pkg/proto/user"
 	"2020_1_Color_noise/internal/pkg/response"
@@ -27,13 +28,15 @@ func NewHandler(as authService.AuthSeviceClient, us userService.UserServiceClien
 }
 
 func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
+	path := "/api/auth/get"
+	metric.Increase()
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth == true {
 		response.Respond(w, http.StatusOK, map[string]string{
 			"message": "Ok",
-		})
+		}, path)
 		return
 	}
 
@@ -42,7 +45,7 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during login"), "Wrong body of request")
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 /*
@@ -65,7 +68,7 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
  */
 	user, err := sh.us.GetByLogin(r.Context(), &userService.Login{Login:input.Login})
 	if err != nil {
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -83,7 +86,7 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		Password: input.Password,
 		})
 	if err != nil {
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -116,23 +119,25 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		Subscriptions: int(user.Subscriptions),
 	}
 
-	response.Respond(w, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp, path)
 }
 
 func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
+	path := "/api/auth/delete"
+	metric.Increase()
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Logout session: user is unauthorized")
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
 		err := error.Wrap(err, "Received bad cookie from context")
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 /*
@@ -148,7 +153,7 @@ func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		Cookie: cookie.Value,
 	})
 	if err != nil {
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
 		return
 	}
 
@@ -160,5 +165,5 @@ func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 
 	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
-	})
+	}, path)
 }

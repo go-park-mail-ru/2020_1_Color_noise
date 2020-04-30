@@ -4,6 +4,8 @@ import (
 	boardDeliveryHttp "2020_1_Color_noise/internal/pkg/board/delivery/http"
 	boardRepository "2020_1_Color_noise/internal/pkg/board/repository"
 	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
+	"2020_1_Color_noise/internal/pkg/metric"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"2020_1_Color_noise/internal/pkg/proto/session"
 	"2020_1_Color_noise/internal/pkg/proto/user"
@@ -44,6 +46,8 @@ import (
 )
 
 func main() {
+
+	metric.Register()
 	r := mux.NewRouter()
 
 	c, err := config.GetDBConfing()
@@ -161,6 +165,7 @@ func main() {
 
 	r.HandleFunc("/api/notifications", notificationsDelivery.GetNotifications).Methods("GET")
 
+	r.Handle("/api/metric", promhttp.Handler())
 	r.Use(m.AccessLogMiddleware)
 	//r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)
