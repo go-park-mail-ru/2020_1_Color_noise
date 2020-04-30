@@ -103,7 +103,7 @@ func WithMessage(err error, message string) error {
 	return Error{errorType: NoType, originalError: err, message: message}
 }
 
-func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interface{}, err error, path string) {
+func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interface{}, err error) {
 	var status int
 	var message string
 
@@ -162,5 +162,5 @@ func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interf
 
 	response.Respond(w, status, map[string]string {
 		"error": message,
-	}, path)
+	})
 }

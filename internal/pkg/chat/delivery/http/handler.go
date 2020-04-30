@@ -4,7 +4,6 @@ import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/chat"
 	"2020_1_Color_noise/internal/pkg/error"
-	"2020_1_Color_noise/internal/pkg/metric"
 	"2020_1_Color_noise/internal/pkg/response"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -26,21 +25,20 @@ func NewHandler(usecase chat.IUsecase, logger *zap.SugaredLogger) *Handler {
 }
 
 func (ch *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
-	path := ""
-	metric.Increase()
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Fetch users for chat: user is unauthorized")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -53,7 +51,7 @@ func (ch *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 
 	users, err := ch.usecase.GetUsers(uint(userId), start, limit)
 	if err != nil {
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -70,25 +68,23 @@ func (ch *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, http.StatusOK, resp, path)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
-	path := ""
-	metric.Increase()
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Fetch messages for chat: user is unauthorized")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -96,7 +92,7 @@ func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	otherId, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting messages for chat"), "Bad id")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -109,7 +105,7 @@ func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 
 	messages, err := ch.usecase.GetMessages(userId, uint(otherId), start, limit)
 	if err != nil {
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -142,5 +138,5 @@ func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("messages in delivery: ", resp)
 
-	response.Respond(w, http.StatusOK, resp, path)
+	response.Respond(w, http.StatusOK, resp)
 }
