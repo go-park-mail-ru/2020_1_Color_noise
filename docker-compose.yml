@@ -2,54 +2,67 @@ version: "3.3"
 
 services:
 
-  main:
+  #main:
 
-    build:
-      context: .
-      dockerfile: build/main.Dockerfile
+  #build:
+    #context: .
+        #dockerfile: build/main.Dockerfile
 
-    volumes:
-      - type: bind
-        source: ../storage
-        target: /storage
+        # volumes:
+    #- type: bind
+        #source: ../storage
+        #target: /storage
 
-    network_mode: host
+        #network_mode: host
     #ports:
      # - 8000:8000
 
     #depends_on:
      # - database
 
-  auth:
+      #auth:
 
-    build:
-      context: .
-      dockerfile: build/auth.Dockerfile
+  #build:
+      #context: .
+    #dockerfile: build/auth.Dockerfile
 
-    volumes:
-      - type: bind
-        source: ../storage
-        target: /storage
+        #volumes:
+    #- type: bind
+      # source: ../storage
+      # target: /storage
 
-    network_mode: host
+      #network_mode: host
       #ports:
       # - 8000:8000
 
-    depends_on:
-     - database
+      #depends_on:
+    #- database
 
-  chat:
+       #chat:
 
-    build:
-      context: .
-      dockerfile: ./build/chat.Dockerfile
+  #build:
+    #context: .
+      #dockerfile: ./build/chat.Dockerfile
 
-    network_mode: host
+      #network_mode: host
     #ports:
      # - 8000:8000
 
-    depends_on:
-      - database
+      #depends_on:
+    #- database
+
+      #user:
+
+  #build:
+    #context: .
+      #dockerfile: ./build/user.Dockerfile
+
+      #network_mode: host
+    #ports:
+    # - 8000:8000
+
+      #depends_on:
+    #- database
 
 
   database:

@@ -17,7 +17,7 @@ func NewUsecase(repo session.IRepository) *SessionUsecase {
 	}
 }
 
-func (su *SessionUsecase) CreateSession(id uint) (*models.Session, error) {
+func (su *SessionUsecase) Create(id uint) (*models.Session, error) {
 	cookie := utils.RandStringRunes(30)
 	token := utils.RandStringRunes(30)
 
@@ -42,9 +42,7 @@ func (su *SessionUsecase) GetByCookie(cookie string) (*models.Session, error) {
 	return session, nil
 }
 
-func (su *SessionUsecase) UpdateToken(session *models.Session, token string) error {
-	session.Token = token
-
+func (su *SessionUsecase) Update(session *models.Session) error {
 	if err := su.repo.Update(session); err != nil {
 		return Wrapf(err, "Updating token error, sess_id: %d", session.Id)
 	}
@@ -58,4 +56,17 @@ func (su *SessionUsecase) Delete(cookie string) error {
 	}
 
 	return nil
+}
+
+func (su *SessionUsecase) Login(u *models.User, password string) (*models.Session, error) {
+	if err := utils.ComparePassword(u.EncryptedPassword, password); err != nil {
+		return nil, Wrapf(err, "Login error: compare password error, login: %s", u.Login)
+	}
+
+	session, err := su.Create(uint(u.Id))
+	if err != nil {
+		return nil, Wrapf(err, "Login error: create session error, login: %s", u.Login)
+	}
+
+	return session, nil
 }

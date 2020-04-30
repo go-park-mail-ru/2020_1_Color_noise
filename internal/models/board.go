@@ -25,7 +25,7 @@ type DataBaseBoard struct {
 
 type InputBoard struct {
 	Name        string `json:"name" valid:"length(1|60), required"`
-	Description string `json:"description" valid:"length(1|1000), required"`
+	Description string `json:"description" valid:"length(0|1000), required"`
 }
 
 type ResponseBoard struct {

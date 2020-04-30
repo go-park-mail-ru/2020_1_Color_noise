@@ -1,11 +1,13 @@
 package main
 
 import (
+	sessionDeliveryGRPC "2020_1_Color_noise/internal/pkg/session/delivery/grpc"
+	sessionRepository "2020_1_Color_noise/internal/pkg/session/repository"
+	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
+
 	"2020_1_Color_noise/internal/pkg/config"
 	"2020_1_Color_noise/internal/pkg/database"
-	"2020_1_Color_noise/internal/pkg/session"
-	"2020_1_Color_noise/internal/pkg/session/delivery/grpc"
-	"2020_1_Color_noise/internal/pkg/session/repository/repo"
+	"2020_1_Color_noise/internal/pkg/proto/session"
 	"fmt"
 	"google.golang.org/grpc"
 	"log"
@@ -18,15 +20,15 @@ func main() {
 		panic(err)
 	}
 
-	c.User = "postgres"
-	c.Password = "password"
-
 	db := database.NewPgxDB()
 	if err := db.Open(c); err != nil {
 		panic(err)
 	}
 
-	sessionRepo := repo.NewRepo(db)
+	sessionRepo := sessionRepository.NewRepo(db)
+	sessionUse := sessionUsecase.NewUsecase(sessionRepo)
+	sessionDelivery := sessionDeliveryGRPC.NewSessionManager(sessionUse)
+
 
 	lis, err := net.Listen("tcp", ":8003")
 	if err != nil {
@@ -35,7 +37,7 @@ func main() {
 
 	server := grpc.NewServer()
 
-	session.RegisterAuthCheckerServer(server, rpc.NewSessionManager(sessionRepo))
+	session.RegisterAuthSeviceServer(server, sessionDelivery )
 
 	fmt.Println("starting server at :8003")
 	server.Serve(lis)

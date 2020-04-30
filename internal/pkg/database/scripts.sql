@@ -29,7 +29,7 @@ CREATE TABLE users(
 	created_at TIMESTAMP NOT NULL
 );
 
-CREATE TABLE sessions (
+CREATE TABLE as (
 	id int REFERENCES users(id) NOT NULL,
 	cookie text NOT NULL,
 	token text NOT NULL,

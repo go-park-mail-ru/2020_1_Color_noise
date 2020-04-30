@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package session;
+
+import "google/protobuf/timestamp.proto";
+
+message Session {
+  int64 Id = 1;
+  string Cookie = 2;
+  string Token = 3;
+  google.protobuf.Timestamp CreatedAt = 4;
+  google.protobuf.Timestamp DeletingAt = 5;
+}
+
+message User {
+  int64 Id = 1;
+  string Email = 2;
+  string Login = 3;
+  string EncryptedPassword = 4;
+  string About = 5;
+  string Avatar = 6;
+  int64 Subscriptions = 7;
+  int64 Subscribers = 8;
+  google.protobuf.Timestamp CreatedAt = 9;
+}
+
+message UserID {
+  int64 Id = 1;
+}
+
+message SignIn {
+  User User = 1;
+  string Password = 2;
+}
+
+message Cookie {
+  string Cookie = 1;
+}
+
+message UserSession {
+  User user = 1;
+  Session session = 2;
+}
+
+message Nothing {
+  bool error = 1;
+}
+
+// grpc-сервис проверки авторизации
+service AuthSevice {
+    rpc Create(UserID) returns (Session) {}
+    rpc Login(SignIn) returns (Session) {}
+    rpc GetByCookie(Cookie) returns (Session) {}
+    rpc Update(Session) returns (Nothing) {}
+    rpc Delete(Cookie) returns (Nothing) {}
+}

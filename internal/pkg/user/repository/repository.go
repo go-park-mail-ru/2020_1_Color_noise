@@ -5,6 +5,7 @@ import (
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
 	"database/sql"
+	"fmt"
 )
 
 type Repository struct {
@@ -18,6 +19,8 @@ func NewRepo(bd database.DBInterface) *Repository {
 }
 
 func (ur *Repository) Create(user *models.User) (*models.User, error){
+	fmt.Println(*user)
+
 	_, err := ur.checkLogin(user.Login)
 	if err == nil {
 		return nil, LoginIsExist.New("Repo: Error in during creating")
