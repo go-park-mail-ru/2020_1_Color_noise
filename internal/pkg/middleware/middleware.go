@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"2020_1_Color_noise/internal/pkg/metric"
 	authService "2020_1_Color_noise/internal/pkg/proto/session"
 	"context"
 	"fmt"
@@ -104,6 +105,7 @@ func (m *Middleware) CORSMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+//Добавлен мониторинг
 func (m *Middleware) AccessLogMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -112,6 +114,9 @@ func (m *Middleware) AccessLogMiddleware(next http.Handler) http.Handler {
 
 		start := time.Now()
 		next.ServeHTTP(w, r)
+		metric.Increase()
+		metric.WorkTime(r.Method, r.URL.Path, time.Since(start))
+		
 		m.logger.Info(r.URL.Path,
 			zap.String("reqId:", reqId),
 			zap.String("method", r.Method),
