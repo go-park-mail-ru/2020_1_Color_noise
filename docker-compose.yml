@@ -2,62 +2,62 @@ version: "3.3"
 
 services:
 
-  #main:
+  main:
 
-  #build:
-    #context: .
-        #dockerfile: build/main.Dockerfile
+    build:
+      context: .
+      dockerfile: build/main.Dockerfile
 
-        # volumes:
-    #- type: bind
-        #source: ../storage
-        #target: /storage
+    volumes:
+      - type: bind
+        source: ../storage
+        target: /storage
 
-        #network_mode: host
+    network_mode: host
     #ports:
      # - 8000:8000
 
     #depends_on:
      # - database
 
-      #auth:
+  auth:
 
-  #build:
-      #context: .
-    #dockerfile: build/auth.Dockerfile
+    build:
+      context: .
+      dockerfile: build/auth.Dockerfile
 
-        #volumes:
-    #- type: bind
-      # source: ../storage
-      # target: /storage
+    volumes:
+      - type: bind
+        source: ../storage
+        target: /storage
 
-      #network_mode: host
+    network_mode: host
       #ports:
       # - 8000:8000
 
       #depends_on:
     #- database
 
-       #chat:
+  chat:
 
-  #build:
-    #context: .
-      #dockerfile: ./build/chat.Dockerfile
+    build:
+      context: .
+      dockerfile: ./build/chat.Dockerfile
 
-      #network_mode: host
+  network_mode: host
     #ports:
      # - 8000:8000
 
       #depends_on:
     #- database
 
-      #user:
+  user:
 
-  #build:
-    #context: .
-      #dockerfile: ./build/user.Dockerfile
+    build:
+      context: .
+      dockerfile: ./build/user.Dockerfile
 
-      #network_mode: host
+    network_mode: host
     #ports:
     # - 8000:8000
 
@@ -89,3 +89,23 @@ services:
 
     ports:
       - 80:80
+
+
+  prometheus:
+    image: prom/prometheus:v2.1.0
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+    network_mode: host
+    restart: always
+  #    deploy:
+  #      placement:
+  #        constraints:
+  #          - node.hostname == ${HOSTNAME}
