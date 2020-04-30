@@ -44,7 +44,7 @@ services:
       context: .
       dockerfile: ./build/chat.Dockerfile
 
-  network_mode: host
+    network_mode: host
     #ports:
      # - 8000:8000
 
@@ -67,6 +67,7 @@ services:
 
   database:
 
+    network_mode: host
     build:
       context: .
       dockerfile: ./build/db.Dockerfile
@@ -95,7 +96,6 @@ services:
     image: prom/prometheus:v2.1.0
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
