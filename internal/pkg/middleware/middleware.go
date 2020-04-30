@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	sessions "2020_1_Color_noise/internal/pkg/session/usecase"
+	authService "2020_1_Color_noise/internal/pkg/proto/session"
 	"context"
 	"fmt"
 	"go.uber.org/zap"
@@ -11,13 +11,13 @@ import (
 )
 
 type Middleware struct {
-	sessions *sessions.SessionUsecase
-	logger   *zap.SugaredLogger
+	as     authService.AuthSeviceClient
+	logger *zap.SugaredLogger
 }
 
-func NewMiddleware(su *sessions.SessionUsecase, logger  *zap.SugaredLogger) Middleware {
+func NewMiddleware(as authService.AuthSeviceClient, logger  *zap.SugaredLogger) Middleware {
 	return Middleware{
-		sessions: su,
+		as: as,
 		logger:   logger,
 	}
 }
@@ -33,7 +33,8 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 		if err != nil {
 			ctx = context.WithValue(ctx, "IsAuth", false)
 		} else {
-			session, err := m.sessions.GetByCookie(cookie.Value)
+			session, err := m.as.GetByCookie(context.Background(),
+				&authService.Cookie{Cookie:cookie.Value})
 			if err != nil {
 				ctx = context.WithValue(ctx, "IsAuth", false)
 				m.logger.Info(r.URL.Path,
@@ -43,10 +44,10 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 			} else {
 				m.logger.Info(
 					zap.String("reqId:", fmt.Sprintf("%v", reqId)),
-					zap.Uint("userId:", session.Id),
+					zap.Uint("userId:", uint(session.Id)),
 				)
 				ctx = context.WithValue(ctx, "IsAuth", true)
-				ctx = context.WithValue(ctx, "Id", session.Id)
+				ctx = context.WithValue(ctx, "Id", uint(session.Id))
 				//newToken := m.sessions.CreateToken()
 				//m.sessions.UpdateToken(session, newToken)
 

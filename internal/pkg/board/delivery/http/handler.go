@@ -5,9 +5,9 @@ import (
 	"2020_1_Color_noise/internal/pkg/board"
 	"2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/response"
-	"encoding/json"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
+	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"
@@ -44,7 +44,8 @@ func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.InputBoard{}
 
-	err := json.NewDecoder(r.Body).Decode(&input)
+
+	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation board"), "Wrong body of request")
 		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
@@ -251,7 +252,7 @@ func (bh *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.InputBoard{}
 
-	err = json.NewDecoder(r.Body).Decode(&input)
+	err = easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating board"), "Wrong body of request")
 		error.ErrorHandler(w, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))

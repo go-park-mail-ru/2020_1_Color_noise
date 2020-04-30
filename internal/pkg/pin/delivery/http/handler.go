@@ -5,9 +5,9 @@ import (
 	"2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/pin"
 	"2020_1_Color_noise/internal/pkg/response"
-	"encoding/json"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
+	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"
@@ -44,7 +44,7 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.InputPin{}
 
-	err := json.NewDecoder(r.Body).Decode(&input)
+	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation pin"), "Wrong body of request")
 		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
@@ -184,7 +184,7 @@ func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.UpdatePin{}
 
-	err = json.NewDecoder(r.Body).Decode(&input)
+	err = easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation pin"), "Wrong body of request")
 		err = error.Wrap(err, "Decoding error during updating pin")

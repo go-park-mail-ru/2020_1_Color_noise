@@ -5,6 +5,9 @@ import (
 	boardRepository "2020_1_Color_noise/internal/pkg/board/repository"
 	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
 
+	"2020_1_Color_noise/internal/pkg/proto/session"
+	"2020_1_Color_noise/internal/pkg/proto/user"
+
 	commentDeliveryHttp "2020_1_Color_noise/internal/pkg/comment/delivery/http"
 	commentRepository "2020_1_Color_noise/internal/pkg/comment/repository"
 	commentUsecase "2020_1_Color_noise/internal/pkg/comment/usecase"
@@ -28,15 +31,8 @@ import (
 
 	searchHandler "2020_1_Color_noise/internal/pkg/search"
 
-	sesionDeliveryGRPC "2020_1_Color_noise/internal/pkg/session"
 	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
-	sessionRepo "2020_1_Color_noise/internal/pkg/session/repository/rpcRepo"
-	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
-
 	userDeliveryHttp "2020_1_Color_noise/internal/pkg/user/delivery/http"
-	userRepository "2020_1_Color_noise/internal/pkg/user/repository"
-	userUsecase "2020_1_Color_noise/internal/pkg/user/usecase"
-
 	"go.uber.org/zap"
 
 	"google.golang.org/grpc"
@@ -63,16 +59,27 @@ func main() {
 		panic(err)
 	}
 
-	grcpConn, err := grpc.Dial(
+	grcpSessConn, err := grpc.Dial(
 		"127.0.0.1:8003",
 		grpc.WithInsecure(),
 	)
 	if err != nil {
-		log.Fatalf("cant connect to grpc")
+		log.Fatalf("cant connect to session grpc")
 	}
-	defer grcpConn.Close()
+	defer grcpSessConn.Close()
 
-	sessManager := sesionDeliveryGRPC.NewAuthCheckerClient(grcpConn)
+	sessManager := session.NewAuthSeviceClient(grcpSessConn)
+
+	grcpUserConn, err := grpc.Dial(
+		"127.0.0.1:8004",
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatalf("cant connect to user grpc")
+	}
+	defer grcpSessConn.Close()
+
+	userService := user.NewUserServiceClient(grcpUserConn)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -85,14 +92,9 @@ func main() {
 		zap.String("logger", "ZAP"),
 	)
 
-	userRepo := userRepository.NewRepo(db)
-	userUse := userUsecase.NewUsecase(userRepo)
+	userDelivery := userDeliveryHttp.NewHandler(userService, sessManager, zap)
 
-	sessionRepo := sessionRepo.NewRepo(sessManager)
-	sessionUse := sessionUsecase.NewUsecase(sessionRepo)
-	sessionDelivery := sessionDeliveryHttp.NewHandler(sessionUse, userUse, zap)
-
-	userDelivery := userDeliveryHttp.NewHandler(userUse, sessionUse, zap)
+	sessionDelivery := sessionDeliveryHttp.NewHandler(sessManager, userService, zap)
 
 	pinRepo := pinRepository.NewRepo(db)
 	pinUse := pinUsecase.NewUsecase(pinRepo)
@@ -114,9 +116,9 @@ func main() {
 	notificationsUse := notificationsUsecase.NewUsecase(notificationsRepo)
 	notificationsDelivery := notificationsDeliveryHttp.NewHandler(notificationsUse, zap)
 
-	search := searchHandler.NewHandler(commentUse, pinUse, userUse, zap)
+	search := searchHandler.NewHandler(commentUse, pinUse, userService, zap)
 
-	m := middleware.NewMiddleware(sessionUse, zap)
+	m := middleware.NewMiddleware(sessManager, zap)
 
 	r.HandleFunc("/api/auth", sessionDelivery.Login).Methods("POST")
 	r.HandleFunc("/api/auth", sessionDelivery.Logout).Methods("DELETE")

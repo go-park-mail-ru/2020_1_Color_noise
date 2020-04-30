@@ -3,34 +3,30 @@ package http
 import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/error"
+	authService "2020_1_Color_noise/internal/pkg/proto/session"
+	userService "2020_1_Color_noise/internal/pkg/proto/user"
 	"2020_1_Color_noise/internal/pkg/response"
-	"2020_1_Color_noise/internal/pkg/session"
-	"2020_1_Color_noise/internal/pkg/user"
 	"bytes"
-	"encoding/json"
-	"fmt"
-	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
+	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 	"io"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
 )
 
 type Handler struct {
-	userUsecase    user.IUsecase
-	sessionUsecase session.IUsecase
-	logger         *zap.SugaredLogger
+	us     userService.UserServiceClient
+	as     authService.AuthSeviceClient
+	logger *zap.SugaredLogger
 }
 
-func NewHandler(usecase user.IUsecase, sessionUsecase session.IUsecase, logger *zap.SugaredLogger) *Handler {
+func NewHandler(us userService.UserServiceClient, as authService.AuthSeviceClient, logger *zap.SugaredLogger) *Handler {
 	return &Handler{
-		userUsecase:    usecase,
-		sessionUsecase: sessionUsecase,
-		logger:			logger,
+		us,
+		as,
+		logger,
 	}
 }
 
@@ -47,30 +43,24 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.SignUpInput{}
 
-	err := json.NewDecoder(r.Body).Decode(input)
+	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation user"), "Wrong body of request")
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	_, err = govalidator.ValidateStruct(input)
-	if err != nil {
-		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
-			"Password should be longer than 6 characters and shorter 100. "+
-				"Login should be letters and numbers, and shorter than 20 characters "+
-				"Email should be like hello@example.com and shorter than 50 characters.")
-		error.ErrorHandler(w, ud.logger, reqId, err)
-		return
-	}
-
-	user, err := ud.userUsecase.Create(input)
+	u, err := ud.us.Create(r.Context(), &userService.SignUp{
+		Email: input.Email,
+		Login: input.Login,
+		Password: input.Password,
+	})
 	if err != nil {
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	session, err := ud.sessionUsecase.CreateSession(user.Id)
+	sess, err := ud.as.Create(r.Context(), &authService.UserID{Id: int64(u.Id)})
 	if err != nil {
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -78,27 +68,25 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	cookie := &http.Cookie{
 		Name:     "session_id",
-		Value:    session.Cookie,
+		Value:    sess.Cookie,
 		Expires:  time.Now().Add(1000 * time.Hour),
 		HttpOnly: true,
-		//Domain:   r.Host,
+		Domain:   r.Host,
 	}
 
 	token := &http.Cookie{
 			Name:    "csrf_token",
-			Value:   session.Token,
+			Value:   sess.Token,
 			Expires: time.Now().Add(5 * time.Hour),
-			//Domain:  r.Host,
+			Domain:  r.Host,
 	}
 
 
 	resp := models.ResponseUser{
-		Id:            user.Id,
-		Login:         user.Login,
-		About:         user.About,
-		Avatar:        user.Avatar,
-		Subscribers:   user.Subscribers,
-		Subscriptions: user.Subscriptions,
+		Id:            uint(u.Id),
+		Login:         u.Login,
+		About:         u.About,
+		Avatar:        u.Avatar,
 	}
 
 	http.SetCookie(w, cookie)
@@ -108,25 +96,6 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
-	files, err := ioutil.ReadDir("./")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, f := range files {
-		fmt.Println(f.Name())
-	}
-
-	files, err = ioutil.ReadDir("../storage")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, f := range files {
-		fmt.Println(f.Name())
-	}
-
-
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -143,20 +112,20 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := ud.userUsecase.GetById(uint(id))
+	us, err := ud.us.GetById(r.Context(), &userService.UserID{Id: int64(id)})
 	if err != nil {
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	resp := models.ResponseUser{
-		Id:            user.Id,
-		Email:         user.Email,
-		Login:         user.Login,
-		About:         user.About,
-		Avatar:        user.Avatar,
-		Subscribers:   user.Subscribers,
-		Subscriptions: user.Subscriptions,
+		Id:            uint(us.Id),
+		Email:         us.Email,
+		Login:         us.Login,
+		About:         us.About,
+		Avatar:        us.Avatar,
+		Subscribers:   int(us.Subscribers),
+		Subscriptions: int(us.Subscriptions),
 	}
 
 	response.Respond(w, http.StatusOK, resp)
@@ -180,19 +149,19 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := ud.userUsecase.GetById(uint(id))
+	us, err := ud.us.GetById(r.Context(), &userService.UserID{Id: int64(id)})
 	if err != nil {
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	resp := models.ResponseUser{
-		Id:            user.Id,
-		Login:         user.Login,
-		About:         user.About,
-		Avatar:        user.Avatar,
-		Subscribers:   user.Subscribers,
-		Subscriptions: user.Subscriptions,
+		Id:            uint(us.Id),
+		Login:         us.Login,
+		About:         us.About,
+		Avatar:        us.Avatar,
+		Subscribers:   int(us.Subscribers),
+		Subscriptions: int(us.Subscriptions),
 	}
 
 	response.Respond(w, http.StatusOK, resp)
@@ -217,23 +186,19 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.UpdateProfileInput{}
 
-	err := json.NewDecoder(r.Body).Decode(input)
+	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating profile user"), "Wrong body of request")
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	_, err = govalidator.ValidateStruct(input)
-	if err != nil {
-		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
-			"Login should be letters and numbers, shorter than 20 characters "+
-				"Email should be like hello@example.com and shorter than 50 characters")
-		error.ErrorHandler(w, ud.logger, reqId, err)
-		return
-	}
-
-	err = ud.userUsecase.UpdateProfile(id, input)
+	_, err = ud.us.UpdateProfile(r.Context(), &userService.Profile{
+		Id: &userService.UserID{Id: int64(id)},
+		Input: &userService.UpdateProfileInput{Login: input.Login,
+			Email: input.Email,
+			},
+	})
 	if err != nil {
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -263,22 +228,17 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.UpdateDescriptionInput{}
 
-	err := json.NewDecoder(r.Body).Decode(input)
+	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating description user"), "Wrong body of request")
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	_, err = govalidator.ValidateStruct(input)
-	if err != nil {
-		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
-			"Description should be shorter than 1000 characters.")
-		error.ErrorHandler(w, ud.logger, reqId, err)
-		return
-	}
-
-	err = ud.userUsecase.UpdateDescription(id, input)
+	_, err = ud.us.UpdateDescription(r.Context(), &userService.Description{
+		Id: &userService.UserID{Id: int64(id)},
+		Description: input.Description,
+			})
 	if err != nil {
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -308,22 +268,17 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.UpdatePasswordInput{}
 
-	err := json.NewDecoder(r.Body).Decode(input)
+	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating password user"), "Wrong body of request")
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	_, err = govalidator.ValidateStruct(input)
-	if err != nil {
-		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", reqId),
-			"Password should be longer than 6 characters and shorter 100.")
-		error.ErrorHandler(w, ud.logger, reqId, err)
-		return
-	}
-
-	err = ud.userUsecase.UpdatePassword(id, input)
+	_, err = ud.us.UpdatePassword(r.Context(), &userService.Password{
+		Id: &userService.UserID{Id: int64(id)},
+		Password: input.Password,
+	})
 	if err != nil {
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -373,14 +328,17 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	address, err := ud.userUsecase.UpdateAvatar(id, buffer)
+	address, err := ud.us.UpdateAvatar(r.Context(), &userService.Avatar{
+		Id: &userService.UserID{Id: int64(id)},
+		Avatar: buffer.Bytes(),
+	})
 	if err != nil {
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	response.Respond(w, http.StatusCreated, map[string]string{
-		"image": address,
+		"image": address.Avatar,
 	})
 }
 
@@ -416,7 +374,10 @@ func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ud.userUsecase.Follow(id, uint(subId))
+	_, err = ud.us.Follow(r.Context(), &userService.Following{
+		Id: &userService.UserID{Id: int64(id)},
+		SubId: &userService.UserID{Id: int64(subId)},
+			})
 	if err != nil {
 		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -459,11 +420,10 @@ func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ud.userUsecase.Unfollow(id, uint(subId))
-	if err != nil {
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
+	_, err = ud.us.Unfollow(r.Context(), &userService.Following{
+		Id: &userService.UserID{Id: int64(id)},
+		SubId: &userService.UserID{Id: int64(subId)},
+	})
 
 	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
@@ -495,7 +455,11 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 		limit = 10
 	}
 
-	users, err := uh.userUsecase.GetSubscribers(uint(id), start, limit)
+	users, err := uh.us.GetSubscribers(r.Context(), &userService.Sub{
+		Id: &userService.UserID{Id: int64(id)},
+		Start: int64(start),
+		Limit: int64(limit),
+	})
 	if err != nil {
 		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -503,14 +467,14 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 
 	resp := make([]models.ResponseUser, 0)
 
-	for _, user := range users {
+	for _, user := range users.Users {
 		resp = append(resp, models.ResponseUser{
-			Id:            user.Id,
+			Id:            uint(user.Id),
 			Login:         user.Login,
 			About:         user.About,
 			Avatar:        user.Avatar,
-			Subscribers:   user.Subscribers,
-			Subscriptions: user.Subscriptions,
+			Subscribers:   int(user.Subscribers),
+			Subscriptions: int(user.Subscriptions),
 		})
 	}
 
@@ -542,9 +506,11 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 		limit = 10
 	}
 
-	fmt.Println(start, limit)
-
-	users, err := uh.userUsecase.GetSubscriptions(uint(id), start, limit)
+	users, err := uh.us.GetSubscriptions(r.Context(), &userService.Sub{
+		Id: &userService.UserID{Id: int64(id)},
+		Start: int64(start),
+		Limit: int64(limit),
+	})
 	if err != nil {
 		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -552,14 +518,14 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 
 	resp := make([]models.ResponseUser, 0)
 
-	for _, user := range users {
+	for _, user := range users.Users {
 		resp = append(resp, models.ResponseUser{
-			Id:            user.Id,
+			Id:            uint(user.Id),
 			Login:         user.Login,
 			About:         user.About,
 			Avatar:        user.Avatar,
-			Subscribers:   user.Subscribers,
-			Subscriptions: user.Subscriptions,
+			Subscribers:   int(user.Subscribers),
+			Subscriptions: int(user.Subscriptions),
 		})
 	}
 

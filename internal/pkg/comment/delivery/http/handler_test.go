@@ -59,24 +59,21 @@ func TestHandler_Create(t *testing.T) {
 			Comment:    &models.Comment{},
 			UserId:		1,
 			IsAuth:     false,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseCreate{
 			IsAuth:     true,
 			UserId:		1,
 			IdErr:      true,
 			Comment:    &models.Comment{},
-			Response:	`{"status":500,"body":{"error":"Internal server error"}}
-`,
+			Response:	`{"status":500,"body":{"error":"Internal server error"}}`,
 		},
 		TestCaseCreate{
 			IsAuth:     true,
 			InputErr:   true,
 			UserId:		1,
 			Comment:    &models.Comment{},
-			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}
-`,
+			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}`,
 		},
 		TestCaseCreate{
 			IsAuth:     true,
@@ -88,8 +85,7 @@ func TestHandler_Create(t *testing.T) {
 				PinId:	1,
 				Text:	"",
 			},
-			Response:	`{"status":400,"body":{"error":"Text shouldn't be empty and longer 2000 characters."}}
-`,
+			Response:	`{"status":400,"body":{"error":"Text shouldn't be empty and longer 2000 characters."}}`,
 		},
 		TestCaseCreate{
 			IsAuth:     true,
@@ -110,8 +106,7 @@ func TestHandler_Create(t *testing.T) {
 				PinId:	1,
 				Text:	"comment",
 			},
-			Response:	`{"status":201,"body":{"id":2}}
-`,
+			Response:	`{"status":201,"body":{"id":2}}`,
 		},
 	}
 
@@ -219,15 +214,13 @@ func TestHandler_GetComment(t *testing.T) {
 		TestCaseGetComment{
 			IsAuth:     false,
 			Comment:    &models.Comment{},
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseGetComment{
 			IsAuth:     true,
 			IdErr:      true,
 			Comment:    &models.Comment{},
-			Response:	`{"status":400,"body":{"error":"Bad id"}}
-`,
+			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
 		},
 		TestCaseGetComment{
 			IsAuth:     true,
@@ -242,8 +235,7 @@ func TestHandler_GetComment(t *testing.T) {
 				PinId:	1,
 				Text:   "comment",
 			},
-			Response: `{"status":200,"body":{"id":2,"user_id":1,"pin_id":1,"created_at":"0001-01-01T00:00:00Z","comment":"comment"}}
-`,
+			Response: `{"status":200,"body":{"id":2,"user_id":1,"pin_id":1,"created_at":"0001-01-01T00:00:00Z","comment":"comment"}}`,
 		},
 	}
 
@@ -343,8 +335,7 @@ func TestHandler_Fetch(t *testing.T) {
 			PinId:     1,
 			Start:		1,
 			Limit:		15,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseFetch{
 			IsAuth:     true,
@@ -352,8 +343,7 @@ func TestHandler_Fetch(t *testing.T) {
 			PinId:     1,
 			Start:		1,
 			Limit:		15,
-			Response:	`{"status":400,"body":{"error":"Bad id"}}
-`,
+			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
 		},
 		TestCaseFetch{
 			IsAuth:     true,
@@ -383,8 +373,7 @@ func TestHandler_Fetch(t *testing.T) {
 				},
 			},
 			Response: `{"status":200,"body":[{"id":2,"user_id":1,"pin_id":1,"created_at":"0001-01-01T00:00:00Z","comment":"comment"},` +
-				`{"id":3,"user_id":4,"pin_id":1,"created_at":"0001-01-01T00:00:00Z","comment":"comment"}]}
-`,
+				`{"id":3,"user_id":4,"pin_id":1,"created_at":"0001-01-01T00:00:00Z","comment":"comment"}]}`,
 		},
 	}
 
