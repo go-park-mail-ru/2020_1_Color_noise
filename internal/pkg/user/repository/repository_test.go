@@ -73,11 +73,12 @@ func TestRepository_Delete(t *testing.T) {
 		t.SkipNow()
 	}
 	db.Open(c)
-	id, _ := repo.Create(&models.User{
+	user, _ := repo.Create(&models.User{
 		Login: fmt.Sprint(time.Now()),
 		Email: "email@mail.com",
 	},)
 
+	id := user.Id
 	cases := []UserCase{
 		{
 			u: models.User{
@@ -137,8 +138,8 @@ func TestRepository_UpdateProfile(t *testing.T) {
 	}
 
 	for i, item := range cases {
-		id, _ := repo.Create(&item.u)
-		item.u.Id = id
+		user, _ := repo.Create(&item.u)
+		item.u.Id = user.Id
 		answer := repo.UpdateProfile(item.u.Id, item.u.Email, item.u.Login)
 		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
@@ -183,8 +184,8 @@ func TestRepository_UpdateAvatar(t *testing.T) {
 	}
 
 	for i, item := range cases {
-		id, _ := repo.Create(&item.u)
-		item.u.Id = id
+		user, _ := repo.Create(&item.u)
+		item.u.Id = user.Id
 		answer := repo.UpdateAvatar(item.u.Id,  item.u.Avatar)
 		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
@@ -229,8 +230,8 @@ func TestRepository_UpdateDescription(t *testing.T) {
 	}
 
 	for i, item := range cases {
-		id, _ := repo.Create(&item.u)
-		item.u.Id = id
+		user, _ := repo.Create(&item.u)
+		item.u.Id = user.Id
 		answer := repo.UpdateDescription(item.u.Id,  &item.u.About)
 		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
@@ -278,7 +279,7 @@ func TestRepository_UpdatePassword(t *testing.T) {
 
 	for i, item := range cases {
 		id, _ := repo.Create(&item.u)
-		item.u.Id = id
+		item.u.Id = id.Id
 		answer := repo.UpdatePassword(item.u.Id,  item.u.EncryptedPassword)
 		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
@@ -373,8 +374,8 @@ func TestRepository_Unfollow(t *testing.T) {
 	for i, item := range cases {
 		id, _ := repo.Create(&item.u)
 		sid, _ := repo.Create(&item.u)
-		_ = repo.Follow(id, sid)
-		answer := repo.Unfollow(id, sid)
+		_ = repo.Follow(id.Id, sid.Id)
+		answer := repo.Unfollow(id.Id, sid.Id)
 		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
@@ -427,7 +428,7 @@ func TestRepository_GetByID(t *testing.T) {
 
 	for i, item := range cases {
 		id, _ := repo.Create(&item.u)
-		item.u.Id = id
+		item.u.Id = id.Id
 		_, answer := repo.GetByID(item.u.Id)
 		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
@@ -531,7 +532,7 @@ func TestRepository_Search(t *testing.T) {
 
 	for i, item := range cases {
 		id, _ := repo.Create(&item.u)
-		item.u.Id = id
+		item.u.Id = id.Id
 		_, answer := repo.Search(item.u.Login, 0, 2)
 		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
