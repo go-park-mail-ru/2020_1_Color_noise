@@ -9,7 +9,7 @@ notifications:
 
 before_script:
   - docker build -t db --file `pwd`/build/db.Dockerfile .
-  - docker run db
+  - docker run -d db
   - go mod tidy
 
 script:
