@@ -3,8 +3,10 @@ package http
 import (
 	"2020_1_Color_noise/internal/models"
 	. "2020_1_Color_noise/internal/pkg/error"
-	sessionMock "2020_1_Color_noise/internal/pkg/session/mock"
-	userMock "2020_1_Color_noise/internal/pkg/user/mock"
+	userServMock "2020_1_Color_noise/internal/pkg/proto/user/mock"
+	authServMock "2020_1_Color_noise/internal/pkg/proto/session/mock"
+	userServ "2020_1_Color_noise/internal/pkg/proto/user"
+	authServ "2020_1_Color_noise/internal/pkg/proto/session"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -39,8 +41,8 @@ func TestHandler_Login(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
-	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
+	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -53,20 +55,18 @@ func TestHandler_Login(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	sessionDelivery := NewHandler(mockSessionUsecase, mockUserUsecase, zap)
+	sessionDelivery := NewHandler(mockAuthService, mockUserService, zap)
 
 	cases := []TestCaseLogin{
 		TestCaseLogin{
 			IsAuth: true,
-			Response: `{"status":200,"body":{"message":"Ok"}}
-`,
+			Response: `{"status":200,"body":{"message":"Ok"}}`,
 		},
 		TestCaseLogin{
 			InputErr: true,
 			Login:    "Login1",
 			Password: "Password1",
-			Response: `{"status":400,"body":{"error":"Wrong body of request"}}
-`,
+			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
 		},
 		TestCaseLogin{
 			GetErr: true,
@@ -98,8 +98,7 @@ func TestHandler_Login(t *testing.T) {
 			},
 			Login:    "Login1",
 			Password: "Password",
-			Response: `{"status":200,"body":{"message":"Ok"}}
-`,
+			Response: `{"status":200,"body":{"id":1,"login":"","subscriptions":0,"subscribers":0}}`,
 			CookieName: "session_id",
 			Cookie:     "cookie",
 			//TokenName:  "csrf_token",
@@ -127,10 +126,10 @@ func TestHandler_Login(t *testing.T) {
 
 		if !item.IsAuth && !item.InputErr {
 
-			input := &models.SignUpInput{
+			/*input := &models.SignUpInput{
 				Login:    item.Login,
 				Password: item.Password,
-			}
+			}*/
 
 			var err error = nil
 			if item.GetErr {
@@ -138,34 +137,34 @@ func TestHandler_Login(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().GetByLogin(input.Login).Return(item.User, err),
+				mockUserService.EXPECT().GetByLogin(r.Context(), &userServ.Login{Login: item.Login}).Return(
+					&userServ.User{Id: int64(item.User.Id)}, err),
 			)
 
 			if !item.GetErr {
 				if item.CompareErr {
 					err = NoType.New("")
 				}
-
-				gomock.InOrder(
-					mockUserUsecase.EXPECT().ComparePassword(item.User, item.Password).Return(err),
-				)
-
-				if !item.CompareErr {
-					session := &models.Session{
+					/*session := &models.Session{
 						Id:     item.User.Id,
 						Cookie: item.Cookie,
 						//Token:  item.Token,
-					}
+					}*/
 
 					if item.CreateErr {
 						err = NoType.New("")
 					}
 
 					gomock.InOrder(
-						mockSessionUsecase.EXPECT().CreateSession(item.User.Id).Return(session, err),
+						mockAuthService.EXPECT().Login(
+							r.Context(), &authServ.SignIn{
+								User: &authServ.User{Id: int64(item.User.Id)},
+								Password: item.Password,
+							},
+							).Return(&authServ.Session{Id: int64(item.User.Id,), Cookie: item.Cookie}, err),
 					)
 
-				}
+
 			}
 		}
 
@@ -248,8 +247,8 @@ func TestHandler_Logout(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
-	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
+	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -262,13 +261,12 @@ func TestHandler_Logout(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	sessionDelivery := NewHandler(mockSessionUsecase, mockUserUsecase, zap)
+	sessionDelivery := NewHandler(mockAuthService, mockUserService, zap)
 
 	cases := []TestCaseLogout{
 		TestCaseLogout{
 			IsAuth: false,
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseLogout{
 			IsAuth:    true,
@@ -279,8 +277,7 @@ func TestHandler_Logout(t *testing.T) {
 		},
 		TestCaseLogout{
 			IsAuth: true,
-			Response: `{"status":200,"body":{"message":"Ok"}}
-`,
+			Response: `{"status":200,"body":{"message":"Ok"}}`,
 			CookieName: "session_id",
 			Cookie:     "cookie",
 			//TokenName:  "csrf_token",
@@ -317,7 +314,8 @@ func TestHandler_Logout(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockSessionUsecase.EXPECT().Delete(item.Cookie).Return(err),
+				mockAuthService.EXPECT().Delete(r.Context(), gomock.Any()).Return(
+					&authServ.Nothing{Error: false}, err),
 			)
 		}
 

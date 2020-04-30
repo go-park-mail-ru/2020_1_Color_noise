@@ -5,8 +5,8 @@ import (
 	. "2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/image"
 	"2020_1_Color_noise/internal/pkg/user"
-	"bytes"
-	"golang.org/x/crypto/bcrypt"
+	"2020_1_Color_noise/internal/pkg/utils"
+	"github.com/asaskevich/govalidator"
 )
 
 type UserUsecase struct {
@@ -19,25 +19,34 @@ func NewUsecase(repo user.IRepository) *UserUsecase {
 	}
 }
 
-func (uu *UserUsecase) Create(input *models.SignUpInput) (uint, error) {
-	encryptedPassword, err := encryptPassword(input.Password)
+func (uu *UserUsecase) Create(input *models.SignUpInput) (*models.User, error) {
+	_, err := govalidator.ValidateStruct(input)
 	if err != nil {
-		return 0, Wrap(err, "Creating new user error")
+		err = WithMessage(BadRequest.Wrap(err, "Creating new user error"),
+			"Password should be longer than 6 characters and shorter 100. "+
+				"Login should be letters and numbers, and shorter than 20 characters "+
+				"Email should be like hello@example.com and shorter than 50 characters.")
+		return nil, err
 	}
 
-	user := &models.User{
+	encryptedPassword, err := utils.EncryptPassword(input.Password)
+	if err != nil {
+		return nil, Wrap(err, "Creating new user error")
+	}
+
+	us := &models.User{
 		Email:             input.Email,
 		Login:             input.Login,
 		EncryptedPassword: encryptedPassword,
 		Avatar:            "avatar.jpg",
 	}
 
-	id, err := uu.repo.Create(user)
+	us, err = uu.repo.Create(us)
 	if err != nil {
-		return 0, Wrap(err, "Creating new user error")
+		return nil, Wrap(err, "Creating by id user error")
 	}
 
-	return id, nil
+	return us, nil
 }
 
 func (uu *UserUsecase) GetById(id uint) (*models.User, error) {
@@ -68,7 +77,15 @@ func (uu *UserUsecase) Search(login string, start int, limit int) ([]*models.Use
 }
 
 func (uu *UserUsecase) UpdateProfile(id uint, input *models.UpdateProfileInput) error {
-	err := uu.repo.UpdateProfile(id, input.Email, input.Login)
+	_, err := govalidator.ValidateStruct(input)
+	if err != nil {
+		err = WithMessage(BadRequest.Wrap(err, "Updating user profile error"),
+			"Login should be letters and numbers, shorter than 20 characters "+
+				"Email should be like hello@example.com and shorter than 50 characters")
+		return err
+	}
+
+	err = uu.repo.UpdateProfile(id, input.Email, input.Login)
 	if err != nil {
 		return Wrap(err, "Updating user profile error")
 	}
@@ -77,7 +94,14 @@ func (uu *UserUsecase) UpdateProfile(id uint, input *models.UpdateProfileInput) 
 }
 
 func (uu *UserUsecase) UpdatePassword(id uint, input *models.UpdatePasswordInput) error {
-	encryptedPassword, err := encryptPassword(input.Password)
+	_, err := govalidator.ValidateStruct(input)
+	if err != nil {
+		err = WithMessage(BadRequest.Wrap(err, "request"),
+			"Password should be longer than 6 characters and shorter 100.")
+		return err
+	}
+
+	encryptedPassword, err := utils.EncryptPassword(input.Password)
 	if err != nil {
 		return Wrap(err, "Updating user password error")
 	}
@@ -91,7 +115,14 @@ func (uu *UserUsecase) UpdatePassword(id uint, input *models.UpdatePasswordInput
 }
 
 func (uu *UserUsecase) UpdateDescription(id uint, input *models.UpdateDescriptionInput) error {
-	err := uu.repo.UpdateDescription(id, &input.Description)
+	_, err := govalidator.ValidateStruct(input)
+	if err != nil {
+		err = WithMessage(BadRequest.Wrap(err, "Updating user description error"),
+			"Description should be shorter than 1000 characters.")
+		return err
+	}
+
+	err = uu.repo.UpdateDescription(id, &input.Description)
 	if err != nil {
 		return Wrap(err, "Updating user description error")
 	}
@@ -99,10 +130,8 @@ func (uu *UserUsecase) UpdateDescription(id uint, input *models.UpdateDescriptio
 	return nil
 }
 
-func (uu *UserUsecase) UpdateAvatar(id uint, buffer *bytes.Buffer) (string, error) {
-	bytes := buffer.Bytes()
-
-	path, err := image.SaveImage(&bytes)
+func (uu *UserUsecase) UpdateAvatar(id uint, buffer []byte) (string, error) {
+	path, err := image.SaveImage(&buffer)
 	if err != nil {
 		return "", Wrapf(err, "Updating avatar error, id:%d", id)
 	}
@@ -155,21 +184,4 @@ func (uu *UserUsecase) GetSubscriptions(id uint, start int, limit int) ([]*model
 	}
 
 	return users, nil
-}
-
-func (uu *UserUsecase) ComparePassword(user *models.User, password string) error {
-	if bcrypt.CompareHashAndPassword([]byte(user.EncryptedPassword), []byte(password)) == nil {
-		return nil
-	}
-
-	return BadPassword.Newf("Password is incorrect")
-}
-
-func encryptPassword(password string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
-	if err != nil {
-		return "", Wrapf(err, "Error in during encrypting password")
-	}
-
-	return string(hash), nil
 }

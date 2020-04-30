@@ -9,7 +9,7 @@ const (
 	DeletePin  = "DELETE from pins WHERE id = $1"
 	PinById    = "SELECT * FROM pins WHERE id = $1"
 	PinByUser  = "SELECT * FROM pins WHERE user_id = $1"
-	PinByName  = "SELECT * FROM pins WHERE name = $1"
+	PinByName  = "SELECT * FROM pins WHERE LOWER(name) = LOWER($1);"
 	PinByBoard = "SELECT * FROM pins WHERE board_id = $1"
 )
 
@@ -31,7 +31,9 @@ const (
 		"WHERE id = $2 RETURNING id;"
 	DeleteUser        = "DELETE FROM users WHERE id = $1;"
 	UserById          = "SELECT * FROM users WHERE id = $1"
-	UserByLogin       = "SELECT * FROM users WHERE login = $1 LIMIT $2 OFFSET $3"
+	//это поиск
+	UserByLogin       = "SELECT * FROM users WHERE LOWER(login) = LOWER($1) LIMIT $2 OFFSET $3"
+	//это точный поиск
 	UserByLoginSearch = "SELECT * FROM users WHERE login = $1"
 	UserByEmail       = "SELECT * FROM users WHERE email = $1"
 	//кто подписан на пользователя
@@ -92,12 +94,24 @@ const (
 	Feed = "SELECT pins.id, pins.user_id, name, description, image, board_id, created_at " +
 		" FROM subscriptions JOIN pins ON subscriptions.subscribed_at = pins.user_id" +
 		" WHERE subscriptions.user_id = $1  ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
-	Main           = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1;"
+	Main           = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1  OFFSET $2;"
 	Recommendation = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1 OFFSET $2;"
 )
 
 const (
-	GetNoti = "SELECT message, from_user_id FROM notifies WHERE user_id = $1;"
+	GetNoti = "SELECT message, from_user_id FROM notifies WHERE user_id = $1 ORDER BY created_at DESC;"
 	PutNoti = "INSERT INTO notifies(" +
 		"user_id, message, from_user_id, created_at) VALUES($1, $2, $3, $4) RETURNING id;"
+)
+
+const (
+	AddChat  = "INSERT INTO chats(sender_id, receiver_id) VALUES ($1, $2) RETURNING id;"
+	GetChats = "SELECT sender_id, receiver_id FROM chat_messages WHERE sender_id = $1 OR receiver_id = $1 " +
+		" GROUP BY sender_id, receiver_id LIMIT $2 OFFSET $3;"
+
+	AddMsg = "INSERT INTO chat_messages(sender_id, receiver_id, message, created_at) " +
+		"VALUES ($1, $2, $3, $4) RETURNING 0;"
+	GetMsg = "SELECT sender_id, message, created_at FROM chat_messages " +
+		" WHERE sender_id = $1 AND receiver_id = $2 OR sender_id = $2 AND receiver_id = $1 " +
+		" ORDER BY created_at ASC LIMIT $3 OFFSET $4;"
 )

@@ -1,9 +1,8 @@
 package response
 
 import (
-	"encoding/json"
+	"github.com/mailru/easyjson"
 	"net/http"
-	"go.uber.org/zap"
 )
 
 type Response struct {
@@ -11,15 +10,13 @@ type Response struct {
 	Body   interface{} `json:"body,omitempty"`
 }
 
-func Respond(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interface{}, status int, body interface{}) {
+func Respond(w http.ResponseWriter, status int, body interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	response := &Response{
 		Status: status,
 		Body:   body,
 	}
 
-	err := json.NewEncoder(w).Encode(response)
-	if err != nil {
-		return
-	}
+	easyjson.MarshalToHTTPResponseWriter(response, w)
+	return
 }

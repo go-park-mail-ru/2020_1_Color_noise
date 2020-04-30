@@ -5,7 +5,7 @@ import (
 )
 
 type IRepository interface {
-	Create(user *models.User) (uint, error)
+	Create(user *models.User) (*models.User, error)
 	GetByID(id uint) (*models.User, error)
 	//GetByEmail(email string) (*models.User, error)
 	UpdateProfile(id uint, email string, login string) error

@@ -5,6 +5,7 @@ import (
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
 	"database/sql"
+	"fmt"
 )
 
 type Repository struct {
@@ -17,23 +18,27 @@ func NewRepo(bd database.DBInterface) *Repository {
 	}
 }
 
-func (ur *Repository) Create(user *models.User) (uint, error) {
+func (ur *Repository) Create(user *models.User) (*models.User, error){
+	fmt.Println(*user)
+
 	_, err := ur.checkLogin(user.Login)
 	if err == nil {
-		return 0, LoginIsExist.New("Repo: Error in during creating")
+		return nil, LoginIsExist.New("Repo: Error in during creating")
 	}
 
 	_, err = ur.checkEmail(user.Email)
 	if err == nil {
-		return 0, EmailIsExist.New("Repo: Error in during creating")
+		return nil, EmailIsExist.New("Repo: Error in during creating")
 	}
 
 	id, err := ur.bd.CreateUser(models.GetBUser(*user))
 	if err != nil {
-		return 0, UserNotFound.Newf("User can not be created")
+		return nil, UserNotFound.Newf("User can not be created")
 	}
 
-	return id, nil
+	user.Id = id
+
+	return user, nil
 }
 
 func (ur *Repository) GetByID(id uint) (*models.User, error) {
@@ -62,7 +67,7 @@ func (ur *Repository) GetByLogin(login string) (*models.User, error) {
 func (ur *Repository) Search(login string, start int, limit int) ([]*models.User, error) {
 
 	var us = models.DataBaseUser{Login: login}
-	users, err := ur.bd.GetUserByLogin(us, limit, start) //START == OFFSET
+	users, err := ur.bd.GetUserByLogin(us, start, limit) //START == OFFSET
 	if err != nil {
 		return nil, err
 	}

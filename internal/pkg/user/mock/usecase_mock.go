@@ -6,7 +6,6 @@ package mock
 
 import (
 	models "2020_1_Color_noise/internal/models"
-	bytes "bytes"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -35,10 +34,10 @@ func (m *MockIUsecase) EXPECT() *MockIUsecaseMockRecorder {
 }
 
 // Create mocks base method
-func (m *MockIUsecase) Create(input *models.SignUpInput) (uint, error) {
+func (m *MockIUsecase) Create(input *models.SignUpInput) (*models.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", input)
-	ret0, _ := ret[0].(uint)
+	ret0, _ := ret[0].(*models.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -107,7 +106,7 @@ func (mr *MockIUsecaseMockRecorder) UpdatePassword(id, input interface{}) *gomoc
 }
 
 // UpdateAvatar mocks base method
-func (m *MockIUsecase) UpdateAvatar(id uint, buffer *bytes.Buffer) (string, error) {
+func (m *MockIUsecase) UpdateAvatar(id uint, buffer []byte) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateAvatar", id, buffer)
 	ret0, _ := ret[0].(string)
@@ -221,18 +220,4 @@ func (m *MockIUsecase) GetSubscriptions(id uint, start, limit int) ([]*models.Us
 func (mr *MockIUsecaseMockRecorder) GetSubscriptions(id, start, limit interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubscriptions", reflect.TypeOf((*MockIUsecase)(nil).GetSubscriptions), id, start, limit)
-}
-
-// ComparePassword mocks base method
-func (m *MockIUsecase) ComparePassword(user *models.User, password string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ComparePassword", user, password)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ComparePassword indicates an expected call of ComparePassword
-func (mr *MockIUsecaseMockRecorder) ComparePassword(user, password interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ComparePassword", reflect.TypeOf((*MockIUsecase)(nil).ComparePassword), user, password)
 }

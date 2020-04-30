@@ -41,7 +41,7 @@ func (error Error) Error() string {
 // New creates a new customError
 func (e ErrorType) New(msg string) error {
 	return Error{errorType: e,
-		originalError: New(msg),
+		originalError: fmt.Errorf(msg),
 	}
 }
 
@@ -132,10 +132,10 @@ func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interf
 		message = "Login or password is incorrect"
 	case LoginIsExist:
 		status = http.StatusUnauthorized
-		message = "Change your login, login is already exist"
+		message = "login"
 	case EmailIsExist:
 		status = http.StatusUnauthorized
-		message = "Change your email, email is already exist"
+		message = "email"
 	case Unauthorized:
 		status = http.StatusUnauthorized
 		message = "User is unauthorized"
@@ -153,13 +153,14 @@ func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interf
 		message = "Internal server error"
 	}
 
-	logger.Error(
+	/*logger.Error(
 		zap.String("reqId:", fmt.Sprintf("%v", reqId)),
-		zap.String("error:", e.Error()),
+		zap.String("error:", err.Error()),
 	)
+	 */
 
 
-	response.Respond(w, logger, reqId, status, map[string]string {
+	response.Respond(w, status, map[string]string {
 		"error": message,
 	})
 }

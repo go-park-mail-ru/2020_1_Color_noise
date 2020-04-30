@@ -23,6 +23,7 @@ func NewHandler(usecase list.IUsecase, logger *zap.SugaredLogger) *Handler {
 }
 
 func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
+
 	reqId := r.Context().Value("ReqId")
 
 	/*isAuth := r.Context().Value("IsAuth")
@@ -58,10 +59,11 @@ func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, lh.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
+	
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -104,10 +106,11 @@ func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, lh.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request) {
+	
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -150,5 +153,5 @@ func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request)
 		})
 	}
 
-	response.Respond(w, lh.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }

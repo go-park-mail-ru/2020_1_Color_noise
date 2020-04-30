@@ -107,7 +107,7 @@ func TestHandler_UpdateToken(t *testing.T) {
 			mockSessionRepository.EXPECT().Update(item.Sess).Return(item.ErrFunc),
 		)
 
-		err := sessionUsecase.UpdateToken(item.Sess, item.Token)
+		err := sessionUsecase.Update(item.Sess)
 		if item.ErrFunc == nil && err != nil {
 			t.Errorf("[%d] wrong Error: got %+v, expected %+v",
 				caseNum, err, item.ErrFunc)

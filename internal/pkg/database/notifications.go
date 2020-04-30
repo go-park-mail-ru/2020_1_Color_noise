@@ -30,8 +30,10 @@ func (db *PgxDB) GetNotifications(user models.DataBaseUser) ([]*models.Notificat
 
 func (db *PgxDB) PutNotifications(com models.DataBaseComment) (uint, error) {
 
-	text := "new comment on your pin, pin №" + fmt.Sprint(com.PinId)
 	pin, _ := db.GetPinById(models.DataBasePin{Id: com.PinId})
+	user, _ := db.GetUserById(models.DataBaseUser{Id:com.UserId})
+
+	text := "Новый комментарий от " + fmt.Sprint(user.Login) + " на ваш пин " + fmt.Sprint(pin.Name) + " : " + fmt.Sprint(com.Text)
 	res := db.dbPool.QueryRow(PutNoti, pin.UserId, text, com.UserId, time.Now())
 	var id uint
 	err := res.Scan(&id)

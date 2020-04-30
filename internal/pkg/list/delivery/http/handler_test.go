@@ -56,8 +56,7 @@ func TestHandler_GetSubList(t *testing.T) {
 			UserId:     1,
 			Start:		1,
 			Limit:		15,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseFetch{
 			IsAuth:     true,
@@ -98,8 +97,7 @@ func TestHandler_GetSubList(t *testing.T) {
 				},
 			},
 			Response: `{"status":200,"body":[{"id":1,"user_id":1,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"},` +
-				`{"id":2,"user_id":1,"board_id":5,"name":"name2","description":"desc2","image":"image.jpg"}]}
-`,
+				`{"id":2,"user_id":1,"board_id":5,"name":"name2","description":"desc2","image":"image.jpg"}]}`,
 		},
 	}
 
@@ -186,8 +184,7 @@ func TestHandler_GetRecommendationList(t *testing.T) {
 			UserId:     1,
 			Start:		1,
 			Limit:		15,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseFetch{
 			IsAuth:     true,
@@ -228,8 +225,7 @@ func TestHandler_GetRecommendationList(t *testing.T) {
 				},
 			},
 			Response: `{"status":200,"body":[{"id":1,"user_id":1,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"},` +
-				`{"id":2,"user_id":1,"board_id":5,"name":"name2","description":"desc2","image":"image.jpg"}]}
-`,
+				`{"id":2,"user_id":1,"board_id":5,"name":"name2","description":"desc2","image":"image.jpg"}]}`,
 		},
 	}
 
@@ -342,8 +338,7 @@ func TestHandler_GetMainList(t *testing.T) {
 				},
 			},
 			Response: `{"status":200,"body":[{"id":1,"user_id":1,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"},` +
-				`{"id":2,"user_id":1,"board_id":5,"name":"name2","description":"desc2","image":"image.jpg"}]}
-`,
+				`{"id":2,"user_id":1,"board_id":5,"name":"name2","description":"desc2","image":"image.jpg"}]}`,
 		},
 	}
 

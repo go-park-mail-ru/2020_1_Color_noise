@@ -33,19 +33,34 @@ func (m *MockIUsecase) EXPECT() *MockIUsecaseMockRecorder {
 	return m.recorder
 }
 
-// CreateSession mocks base method
-func (m *MockIUsecase) CreateSession(id uint) (*models.Session, error) {
+// Create mocks base method
+func (m *MockIUsecase) Create(id uint) (*models.Session, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateSession", id)
+	ret := m.ctrl.Call(m, "Create", id)
 	ret0, _ := ret[0].(*models.Session)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// CreateSession indicates an expected call of CreateSession
-func (mr *MockIUsecaseMockRecorder) CreateSession(id interface{}) *gomock.Call {
+// Create indicates an expected call of Create
+func (mr *MockIUsecaseMockRecorder) Create(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSession", reflect.TypeOf((*MockIUsecase)(nil).CreateSession), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockIUsecase)(nil).Create), id)
+}
+
+// Login mocks base method
+func (m *MockIUsecase) Login(u *models.User, password string) (*models.Session, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Login", u, password)
+	ret0, _ := ret[0].(*models.Session)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Login indicates an expected call of Login
+func (mr *MockIUsecaseMockRecorder) Login(u, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockIUsecase)(nil).Login), u, password)
 }
 
 // GetByCookie mocks base method
@@ -63,18 +78,18 @@ func (mr *MockIUsecaseMockRecorder) GetByCookie(cookie interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCookie", reflect.TypeOf((*MockIUsecase)(nil).GetByCookie), cookie)
 }
 
-// UpdateToken mocks base method
-func (m *MockIUsecase) UpdateToken(session *models.Session, token string) error {
+// Update mocks base method
+func (m *MockIUsecase) Update(session *models.Session) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateToken", session, token)
+	ret := m.ctrl.Call(m, "Update", session)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// UpdateToken indicates an expected call of UpdateToken
-func (mr *MockIUsecaseMockRecorder) UpdateToken(session, token interface{}) *gomock.Call {
+// Update indicates an expected call of Update
+func (mr *MockIUsecaseMockRecorder) Update(session interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateToken", reflect.TypeOf((*MockIUsecase)(nil).UpdateToken), session, token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockIUsecase)(nil).Update), session)
 }
 
 // Delete mocks base method

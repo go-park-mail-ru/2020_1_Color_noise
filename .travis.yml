@@ -8,8 +8,10 @@ notifications:
   email: false
 
 before_script:
-  - git checkout develop
+  - docker build -t db --file `pwd`/build/db.Dockerfile .
+  - docker run -d -p 5432:5432 db
   - go mod tidy
 
 script:
+  - sleep 15
   - go test ./...

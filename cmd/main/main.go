@@ -4,39 +4,40 @@ import (
 	boardDeliveryHttp "2020_1_Color_noise/internal/pkg/board/delivery/http"
 	boardRepository "2020_1_Color_noise/internal/pkg/board/repository"
 	boardUsecase "2020_1_Color_noise/internal/pkg/board/usecase"
-	"go.uber.org/zap"
+	"2020_1_Color_noise/internal/pkg/metric"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"2020_1_Color_noise/internal/pkg/config"
-
-	notificationsDeliveryHttp "2020_1_Color_noise/internal/pkg/notifications/delivery/http"
-	notificationsRepository "2020_1_Color_noise/internal/pkg/notifications/repository"
-	notificationsUsecase "2020_1_Color_noise/internal/pkg/notifications/usecase"
+	"2020_1_Color_noise/internal/pkg/proto/session"
+	"2020_1_Color_noise/internal/pkg/proto/user"
 
 	commentDeliveryHttp "2020_1_Color_noise/internal/pkg/comment/delivery/http"
 	commentRepository "2020_1_Color_noise/internal/pkg/comment/repository"
 	commentUsecase "2020_1_Color_noise/internal/pkg/comment/usecase"
 
+	"2020_1_Color_noise/internal/pkg/config"
 	"2020_1_Color_noise/internal/pkg/database"
-
-	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
-	pinRepository "2020_1_Color_noise/internal/pkg/pin/repository"
-	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
-
-	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
-	sessionRepository "2020_1_Color_noise/internal/pkg/session/repository"
-	sessionUsecase "2020_1_Color_noise/internal/pkg/session/usecase"
-
-	userDeliveryHttp "2020_1_Color_noise/internal/pkg/user/delivery/http"
-	userRepository "2020_1_Color_noise/internal/pkg/user/repository"
-	userUsecase "2020_1_Color_noise/internal/pkg/user/usecase"
 
 	listDeliveryHttp "2020_1_Color_noise/internal/pkg/list/delivery/http"
 	listRepository "2020_1_Color_noise/internal/pkg/list/repository"
 	listUsecase "2020_1_Color_noise/internal/pkg/list/usecase"
 
+	"2020_1_Color_noise/internal/pkg/middleware"
+
+	notificationsDeliveryHttp "2020_1_Color_noise/internal/pkg/notifications/delivery/http"
+	notificationsRepository "2020_1_Color_noise/internal/pkg/notifications/repository"
+	notificationsUsecase "2020_1_Color_noise/internal/pkg/notifications/usecase"
+
+	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
+	pinRepository "2020_1_Color_noise/internal/pkg/pin/repository"
+	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
+
 	searchHandler "2020_1_Color_noise/internal/pkg/search"
 
-	"2020_1_Color_noise/internal/pkg/middleware"
+	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
+	userDeliveryHttp "2020_1_Color_noise/internal/pkg/user/delivery/http"
+	"go.uber.org/zap"
+
+	"google.golang.org/grpc"
 
 	"github.com/gorilla/mux"
 	"log"
@@ -45,6 +46,8 @@ import (
 )
 
 func main() {
+
+	metric.Register()
 	r := mux.NewRouter()
 
 	c, err := config.GetDBConfing()
@@ -52,10 +55,35 @@ func main() {
 		panic(err)
 	}
 
+	c.User = "postgres"
+	c.Password = "password"
+
 	db := database.NewPgxDB()
 	if err := db.Open(c); err != nil {
 		panic(err)
 	}
+
+	grcpSessConn, err := grpc.Dial(
+		"127.0.0.1:8003",
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatalf("cant connect to session grpc")
+	}
+	defer grcpSessConn.Close()
+
+	sessManager := session.NewAuthSeviceClient(grcpSessConn)
+
+	grcpUserConn, err := grpc.Dial(
+		"127.0.0.1:8004",
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatalf("cant connect to user grpc")
+	}
+	defer grcpSessConn.Close()
+
+	userService := user.NewUserServiceClient(grcpUserConn)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -68,14 +96,9 @@ func main() {
 		zap.String("logger", "ZAP"),
 	)
 
-	userRepo := userRepository.NewRepo(db)
-	userUse := userUsecase.NewUsecase(userRepo)
+	userDelivery := userDeliveryHttp.NewHandler(userService, sessManager, zap)
 
-	sessionRepo := sessionRepository.NewRepo(db)
-	sessionUse := sessionUsecase.NewUsecase(sessionRepo)
-	sessionDelivery := sessionDeliveryHttp.NewHandler(sessionUse, userUse, zap)
-
-	userDelivery := userDeliveryHttp.NewHandler(userUse, sessionUse, zap)
+	sessionDelivery := sessionDeliveryHttp.NewHandler(sessManager, userService, zap)
 
 	pinRepo := pinRepository.NewRepo(db)
 	pinUse := pinUsecase.NewUsecase(pinRepo)
@@ -97,9 +120,9 @@ func main() {
 	notificationsUse := notificationsUsecase.NewUsecase(notificationsRepo)
 	notificationsDelivery := notificationsDeliveryHttp.NewHandler(notificationsUse, zap)
 
-	search := searchHandler.NewHandler(commentUse, pinUse, userUse, zap)
+	search := searchHandler.NewHandler(commentUse, pinUse, userService, zap)
 
-	m := middleware.NewMiddleware(sessionUse, zap)
+	m := middleware.NewMiddleware(sessManager, zap)
 
 	r.HandleFunc("/api/auth", sessionDelivery.Login).Methods("POST")
 	r.HandleFunc("/api/auth", sessionDelivery.Logout).Methods("DELETE")
@@ -142,21 +165,16 @@ func main() {
 
 	r.HandleFunc("/api/notifications", notificationsDelivery.GetNotifications).Methods("GET")
 
+	r.Handle("/api/metric", promhttp.Handler())
 	r.Use(m.AccessLogMiddleware)
-	r.Use(m.CORSMiddleware)
+	//r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)
 
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
-	/*r.PathPrefix("/subscriptions[/]+").Handler(http.FileServer(http.Dir("./static/")))
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))*/
+	/*r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))*/
 
 	srv := &http.Server{
 		Handler: r,
-		Addr:    "127.0.0.1:8000",
+		Addr:    ":8001",
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,

@@ -95,3 +95,16 @@ ON users
 EXECUTE FUNCTION new_desks();
  */
 
+CREATE TABLE chats(
+                      id serial PRIMARY KEY,
+                      sender_id int REFERENCES users(id) NOT NULL,
+                      receiver_id int REFERENCES users(id) NOT NULL
+);
+
+CREATE TABLE chat_messages(
+                              id serial PRIMARY KEY,
+                              sender_id int REFERENCES users(id) NOT NULL,
+                              receiver_id int REFERENCES users(id) NOT NULL,
+                              message text NOT NULL,
+                              created_at TIMESTAMP
+);

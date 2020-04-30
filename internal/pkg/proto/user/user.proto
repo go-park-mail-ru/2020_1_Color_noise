@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package user;
+
+import "google/protobuf/timestamp.proto";
+
+message User {
+  int64 Id = 1;
+  string Email = 2;
+  string Login = 3;
+  string EncryptedPassword = 4;
+  string About = 5;
+  string Avatar = 6;
+  int64 Subscriptions = 7;
+  int64 Subscribers = 8;
+  google.protobuf.Timestamp CreatedAt = 9;
+}
+
+message Session {
+  int64 Id = 1;
+  string Cookie = 2;
+  string Token = 3;
+  google.protobuf.Timestamp CreatedAt = 4;
+  google.protobuf.Timestamp DeletingAt = 5;
+}
+
+message UserSession {
+  User user = 1;
+  Session session = 2;
+}
+
+message UserID {
+  int64 Id = 1;
+}
+
+message Nothing {
+  bool error = 1;
+}
+
+message SignUp {
+  string Email = 1;
+  string Login = 2;
+  string Password = 3;
+}
+
+message UpdateProfileInput {
+  string Email = 1;
+  string Login = 2;
+}
+
+message Profile {
+  UserID Id = 1;
+  UpdateProfileInput Input = 2;
+}
+
+message Description {
+  UserID Id = 1;
+  string Description = 2;
+}
+
+message Password {
+  UserID Id = 1;
+  string Password = 2;
+}
+
+message Avatar {
+  UserID Id = 1;
+  bytes Avatar = 2;
+}
+
+message Address {
+  string Avatar = 1;
+}
+
+message Following {
+  UserID Id = 1;
+  UserID SubId = 2;
+}
+
+message Login {
+  string Login = 1;
+}
+
+message Searching {
+  Login Login = 1;
+  int64 Start = 2;
+  int64 Limit = 3;
+}
+
+message Sub {
+  UserID Id = 1;
+  int64 Start = 2;
+  int64 Limit = 3;
+}
+
+message Users {
+  repeated User Users = 1;
+}
+
+service UserService {
+    rpc Create(SignUp) returns (User) {}
+    rpc GetById(UserID) returns (User) {}
+    rpc GetByLogin(Login) returns (User) {}
+    rpc UpdateProfile(Profile) returns (Nothing) {}
+    rpc UpdateDescription(Description) returns (Nothing) {}
+    rpc UpdatePassword(Password) returns (Nothing) {}
+    rpc UpdateAvatar(Avatar) returns (Address) {}
+    rpc Follow(Following) returns (Nothing) {}
+    rpc Unfollow(Following) returns (Nothing) {}
+    rpc Search(Searching) returns (Users) {}
+    rpc GetSubscribers(Sub) returns (Users) {}
+    rpc GetSubscriptions(Sub) returns (Users) {}
+}

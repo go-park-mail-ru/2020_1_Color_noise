@@ -5,9 +5,9 @@ import (
 	"2020_1_Color_noise/internal/pkg/comment"
 	"2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/response"
-	"encoding/json"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
+	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
 	"net/http"
 	"strconv"
@@ -44,7 +44,7 @@ func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.InputComment{}
 
-	err := json.NewDecoder(r.Body).Decode(input)
+	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation comment"), "Wrong body of request")
 		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
@@ -69,7 +69,7 @@ func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		Id: id,
 	}
 
-	response.Respond(w, ch.logger, reqId, http.StatusCreated, resp)
+	response.Respond(w, http.StatusCreated, resp)
 }
 
 func (ch *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
@@ -104,7 +104,7 @@ func (ch *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
 		CreatedAt: &comment.CreatedAt,
 	}
 
-	response.Respond(w, ch.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
@@ -150,5 +150,5 @@ func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, ch.logger, reqId, http.StatusOK, resp)
+	response.Respond(w, http.StatusOK, resp)
 }
