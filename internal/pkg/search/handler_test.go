@@ -12,7 +12,8 @@ import (
 	commentMock "2020_1_Color_noise/internal/pkg/comment/mock"
 	. "2020_1_Color_noise/internal/pkg/error"
 	pinMock "2020_1_Color_noise/internal/pkg/pin/mock"
-	userMock "2020_1_Color_noise/internal/pkg/user/mock"
+	userServMock "2020_1_Color_noise/internal/pkg/proto/user/mock"
+	userServ "2020_1_Color_noise/internal/pkg/proto/user"
 	"context"
 	"io/ioutil"
 	//"io/ioutil"
@@ -46,7 +47,7 @@ func TestHandler_Search(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
 	mockPinUsecase := pinMock.NewMockIUsecase(ctl)
 	mockCommentUsecase := commentMock.NewMockIUsecase(ctl)
 
@@ -61,7 +62,7 @@ func TestHandler_Search(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	searchDelivery := NewHandler(mockCommentUsecase, mockPinUsecase, mockUserUsecase, zap)
+	searchDelivery := NewHandler(mockCommentUsecase, mockPinUsecase, mockUserService, zap)
 
 	cases := []TestCaseSearch{
 		TestCaseSearch{
@@ -69,8 +70,7 @@ func TestHandler_Search(t *testing.T) {
 			UserId:     1,
 			Start:		1,
 			Limit:		15,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseSearch{
 			IsAuth:     true,
@@ -101,8 +101,7 @@ func TestHandler_Search(t *testing.T) {
 				},
 			},
 			Response: `{"status":200,"body":[{"id":2,"user_id":1,"pin_id":1,"created_at":"0001-01-01T00:00:00Z","comment":"comment"},` +
-				`{"id":3,"user_id":4,"pin_id":1,"created_at":"0001-01-01T00:00:00Z","comment":"comment"}]}
-`,
+				`{"id":3,"user_id":4,"pin_id":1,"created_at":"0001-01-01T00:00:00Z","comment":"comment"}]}`,
 		},
 		TestCaseSearch{
 			IsAuth:     true,
@@ -137,8 +136,7 @@ func TestHandler_Search(t *testing.T) {
 				},
 			},
 			Response: `{"status":200,"body":[{"id":1,"login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000},` +
-				`{"id":1,"login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000}]}
-`,
+				`{"id":1,"login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000}]}`,
 		},
 		TestCaseSearch{
 			IsAuth:     true,
@@ -173,16 +171,14 @@ func TestHandler_Search(t *testing.T) {
 				},
 			},
 			Response: `{"status":200,"body":[{"id":1,"user_id":1,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"},` +
-				`{"id":2,"user_id":1,"board_id":5,"name":"name2","description":"desc2","image":"image.jpg"}]}
-`,
+				`{"id":2,"user_id":1,"board_id":5,"name":"name2","description":"desc2","image":"image.jpg"}]}`,
 		},
 		TestCaseSearch{
 			IsAuth:     true,
 			UserId:     1,
 			Start:		1,
 			Limit:		15,
-			Response:	`{"status":404,"body":{"error":"Not found"}}
-`,
+			Response:	`{"status":404,"body":{"error":"Not found"}}`,
 		},
 	}
 
@@ -242,8 +238,27 @@ func TestHandler_Search(t *testing.T) {
 				err = NoType.New("")
 			}
 
+			s := &userServ.Searching{Login: &userServ.Login{Login: item.Line},
+				Start: int64(item.Start),
+				Limit: int64(item.Limit),
+			}
+
+			u := &userServ.Users{}
+
+			for _, us := range item.Users {
+				u.Users = append(u.Users,
+					&userServ.User{
+						Id: int64(us.Id),
+						Login:         us.Login,
+						About:         us.About,
+						Avatar:        us.Avatar,
+						Subscribers:   int64(us.Subscribers),
+						Subscriptions: int64(us.Subscriptions),
+					})
+			}
+
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().Search(item.Line, item.Start, item.Limit).Return(item.Users, err),
+				mockUserService.EXPECT().Search(r.Context(), s).Return(u, err),
 			)
 		}
 

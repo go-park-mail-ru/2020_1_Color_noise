@@ -4,7 +4,6 @@ import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/list"
-	"2020_1_Color_noise/internal/pkg/metric"
 	"2020_1_Color_noise/internal/pkg/response"
 	"go.uber.org/zap"
 	"net/http"
@@ -24,8 +23,6 @@ func NewHandler(usecase list.IUsecase, logger *zap.SugaredLogger) *Handler {
 }
 
 func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
-	path := "/api/list/get"
-	metric.Increase()
 
 	reqId := r.Context().Value("ReqId")
 
@@ -45,7 +42,7 @@ func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
 
 	pins, err := lh.usecase.GetMainList(start, limit)
 	if err != nil {
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -62,25 +59,24 @@ func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, http.StatusOK, resp, path)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
-	path := "/api/list/sub/get"
-	metric.Increase()
+	
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("GetSubList: user is unauthorized")
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -93,7 +89,7 @@ func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
 
 	pins, err := lh.usecase.GetSubList(id, start, limit)
 	if err != nil {
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -110,25 +106,24 @@ func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	response.Respond(w, http.StatusOK, resp, path)
+	response.Respond(w, http.StatusOK, resp)
 }
 
 func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request) {
-	path := "/api/list/rec/get"
-	metric.Increase()
+	
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("GetRecommendationList: user is unauthorized")
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -141,7 +136,7 @@ func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request)
 
 	pins, err := lh.usecase.GetRecommendationList(id, start, limit)
 	if err != nil {
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId), path)
+		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -158,5 +153,5 @@ func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request)
 		})
 	}
 
-	response.Respond(w, http.StatusOK, resp, path)
+	response.Respond(w, http.StatusOK, resp)
 }

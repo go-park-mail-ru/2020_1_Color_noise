@@ -6,11 +6,12 @@ import (
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"net/http"
-
+	userServMock "2020_1_Color_noise/internal/pkg/proto/user/mock"
+	authServMock "2020_1_Color_noise/internal/pkg/proto/session/mock"
+	userServ "2020_1_Color_noise/internal/pkg/proto/user"
+	authServ "2020_1_Color_noise/internal/pkg/proto/session"
 	"2020_1_Color_noise/internal/models"
 	. "2020_1_Color_noise/internal/pkg/error"
-	sessionMock "2020_1_Color_noise/internal/pkg/session/mock"
-	userMock "2020_1_Color_noise/internal/pkg/user/mock"
 	"context"
 	"io/ioutil"
 	//"io/ioutil"
@@ -44,8 +45,8 @@ func TestHandler_Create(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
-	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
+	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -58,43 +59,38 @@ func TestHandler_Create(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
 			IsAuth: true,
-			Response: `{"status":200,"body":{"message":"Ok"}}
-`,
+			Response: `{"status":200,"body":{"message":"Ok"}}`,
 		},
 		TestCaseCreate{
 			InputErr: true,
-			Response: `{"status":400,"body":{"error":"Wrong body of request"}}
-`,
+			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
 		},
-		TestCaseCreate{
+		/*TestCaseCreate{
 			ValidErr: true,
-			Response: `{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}
-`,
+			Response: `{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}`,
 			Email:    "helloexam.com",
 			Login:    "Login1",
 			Password: "Password1",
 		},
 		TestCaseCreate{
 			ValidErr: true,
-			Response: `{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}
-`,
+			Response: `{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}`,
 			Email:    "hello@exam.com",
 			Login:    "",
 			Password: "Password1",
 		},
 		TestCaseCreate{
 			ValidErr: true,
-			Response: `{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}
-`,
+			Response: `{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100. Login should be letters and numbers, and shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters."}}`,
 			Email:    "hello@exam.com",
 			Login:    "Login1",
 			Password: "Passw",
-		},
+		},*/
 		TestCaseCreate{
 			CreateErr: true,
 			Email:     "hello@exam.com",
@@ -111,8 +107,7 @@ func TestHandler_Create(t *testing.T) {
 			Email:    "hello@exam.com",
 			Login:    "Login1",
 			Password: "Password",
-			Response: `{"status":201,"body":{"message":"Ok"}}
-`,
+			Response: `{"status":201,"body":{"id":1,"login":"","subscriptions":0,"subscribers":0}}`,
 			CookieName: "session_id",
 			Cookie:     "cookie",
 			//TokenName:  "csrf_token",
@@ -140,7 +135,7 @@ func TestHandler_Create(t *testing.T) {
 
 		if !item.IsAuth && !item.InputErr && !item.ValidErr {
 
-			input := &models.SignUpInput{
+			input := &userServ.SignUp{
 				Email:    item.Email,
 				Login:    item.Login,
 				Password: item.Password,
@@ -152,11 +147,11 @@ func TestHandler_Create(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().Create(input).Return(uint(1), err),
+				mockUserService.EXPECT().Create(r.Context(), input).Return(&userServ.User{Id: int64(1)}, err),
 			)
 
 			if !item.CreateErr {
-				session := &models.Session{
+				session := &authServ.Session{
 					Id:     1,
 					Cookie: item.Cookie,
 					Token:  item.Token,
@@ -167,7 +162,8 @@ func TestHandler_Create(t *testing.T) {
 				}
 
 				gomock.InOrder(
-					mockSessionUsecase.EXPECT().CreateSession(uint(1)).Return(session, err),
+					mockAuthService.EXPECT().Create(r.Context(),
+					&authServ.UserID{Id:	int64(1)}).Return(session, err),
 				)
 			}
 		}
@@ -205,7 +201,7 @@ func TestHandler_Create(t *testing.T) {
 
 			if !item.IsAuth && !item.InputErr && !item.ValidErr {
 				cookies := w.Result().Cookies()
-				if len(cookies) != 1 {
+				if len(cookies) < 1 {
 					t.Fatalf("[%d] No Cookie", caseNum)
 				}
 
@@ -248,8 +244,8 @@ func TestHandler_GetUser(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
-	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
+	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -262,21 +258,20 @@ func TestHandler_GetUser(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
+
 
 	cases := []TestCaseGetUser{
 		TestCaseGetUser{
 			IsAuth: false,
 			User:   &models.User{},
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseGetUser{
 			IsAuth: true,
 			IdErr:  true,
 			User:   &models.User{},
-			Response: `{"status":500,"body":{"error":"Internal server error"}}
-`,
+			Response: `{"status":500,"body":{"error":"Internal server error"}}`,
 		},
 		TestCaseGetUser{
 			IsAuth: true,
@@ -294,8 +289,7 @@ func TestHandler_GetUser(t *testing.T) {
 				Subscribers:   11000,
 				Subscriptions: 100,
 			},
-			Response: `{"status":200,"body":{"id":1,"email":"a@b.com","login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000}}
-`,
+			Response: `{"status":200,"body":{"id":1,"email":"a@b.com","login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000}}`,
 		},
 	}
 
@@ -319,7 +313,18 @@ func TestHandler_GetUser(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().GetById(item.User.Id).Return(item.User, err),
+				mockUserService.EXPECT().GetById(r.Context(),
+					&userServ.UserID{Id: int64(item.User.Id)}).Return(
+					&userServ.User{Id: int64(item.User.Id),
+						Email: item.User.Email,
+						Login: item.User.Login,
+						Avatar: item.User.Avatar,
+						About: item.User.About,
+						Subscribers: int64(item.User.Subscribers),
+						Subscriptions: int64(item.User.Subscriptions),
+						},
+						err,
+						),
 			)
 		}
 
@@ -362,8 +367,8 @@ func TestHandler_GetOtherUser(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
-	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
+	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -376,14 +381,13 @@ func TestHandler_GetOtherUser(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
 
 	cases := []TestCaseGetUser{
 		TestCaseGetUser{
 			IsAuth: false,
 			User:   &models.User{},
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseGetUser{
 			IsAuth: true,
@@ -401,8 +405,7 @@ func TestHandler_GetOtherUser(t *testing.T) {
 				Subscribers:   11000,
 				Subscriptions: 100,
 			},
-			Response: `{"status":200,"body":{"id":1,"login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000}}
-`,
+			Response: `{"status":200,"body":{"id":1,"login":"login","about":"about me","avatar":"avatar.jpg","subscriptions":100,"subscribers":11000}}`,
 		},
 	}
 
@@ -427,7 +430,18 @@ func TestHandler_GetOtherUser(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().GetById(item.User.Id).Return(item.User, err),
+				mockUserService.EXPECT().GetById(r.Context(),
+					&userServ.UserID{Id: int64(item.User.Id)}).Return(
+					&userServ.User{Id: int64(item.User.Id),
+						Email: item.User.Email,
+						Login: item.User.Login,
+						Avatar: item.User.Avatar,
+						About: item.User.About,
+						Subscribers: int64(item.User.Subscribers),
+						Subscriptions: int64(item.User.Subscriptions),
+					},
+					err,
+				),
 			)
 		}
 
@@ -482,8 +496,8 @@ func TestHandler_UpdateProfile(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
-	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
+	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -496,34 +510,30 @@ func TestHandler_UpdateProfile(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
 
 	cases := []TestCaseUpdateProfile{
 		TestCaseUpdateProfile{
 			IsAuth: false,
 			User:   &models.User{},
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseUpdateProfile{
 			IsAuth: true,
 			IdErr:  true,
 			User:   &models.User{},
-			Response: `{"status":500,"body":{"error":"Internal server error"}}
-`,
+			Response: `{"status":500,"body":{"error":"Internal server error"}}`,
 		},
 		TestCaseUpdateProfile{
 			IsAuth:   true,
 			InputErr: true,
 			User:     &models.User{},
-			Response: `{"status":400,"body":{"error":"Wrong body of request"}}
-`,
+			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
 		},
-		TestCaseUpdateProfile{
+		/*TestCaseUpdateProfile{
 			IsAuth:   true,
 			ValidErr: true,
-			Response: `{"status":400,"body":{"error":"Login should be letters and numbers, shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters"}}
-`,
+			Response: `{"status":400,"body":{"error":"Login should be letters and numbers, shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters"}}`,
 			User: &models.User{
 				Email: "helloexam.com",
 				Login: "Login1",
@@ -532,13 +542,12 @@ func TestHandler_UpdateProfile(t *testing.T) {
 		TestCaseUpdateProfile{
 			IsAuth:   true,
 			ValidErr: true,
-			Response: `{"status":400,"body":{"error":"Login should be letters and numbers, shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters"}}
-`,
+			Response: `{"status":400,"body":{"error":"Login should be letters and numbers, shorter than 20 characters Email should be like hello@example.com and shorter than 50 characters"}}`,
 			User: &models.User{
 				Email: "helloexam.com",
 				Login: "",
 			},
-		},
+		},*/
 		TestCaseUpdateProfile{
 			IsAuth:    true,
 			UpdateErr: true,
@@ -555,8 +564,7 @@ func TestHandler_UpdateProfile(t *testing.T) {
 				Email: "hello@exam.com",
 				Login: "login",
 			},
-			Response: `{"status":200,"body":{"message":"Ok"}}
-`,
+			Response: `{"status":200,"body":{"message":"Ok"}}`,
 		},
 	}
 
@@ -583,9 +591,12 @@ func TestHandler_UpdateProfile(t *testing.T) {
 
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
 
-			input := &models.UpdateProfileInput{
-				Email: item.User.Email,
-				Login: item.User.Login,
+			input := &userServ.Profile{
+				Id: &userServ.UserID{Id: int64(item.User.Id)},
+				Input: &userServ.UpdateProfileInput{
+					Email: item.User.Email,
+					Login: item.User.Login,
+				},
 			}
 
 			var err error = nil
@@ -594,7 +605,8 @@ func TestHandler_UpdateProfile(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().UpdateProfile(item.User.Id, input).Return(err),
+				mockUserService.EXPECT().UpdateProfile(r.Context(), input).Return(
+					&userServ.Nothing{Error:false}, err),
 			)
 
 		}
@@ -648,8 +660,8 @@ func TestHandler_UpdateDescription(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
-	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
+	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -662,28 +674,25 @@ func TestHandler_UpdateDescription(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
 
 	cases := []TestCaseUpdateDescription{
 		TestCaseUpdateDescription{
 			IsAuth: false,
 			User:   &models.User{},
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseUpdateDescription{
 			IsAuth: true,
 			IdErr:  true,
 			User:   &models.User{},
-			Response: `{"status":500,"body":{"error":"Internal server error"}}
-`,
+			Response: `{"status":500,"body":{"error":"Internal server error"}}`,
 		},
 		TestCaseUpdateDescription{
 			IsAuth:   true,
 			InputErr: true,
 			User:     &models.User{},
-			Response: `{"status":400,"body":{"error":"Wrong body of request"}}
-`,
+			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
 		},
 		TestCaseUpdateDescription{
 			IsAuth:    true,
@@ -699,8 +708,7 @@ func TestHandler_UpdateDescription(t *testing.T) {
 				Id:    1,
 				About: "about me",
 			},
-			Response: `{"status":200,"body":{"message":"Ok"}}
-`,
+			Response: `{"status":200,"body":{"message":"Ok"}}`,
 		},
 	}
 
@@ -727,7 +735,8 @@ func TestHandler_UpdateDescription(t *testing.T) {
 
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
 
-			input := &models.UpdateDescriptionInput{
+			input := &userServ.Description{
+				Id: &userServ.UserID{Id: int64(item.User.Id)},
 				Description: item.User.About,
 			}
 
@@ -737,7 +746,8 @@ func TestHandler_UpdateDescription(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().UpdateDescription(item.User.Id, input).Return(err),
+				mockUserService.EXPECT().UpdateDescription(r.Context(), input).Return(
+					&userServ.Nothing{Error: false}, err),
 			)
 
 		}
@@ -793,8 +803,8 @@ func TestHandler_UpdatePassword(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
-	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
+	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -807,40 +817,37 @@ func TestHandler_UpdatePassword(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
 
 	cases := []TestCaseUpdatePassword{
 		TestCaseUpdatePassword{
 			IsAuth:   false,
 			UserId:   1,
 			Password: "password",
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseUpdatePassword{
 			IsAuth:   true,
 			IdErr:    true,
 			UserId:   1,
 			Password: "password",
-			Response: `{"status":500,"body":{"error":"Internal server error"}}
-`,
+			Response: `{"status":500,"body":{"error":"Internal server error"}}`,
 		},
 		TestCaseUpdatePassword{
 			IsAuth:   true,
 			InputErr: true,
 			UserId:   1,
 			Password: "password",
-			Response: `{"status":400,"body":{"error":"Wrong body of request"}}
-`,
+			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
 		},
-		TestCaseUpdatePassword{
+		/*TestCaseUpdatePassword{
 			IsAuth:   true,
 			ValidErr: true,
 			Response: `{"status":400,"body":{"error":"Password should be longer than 6 characters and shorter 100."}}
 `,
 			UserId:   1,
 			Password: "pas",
-		},
+		},*/
 		TestCaseUpdatePassword{
 			IsAuth:    true,
 			UpdateErr: true,
@@ -851,8 +858,7 @@ func TestHandler_UpdatePassword(t *testing.T) {
 			IsAuth:   true,
 			UserId:   1,
 			Password: "password",
-			Response: `{"status":200,"body":{"message":"Ok"}}
-`,
+			Response: `{"status":200,"body":{"message":"Ok"}}`,
 		},
 	}
 
@@ -879,7 +885,8 @@ func TestHandler_UpdatePassword(t *testing.T) {
 
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
 
-			input := &models.UpdatePasswordInput{
+			input := &userServ.Password{
+				Id: &userServ.UserID{Id: int64(item.UserId)},
 				Password: item.Password,
 			}
 
@@ -889,8 +896,8 @@ func TestHandler_UpdatePassword(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().UpdatePassword(uint(item.UserId), input).Return(err),
-			)
+				mockUserService.EXPECT().UpdatePassword(r.Context(), input).Return(
+					&userServ.Nothing{Error: false}, err))
 
 		}
 
@@ -945,8 +952,8 @@ func TestHandler_Follow(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
-	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
+	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -959,39 +966,35 @@ func TestHandler_Follow(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
 
 	cases := []TestCaseFollow{
 		TestCaseFollow{
 			IsAuth: false,
 			UserId: 1,
 			SubId:  2,
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseFollow{
 			IsAuth: true,
 			IdErr:  true,
 			UserId: 1,
 			SubId:  2,
-			Response: `{"status":500,"body":{"error":"Internal server error"}}
-`,
+			Response: `{"status":500,"body":{"error":"Internal server error"}}`,
 		},
 		TestCaseFollow{
 			IsAuth:   true,
 			BadIdErr: true,
 			UserId:   1,
 			SubId:    2,
-			Response: `{"status":400,"body":{"error":"Bad id"}}
-`,
+			Response: `{"status":400,"body":{"error":"Bad id"}}`,
 		},
 		TestCaseFollow{
 			IsAuth:   true,
 			SubIdErr: true,
 			UserId:   1,
 			SubId:    1,
-			Response: `{"status":400,"body":{"error":"Your id and following id shoudn't match"}}
-`,
+			Response: `{"status":400,"body":{"error":"Your id and following id shoudn't match"}}`,
 		},
 		TestCaseFollow{
 			IsAuth:    true,
@@ -1003,8 +1006,7 @@ func TestHandler_Follow(t *testing.T) {
 			IsAuth: true,
 			UserId: 1,
 			SubId:  2,
-			Response: `{"status":201,"body":{"message":"Ok"}}
-`,
+			Response: `{"status":201,"body":{"message":"Ok"}}`,
 		},
 	}
 
@@ -1036,7 +1038,11 @@ func TestHandler_Follow(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().Follow(item.UserId, item.SubId).Return(err),
+				mockUserService.EXPECT().Follow(r.Context(),
+					&userServ.Following{
+					Id: &userServ.UserID{Id: int64(item.UserId)},
+					SubId: &userServ.UserID{Id: int64(item.SubId)},
+					}).Return(&userServ.Nothing{Error: false}, err),
 			)
 
 		}
@@ -1082,8 +1088,8 @@ func TestHandler_Unfollow(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
-	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
+	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -1096,39 +1102,35 @@ func TestHandler_Unfollow(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
 
 	cases := []TestCaseFollow{
 		TestCaseFollow{
 			IsAuth: false,
 			UserId: 1,
 			SubId:  2,
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseFollow{
 			IsAuth: true,
 			IdErr:  true,
 			UserId: 1,
 			SubId:  2,
-			Response: `{"status":500,"body":{"error":"Internal server error"}}
-`,
+			Response: `{"status":500,"body":{"error":"Internal server error"}}`,
 		},
 		TestCaseFollow{
 			IsAuth:   true,
 			BadIdErr: true,
 			UserId:   1,
 			SubId:    2,
-			Response: `{"status":400,"body":{"error":"Bad id"}}
-`,
+			Response: `{"status":400,"body":{"error":"Bad id"}}`,
 		},
 		TestCaseFollow{
 			IsAuth:   true,
 			SubIdErr: true,
 			UserId:   1,
 			SubId:    1,
-			Response: `{"status":400,"body":{"error":"Your id and unfollowing id shoudn't match"}}
-`,
+			Response: `{"status":400,"body":{"error":"Your id and unfollowing id shoudn't match"}}`,
 		},
 		TestCaseFollow{
 			IsAuth:    true,
@@ -1140,8 +1142,7 @@ func TestHandler_Unfollow(t *testing.T) {
 			IsAuth: true,
 			UserId: 1,
 			SubId:  2,
-			Response: `{"status":200,"body":{"message":"Ok"}}
-`,
+			Response: `{"status":200,"body":{"message":"Ok"}}`,
 		},
 	}
 
@@ -1171,7 +1172,11 @@ func TestHandler_Unfollow(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().Unfollow(item.UserId, item.SubId).Return(err),
+				mockUserService.EXPECT().Unfollow(r.Context(),
+					&userServ.Following{
+						Id: &userServ.UserID{Id: int64(item.UserId)},
+						SubId: &userServ.UserID{Id: int64(item.SubId)},
+					}).Return(&userServ.Nothing{Error: false}, err),
 			)
 
 		}
@@ -1224,8 +1229,8 @@ func TestHandler_GetSubscribers(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
-	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
+	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -1238,14 +1243,13 @@ func TestHandler_GetSubscribers(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
 
 	cases := []TestCaseGet{
 		TestCaseGet{
 			IsAuth: false,
 			UserId: 1,
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseGet{
 			IsAuth: true,
@@ -1275,8 +1279,7 @@ func TestHandler_GetSubscribers(t *testing.T) {
 				},
 			},
 			Response: `{"status":200,"body":[{"id":2,"login":"login1","about":"about me","avatar":"avatar.jpg","subscriptions":1,"subscribers":5},` +
-				`{"id":3,"login":"login2","about":"about me","avatar":"avatar.jpg","subscriptions":2,"subscribers":6}]}
-`,
+				`{"id":3,"login":"login2","about":"about me","avatar":"avatar.jpg","subscriptions":2,"subscribers":6}]}`,
 		},
 	}
 
@@ -1300,8 +1303,27 @@ func TestHandler_GetSubscribers(t *testing.T) {
 				err = NoType.New("")
 			}
 
+			u := &userServ.Users{}
+
+			for _, us := range item.Users {
+				u.Users = append(u.Users,
+					&userServ.User{
+					Id: int64(us.Id),
+					Login:         us.Login,
+					About:         us.About,
+					Avatar:        us.Avatar,
+					Subscribers:   int64(us.Subscribers),
+					Subscriptions: int64(us.Subscriptions),
+					})
+			}
+
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().GetSubscribers(item.UserId, 1, 15).Return(item.Users, err),
+				mockUserService.EXPECT().GetSubscribers(r.Context(),
+					&userServ.Sub{Id: &userServ.UserID{Id: int64(item.UserId)},
+						Start: 1,
+					Limit:15,
+					}).Return(
+						u, err),
 			)
 
 		}
@@ -1347,8 +1369,8 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	mockUserUsecase := userMock.NewMockIUsecase(ctl)
-	mockSessionUsecase := sessionMock.NewMockIUsecase(ctl)
+	mockUserService := userServMock.NewMockUserServiceClient(ctl)
+	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -1361,14 +1383,13 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserUsecase, mockSessionUsecase, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
 
 	cases := []TestCaseGet{
 		TestCaseGet{
 			IsAuth: false,
 			UserId: 1,
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}
-`,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseGet{
 			IsAuth: true,
@@ -1398,8 +1419,7 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 				},
 			},
 			Response: `{"status":200,"body":[{"id":2,"login":"login1","about":"about me","avatar":"avatar.jpg","subscriptions":1,"subscribers":5},` +
-				`{"id":3,"login":"login2","about":"about me","avatar":"avatar.jpg","subscriptions":2,"subscribers":6}]}
-`,
+				`{"id":3,"login":"login2","about":"about me","avatar":"avatar.jpg","subscriptions":2,"subscribers":6}]}`,
 		},
 	}
 
@@ -1423,8 +1443,27 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 				err = NoType.New("")
 			}
 
+			u := &userServ.Users{}
+
+			for _, us := range item.Users {
+				u.Users = append(u.Users,
+					&userServ.User{
+						Id: int64(us.Id),
+						Login:         us.Login,
+						About:         us.About,
+						Avatar:        us.Avatar,
+						Subscribers:   int64(us.Subscribers),
+						Subscriptions: int64(us.Subscriptions),
+					})
+			}
+
 			gomock.InOrder(
-				mockUserUsecase.EXPECT().GetSubscriptions(item.UserId, 1, 15).Return(item.Users, err),
+				mockUserService.EXPECT().GetSubscriptions(r.Context(),
+					&userServ.Sub{Id: &userServ.UserID{Id: int64(item.UserId)},
+						Start: 1,
+						Limit:15,
+					}).Return(
+					u, err),
 			)
 
 		}
