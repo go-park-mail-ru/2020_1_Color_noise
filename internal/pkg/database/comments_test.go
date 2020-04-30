@@ -23,7 +23,7 @@ func TestPgxDB_CreateComment(t *testing.T) {
 	CommentDB.Open(c)
 
 	id, _ := CommentDB.CreateUser(models.DataBaseUser{
-		Login: fmt.Sprint(time.Now()),
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_GetPinsByBoardID",
 	})
 
 	bid, _ := CommentDB.CreateBoard(models.DataBaseBoard{
@@ -76,7 +76,7 @@ func TestPgxDB_UpdateComment(t *testing.T) {
 	CommentDB.Open(c)
 
 	id, _ := CommentDB.CreateUser(models.DataBaseUser{
-		Login: fmt.Sprint(time.Now()),
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_UpdateComment",
 	})
 
 	bid, _ := CommentDB.CreateBoard(models.DataBaseBoard{
@@ -134,7 +134,7 @@ func TestPgxDB_DeleteComment(t *testing.T) {
 	CommentDB.Open(c)
 
 	id, _ := CommentDB.CreateUser(models.DataBaseUser{
-		Login: fmt.Sprint(time.Now()),
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_DeleteComment",
 	})
 
 	bid, _ := CommentDB.CreateBoard(models.DataBaseBoard{
@@ -197,7 +197,7 @@ func TestPgxDB_GetCommentById(t *testing.T) {
 	CommentDB.Open(c)
 
 	id, _ := CommentDB.CreateUser(models.DataBaseUser{
-		Login: fmt.Sprint(time.Now()),
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_GetCommentById",
 	})
 
 	bid, _ := CommentDB.CreateBoard(models.DataBaseBoard{
@@ -259,7 +259,7 @@ func TestPgxDB_GetCommentsByPinId(t *testing.T) {
 	CommentDB.Open(c)
 
 	id, _ := CommentDB.CreateUser(models.DataBaseUser{
-		Login: fmt.Sprint(time.Now()),
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_GetCommentByPinId",
 	})
 
 	bid, _ := CommentDB.CreateBoard(models.DataBaseBoard{

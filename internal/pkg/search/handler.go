@@ -4,6 +4,7 @@ import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/comment"
 	"2020_1_Color_noise/internal/pkg/error"
+	"2020_1_Color_noise/internal/pkg/metric"
 	"2020_1_Color_noise/internal/pkg/pin"
 	userService "2020_1_Color_noise/internal/pkg/proto/user"
 	"2020_1_Color_noise/internal/pkg/response"
@@ -29,6 +30,8 @@ func NewHandler(commentUsecase comment.IUsecase, pinUsecase pin.IUsecase, us use
 }
 
 func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
+	metric.Increase()
+
 	reqId:= r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")

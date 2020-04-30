@@ -23,7 +23,7 @@ func TestPgxDB_CreateBoard(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login: fmt.Sprint(time.Now()),
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_CreateBoard",
 	})
 
 	cases := []BoardCase{
@@ -63,7 +63,7 @@ func TestPgxDB_DeleteBoard(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()),
+		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_DeleteBoard",
 	})
 
 	bid, _ := BDB.CreateBoard(models.DataBaseBoard{
@@ -104,7 +104,7 @@ func TestPgxDB_GetBoardById(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()),
+		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_GetBoardById",
 	})
 
 	bid, _ := BDB.CreateBoard(models.DataBaseBoard{
@@ -146,7 +146,7 @@ func TestPgxDB_GetBoardLastPin(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()),
+		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_GetBoardLastPin",
 	})
 
 	bid, _ := BDB.CreateBoard(models.DataBaseBoard{
@@ -192,7 +192,7 @@ func TestPgxDB_UpdateBoard(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()),
+		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_UpdateBoard",
 	})
 
 	bid, _ := BDB.CreateBoard(models.DataBaseBoard{
@@ -234,7 +234,7 @@ func TestPgxDB_GetBoardsByName(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()),
+		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_GetBoardsByName",
 	})
 
 	_, _ = BDB.CreateBoard(models.DataBaseBoard{
@@ -277,7 +277,7 @@ func TestPgxDB_GetBoardsByUserId(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()),
+		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_GetBoardsByUserId",
 	})
 
 	_, _ = BDB.CreateBoard(models.DataBaseBoard{
@@ -322,7 +322,7 @@ func TestPgxDB_GetPinsByBoardID(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()),
+		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_GetPinsByBoardID",
 	})
 
 	bid, _ := BDB.CreateBoard(models.DataBaseBoard{

@@ -116,7 +116,7 @@ func (m *Middleware) AccessLogMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 		metric.Increase()
 		metric.WorkTime(r.Method, r.URL.Path, time.Since(start))
-		
+
 		m.logger.Info(r.URL.Path,
 			zap.String("reqId:", reqId),
 			zap.String("method", r.Method),
