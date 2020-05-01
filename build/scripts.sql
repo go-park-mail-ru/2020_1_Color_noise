@@ -1,8 +1,8 @@
 -- Database: pinterest
 
-DROP DATABASE test;
+DROP DATABASE pinterest;
 
-CREATE DATABASE test
+CREATE DATABASE pinterest
     WITH
     OWNER = postgres
     ENCODING = 'UTF8'
