@@ -99,7 +99,7 @@ const (
 )
 
 const (
-	GetNoti = "SELECT message, from_user_id FROM notifies WHERE user_id = $1 ORDER BY created_at DESC;"
+	GetNoti = "SELECT message, from_user_id FROM notifies WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
 	PutNoti = "INSERT INTO notifies(" +
 		"user_id, message, from_user_id, created_at) VALUES($1, $2, $3, $4) RETURNING id;"
 )
