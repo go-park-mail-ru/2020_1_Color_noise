@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-func (db *PgxDB) GetNotifications(user models.DataBaseUser) ([]*models.Notification, error) {
+func (db *PgxDB) GetNotifications(user models.DataBaseUser, start, limit int) ([]*models.Notification, error) {
 	var res []*models.Notification
 
-	row, err := db.dbPool.Query(GetNoti, user.Id)
+	row, err := db.dbPool.Query(GetNoti, user.Id, limit, start)
 	if err != nil {
 		return nil, err
 	}

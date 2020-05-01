@@ -18,7 +18,7 @@ func NewRepo(d database.DBInterface) *Repository {
 
 func (nr *Repository) GetNotifications(id uint, start int, limit int) ([]*models.Notification, error) {
 	user := models.DataBaseUser{Id: id}
-	nts, err := nr.db.GetNotifications(user)
+	nts, err := nr.db.GetNotifications(user, start, limit)
 	if err != nil {
 		return nil, fmt.Errorf("no notifications")
 	}

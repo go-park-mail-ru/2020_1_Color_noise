@@ -60,7 +60,7 @@ type DBInterface interface {
 	GetMainFeed(user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
 	GetRecFeed(user models.DataBaseUser, start, limit int) ([]*models.Pin, error)
 
-	GetNotifications(user models.DataBaseUser) ([]*models.Notification, error)
+	GetNotifications(user models.DataBaseUser, start, limit int) ([]*models.Notification, error)
 	PutNotifications(cm models.DataBaseComment) (uint, error)
 
 	AddMessage(send, rec int, mess string) (*models.Message, error)
