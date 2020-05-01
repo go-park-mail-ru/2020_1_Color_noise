@@ -13,12 +13,11 @@ services:
         source: ../storage
         target: /storage
 
-    network_mode: host
-    #ports:
-     # - 8000:8000
 
-    #depends_on:
-     # - database
+    depends_on:
+      - database
+      - auth
+      - user
 
   auth:
 
@@ -30,13 +29,8 @@ services:
       - type: bind
         source: ../storage
         target: /storage
-
-    network_mode: host
-      #ports:
-      # - 8000:8000
-
-      #depends_on:
-    #- database
+    depends_on:
+      - database
 
   chat:
 
@@ -44,12 +38,9 @@ services:
       context: .
       dockerfile: ./build/chat.Dockerfile
 
-    network_mode: host
-    #ports:
-     # - 8000:8000
-
-      #depends_on:
-    #- database
+    depends_on:
+      - database
+      - auth
 
   user:
 
@@ -57,31 +48,22 @@ services:
       context: .
       dockerfile: ./build/user.Dockerfile
 
-    network_mode: host
-    #ports:
-    # - 8000:8000
-
-      #depends_on:
-    #- database
+    depends_on:
+      - database
 
 
   database:
 
-    network_mode: host
     build:
       context: .
       dockerfile: ./build/db.Dockerfile
 
-    ports:
-      - 5432:5432
-
   nginx:
     image: nginx:1.15.3
 
-    #links:
-    #  - main:main
-    #  - chat:chat
-    network_mode: host
+    links:
+      - main:main
+      - chat:chat
 
     volumes:
       - ./nginx:/etc/nginx/conf.d
@@ -103,7 +85,7 @@ services:
       - '--web.console.templates=/usr/share/prometheus/consoles'
     ports:
       - 9090:9090
-    network_mode: host
+
     restart: always
 
   grafana:
@@ -113,4 +95,4 @@ services:
     ports:
       - 3000:3000
     restart: always
-    network_mode: host
+

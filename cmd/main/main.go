@@ -61,7 +61,7 @@ func main() {
 	}
 
 	grcpSessConn, err := grpc.Dial(
-		"127.0.0.1:8003",
+		"auth:8000",
 		grpc.WithInsecure(),
 	)
 	if err != nil {
@@ -72,7 +72,7 @@ func main() {
 	sessManager := session.NewAuthSeviceClient(grcpSessConn)
 
 	grcpUserConn, err := grpc.Dial(
-		"127.0.0.1:8004",
+		"user:8000",
 		grpc.WithInsecure(),
 	)
 	if err != nil {
@@ -171,7 +171,7 @@ func main() {
 
 	srv := &http.Server{
 		Handler: r,
-		Addr:    ":8001",
+		Addr:    ":8000",
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,

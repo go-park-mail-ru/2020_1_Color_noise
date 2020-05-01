@@ -30,7 +30,7 @@ func main() {
 	sessionDelivery := sessionDeliveryGRPC.NewSessionManager(sessionUse)
 
 
-	lis, err := net.Listen("tcp", ":8003")
+	lis, err := net.Listen("tcp", ":8000")
 	if err != nil {
 		log.Fatalln("cant listet port", err)
 	}
@@ -39,6 +39,6 @@ func main() {
 
 	session.RegisterAuthSeviceServer(server, sessionDelivery )
 
-	fmt.Println("starting server at :8003")
+	fmt.Println("starting server at :8000")
 	server.Serve(lis)
 }

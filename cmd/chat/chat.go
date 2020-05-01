@@ -34,7 +34,7 @@ func main() {
 	}
 
 	grcpSessionConn, err := grpc.Dial(
-		"127.0.0.1:8003",
+		"auth:8000",
 		grpc.WithInsecure(),
 	)
 	if err != nil {
@@ -81,7 +81,7 @@ func main() {
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}*/
-	err = http.ListenAndServe("127.0.0.1:8002", r)
+	err = http.ListenAndServe(":8000", r)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
