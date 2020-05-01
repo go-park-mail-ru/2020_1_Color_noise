@@ -29,6 +29,18 @@ const(
 
 type ErrorType uint
 
+var array = [...]ErrorType{NoType, BadRequest, PinNotFound, BoardNotFound, UserNotFound, CommentNotFound,
+	BadLogin, BadPassword, BadEmail, FollowingIsAlreadyDone, FollowingIsNotYetDone, LoginIsExist,
+	EmailIsExist, Unauthorized, TooMuchSize, SearchNotFound}
+
+func Cast(d int) ErrorType {
+	if d >= len(array) || d < 0 {
+		return NoType
+	}
+
+	return array[d]
+}
+
 type Error struct {
 	errorType ErrorType
 	originalError error
@@ -103,15 +115,14 @@ func WithMessage(err error, message string) error {
 	return Error{errorType: NoType, originalError: err, message: message}
 }
 
-func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interface{}, err error) {
+func ErrorHandler(w http.ResponseWriter, r *http.Request, logger *zap.SugaredLogger, reqId interface{}, err error) {
 	var status int
 	var message string
 
-	e, _ := err.(Error)
 	switch GetType(err) {
 	case BadRequest:
 		status = http.StatusBadRequest
-		message = e.message
+		message = "Bad request"
 	case SearchNotFound:
 		status = http.StatusNotFound
 		message = "Not found"
@@ -153,12 +164,10 @@ func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interf
 		message = "Internal server error"
 	}
 
-	/*logger.Error(
+	logger.Error(
 		zap.String("reqId:", fmt.Sprintf("%v", reqId)),
 		zap.String("error:", err.Error()),
 	)
-	 */
-
 
 	response.Respond(w, status, map[string]string {
 		"error": message,

@@ -30,7 +30,6 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 		ctx := r.Context()
 
 		cookie, err := r.Cookie("session_id")
-		 fmt.Println("cookie ", cookie)
 		if err != nil {
 			ctx = context.WithValue(ctx, "IsAuth", false)
 		} else {
@@ -88,7 +87,8 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 
 			}
 		}
-		next.ServeHTTP(w, r.WithContext(ctx))
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r)
 	})
 }
 
@@ -113,7 +113,7 @@ func (m *Middleware) AccessLogMiddleware(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, "ReqId", reqId)
 
 		start := time.Now()
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(ctx))
 		metric.Increase()
 		metric.WorkTime(r.Method, r.URL.Path, time.Since(start))
 

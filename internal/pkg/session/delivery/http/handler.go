@@ -43,48 +43,56 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during login"), "Wrong body of request")
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 /*
 	user, err := sh.as.GetByLogin(input.Login)
 	if err != nil {
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	if err = sh.userUsecase.ComparePassword(user, input.Password); err != nil {
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	session, err := sh.sessionUsecase.Create(user.Id)
 	if err != nil {
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
  */
-	user, err := sh.us.GetByLogin(r.Context(), &userService.Login{Login:input.Login})
+	u, err := sh.us.GetByLogin(r.Context(), &userService.Login{Login:input.Login})
 	if err != nil {
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		e := error.NoType
+		if u != nil {
+			e = error.Cast(int(u.Error))
+		}
+		error.ErrorHandler(w, r, sh.logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	sess, err := sh.as.Login(r.Context(), &authService.SignIn{
 		User: &authService.User{
-			Id:            user.Id,
-			Email:         user.Email,
-			Login:         user.Login,
-			EncryptedPassword: user.EncryptedPassword,
-			About:         user.About,
-			Avatar:        user.Avatar,
-			Subscribers:   user.Subscribers,
-			Subscriptions: user.Subscriptions,
+			Id:            u.Id,
+			Email:         u.Email,
+			Login:         u.Login,
+			EncryptedPassword: u.EncryptedPassword,
+			About:         u.About,
+			Avatar:        u.Avatar,
+			Subscribers:   u.Subscribers,
+			Subscriptions: u.Subscriptions,
 		},
 		Password: input.Password,
 		})
 	if err != nil {
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		e := error.NoType
+		if sess != nil {
+			e = error.Cast(int(sess.Error))
+		}
+		error.ErrorHandler(w, r, sh.logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -108,13 +116,13 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 
 	resp := models.ResponseUser{
-		Id:            uint(user.Id),
-		Email:         user.Email,
-		Login:         user.Login,
-		About:         user.About,
-		Avatar:        user.Avatar,
-		Subscribers:   int(user.Subscribers),
-		Subscriptions: int(user.Subscriptions),
+		Id:            uint(u.Id),
+		Email:         u.Email,
+		Login:         u.Login,
+		About:         u.About,
+		Avatar:        u.Avatar,
+		Subscribers:   int(u.Subscribers),
+		Subscriptions: int(u.Subscriptions),
 	}
 
 	response.Respond(w, http.StatusOK, resp)
@@ -127,30 +135,31 @@ func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Logout session: user is unauthorized")
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
 		err := error.Wrap(err, "Received bad cookie from context")
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 /*
 	token, err := r.Cookie("token")
 	if err != nil {
 		err := error.Wrap(err,"Received bad token from context")
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 	*/
 
-	_, err = sh.as.Delete(r.Context(), &authService.Cookie{
+	nothing, err := sh.as.Delete(r.Context(), &authService.Cookie{
 		Cookie: cookie.Value,
 	})
 	if err != nil {
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		e := error.Cast(int(nothing.Error))
+		error.ErrorHandler(w, r, sh.logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 

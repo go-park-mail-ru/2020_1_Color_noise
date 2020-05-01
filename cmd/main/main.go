@@ -55,9 +55,6 @@ func main() {
 		panic(err)
 	}
 
-	c.User = "postgres"
-	c.Password = "password"
-
 	db := database.NewPgxDB()
 	if err := db.Open(c); err != nil {
 		panic(err)
