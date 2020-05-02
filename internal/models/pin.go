@@ -45,7 +45,7 @@ type ResponsePin struct {
 	UserId      uint   `json:"user_id,omitempty"`
 	BoardId     uint   `json:"board_id,omitempty"`
 	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
+	Description string `json:"description"`
 	Image       string `json:"image,omitempty"`
 }
 

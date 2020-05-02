@@ -32,7 +32,7 @@ type ResponseBoard struct {
 	Id          uint           `json:"id"`
 	UserId      uint           `json:"user_id,omitempty"`
 	Name        string         `json:"name,omitempty"`
-	Description string         `json:"description,omitempty"`
+	Description string         `json:"description"`
 	Pins        []*ResponsePin `json:"pins,omitempty"`
 	LastPin		*ResponsePin   `json:"last_pin,omitempty"`
 }

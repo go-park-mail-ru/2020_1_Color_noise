@@ -48,6 +48,11 @@ services:
       context: .
       dockerfile: ./build/user.Dockerfile
 
+    volumes:
+      - type: bind
+        source: ../storage
+        target: /storage
+
     depends_on:
       - database
 
