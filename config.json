@@ -9,7 +9,7 @@
   "test": {
     "host":     "database",
     "port":      5432,
-    "database": "test",
+    "database": "pinterest",
     "user":     "postgres",
     "password": "password"
   }
