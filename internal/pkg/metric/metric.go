@@ -11,29 +11,41 @@ var (
 		Help: "Number of all hits.",
 	})
 
-	rps = prometheus.NewCounterVec(prometheus.CounterOpts{
-		Name: "rpc",
-	}, []string{"status", "path"})
+	er = prometheus.NewCounter(prometheus.CounterOpts{
+		Name: "errors_hits",
+		Help: "Number of all errors.",
+	})
 
-	rpss = prometheus.NewSummaryVec(prometheus.SummaryOpts{
-		Name: "rps_summary",
-	}, []string{"status", "path"})
+	rps = prometheus.NewSummaryVec(prometheus.SummaryOpts{
+		Name: "work_time",
+	}, []string{"method", "path"})
+
+	errors = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "errors_vector",
+	}, []string{"status_code", "path"})
 
 )
 
 func Register()  {
 	prometheus.MustRegister(hits)
 	prometheus.MustRegister(rps)
+	prometheus.MustRegister(er)
+
+	prometheus.MustRegister(errors)
 }
 
 func Increase()  {
 	hits.Add(1)
 }
 
-func IncreaseRps(status, path string)  {
-	rps.WithLabelValues(status, path).Add(1)
+func IncreaseError()  {
+	er.Add(1)
 }
 
 func WorkTime(method, path string, time time.Duration)  {
-	rpss.WithLabelValues(method, path).Observe(float64(time))
+	rps.WithLabelValues(method, path).Observe(float64(time))
+}
+
+func Errors(st, path string)  {
+	errors.WithLabelValues(st, path).Inc()
 }

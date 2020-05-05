@@ -1,6 +1,7 @@
 package error
 
 import (
+	"2020_1_Color_noise/internal/pkg/metric"
 	"2020_1_Color_noise/internal/pkg/response"
 	"fmt"
 	"github.com/pkg/errors"
@@ -107,6 +108,8 @@ func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interf
 	var status int
 	var message string
 
+	metric.IncreaseError()
+	
 	e, _ := err.(Error)
 	switch GetType(err) {
 	case BadRequest:
@@ -158,7 +161,6 @@ func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interf
 		zap.String("error:", err.Error()),
 	)
 	 */
-
 
 	response.Respond(w, status, map[string]string {
 		"error": message,
