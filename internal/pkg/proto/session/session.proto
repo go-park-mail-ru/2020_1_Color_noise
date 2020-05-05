@@ -10,6 +10,7 @@ message Session {
   string Token = 3;
   google.protobuf.Timestamp CreatedAt = 4;
   google.protobuf.Timestamp DeletingAt = 5;
+  int32 Error = 6;
 }
 
 message User {
@@ -43,7 +44,7 @@ message UserSession {
 }
 
 message Nothing {
-  bool error = 1;
+  int32 Error = 1;
 }
 
 // grpc-сервис проверки авторизации

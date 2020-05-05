@@ -47,7 +47,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation user"), "Wrong body of request")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -57,13 +57,21 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		Password: input.Password,
 	})
 	if err != nil {
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		e := error.NoType
+		if u != nil {
+			e = error.Cast(int(u.Error))
+		}
+		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	sess, err := ud.as.Create(r.Context(), &authService.UserID{Id: int64(u.Id)})
 	if err != nil {
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		e := error.NoType
+		if sess != nil {
+			e = error.Cast(int(sess.Error))
+		}
+		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -103,20 +111,24 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get user: user is unauthorized")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf( err,"request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf( err,"request id: %s", reqId) )
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	us, err := ud.us.GetById(r.Context(), &userService.UserID{Id: int64(id)})
 	if err != nil {
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		e := error.NoType
+		if us != nil {
+			e = error.Cast(int(us.Error))
+		}
+		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -140,7 +152,7 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get other user: user is unauthorized")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -148,13 +160,17 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting user"), "Bad id")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	us, err := ud.us.GetById(r.Context(), &userService.UserID{Id: int64(id)})
 	if err != nil {
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		e := error.NoType
+		if us != nil {
+			e = error.Cast(int(us.Error))
+		}
+		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -177,14 +193,14 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Update user: user is unauthorized")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -193,18 +209,22 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating profile user"), "Wrong body of request")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
-	_, err = ud.us.UpdateProfile(r.Context(), &userService.Profile{
+	nothing, err := ud.us.UpdateProfile(r.Context(), &userService.Profile{
 		Id: &userService.UserID{Id: int64(id)},
 		Input: &userService.UpdateProfileInput{Login: input.Login,
 			Email: input.Email,
 			},
 	})
 	if err != nil {
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		e := error.NoType
+		if nothing != nil {
+			e = error.Cast(int(nothing.Error))
+		}
+		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -220,14 +240,14 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Update description of user: user is unauthorized")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -236,16 +256,20 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating description user"), "Wrong body of request")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
-	_, err = ud.us.UpdateDescription(r.Context(), &userService.Description{
+	nothing, err := ud.us.UpdateDescription(r.Context(), &userService.Description{
 		Id: &userService.UserID{Id: int64(id)},
 		Description: input.Description,
 			})
 	if err != nil {
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		e := error.NoType
+		if nothing != nil {
+			e = error.Cast(int(nothing.Error))
+		}
+		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -261,14 +285,14 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Update password of user: user is unauthorized")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -277,16 +301,20 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during updating password user"), "Wrong body of request")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
-	_, err = ud.us.UpdatePassword(r.Context(), &userService.Password{
+	nothing, err := ud.us.UpdatePassword(r.Context(), &userService.Password{
 		Id: &userService.UserID{Id: int64(id)},
 		Password: input.Password,
 	})
 	if err != nil {
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		e := error.NoType
+		if nothing != nil {
+			e = error.Cast(int(nothing.Error))
+		}
+		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -302,28 +330,28 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Upload avatar of user: user is unauthorized")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	err := r.ParseMultipartForm(5 * 1024 * 1025)
 	if err != nil {
 		err := error.Wrap(err, "Decoding error during updating password")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	file, _, err := r.FormFile("image")
 	if err != nil {
 		err := error.Wrap(err, "Reading image from form error")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -331,7 +359,7 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 	_, err = io.Copy(buffer, file)
 	if err != nil {
 		err := error.Wrap(err, "Coping byte form error")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -340,7 +368,11 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 		Avatar: buffer.Bytes(),
 	})
 	if err != nil {
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		e := error.NoType
+		if address != nil {
+			e = error.Cast(int(address.Error))
+		}
+		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -357,14 +389,14 @@ func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Following user: user is unauthorized")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -372,23 +404,27 @@ func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
 	subId, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during following"), "Bad id")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	if id == uint(subId) {
 		err = error.WithMessage(error.BadRequest.New("Bad id in during following user"),
 			"Your id and following id shoudn't match")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
-	_, err = ud.us.Follow(r.Context(), &userService.Following{
+	nothing, err := ud.us.Follow(r.Context(), &userService.Following{
 		Id: &userService.UserID{Id: int64(id)},
 		SubId: &userService.UserID{Id: int64(subId)},
 			})
 	if err != nil {
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		e := error.NoType
+		if nothing != nil {
+			e = error.Cast(int(nothing.Error))
+		}
+		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -403,14 +439,14 @@ func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Unfollowing  user: user is unauthorized")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -418,21 +454,29 @@ func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
 	subId, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during unfollowing"), "Bad id")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
 	if id == uint(subId) {
 		err = error.WithMessage(error.BadRequest.New("Bad id in during unfollowing user"),
 			"Your id and unfollowing id shoudn't match")
-		error.ErrorHandler(w, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
-	_, err = ud.us.Unfollow(r.Context(), &userService.Following{
+	nothing, err := ud.us.Unfollow(r.Context(), &userService.Following{
 		Id: &userService.UserID{Id: int64(id)},
 		SubId: &userService.UserID{Id: int64(subId)},
 	})
+	if err != nil {
+		e := error.NoType
+		if nothing != nil {
+			e = error.Cast(int(nothing.Error))
+		}
+		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		return
+	}
 
 	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
@@ -446,7 +490,7 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get subscribers of user: user is unauthorized")
-		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -454,7 +498,7 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting subscribers for user"), "Bad id")
-		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -471,7 +515,11 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 		Limit: int64(limit),
 	})
 	if err != nil {
-		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		e := error.NoType
+		if users != nil {
+			e = error.Cast(int(users.Error))
+		}
+		error.ErrorHandler(w, r, uh.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -498,7 +546,7 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get subscribtions of user: user is unauthorized")
-		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -506,7 +554,7 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting subscribtions for user"), "Bad id")
-		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 
@@ -523,7 +571,11 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 		Limit: int64(limit),
 	})
 	if err != nil {
-		error.ErrorHandler(w, uh.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		e := error.NoType
+		if users != nil {
+			e = error.Cast(int(users.Error))
+		}
+		error.ErrorHandler(w, r, uh.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
 

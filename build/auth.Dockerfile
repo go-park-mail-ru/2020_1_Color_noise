@@ -20,4 +20,4 @@ WORKDIR /app
 COPY --from=builder app/auth .
 COPY --from=builder app/config.json .
 
-CMD sleep 10 && ./auth
+CMD sleep 15 && ./auth

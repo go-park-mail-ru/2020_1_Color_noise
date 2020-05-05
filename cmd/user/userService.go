@@ -30,7 +30,7 @@ func main() {
 	userDelivery := userDeliveryGRPC.NewUserService(userUse)
 
 
-	lis, err := net.Listen("tcp", ":8004")
+	lis, err := net.Listen("tcp", ":8000")
 	if err != nil {
 		log.Fatalln("cant listet port", err)
 	}
@@ -39,6 +39,6 @@ func main() {
 
 	user.RegisterUserServiceServer(server, userDelivery)
 
-	fmt.Println("starting server at :8003")
+	fmt.Println("starting server at :8000")
 	server.Serve(lis)
 }

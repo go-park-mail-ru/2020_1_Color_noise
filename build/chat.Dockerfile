@@ -20,4 +20,4 @@ WORKDIR /app
 COPY --from=builder app/main_chat .
 COPY --from=builder app/config.json .
 
-CMD sleep 10 && ./main_chat
+CMD sleep 15 && ./main_chat

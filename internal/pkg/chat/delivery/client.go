@@ -154,14 +154,14 @@ func ServeWs(hub *Hub, logger  *zap.SugaredLogger, usecase chat.IUsecase, w http
 	if isAuth != true {
 		//log.Println("User is unauthorized, reqId: ", reqId)
 		err := e.Unauthorized.New("Chatting: user is unauthorized")
-		e.ErrorHandler(w, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
+		e.ErrorHandler(w, r, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := e.NoType.New("Received bad id from context")
-		e.ErrorHandler(w, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
+		e.ErrorHandler(w, r, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -170,7 +170,7 @@ func ServeWs(hub *Hub, logger  *zap.SugaredLogger, usecase chat.IUsecase, w http
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		err := e.NoType.New("Check origin error, chat")
-		e.ErrorHandler(w, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
+		e.ErrorHandler(w, r, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 

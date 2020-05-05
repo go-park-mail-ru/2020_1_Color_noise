@@ -21,7 +21,7 @@ func NewSessionManager(usecase session.IUsecase) *SessionManager {
 func (sm *SessionManager) Create(ctx context.Context, in *authService.UserID) (*authService.Session, error) {
 	s, err := sm.usecase.Create(uint(in.Id))
 	if err != nil {
-		return &authService.Session{}, Wrapf(err, "GRPC create: Creating session error, id: %d", in.Id)
+		return &authService.Session{Error: int32(GetType(err))}, Wrapf(err, "GRPC create: Creating session error, id: %d", in.Id)
 	}
 
 	sess := &authService.Session{
@@ -36,7 +36,7 @@ func (sm *SessionManager) Create(ctx context.Context, in *authService.UserID) (*
 func (sm *SessionManager) GetByCookie(ctx context.Context, in *authService.Cookie) (*authService.Session, error) {
 	s, err := sm.usecase.GetByCookie(in.Cookie)
 	if err != nil {
-		return &authService.Session{}, Wrap(err, "GPRC GetByCoolie: Getting session error")
+		return &authService.Session{Error: int32(GetType(err))}, Wrap(err, "GPRC GetByCoolie: Getting session error")
 	}
 
 	sess := &authService.Session{
@@ -57,19 +57,19 @@ func (sm *SessionManager) Update(ctx context.Context, in *authService.Session) (
 
 	err := sm.usecase.Update(sess)
 	if err != nil {
-		return &authService.Nothing{Error: true}, Wrap(err, "GPRC Update: Updating session error")
+		return &authService.Nothing{Error: int32(GetType(err))}, Wrap(err, "GPRC Update: Updating session error")
 	}
 
-	return &authService.Nothing{Error: false}, nil
+	return &authService.Nothing{}, nil
 }
 
 func (sm *SessionManager) Delete(ctx context.Context, in *authService.Cookie) (*authService.Nothing, error) {
 	err := sm.usecase.Delete(in.Cookie)
 	if err != nil {
-		return &authService.Nothing{Error: true}, Wrap(err, "GPRC Delete: Deleting session error")
+		return &authService.Nothing{Error: int32(GetType(err))}, Wrap(err, "GPRC Delete: Deleting session error")
 	}
 
-	return &authService.Nothing{Error: false}, nil
+	return &authService.Nothing{}, nil
 }
 
 func (sm *SessionManager) Login(ctx context.Context, in *authService.SignIn) (*authService.Session, error) {
@@ -86,7 +86,7 @@ func (sm *SessionManager) Login(ctx context.Context, in *authService.SignIn) (*a
 
 	s, err := sm.usecase.Login(us, in.Password)
 	if err != nil {
-		return &authService.Session{}, Wrapf(err, "GRPC Login: Login error",)
+		return &authService.Session{Error: int32(GetType(err))}, Wrapf(err, "GRPC Login: Login error",)
 	}
 
 

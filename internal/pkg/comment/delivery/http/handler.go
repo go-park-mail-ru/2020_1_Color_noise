@@ -31,14 +31,14 @@ func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Create comment: user is unauthorized")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -47,7 +47,7 @@ func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation comment"), "Wrong body of request")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -55,13 +55,13 @@ func (ch *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
 			"Text shouldn't be empty and longer 2000 characters.")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, err := ch.commentUsecase.Create(input, userId)
 	if err != nil {
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -78,7 +78,7 @@ func (ch *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get comment: user is unauthorized")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -86,13 +86,13 @@ func (ch *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting a comment"), "Bad id")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	comment, err := ch.commentUsecase.GetById(uint(id))
 	if err != nil {
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -113,7 +113,7 @@ func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Fetch comment: user is unauthorized")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -121,7 +121,7 @@ func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	pinId, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id when in during getting comments for pin"), "Bad id")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -134,7 +134,7 @@ func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 
 	comments, err := ch.commentUsecase.GetByPinId(uint(pinId), start, limit)
 	if err != nil {
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 

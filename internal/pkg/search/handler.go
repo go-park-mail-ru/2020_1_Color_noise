@@ -37,7 +37,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Search: user is unauthorized")
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -55,7 +55,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		comments, err := sh.commentUsecase.GetByText(description, start, limit)
 		if err != nil {
 			err = error.Wrap(err, "Error searching comments")
-			error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+			error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 			return
 		}
 
@@ -76,7 +76,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		pins, err := sh.pinUsecase.GetByName(description, start, limit)
 		if err != nil {
 			err = error.Wrap(err, "Error searching pins")
-			error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+			error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 			return
 		}
 
@@ -102,7 +102,8 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 			})
 		if err != nil {
 			err = error.Wrap(err, "Error searching users")
-			error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+			e := error.Cast(int(users.Error))
+			error.ErrorHandler(w, r, sh.logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 			return
 		}
 
@@ -122,6 +123,6 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	default:
 		err = error.WithMessage(error.SearchNotFound.New( "Bad id when in during searching"), "Bad parametrs")
-		error.ErrorHandler(w, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 	}
 }

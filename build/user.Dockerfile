@@ -20,4 +20,4 @@ WORKDIR /app
 COPY --from=builder app/userService .
 COPY --from=builder app/config.json .
 
-CMD sleep 10 && ./userService
+CMD sleep 15 && ./userService
