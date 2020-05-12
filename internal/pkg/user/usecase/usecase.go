@@ -154,7 +154,9 @@ func (uu *UserUsecase) Delete(id uint) error {
 
 func (uu *UserUsecase) Follow(id uint, subId uint) error {
 	if err := uu.repo.Follow(id, subId); err != nil {
-		return Wrap(err, "Following error")
+		err = WithMessage(FollowingIsAlreadyDone.Wrap(err, "You are following this user"),
+			"You are following this user")
+		return err
 	}
 
 	return nil
@@ -162,7 +164,9 @@ func (uu *UserUsecase) Follow(id uint, subId uint) error {
 
 func (uu *UserUsecase) Unfollow(id uint, subId uint) error {
 	if err := uu.repo.Unfollow(id, subId); err != nil {
-		return Wrap(err, "Unfollowing error")
+		err = WithMessage(FollowingIsNotYetDone.Wrap(err, "You are not following this user"),
+			"You are not following this user")
+		return err
 	}
 
 	return nil
