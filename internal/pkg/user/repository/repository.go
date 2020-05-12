@@ -175,40 +175,42 @@ func (ur *Repository) Delete(id uint) error {
 func (ur *Repository) Follow(id uint, subId uint) error {
 	_, err := ur.GetByID(id)
 	if err != nil {
-		return err
+		return UserNotFound.Newf("User not found, id: %d", id)
 	}
 
 	_, err = ur.GetByID(subId)
 	if err != nil {
-		return err
+		return UserNotFound.Newf("User not found, id: %d", id)
 	}
 
 	err = ur.bd.Follow(id, subId)
 	if err != nil {
-		return err
+		return FollowingIsAlreadyDone.New("Following is already done")
 	}
 
 	//TODO: обновить
+
 	return nil
 }
 
 func (ur *Repository) Unfollow(id uint, subId uint) error {
 	_, err := ur.GetByID(id)
 	if err != nil {
-		return err
+		return UserNotFound.Newf("User not found, id: %d", id)
 	}
 
 	_, err = ur.GetByID(subId)
 	if err != nil {
-		return err
+		return UserNotFound.Newf("User not found, id: %d", id)
 	}
 
 	err = ur.bd.Unfollow(id, subId)
 	if err != nil {
-		return err
+		return FollowingIsNotYetDone.New("Following is not yet done")
 
 	}
 	//TODO: обновить
+
 	return nil
 
 }
