@@ -48,6 +48,10 @@ const (
 	UserSubscriptions = "SELECT COUNT(user_id) FROM subscriptions WHERE subscribed_at = $1"
 	Follow            = "INSERT INTO subscriptions( user_id, subscribed_at) VALUES ($1, $2) RETURNING id;"
 	Unfollow          = "DELETE FROM public.subscriptions WHERE user_id = $1 AND subscribed_at = $2 RETURNING 0;"
+	UpdateUnfollowA = "UPDATE users SET subscriptions = subscriptions - 1 WHERE id = $1 RETURNING 0;"
+	UpdateFollowA = "UPDATE users SET subscriptions = subscriptions + 1 WHERE id = $1 RETURNING 0;"
+	UpdateUnfollowB = "UPDATE users SET subscribers = subscribers - 1 WHERE id = $1 RETURNING 0;"
+	UpdateFollowB = "UPDATE users SET subscribers = subscribers + 1 WHERE id =  $1 RETURNING 0;"
 )
 
 const (
