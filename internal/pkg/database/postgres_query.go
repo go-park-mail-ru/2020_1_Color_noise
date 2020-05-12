@@ -47,7 +47,7 @@ const (
 	UserSubscribed    = "SELECT COUNT(subscribed_at) FROM subscriptions WHERE user_id = $1"
 	UserSubscriptions = "SELECT COUNT(user_id) FROM subscriptions WHERE subscribed_at = $1"
 	Follow            = "INSERT INTO subscriptions( user_id, subscribed_at) VALUES ($1, $2) RETURNING id;"
-	Unfollow          = "DELETE FROM public.subscriptions WHERE user_id = $1 AND subscribed_at = $2 RETURNING 0;"
+	Unfollow          = "DELETE FROM subscriptions WHERE user_id = $1 AND subscribed_at = $2 RETURNING 0;"
 	UpdateUnfollowA = "UPDATE users SET subscriptions = subscriptions - 1 WHERE id = $1 RETURNING 0;"
 	UpdateFollowA = "UPDATE users SET subscriptions = subscriptions + 1 WHERE id = $1 RETURNING 0;"
 	UpdateUnfollowB = "UPDATE users SET subscribers = subscribers - 1 WHERE id = $1 RETURNING 0;"
@@ -74,7 +74,7 @@ const (
 		"WHERE id = $3"
 	DeleteBoard        = "DELETE FROM boards WHERE id = $1"
 	BoardById          = "SELECT * FROM boards WHERE id = $1"
-	BoardsByUserId     = "SELECT * FROM boards WHERE user_id = $1 LIMIT $2 OFFSET $3"
+	BoardsByUserId     = "SELECT * FROM boards WHERE user_id = $1 LIMIT $2 OFFSET $3 ORDER BY id ASC"
 	BoardsByNameSearch = "SELECT * FROM boards WHERE name = $1 LIMIT $2 OFFSET $3"
 	LastPin            = "SELECT id, user_id, name, description, image, board_id, created_at " +
 		"FROM pins WHERE board_id = $1 ORDER BY created_at DESC LIMIT 1;"
