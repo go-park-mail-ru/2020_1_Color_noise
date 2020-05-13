@@ -86,7 +86,7 @@ const (
 	BoardsByUserId     = "SELECT * FROM boards WHERE user_id = $1 LIMIT $2 OFFSET $3 ORDER BY id ASC"
 	BoardsByNameSearch = "SELECT * FROM boards WHERE name = $1 LIMIT $2 OFFSET $3"
 	LastPin            = "SELECT id, user_id, name, description, image, board_id, created_at " +
-		"FROM pins WHERE board_id = $1 ORDER BY created_at DESC LIMIT 1;"
+		"FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id WHERE board_id = $1 ORDER BY created_at DESC LIMIT 1;"
 )
 
 const (
@@ -105,9 +105,13 @@ const (
 
 const (
 	Feed = "SELECT pins.id, pins.user_id, name, description, image, board_id, created_at " +
-		" FROM subscriptions JOIN pins ON subscriptions.subscribed_at = pins.user_id" +
+		" FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		" WHERE original = true " +
+		" JOIN subscriptions ON subscriptions.subscribed_at = pins.user_id" +
 		" WHERE subscriptions.user_id = $1  ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
-	Main           = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1  OFFSET $2;"
+	Main  = "SELECT id, user_id, name, description, image, board_id, created_at " +
+		"FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		"WHERE original = true ORDER BY created_at DESC LIMIT $1  OFFSET $2;"
 	Recommendation = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1 OFFSET $2;"
 )
 
