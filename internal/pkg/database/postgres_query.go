@@ -5,21 +5,21 @@ const (
 		"VALUES($1, $2, $3, $4, $5) RETURNING id"
 	InsertBoardsPin = "INSERT INTO boards_pins(image_id, board_id, original) VALUES ($1, $2, $3) RETURNING 0;"
 	UpdatePin       = "UPDATE pins SET " +
-		"name = $1, description = $2, board_id = $3 " +
-		"WHERE id = $4"
+		" name = $1, description = $2, board_id = $3 " +
+		" WHERE id = $4"
 	DeletePin = "DELETE from pins WHERE id = $1 CASCADE;"
 	PinById   = "SELECT id, user_id, name, description, image, board_id, created_at " +
-		"FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
-		"WHERE original = true AND id = $1"
+		" FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		" WHERE original = true AND id = $1"
 	PinByUser = "SELECT id, user_id, name, description, image, board_id, created_at " +
-		"FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
-		"WHERE original = true AND user_id = $1"
+		" FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		" WHERE original = true AND user_id = $1"
 	PinByName = "SELECT id, user_id, name, description, image, board_id, created_at " +
-		"FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
-		"WHERE original = true AND  LOWER(name) = LOWER($1);"
+		" FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		" WHERE original = true AND  LOWER(name) = LOWER($1);"
 	PinByBoard = "SELECT id, user_id, name, description, image, board_id, created_at " +
-		"FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
-		"WHERE original = true AND  board_id = $1"
+		" FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		" WHERE original = true AND  board_id = $1"
 )
 
 const (
@@ -77,21 +77,21 @@ const (
 
 const (
 	InsertBoard = "INSERT INTO boards(user_id, name, description, created_at) " +
-		"VALUES($1, $2, $3, $4) RETURNING id"
+		" VALUES($1, $2, $3, $4) RETURNING id"
 	UpdateBoard = "UPDATE boards SET " +
-		"name = $1, description = $2 " +
-		"WHERE id = $3"
+		" name = $1, description = $2 " +
+		" WHERE id = $3"
 	DeleteBoard        = "DELETE FROM boards WHERE id = $1"
 	BoardById          = "SELECT * FROM boards WHERE id = $1"
 	BoardsByUserId     = "SELECT * FROM boards WHERE user_id = $1 LIMIT $2 OFFSET $3 ORDER BY id ASC"
 	BoardsByNameSearch = "SELECT * FROM boards WHERE name = $1 LIMIT $2 OFFSET $3"
 	LastPin            = "SELECT id, user_id, name, description, image, board_id, created_at " +
-		"FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id WHERE board_id = $1 ORDER BY created_at DESC LIMIT 1;"
+		" FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id WHERE board_id = $1 ORDER BY created_at DESC LIMIT 1;"
 )
 
 const (
 	InsertSession = "INSERT INTO sessions(" +
-		"id, cookie, token, created_at, deleting_at)" +
+		" id, cookie, token, created_at, deleting_at)" +
 		" VALUES ($1, $2, $3, $4, $5) RETURNING 0;"
 
 	UpdateSession = "UPDATE sessions" +
@@ -106,13 +106,14 @@ const (
 const (
 	Feed = "SELECT pins.id, pins.user_id, name, description, image, board_id, created_at " +
 		" FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
-		" WHERE original = true " +
 		" JOIN subscriptions ON subscriptions.subscribed_at = pins.user_id" +
-		" WHERE subscriptions.user_id = $1  ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
+		" WHERE subscriptions.user_id = $1  AND original = true ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
 	Main  = "SELECT id, user_id, name, description, image, board_id, created_at " +
-		"FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
-		"WHERE original = true ORDER BY created_at DESC LIMIT $1  OFFSET $2;"
-	Recommendation = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1 OFFSET $2;"
+		" FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		" WHERE original = true ORDER BY created_at DESC LIMIT $1  OFFSET $2;"
+	Recommendation = "SELECT id, user_id, name, description, image, board_id, created_at " +
+		" FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		" WHERE original = true ORDER BY created_at DESC LIMIT $1  OFFSET $2;"
 )
 
 const (
