@@ -252,3 +252,39 @@ func (ph *Handler) DeletePin(w http.ResponseWriter, r *http.Request) {
 		"message": "Ok",
 	})
 }
+
+func (ph *Handler) Save(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Save pin: user is unauthorized")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	userId, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	vars := mux.Vars(r)
+	pinId, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during saving a pin"), "Bad id")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	err = ph.pinUsecase.Save(pinId, userId)
+	if err != nil {
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	response.Respond(w, http.StatusCreated, map[string]string{
+		"message": "Ok",
+	})
+}
