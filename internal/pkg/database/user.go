@@ -92,7 +92,7 @@ func (db *PgxDB) GetUserByLogin(user models.DataBaseUser, start int, limit int) 
 	for row.Next() {
 		var res models.DataBaseUser
 		ok := row.Scan(&res.Id, &res.Email, &res.Login, &res.EncryptedPassword,
-			&res.About, &res.Avatar, &res.Subscribers, &res.Subscriptions, &res.CreatedAt)
+			&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt)
 		if ok != nil {
 			return nil, errors.New("user not found")
 		}
@@ -107,7 +107,7 @@ func (db *PgxDB) GetUserByName(user models.DataBaseUser) (models.User, error) {
 
 	row := db.dbPool.QueryRow(UserByLoginSearch, user.Login)
 	err := row.Scan(&res.Id, &res.Email, &res.Login, &res.EncryptedPassword,
-		&res.About, &res.Avatar, &res.Subscribers, &res.Subscriptions, &res.CreatedAt)
+		&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt)
 	if err != nil {
 		return models.User{}, errors.New("user not found")
 	}
@@ -119,7 +119,7 @@ func (db *PgxDB) GetUserByEmail(user models.DataBaseUser) (models.User, error) {
 
 	row := db.dbPool.QueryRow(UserByEmail, user.Email)
 	err := row.Scan(&res.Id, &res.Email, &res.Login, &res.EncryptedPassword,
-		&res.About, &res.Avatar, &res.Subscribers, &res.Subscriptions, &res.CreatedAt)
+		&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt)
 
 	if err != nil {
 		return models.User{}, errors.New("user not found")
@@ -187,9 +187,10 @@ func (db *PgxDB) GetUserSubscribers(user models.DataBaseUser) (models.User, erro
 	return res, nil
 }
 
+//кто подписан
 func (db *PgxDB) GetUserSubUsers(user models.DataBaseUser) ([]*models.User, error) {
 	var users []*models.User
-	row, err := db.dbPool.Query(UserSubscriptionsUsers, user.Id)
+	row, err := db.dbPool.Query(UserSubscribedUsers, user.Id)
 
 	if err != nil {
 		return nil, errors.New("db error")
@@ -198,7 +199,7 @@ func (db *PgxDB) GetUserSubUsers(user models.DataBaseUser) ([]*models.User, erro
 	for row.Next() {
 		var res models.DataBaseUser
 		ok := row.Scan(&res.Id, &res.Email, &res.Login, &res.EncryptedPassword,
-			&res.About, &res.Avatar, &res.Subscribers, &res.Subscriptions, &res.CreatedAt)
+			&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt)
 		if ok != nil {
 			return users, nil
 		}
@@ -208,6 +209,7 @@ func (db *PgxDB) GetUserSubUsers(user models.DataBaseUser) ([]*models.User, erro
 	return users, nil
 }
 
+//на кого подписан
 func (db *PgxDB) GetUserSupUsers(user models.DataBaseUser) ([]*models.User, error) {
 	var users []*models.User
 	row, err := db.dbPool.Query(UserSubscriptionsUsers, user.Id)
@@ -219,7 +221,7 @@ func (db *PgxDB) GetUserSupUsers(user models.DataBaseUser) ([]*models.User, erro
 	for row.Next() {
 		var res models.DataBaseUser
 		ok := row.Scan(&res.Id, &res.Email, &res.Login, &res.EncryptedPassword,
-			&res.About, &res.Avatar, &res.Subscribers, &res.Subscriptions, &res.CreatedAt)
+			&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt)
 		if ok != nil {
 			return users, nil
 		}
