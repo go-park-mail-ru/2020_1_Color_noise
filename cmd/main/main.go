@@ -93,17 +93,15 @@ func main() {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := userDeliveryHttp.NewHandler(userService, sessManager, zap)
-
 	sessionDelivery := sessionDeliveryHttp.NewHandler(sessManager, userService, zap)
-
-	pinRepo := pinRepository.NewRepo(db)
-	pinUse := pinUsecase.NewUsecase(pinRepo)
-	pinDelivery := pinDeliveryHttp.NewHandler(pinUse, zap)
 
 	boardRepo := boardRepository.NewRepo(db)
 	boardUse := boardUsecase.NewUsecase(boardRepo)
 	boardDelivery := boardDeliveryHttp.NewHandler(boardUse, zap)
+
+	pinRepo := pinRepository.NewRepo(db)
+	pinUse := pinUsecase.NewUsecase(pinRepo, boardRepo)
+	pinDelivery := pinDeliveryHttp.NewHandler(pinUse, zap)
 
 	commentRepo := commentRepository.NewRepo(db)
 	commentUse := commentUsecase.NewUsecase(commentRepo)
@@ -118,6 +116,8 @@ func main() {
 	notificationsDelivery := notificationsDeliveryHttp.NewHandler(notificationsUse, zap)
 
 	search := searchHandler.NewHandler(commentUse, pinUse, userService, zap)
+
+	userDelivery := userDeliveryHttp.NewHandler(userService, sessManager, boardUse, zap)
 
 	m := middleware.NewMiddleware(sessManager, zap)
 
@@ -138,6 +138,7 @@ func main() {
 	//r.HandleFunc("/api/user", userDelivery.Delete).Methods("DELETE")
 
 	r.HandleFunc("/api/pin", pinDelivery.Create).Methods("POST")
+	r.HandleFunc("/api/pin/saving/{id:[0-9]+}", pinDelivery.Save).Methods("POST")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.GetPin).Methods("GET")
 	r.HandleFunc("/api/pin/user/{id:[0-9]+}", pinDelivery.Fetch).Methods("GET")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.Update).Methods("PUT")

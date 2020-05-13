@@ -2,6 +2,7 @@ package http
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/board"
 	"2020_1_Color_noise/internal/pkg/error"
 	authService "2020_1_Color_noise/internal/pkg/proto/session"
 	userService "2020_1_Color_noise/internal/pkg/proto/user"
@@ -20,13 +21,15 @@ import (
 type Handler struct {
 	us     userService.UserServiceClient
 	as     authService.AuthSeviceClient
+	bu     board.IUsecase
 	logger *zap.SugaredLogger
 }
 
-func NewHandler(us userService.UserServiceClient, as authService.AuthSeviceClient, logger *zap.SugaredLogger) *Handler {
+func NewHandler(us userService.UserServiceClient, as authService.AuthSeviceClient, bu board.IUsecase, logger *zap.SugaredLogger) *Handler {
 	return &Handler{
 		us,
 		as,
+		bu,
 		logger,
 	}
 }
@@ -66,6 +69,14 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			msg = errStatus.Message()
 		}
 		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
+		return
+	}
+
+	b := &models.InputBoard{Name: "Моя доска"}
+
+	_, err = ud.bu.Create(b, uint(u.Id))
+	if err != nil {
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
