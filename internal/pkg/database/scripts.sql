@@ -17,58 +17,66 @@ CREATE DATABASE pinterest
 -- DROP TABLE IF EXISTS subscriptions CASCADE;
 -- DROP TABLE IF EXISTS commentaries CASCADE;
 
+
+
 CREATE TABLE users(
-	id serial PRIMARY KEY,
-	email text NOT NULL,
-	login text UNIQUE NOT NULL,
-	encrypted_password text NOT NULL,
-	about text,
-	avatar text,
-	subscriptions int,
-	subscribers int,
-	created_at TIMESTAMP NOT NULL
+                      id serial PRIMARY KEY,
+                      email text NOT NULL,
+                      login text UNIQUE NOT NULL,
+                      encrypted_password text NOT NULL,
+                      about text,
+                      avatar text,
+                      subscriptions int,
+                      subscribers int,
+                      created_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE sessions (
-	id int REFERENCES users(id) NOT NULL,
-	cookie text NOT NULL,
-	token text NOT NULL,
-	created_at timestamp NOT NULL,
-	deleting_at timestamp
+                          id int REFERENCES users(id) NOT NULL,
+                          cookie text NOT NULL,
+                          token text NOT NULL,
+                          created_at timestamp NOT NULL,
+                          deleting_at timestamp
 );
 
 
 CREATE TABLE boards(
-	id serial PRIMARY KEY,
-	user_id int REFERENCES users(id),
-	name text NOT NULL,
-	description text,
-	created_at timestamp
+                       id serial PRIMARY KEY,
+                       user_id int REFERENCES users(id),
+                       name text NOT NULL,
+                       description text,
+                       created_at timestamp
 );
 
 CREATE TABLE pins (
-	id serial PRIMARY KEY,
-	user_id int REFERENCES users(id),
-	name text,
-	description text,
-	image text NOT NULL,
-	board_id int REFERENCES boards(id),
-	created_at timestamp
+                      id serial PRIMARY KEY,
+                      user_id int REFERENCES users(id),
+                      name text,
+                      description text,
+                      image text NOT NULL,
+                      created_at timestamp,
+                      tags text[]
 );
 
+CREATE TABLE boards_pins (
+                             image_id int REFERENCES pins(id),
+                             board_id int REFERENCES boards(id)
+);
+
+
 CREATE TABLE subscriptions (
-	id serial PRIMARY KEY,
-	user_id int REFERENCES users(id) NOT NULL,
-	subscribed_at int REFERENCES users(id) NOT NULL,
-	UNIQUE (user_id, subscribed_at)
+                               id serial PRIMARY KEY,
+                               user_id int REFERENCES users(id) NOT NULL,
+                               subscribed_at int REFERENCES users(id) NOT NULL,
+                               UNIQUE (user_id, subscribed_at)
 );
 
 CREATE TABLE commentaries (
-	id serial PRIMARY KEY,
-	user_id int REFERENCES users(id) NOT NULL,
-	pin_id int REFERENCES pins(id) NOT NULL,
-	comment text NOT NULL,
-	created_at timestamp
+                              id serial PRIMARY KEY,
+                              user_id int REFERENCES users(id) NOT NULL,
+                              pin_id int REFERENCES pins(id) NOT NULL,
+                              comment text NOT NULL,
+                              created_at timestamp
 );
 
 CREATE TABLE notifies (
