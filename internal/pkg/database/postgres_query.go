@@ -83,7 +83,7 @@ const (
 		" WHERE id = $3"
 	DeleteBoard        = "DELETE FROM boards WHERE id = $1"
 	BoardById          = "SELECT * FROM boards WHERE id = $1"
-	BoardsByUserId     = "SELECT * FROM boards WHERE user_id = $1 LIMIT $2 OFFSET $3 ORDER BY id ASC"
+	BoardsByUserId     = "SELECT * FROM boards WHERE user_id = $1 ORDER BY id ASC LIMIT $2 OFFSET $3"
 	BoardsByNameSearch = "SELECT * FROM boards WHERE name = $1 LIMIT $2 OFFSET $3"
 	LastPin            = "SELECT id, user_id, name, description, image, board_id, created_at " +
 		" FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id WHERE board_id = $1 ORDER BY created_at DESC LIMIT 1;"
