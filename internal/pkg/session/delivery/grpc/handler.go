@@ -6,6 +6,8 @@ import (
 	authService "2020_1_Color_noise/internal/pkg/proto/session"
 	"2020_1_Color_noise/internal/pkg/session"
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type SessionManager struct {
@@ -21,7 +23,7 @@ func NewSessionManager(usecase session.IUsecase) *SessionManager {
 func (sm *SessionManager) Create(ctx context.Context, in *authService.UserID) (*authService.Session, error) {
 	s, err := sm.usecase.Create(uint(in.Id))
 	if err != nil {
-		return &authService.Session{Error: int32(GetType(err))}, Wrapf(err, "GRPC create: Creating session error, id: %d", in.Id)
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrapf(err, "GRPC create: Creating session error, id: %d", in.Id).Error())
 	}
 
 	sess := &authService.Session{
@@ -36,10 +38,10 @@ func (sm *SessionManager) Create(ctx context.Context, in *authService.UserID) (*
 func (sm *SessionManager) GetByCookie(ctx context.Context, in *authService.Cookie) (*authService.Session, error) {
 	s, err := sm.usecase.GetByCookie(in.Cookie)
 	if err != nil {
-		return &authService.Session{Error: int32(GetType(err))}, Wrap(err, "GPRC GetByCoolie: Getting session error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GPRC GetByCoolie: Getting session error").Error())
 	}
 
-	sess := &authService.Session{
+	sess := &authService.Session {
 		Id: int64(s.Id),
 		Cookie: s.Cookie,
 		Token: s.Token,
@@ -57,7 +59,7 @@ func (sm *SessionManager) Update(ctx context.Context, in *authService.Session) (
 
 	err := sm.usecase.Update(sess)
 	if err != nil {
-		return &authService.Nothing{Error: int32(GetType(err))}, Wrap(err, "GPRC Update: Updating session error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GPRC Update: Updating session error").Error())
 	}
 
 	return &authService.Nothing{}, nil
@@ -66,7 +68,7 @@ func (sm *SessionManager) Update(ctx context.Context, in *authService.Session) (
 func (sm *SessionManager) Delete(ctx context.Context, in *authService.Cookie) (*authService.Nothing, error) {
 	err := sm.usecase.Delete(in.Cookie)
 	if err != nil {
-		return &authService.Nothing{Error: int32(GetType(err))}, Wrap(err, "GPRC Delete: Deleting session error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GPRC Delete: Deleting session error").Error())
 	}
 
 	return &authService.Nothing{}, nil
@@ -86,7 +88,7 @@ func (sm *SessionManager) Login(ctx context.Context, in *authService.SignIn) (*a
 
 	s, err := sm.usecase.Login(us, in.Password)
 	if err != nil {
-		return &authService.Session{Error: int32(GetType(err))}, Wrapf(err, "GRPC Login: Login error",)
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC Login: Login error").Error())
 	}
 
 

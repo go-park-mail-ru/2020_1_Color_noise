@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 )
@@ -136,7 +137,31 @@ func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	fmt.Println("messages in delivery: ", resp)
+	response.Respond(w, http.StatusOK, resp)
+}
+
+func (ch *Handler) GetStickers(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Fetch messages for chat: user is unauthorized")
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	files, err := ioutil.ReadDir("../static/stickers")
+	if err != nil {
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	resp := make([]string, 0)
+
+	for _, file := range files {
+		resp = append(resp, file.Name())
+	}
 
 	response.Respond(w, http.StatusOK, resp)
 }
+
