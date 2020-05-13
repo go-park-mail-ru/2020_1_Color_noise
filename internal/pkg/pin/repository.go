@@ -6,6 +6,7 @@ import (
 
 type IRepository interface {
 	Create(pin *models.Pin) (uint, error)
+	Save(pinId uint, boardId uint) error
 	GetByID(id uint) (*models.Pin, error)
 	GetByUserID(userId uint, start int, limit int) ([]*models.Pin, error)
 	GetByName(name string, start int, limit int) ([]*models.Pin, error)
