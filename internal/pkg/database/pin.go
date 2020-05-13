@@ -8,15 +8,25 @@ import (
 )
 
 func (db *PgxDB) CreatePin(pin models.DataBasePin) (uint, error) {
-	var id uint
+	var id, check uint
 
-	res := db.dbPool.QueryRow(InsertPin, pin.UserId, pin.Name, pin.Description, pin.Image, pin.BoardId, time.Now())
+	res := db.dbPool.QueryRow(InsertPin, pin.UserId, pin.Name, pin.Description, pin.Image, time.Now())
 	err := res.Scan(&id)
 
 	if err != nil {
 		return 0, errors.New("pin creation error")
 	}
+	res = db.dbPool.QueryRow(InsertBoardsPin, id, pin.BoardId, true)
+	err = res.Scan(&check)
 	return id, err
+}
+
+func (db *PgxDB) Save(pinId, boardId uint) ( error) {
+	var check uint
+
+	res := db.dbPool.QueryRow(InsertBoardsPin, pinId, boardId, false)
+	err := res.Scan(&check)
+	return err
 }
 
 func (db *PgxDB) UpdatePin(pin models.DataBasePin) error {

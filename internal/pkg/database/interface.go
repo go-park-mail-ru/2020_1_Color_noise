@@ -17,6 +17,7 @@ type DBInterface interface {
 	GetSessionByCookie(s models.DataBaseSession) (models.Session, error)
 
 	CreatePin(pin models.DataBasePin) (uint, error)
+	Save(pinId, boardId uint) error
 	UpdatePin(pin models.DataBasePin) error
 	DeletePin(pin models.DataBasePin) error
 	GetPinById(pin models.DataBasePin) (models.Pin, error)
