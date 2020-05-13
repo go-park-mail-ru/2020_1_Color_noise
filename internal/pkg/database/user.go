@@ -72,7 +72,7 @@ func (db *PgxDB) GetUserById(user models.DataBaseUser) (models.User, error) {
 	var res models.DataBaseUser
 	row := db.dbPool.QueryRow(UserById, user.Id)
 	err := row.Scan(&res.Id, &res.Email, &res.Login, &res.EncryptedPassword,
-		&res.About, &res.Avatar, &res.Subscribers, &res.Subscriptions, &res.CreatedAt)
+		&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt)
 
 	if err != nil {
 		return models.User{}, errors.New("user not found")

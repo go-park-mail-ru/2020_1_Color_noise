@@ -30,7 +30,7 @@ const (
 		"avatar = $1 " +
 		"WHERE id = $2 RETURNING id;"
 	DeleteUser        = "DELETE FROM users WHERE id = $1;"
-	UserById          = "SELECT * FROM users WHERE id = $1"
+	UserById          = "SELECT id, email, login, encrypted_password, about, avatar, subscriptions, subscribers, created_at FROM users WHERE id = $1"
 	//это поиск
 	UserByLogin       = "SELECT * FROM users WHERE LOWER(login) = LOWER($1) LIMIT $2 OFFSET $3"
 	//это точный поиск
