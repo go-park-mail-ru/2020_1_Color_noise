@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (db *PgxDB) AddMessage(sid, rid int, msg string) (*models.Message, error) {
+func (db *PgxDB) AddMessage(sid, rid int, msg string, sticker string) (*models.Message, error) {
 	var id uint
 
 	sender, err := db.GetUserById(models.DataBaseUser{Id: uint(sid)})
@@ -23,10 +23,13 @@ func (db *PgxDB) AddMessage(sid, rid int, msg string) (*models.Message, error) {
 		SendUser:  &sender,
 		RecUser:   &receiver,
 		Message:   msg,
+		Stickers: sticker,
 		CreatedAt: time.Now(),
 	}
 
-	res := db.dbPool.QueryRow(AddMsg, ms.SendUser.Id, ms.RecUser.Id, ms.Message, ms.CreatedAt)
+	dms := models.GetDMessage(ms)
+
+	res := db.dbPool.QueryRow(AddMsg, dms.SendUser.Id, dms.RecUser.Id, dms.Message, dms.Stickers, dms.CreatedAt)
 	err = res.Scan(&id)
 	if err != nil {
 		return &models.Message{}, err
@@ -56,10 +59,10 @@ func (db *PgxDB) GetMessages(userId, otherId uint, start int, limit int) ([]*mod
 	}
 
 	for row.Next() {
-		var tmp models.Message
+		var tmp models.DMessage
 		var author uint
 
-		ok := row.Scan(&author, &tmp.Message, &tmp.CreatedAt)
+		ok := row.Scan(&author, &tmp.Message, &tmp.Stickers, &tmp.CreatedAt)
 		if ok != nil {
 			return res, nil
 		}
@@ -72,8 +75,8 @@ func (db *PgxDB) GetMessages(userId, otherId uint, start int, limit int) ([]*mod
 			tmp.RecUser = &sender
 		}
 
-
-		res = append(res, &tmp)
+		ms := models.GetMessage(tmp)
+		res = append(res, &ms)
 	}
 
 	return res, nil

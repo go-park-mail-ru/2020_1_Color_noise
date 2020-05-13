@@ -14,9 +14,9 @@ func NewRepository(db database.DBInterface) *Repository {
 	return &Repository{db: db}
 }
 
-func (rp *Repository) AddMessage(userSentId uint, userReceivedId uint, message string) (*models.Message, error) {
+func (rp *Repository) AddMessage(userSentId uint, userReceivedId uint, message string, sticker string) (*models.Message, error) {
 	//создать сообщение
-	msg, err := rp.db.AddMessage(int(userSentId), int(userReceivedId), message)
+	msg, err := rp.db.AddMessage(int(userSentId), int(userReceivedId), message, sticker)
 	if err != nil {
 		return &models.Message{}, UserNotFound.Newf("User to get not found, id: %d", userSentId)
 	}

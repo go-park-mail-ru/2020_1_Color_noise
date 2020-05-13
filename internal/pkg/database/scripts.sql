@@ -105,6 +105,7 @@ CREATE TABLE chat_messages(
                               id serial PRIMARY KEY,
                               sender_id int REFERENCES users(id) NOT NULL,
                               receiver_id int REFERENCES users(id) NOT NULL,
-                              message text NOT NULL,
+                              message text,
+                              sticker text,
                               created_at TIMESTAMP
 );

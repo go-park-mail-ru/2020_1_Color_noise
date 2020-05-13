@@ -868,7 +868,7 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels9(out *jwriter.Writer, i
 		}
 		out.String(string(in.Name))
 	}
-	if in.Description != "" {
+	{
 		const prefix string = ",\"description\":"
 		if first {
 			first = false
@@ -880,12 +880,7 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels9(out *jwriter.Writer, i
 	}
 	if in.Image != "" {
 		const prefix string = ",\"image\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Image))
 	}
 	out.RawByte('}')
@@ -1034,6 +1029,8 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels11(in *jlexer.Lexer, out
 			}
 		case "message":
 			out.Message = string(in.String())
+		case "stickers":
+			out.Stickers = string(in.String())
 		case "created_at":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.CreatedAt).UnmarshalJSON(data))
@@ -1074,6 +1071,11 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels11(out *jwriter.Writer, 
 		const prefix string = ",\"message\":"
 		out.RawString(prefix)
 		out.String(string(in.Message))
+	}
+	{
+		const prefix string = ",\"stickers\":"
+		out.RawString(prefix)
+		out.String(string(in.Stickers))
 	}
 	{
 		const prefix string = ",\"created_at\":"
@@ -1328,7 +1330,7 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels13(out *jwriter.Writer, 
 		out.RawString(prefix)
 		out.String(string(in.Name))
 	}
-	if in.Description != "" {
+	{
 		const prefix string = ",\"description\":"
 		out.RawString(prefix)
 		out.String(string(in.Description))
@@ -1615,6 +1617,8 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels16(in *jlexer.Lexer, out
 			}
 		case "Message":
 			out.Message = string(in.String())
+		case "Stickers":
+			out.Stickers = string(in.String())
 		case "CreatedAt":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.CreatedAt).UnmarshalJSON(data))
@@ -1655,6 +1659,11 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels16(out *jwriter.Writer, 
 		const prefix string = ",\"Message\":"
 		out.RawString(prefix)
 		out.String(string(in.Message))
+	}
+	{
+		const prefix string = ",\"Stickers\":"
+		out.RawString(prefix)
+		out.String(string(in.Stickers))
 	}
 	{
 		const prefix string = ",\"CreatedAt\":"
@@ -1797,6 +1806,8 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels18(in *jlexer.Lexer, out
 			out.UserRecviredId = uint(in.Uint())
 		case "message":
 			out.Message = string(in.String())
+		case "stickers":
+			out.Stickers = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -1820,6 +1831,11 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels18(out *jwriter.Writer, 
 		const prefix string = ",\"message\":"
 		out.RawString(prefix)
 		out.String(string(in.Message))
+	}
+	{
+		const prefix string = ",\"stickers\":"
+		out.RawString(prefix)
+		out.String(string(in.Stickers))
 	}
 	out.RawByte('}')
 }
@@ -2622,7 +2638,127 @@ func (v *DataBaseBoard) UnmarshalJSON(data []byte) error {
 func (v *DataBaseBoard) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonD2b7633eDecode20201ColorNoiseInternalModels25(l, v)
 }
-func easyjsonD2b7633eDecode20201ColorNoiseInternalModels26(in *jlexer.Lexer, out *Comment) {
+func easyjsonD2b7633eDecode20201ColorNoiseInternalModels26(in *jlexer.Lexer, out *DMessage) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "SendUser":
+			if in.IsNull() {
+				in.Skip()
+				out.SendUser = nil
+			} else {
+				if out.SendUser == nil {
+					out.SendUser = new(User)
+				}
+				(*out.SendUser).UnmarshalEasyJSON(in)
+			}
+		case "RecUser":
+			if in.IsNull() {
+				in.Skip()
+				out.RecUser = nil
+			} else {
+				if out.RecUser == nil {
+					out.RecUser = new(User)
+				}
+				(*out.RecUser).UnmarshalEasyJSON(in)
+			}
+		case "Message":
+			easyjsonD2b7633eDecodeDatabaseSql(in, &out.Message)
+		case "Stickers":
+			easyjsonD2b7633eDecodeDatabaseSql(in, &out.Stickers)
+		case "CreatedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.CreatedAt).UnmarshalJSON(data))
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonD2b7633eEncode20201ColorNoiseInternalModels26(out *jwriter.Writer, in DMessage) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"SendUser\":"
+		out.RawString(prefix[1:])
+		if in.SendUser == nil {
+			out.RawString("null")
+		} else {
+			(*in.SendUser).MarshalEasyJSON(out)
+		}
+	}
+	{
+		const prefix string = ",\"RecUser\":"
+		out.RawString(prefix)
+		if in.RecUser == nil {
+			out.RawString("null")
+		} else {
+			(*in.RecUser).MarshalEasyJSON(out)
+		}
+	}
+	{
+		const prefix string = ",\"Message\":"
+		out.RawString(prefix)
+		easyjsonD2b7633eEncodeDatabaseSql(out, in.Message)
+	}
+	{
+		const prefix string = ",\"Stickers\":"
+		out.RawString(prefix)
+		easyjsonD2b7633eEncodeDatabaseSql(out, in.Stickers)
+	}
+	{
+		const prefix string = ",\"CreatedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.CreatedAt).MarshalJSON())
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v DMessage) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonD2b7633eEncode20201ColorNoiseInternalModels26(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v DMessage) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonD2b7633eEncode20201ColorNoiseInternalModels26(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *DMessage) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonD2b7633eDecode20201ColorNoiseInternalModels26(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *DMessage) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonD2b7633eDecode20201ColorNoiseInternalModels26(l, v)
+}
+func easyjsonD2b7633eDecode20201ColorNoiseInternalModels27(in *jlexer.Lexer, out *Comment) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -2663,7 +2799,7 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels26(in *jlexer.Lexer, out
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncode20201ColorNoiseInternalModels26(out *jwriter.Writer, in Comment) {
+func easyjsonD2b7633eEncode20201ColorNoiseInternalModels27(out *jwriter.Writer, in Comment) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -2698,27 +2834,27 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels26(out *jwriter.Writer, 
 // MarshalJSON supports json.Marshaler interface
 func (v Comment) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD2b7633eEncode20201ColorNoiseInternalModels26(&w, v)
+	easyjsonD2b7633eEncode20201ColorNoiseInternalModels27(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Comment) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncode20201ColorNoiseInternalModels26(w, v)
+	easyjsonD2b7633eEncode20201ColorNoiseInternalModels27(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Comment) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD2b7633eDecode20201ColorNoiseInternalModels26(&r, v)
+	easyjsonD2b7633eDecode20201ColorNoiseInternalModels27(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Comment) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecode20201ColorNoiseInternalModels26(l, v)
+	easyjsonD2b7633eDecode20201ColorNoiseInternalModels27(l, v)
 }
-func easyjsonD2b7633eDecode20201ColorNoiseInternalModels27(in *jlexer.Lexer, out *Board) {
+func easyjsonD2b7633eDecode20201ColorNoiseInternalModels28(in *jlexer.Lexer, out *Board) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -2792,7 +2928,7 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels27(in *jlexer.Lexer, out
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncode20201ColorNoiseInternalModels27(out *jwriter.Writer, in Board) {
+func easyjsonD2b7633eEncode20201ColorNoiseInternalModels28(out *jwriter.Writer, in Board) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -2852,23 +2988,23 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels27(out *jwriter.Writer, 
 // MarshalJSON supports json.Marshaler interface
 func (v Board) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD2b7633eEncode20201ColorNoiseInternalModels27(&w, v)
+	easyjsonD2b7633eEncode20201ColorNoiseInternalModels28(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Board) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncode20201ColorNoiseInternalModels27(w, v)
+	easyjsonD2b7633eEncode20201ColorNoiseInternalModels28(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Board) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD2b7633eDecode20201ColorNoiseInternalModels27(&r, v)
+	easyjsonD2b7633eDecode20201ColorNoiseInternalModels28(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Board) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecode20201ColorNoiseInternalModels27(l, v)
+	easyjsonD2b7633eDecode20201ColorNoiseInternalModels28(l, v)
 }
