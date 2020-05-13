@@ -59,8 +59,9 @@ CREATE TABLE pins (
 );
 
 CREATE TABLE boards_pins (
-                             image_id int REFERENCES pins(id),
-                             board_id int REFERENCES boards(id)
+                             image_id int REFERENCES pins(id) NOT NULL ,
+                             board_id int REFERENCES boards(id) NOT NULL,
+                             original boolean
 );
 
 

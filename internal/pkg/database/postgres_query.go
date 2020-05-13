@@ -1,16 +1,25 @@
 package database
 
 const (
-	InsertPin = "INSERT INTO pins(user_id, name, description, image, board_id, created_at) " +
-		"VALUES($1, $2, $3, $4, $5, $6) RETURNING id"
-	UpdatePin = "UPDATE pins SET " +
+	InsertPin = "INSERT INTO pins(user_id, name, description, image, created_at) " +
+		"VALUES($1, $2, $3, $4, $5) RETURNING id"
+	InsertBoardsPin = "INSERT INTO boards_pins(image_id, board_id, original) VALUES ($1, $2, $3) RETURNING 0;"
+	UpdatePin       = "UPDATE pins SET " +
 		"name = $1, description = $2, board_id = $3 " +
 		"WHERE id = $4"
-	DeletePin  = "DELETE from pins WHERE id = $1"
-	PinById    = "SELECT * FROM pins WHERE id = $1"
-	PinByUser  = "SELECT * FROM pins WHERE user_id = $1"
-	PinByName  = "SELECT * FROM pins WHERE LOWER(name) = LOWER($1);"
-	PinByBoard = "SELECT * FROM pins WHERE board_id = $1"
+	DeletePin = "DELETE from pins WHERE id = $1 CASCADE;"
+	PinById   = "SELECT id, user_id, name, description, image, board_id, created_at " +
+		"FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		"WHERE original = true AND id = $1"
+	PinByUser = "SELECT id, user_id, name, description, image, board_id, created_at " +
+		"FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		"WHERE original = true AND user_id = $1"
+	PinByName = "SELECT id, user_id, name, description, image, board_id, created_at " +
+		"FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		"WHERE original = true AND  LOWER(name) = LOWER($1);"
+	PinByBoard = "SELECT id, user_id, name, description, image, board_id, created_at " +
+		"FROM public.pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		"WHERE original = true AND  board_id = $1"
 )
 
 const (
@@ -29,10 +38,10 @@ const (
 	UpdateUserAv = "UPDATE users SET " +
 		"avatar = $1 " +
 		"WHERE id = $2 RETURNING id;"
-	DeleteUser        = "DELETE FROM users WHERE id = $1;"
-	UserById          = "SELECT id, email, login, encrypted_password, about, avatar, subscriptions, subscribers, created_at FROM users WHERE id = $1"
+	DeleteUser = "DELETE FROM users WHERE id = $1;"
+	UserById   = "SELECT id, email, login, encrypted_password, about, avatar, subscriptions, subscribers, created_at FROM users WHERE id = $1"
 	//это поиск
-	UserByLogin       = "SELECT * FROM users WHERE LOWER(login) = LOWER($1) LIMIT $2 OFFSET $3"
+	UserByLogin = "SELECT * FROM users WHERE LOWER(login) = LOWER($1) LIMIT $2 OFFSET $3"
 	//это точный поиск
 	UserByLoginSearch = "SELECT * FROM users WHERE login = $1"
 	UserByEmail       = "SELECT * FROM users WHERE email = $1"
@@ -48,10 +57,10 @@ const (
 	UserSubscriptions = "SELECT subscriptions FROM users WHERE id = $1;"
 	Follow            = "INSERT INTO subscriptions( user_id, subscribed_at) VALUES ($1, $2) RETURNING id;"
 	Unfollow          = "DELETE FROM subscriptions WHERE user_id = $1 AND subscribed_at = $2 RETURNING 0;"
-	UpdateUnfollowA = "UPDATE users SET subscriptions = subscriptions - 1 WHERE id = $1 RETURNING 0;"
-	UpdateFollowA = "UPDATE users SET subscriptions = subscriptions + 1 WHERE id = $1 RETURNING 0;"
-	UpdateUnfollowB = "UPDATE users SET subscribers = subscribers - 1 WHERE id = $1 RETURNING 0;"
-	UpdateFollowB = "UPDATE users SET subscribers = subscribers + 1 WHERE id =  $1 RETURNING 0;"
+	UpdateUnfollowA   = "UPDATE users SET subscriptions = subscriptions - 1 WHERE id = $1 RETURNING 0;"
+	UpdateFollowA     = "UPDATE users SET subscriptions = subscriptions + 1 WHERE id = $1 RETURNING 0;"
+	UpdateUnfollowB   = "UPDATE users SET subscribers = subscribers - 1 WHERE id = $1 RETURNING 0;"
+	UpdateFollowB     = "UPDATE users SET subscribers = subscribers + 1 WHERE id =  $1 RETURNING 0;"
 )
 
 const (

@@ -17,6 +17,8 @@ func NewRepo(d database.DBInterface) *Repository {
 }
 
 func (pr *Repository) Create(pin *models.Pin) (uint, error) {
+	//добавить в пины
+	//добавить в таблицу
 	id, err := pr.db.CreatePin(models.GetBPin(*pin))
 
 	if err != nil {
@@ -24,6 +26,18 @@ func (pr *Repository) Create(pin *models.Pin) (uint, error) {
 	}
 
 	return id, err
+}
+
+func (pr *Repository) Save(pinId uint, boardId uint) (error) {
+	//добавить в пины
+	//добавить в таблицу
+	err := pr.db.Save(pinId, boardId)
+
+	if err != nil {
+		return PinNotFound.Newf("Pin can not be saved, err: %v", err)
+	}
+
+	return err
 }
 
 func (pr *Repository) GetByID(id uint) (*models.Pin, error) {

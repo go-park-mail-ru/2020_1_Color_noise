@@ -278,7 +278,7 @@ func (ph *Handler) Save(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ph.pinUsecase.Save(pinId, userId)
+	err = ph.pinUsecase.Save(uint(pinId), userId)
 	if err != nil {
 		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
