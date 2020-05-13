@@ -44,8 +44,8 @@ const (
 	UserSubscriptionsUsers = "SELECT users.id, email, login, encrypted_password, about, avatar, subscriptions, subscribers, created_at  " +
 		" FROM users JOIN subscriptions ON users.ID = subscriptions.subscribed_at" +
 		" WHERE user_id = $1"
-	UserSubscribed    = "SELECT COUNT(subscribed_at) FROM subscriptions WHERE user_id = $1"
-	UserSubscriptions = "SELECT COUNT(user_id) FROM subscriptions WHERE subscribed_at = $1"
+	UserSubscribed    = "SELECT subscribers FROM users WHERE id = $1;"
+	UserSubscriptions = "SELECT subscriptions FROM users WHERE id = $1;"
 	Follow            = "INSERT INTO subscriptions( user_id, subscribed_at) VALUES ($1, $2) RETURNING id;"
 	Unfollow          = "DELETE FROM subscriptions WHERE user_id = $1 AND subscribed_at = $2 RETURNING 0;"
 	UpdateUnfollowA = "UPDATE users SET subscriptions = subscriptions - 1 WHERE id = $1 RETURNING 0;"

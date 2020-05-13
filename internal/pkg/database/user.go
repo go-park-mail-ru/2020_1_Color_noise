@@ -177,7 +177,7 @@ func (db *PgxDB) GetUserSubscriptions(user models.DataBaseUser) (models.User, er
 func (db *PgxDB) GetUserSubscribers(user models.DataBaseUser) (models.User, error) {
 	var res models.User
 
-	row := db.dbPool.QueryRow(UserSubscriptions, user.Id)
+	row := db.dbPool.QueryRow(UserSubscribed, user.Id)
 	err := row.Scan(&res.Subscriptions)
 
 	if err != nil {
@@ -189,7 +189,7 @@ func (db *PgxDB) GetUserSubscribers(user models.DataBaseUser) (models.User, erro
 
 func (db *PgxDB) GetUserSubUsers(user models.DataBaseUser) ([]*models.User, error) {
 	var users []*models.User
-	row, err := db.dbPool.Query(UserSubscribedUsers, user.Id)
+	row, err := db.dbPool.Query(UserSubscriptionsUsers, user.Id)
 
 	if err != nil {
 		return nil, errors.New("db error")
