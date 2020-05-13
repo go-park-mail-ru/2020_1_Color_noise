@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/status"
 	"io"
 	"net/http"
 	"strconv"
@@ -58,20 +59,26 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		e := error.NoType
-		if u != nil {
-			e = error.Cast(int(u.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
 	sess, err := ud.as.Create(r.Context(), &authService.UserID{Id: int64(u.Id)})
 	if err != nil {
 		e := error.NoType
-		if sess != nil {
-			e = error.Cast(int(sess.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
@@ -125,10 +132,13 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	us, err := ud.us.GetById(r.Context(), &userService.UserID{Id: int64(id)})
 	if err != nil {
 		e := error.NoType
-		if us != nil {
-			e = error.Cast(int(us.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
@@ -167,10 +177,13 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 	us, err := ud.us.GetById(r.Context(), &userService.UserID{Id: int64(id)})
 	if err != nil {
 		e := error.NoType
-		if us != nil {
-			e = error.Cast(int(us.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
@@ -213,7 +226,7 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	nothing, err := ud.us.UpdateProfile(r.Context(), &userService.Profile{
+	_, err = ud.us.UpdateProfile(r.Context(), &userService.Profile{
 		Id: &userService.UserID{Id: int64(id)},
 		Input: &userService.UpdateProfileInput{Login: input.Login,
 			Email: input.Email,
@@ -221,10 +234,13 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		e := error.NoType
-		if nothing != nil {
-			e = error.Cast(int(nothing.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
@@ -260,16 +276,19 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	nothing, err := ud.us.UpdateDescription(r.Context(), &userService.Description{
+	_, err = ud.us.UpdateDescription(r.Context(), &userService.Description{
 		Id: &userService.UserID{Id: int64(id)},
 		Description: input.Description,
 			})
 	if err != nil {
 		e := error.NoType
-		if nothing != nil {
-			e = error.Cast(int(nothing.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
@@ -305,16 +324,19 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	nothing, err := ud.us.UpdatePassword(r.Context(), &userService.Password{
+	_, err = ud.us.UpdatePassword(r.Context(), &userService.Password{
 		Id: &userService.UserID{Id: int64(id)},
 		Password: input.Password,
 	})
 	if err != nil {
 		e := error.NoType
-		if nothing != nil {
-			e = error.Cast(int(nothing.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
@@ -369,10 +391,13 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		e := error.NoType
-		if address != nil {
-			e = error.Cast(int(address.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
@@ -415,16 +440,19 @@ func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	nothing, err := ud.us.Follow(r.Context(), &userService.Following{
+	_, err = ud.us.Follow(r.Context(), &userService.Following{
 		Id: &userService.UserID{Id: int64(id)},
 		SubId: &userService.UserID{Id: int64(subId)},
 			})
 	if err != nil {
 		e := error.NoType
-		if nothing != nil {
-			e = error.Cast(int(nothing.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
@@ -465,16 +493,19 @@ func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	nothing, err := ud.us.Unfollow(r.Context(), &userService.Following{
+	_, err = ud.us.Unfollow(r.Context(), &userService.Following{
 		Id: &userService.UserID{Id: int64(id)},
 		SubId: &userService.UserID{Id: int64(subId)},
 	})
 	if err != nil {
 		e := error.NoType
-		if nothing != nil {
-			e = error.Cast(int(nothing.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, ud.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
@@ -516,10 +547,13 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		e := error.NoType
-		if users != nil {
-			e = error.Cast(int(users.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, uh.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, uh.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
@@ -572,10 +606,13 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		e := error.NoType
-		if users != nil {
-			e = error.Cast(int(users.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, uh.logger, reqId, e.Wrapf(err, "request id: %s", reqId) )
+		error.ErrorHandler(w, r, uh.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 

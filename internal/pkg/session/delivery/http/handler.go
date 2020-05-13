@@ -8,6 +8,7 @@ import (
 	"2020_1_Color_noise/internal/pkg/response"
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/status"
 	"net/http"
 	"time"
 )
@@ -67,10 +68,13 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	u, err := sh.us.GetByLogin(r.Context(), &userService.Login{Login:input.Login})
 	if err != nil {
 		e := error.NoType
-		if u != nil {
-			e = error.Cast(int(u.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, sh.logger, reqId, e.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
@@ -89,10 +93,13 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		})
 	if err != nil {
 		e := error.NoType
-		if sess != nil {
-			e = error.Cast(int(sess.Error))
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
 		}
-		error.ErrorHandler(w, r, sh.logger, reqId, e.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 
@@ -154,12 +161,18 @@ func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	}
 	*/
 
-	nothing, err := sh.as.Delete(r.Context(), &authService.Cookie{
+	_, err = sh.as.Delete(r.Context(), &authService.Cookie{
 		Cookie: cookie.Value,
 	})
 	if err != nil {
-		e := error.Cast(int(nothing.Error))
-		error.ErrorHandler(w, r, sh.logger, reqId, e.Wrapf(err, "request id: %s", reqId))
+		e := error.NoType
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
+		}
+		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 		return
 	}
 

@@ -2,8 +2,13 @@ version: "3.3"
 
 services:
 
-  main:
+  database:
 
+    build:
+      context: .
+      dockerfile: ./build/db.Dockerfile
+
+  main:
     build:
       context: .
       dockerfile: build/main.Dockerfile
@@ -13,14 +18,12 @@ services:
         source: ../storage
         target: /storage
 
-
     depends_on:
       - database
       - auth
       - user
 
   auth:
-
     build:
       context: .
       dockerfile: build/auth.Dockerfile
@@ -29,21 +32,25 @@ services:
       - type: bind
         source: ../storage
         target: /storage
+
     depends_on:
       - database
 
   chat:
-
     build:
       context: .
       dockerfile: ./build/chat.Dockerfile
+
+    volumes:
+      - type: bind
+        source: ../static
+        target: /static
 
     depends_on:
       - database
       - auth
 
   user:
-
     build:
       context: .
       dockerfile: ./build/user.Dockerfile
@@ -55,13 +62,6 @@ services:
 
     depends_on:
       - database
-
-
-  database:
-
-    build:
-      context: .
-      dockerfile: ./build/db.Dockerfile
 
   nginx:
     image: nginx:1.15.3

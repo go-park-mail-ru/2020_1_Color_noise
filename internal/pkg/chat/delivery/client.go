@@ -5,7 +5,6 @@ import (
 	"2020_1_Color_noise/internal/pkg/chat"
 	e "2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/response"
-	"fmt"
 	"go.uber.org/zap"
 	"log"
 	"net/http"
@@ -103,8 +102,8 @@ func (c *Client) writePump() {
 				return
 			}
 
-			resp := &models.ResponseMessage{
-				SendUser: &models.ResponseUser{
+			resp := &models.ResponseMessage {
+				SendUser: &models.ResponseUser {
 					Id:            message.SendUser.Id,
 					Login:         message.SendUser.Login,
 					About:         message.SendUser.About,
@@ -113,7 +112,7 @@ func (c *Client) writePump() {
 					Subscriptions: message.SendUser.Subscriptions,
 				},
 
-				RecUser: &models.ResponseUser{
+				RecUser: &models.ResponseUser {
 					Id:            message.SendUser.Id,
 					Login:         message.SendUser.Login,
 					About:         message.SendUser.About,
@@ -123,6 +122,8 @@ func (c *Client) writePump() {
 				},
 
 				Message: message.Message,
+
+				Stickers: message.Stickers,
 
 				CreatedAt: message.CreatedAt,
 			}
@@ -176,7 +177,6 @@ func ServeWs(hub *Hub, logger  *zap.SugaredLogger, usecase chat.IUsecase, w http
 
 	client := &Client{userId: userId, hub: hub, conn: conn, send: make(chan *models.Message), usecase: usecase}
 	client.hub.register <- client
-	fmt.Println("client ", client)
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
 	go client.writePump()

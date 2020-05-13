@@ -9,6 +9,7 @@ import (
 	userService "2020_1_Color_noise/internal/pkg/proto/user"
 	"2020_1_Color_noise/internal/pkg/response"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/status"
 	"net/http"
 	"strconv"
 )
@@ -101,9 +102,14 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		Limit: int64(limit),
 			})
 		if err != nil {
-			err = error.Wrap(err, "Error searching users")
-			e := error.Cast(int(users.Error))
-			error.ErrorHandler(w, r, sh.logger, reqId, e.Wrapf(err, "request id: %s", reqId))
+			e := error.NoType
+			errStatus, ok := status.FromError(err)
+			msg := "Unknown GRPC error"
+			if ok == true {
+				e = error.Cast(int(errStatus.Code()))
+				msg = errStatus.Message()
+			}
+			error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
 			return
 		}
 
