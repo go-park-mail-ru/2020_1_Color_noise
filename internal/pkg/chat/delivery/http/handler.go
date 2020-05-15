@@ -159,7 +159,7 @@ func (ch *Handler) GetStickers(w http.ResponseWriter, r *http.Request) {
 	resp := make([]string, 0)
 
 	for _, file := range files {
-		resp = append(resp, "stickers" + file.Name())
+		resp = append(resp, "stickers/" + file.Name())
 	}
 
 	response.Respond(w, http.StatusOK, resp)
