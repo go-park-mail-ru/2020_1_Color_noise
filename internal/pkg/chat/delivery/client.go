@@ -70,6 +70,7 @@ func (c *Client) readPump() {
 			}
 			break
 		}
+		input.
 
 		message, err := c.usecase.AddMessage(c.userId, input)
 		if err != nil {

@@ -132,6 +132,7 @@ func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 				Subscribers:   message.RecUser.Subscribers,
 				Subscriptions: message.RecUser.Subscriptions,
 			},
+			Stickers: message.Stickers,
 			Message:   message.Message,
 			CreatedAt: message.CreatedAt,
 		})
