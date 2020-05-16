@@ -169,14 +169,14 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 	  
 	reqId := r.Context().Value("ReqId")
-
+	/*
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get other user: user is unauthorized")
 		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
 		return
 	}
-
+	*/
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {

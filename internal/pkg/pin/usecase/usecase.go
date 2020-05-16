@@ -92,8 +92,8 @@ func (pu *Usecase) GetByUserId(id uint, start int, limit int) ([]*models.Pin, er
 	return pins, nil
 }
 
-func (pu *Usecase) GetByName(name string, start int, limit int) ([]*models.Pin, error) {
-	pins, err := pu.repoPin.GetByName(name, start, limit)
+func (pu *Usecase) GetByName(name string, start int, limit int, date string, desc bool, most string) ([]*models.Pin, error) {
+	pins, err := pu.repoPin.GetByName(name, start, limit, date, desc, most)
 	if err != nil {
 		return nil, Wrapf(err, "Getting pin by id error, name: %s", name)
 	}

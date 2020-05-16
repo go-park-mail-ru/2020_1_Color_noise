@@ -1,4 +1,4 @@
-package repository
+  package repository
 
 import (
 	"2020_1_Color_noise/internal/models"

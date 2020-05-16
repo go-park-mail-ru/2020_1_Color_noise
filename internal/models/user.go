@@ -14,6 +14,7 @@ type User struct {
 	Avatar            string
 	Subscriptions     int
 	Subscribers       int
+	Preferences       []string
 	CreatedAt         time.Time
 }
 
