@@ -12,6 +12,7 @@ type Pin struct {
 	Name        string
 	Description string
 	Image       string
+	Tags        []string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }

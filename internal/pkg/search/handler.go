@@ -74,7 +74,23 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		response.Respond(w, http.StatusOK, resp)
 		return
 	case "pin":
-		pins, err := sh.pinUsecase.GetByName(description, start, limit)
+		date := r.URL.Query().Get("date")
+		if date != "day" && date != "week" && date != "month" {
+			date = ""
+		}
+
+		descString := r.URL.Query().Get("desc")
+		desc := false
+		if descString == "true" {
+			desc = true
+		}
+
+		most := r.URL.Query().Get("most")
+		if most != "popular" && most != "comment" {
+			most = ""
+		}
+
+		pins, err := sh.pinUsecase.GetByName(description, start, limit, date, desc, most)
 		if err != nil {
 			err = error.Wrap(err, "Error searching pins")
 			error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
