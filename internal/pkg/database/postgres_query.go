@@ -13,7 +13,7 @@ const (
 		" WHERE original = true AND id = $1"
 	PinByUser = "SELECT id, user_id, name, description, image, board_id, created_at " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
-		" WHERE original = true AND user_id = $1"
+		" WHERE original = true AND user_id = $1  ORDER BY id DESC"
 	PinByName = "SELECT id, user_id, name, description, image, board_id, created_at " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
 		" WHERE original = true AND  LOWER(name) = LOWER($1);"
