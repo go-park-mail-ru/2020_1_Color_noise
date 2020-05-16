@@ -87,6 +87,11 @@ message Users {
   int32 Error = 2;
 }
 
+message Pref {
+  int32 UserId = 1;
+  repeated string Preferences = 2;
+}
+
 service UserService {
     rpc Create(SignUp) returns (User) {}
     rpc GetById(UserID) returns (User) {}
@@ -100,4 +105,5 @@ service UserService {
     rpc Search(Searching) returns (Users) {}
     rpc GetSubscribers(Sub) returns (Users) {}
     rpc GetSubscriptions(Sub) returns (Users) {}
+    rpc UpdatePreferences(Pref) returns (Nothing) {}
 }

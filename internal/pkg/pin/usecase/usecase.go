@@ -13,12 +13,14 @@ import (
 type Usecase struct {
 	repoPin   pin.IRepository
 	repoBoard board.IRepository
+	imageUs   image.IUsecase
 }
 
-func NewUsecase(repoPin pin.IRepository, repoBoard board.IRepository) *Usecase {
+func NewUsecase(repoPin pin.IRepository, repoBoard board.IRepository, imageUs image.IUsecase) *Usecase {
 	return &Usecase{
 		repoPin,
 		repoBoard,
+		imageUs,
 	}
 }
 
@@ -53,6 +55,8 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 	if err != nil {
 		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
+
+	go pu.imageUs.Analyze(pin.Id, pin.UserId, name)
 
 	return id, nil
 }

@@ -189,3 +189,11 @@ func (uu *UserUsecase) GetSubscriptions(id uint, start int, limit int) ([]*model
 
 	return users, nil
 }
+
+func (uu *UserUsecase) UpdatePreferences(userId uint, preferences []string) error {
+	if err := uu.repo.UpdatePreferences(userId, preferences); err != nil {
+		return Wrap(err, "UpdatePreferences error")
+	}
+
+	return nil
+}

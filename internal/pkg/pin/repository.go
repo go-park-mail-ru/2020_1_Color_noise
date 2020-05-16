@@ -13,5 +13,5 @@ type IRepository interface {
 	Update(pin *models.Pin) error
 	Delete(pinId uint, userId uint) error
 	//TODO
-	AddTags(tags []string) error
+	AddTags(pinId uint, tags []string) error
 }

@@ -20,5 +20,5 @@ type IRepository interface {
 	GetSubscriptions(id uint, start int, limit int) ([]*models.User, error)
 	Delete(id uint) error
 	//TODO
-	UpdatePreferences(preferences *[]string) error
+	UpdatePreferences(userId uint, preferences []string) error
 }

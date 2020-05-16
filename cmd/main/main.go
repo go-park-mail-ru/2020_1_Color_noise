@@ -31,6 +31,8 @@ import (
 	pinRepository "2020_1_Color_noise/internal/pkg/pin/repository"
 	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
 
+	imageUsecase "2020_1_Color_noise/internal/pkg/image/usecase"
+
 	searchHandler "2020_1_Color_noise/internal/pkg/search"
 
 	sessionDeliveryHttp "2020_1_Color_noise/internal/pkg/session/delivery/http"
@@ -93,6 +95,8 @@ func main() {
 		zap.String("logger", "ZAP"),
 	)
 
+
+
 	sessionDelivery := sessionDeliveryHttp.NewHandler(sessManager, userService, zap)
 
 	boardRepo := boardRepository.NewRepo(db)
@@ -100,7 +104,9 @@ func main() {
 	boardDelivery := boardDeliveryHttp.NewHandler(boardUse, zap)
 
 	pinRepo := pinRepository.NewRepo(db)
-	pinUse := pinUsecase.NewUsecase(pinRepo, boardRepo)
+
+	imageUse := imageUsecase.NewImageUsecase(pinRepo, boardRepo, userService)
+	pinUse := pinUsecase.NewUsecase(pinRepo, boardRepo, imageUse)
 	pinDelivery := pinDeliveryHttp.NewHandler(pinUse, zap)
 
 	commentRepo := commentRepository.NewRepo(db)
