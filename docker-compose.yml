@@ -78,22 +78,11 @@ services:
       - ./server/nginx:/etc/nginx/conf.d
       - ../static:/static
       - ../storage:/storage
-      - ./server/certbot/conf:/etc/letsencrypt
-      - ./server/certbot/www:/var/www/certbot
+      - ../cert:/etc/ssl
 
     ports:
       - 80:80
       - 443:443
-
-  certbot:
-    image: certbot/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-
-    restart: unless-stopped
-
-    volumes:
-      - ./server/certbot/conf:/etc/letsencrypt
-      - ./server/certbot/www:/var/www/certbot
 
   prometheus:
     image: prom/prometheus:v2.1.0
