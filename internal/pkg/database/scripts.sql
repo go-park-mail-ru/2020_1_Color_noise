@@ -56,7 +56,9 @@ CREATE TABLE pins (
                       description text,
                       image text NOT NULL,
                       created_at timestamp,
-                      tags text[] NOT NULL
+                      tags text[] NOT NULL,
+                      views int NOT NULL,
+                      comments int NOT NULL
 );
 
 CREATE TABLE boards_pins (

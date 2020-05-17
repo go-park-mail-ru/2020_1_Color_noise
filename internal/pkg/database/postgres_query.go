@@ -1,12 +1,18 @@
 package database
 
 const (
-	InsertPin = "INSERT INTO pins(user_id, name, description, image, created_at, tags) " +
-		"VALUES($1, $2, $3, $4, $5, $6) RETURNING id"
+	InsertPin = "INSERT INTO pins(user_id, name, description, image, created_at, tags, views, comments) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
 	InsertBoardsPin = "INSERT INTO boards_pins(image_id, board_id, original) VALUES ($1, $2, $3) RETURNING 0;"
 	UpdatePin       = "UPDATE pins SET " +
 		" name = $1, description = $2, board_id = $3 " +
 		" WHERE id = $4"
+	UpdateViews      = "UPDATE pins SET " +
+		" views = views + 1" +
+		" WHERE id = $1"
+	UpdateComments     = "UPDATE pins SET " +
+		" comments = comments + 1" +
+		" WHERE id = $1"
 	DeletePin = "DELETE from pins WHERE id = $1 CASCADE;"
 	PinById   = "SELECT id, user_id, name, description, image, board_id, created_at, tags " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +

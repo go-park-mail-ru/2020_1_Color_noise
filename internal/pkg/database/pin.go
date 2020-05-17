@@ -10,7 +10,7 @@ import (
 func (db *PgxDB) CreatePin(pin models.DataBasePin) (uint, error) {
 	var id, check uint
 
-	res := db.dbPool.QueryRow(InsertPin, pin.UserId, pin.Name, pin.Description, pin.Image, time.Now(), []string{})
+	res := db.dbPool.QueryRow(InsertPin, pin.UserId, pin.Name, pin.Description, pin.Image, time.Now(), []string{}, 0, 0)
 	err := res.Scan(&id)
 
 	if err != nil {
@@ -61,6 +61,7 @@ func (db *PgxDB) GetPinById(pin models.DataBasePin) (models.Pin, error) {
 		return models.Pin{}, errors.New("pin not found")
 	}
 
+	db.UpdateViews(pin.Id)
 	return models.GetPin(res), nil
 }
 
@@ -132,6 +133,25 @@ func (db *PgxDB) AddTags(pinID uint, tags []string) error {
 
 	if err != nil {
 		return errors.New("tags adding error")
+	}
+	return nil
+}
+
+func (db *PgxDB) UpdateViews(pinID uint) error {
+
+	_, err := db.dbPool.Exec(UpdateViews, pinID)
+
+	if err != nil {
+		return errors.New("views error")
+	}
+	return nil
+}
+
+func (db *PgxDB) UpdateComments(pinID uint) error {
+
+	_, err := db.dbPool.Exec(UpdateComments, pinID)
+	if err != nil {
+		return errors.New("comments error")
 	}
 	return nil
 }
