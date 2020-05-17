@@ -85,10 +85,31 @@ func (db *PgxDB) GetPinsByUserId(pin models.DataBasePin) ([]*models.Pin, error) 
 	return res, nil
 }
 
-func (db *PgxDB) GetPinsByName(pin models.DataBasePin) ([]*models.Pin, error) {
+func (db *PgxDB) GetPinsByName(pin models.DataBasePin, since time.Time, to time.Time, desc bool, st string, start int, limit int) ([]*models.Pin, error) {
 	var res []*models.Pin
+	Query := PinByName
 
-	row, err := db.dbPool.Query(PinByName, pin.Name)
+	if desc {
+		switch st {
+		case "popular":
+			Query = PopularDesc
+		case "comment":
+			Query = CommentsDesc
+		default:
+			Query = IdDesc
+		}
+	} else {
+		switch st {
+		case "popular":
+			Query = PopularAsc
+		case "comment":
+			Query = CommentsAsc
+		default:
+			Query = IdAsc
+		}
+	}
+
+	row, err := db.dbPool.Query(Query, pin.Name, since, to, start, limit)
 	if err != nil {
 		return nil, err
 	}

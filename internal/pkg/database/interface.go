@@ -3,6 +3,7 @@ package database
 import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/config"
+	"time"
 )
 
 type DBInterface interface {
@@ -22,7 +23,9 @@ type DBInterface interface {
 	DeletePin(pin models.DataBasePin) error
 	GetPinById(pin models.DataBasePin) (models.Pin, error)
 	GetPinsByUserId(pin models.DataBasePin) ([]*models.Pin, error)
-	GetPinsByName(pin models.DataBasePin) ([]*models.Pin, error)
+	GetPinsByName(pin models.DataBasePin, since time.Time, to time.Time,
+		desc bool, st string,
+		start int, limit int) ([]*models.Pin, error)
 	GetPinsByBoardID(board models.DataBaseBoard) ([]*models.Pin, error)
 	AddTags(pinID uint, tags []string) error
 	UpdateComments(pinID uint) error
