@@ -162,6 +162,15 @@ func (uu *UserUsecase) Follow(id uint, subId uint) error {
 	return nil
 }
 
+func (uu *UserUsecase) IsFollowed(id uint, subId uint) (bool, error) {
+	s, err := uu.repo.IsFollowed(id, subId)
+	if err != nil {
+		return false, Wrap(err, "Error in during check follow")
+	}
+
+	return s, nil
+}
+
 func (uu *UserUsecase) Unfollow(id uint, subId uint) error {
 	if err := uu.repo.Unfollow(id, subId); err != nil {
 		err = WithMessage(FollowingIsNotYetDone.Wrap(err, "You are not following this user"),

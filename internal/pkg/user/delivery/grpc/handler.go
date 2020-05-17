@@ -139,6 +139,15 @@ func (us *UserService) Follow(ctx context.Context, in *userService.Following) (*
 	return &userService.Nothing{}, nil
 }
 
+func (us *UserService) IsFollowed(ctx context.Context, in *userService.Following) (*userService.Status, error) {
+	s, err := us.usecase.IsFollowed(uint(in.Id.Id), uint(in.SubId.Id))
+	if err != nil {
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC IsFollowed error").Error())
+	}
+
+	return &userService.Status{Status: s}, nil
+}
+
 func (us *UserService) Unfollow(ctx context.Context, in *userService.Following) (*userService.Nothing, error) {
 	err := us.usecase.Unfollow(uint(in.Id.Id), uint(in.SubId.Id))
 	if err != nil {

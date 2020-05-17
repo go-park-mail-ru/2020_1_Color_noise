@@ -418,8 +418,6 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
-
-
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -470,6 +468,65 @@ func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
 	response.Respond(w, http.StatusCreated, map[string]string{
 		"message": "Ok",
 	} )
+}
+
+func (ud *Handler) IsFollowed(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Following user: user is unauthorized")
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		return
+	}
+
+	id, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		return
+	}
+
+	vars := mux.Vars(r)
+	subId, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during following"), "Bad id")
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		return
+	}
+
+	if id == uint(subId) {
+		err = error.WithMessage(error.BadRequest.New("Bad id in during following user"),
+			"Your id and following id shoudn't match")
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+		return
+	}
+
+	s, err := ud.us.IsFollowed(r.Context(), &userService.Following{
+		Id: &userService.UserID{Id: int64(id)},
+		SubId: &userService.UserID{Id: int64(subId)},
+	})
+	if err != nil {
+		e := error.NoType
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
+		}
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
+		return
+	}
+
+	if s.Status == true {
+		response.Respond(w, http.StatusCreated, map[string]string{
+			"is_followed": "true",
+		} )
+	} else {
+		response.Respond(w, http.StatusCreated, map[string]string{
+			"is_followed": "false",
+		} )
+	}
 }
 
 func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
