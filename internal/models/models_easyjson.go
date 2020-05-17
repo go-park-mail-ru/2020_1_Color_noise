@@ -54,6 +54,29 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels(in *jlexer.Lexer, out *
 			out.Subscriptions = int(in.Int())
 		case "Subscribers":
 			out.Subscribers = int(in.Int())
+		case "Preferences":
+			if in.IsNull() {
+				in.Skip()
+				out.Preferences = nil
+			} else {
+				in.Delim('[')
+				if out.Preferences == nil {
+					if !in.IsDelim(']') {
+						out.Preferences = make([]string, 0, 4)
+					} else {
+						out.Preferences = []string{}
+					}
+				} else {
+					out.Preferences = (out.Preferences)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v1 string
+					v1 = string(in.String())
+					out.Preferences = append(out.Preferences, v1)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		case "CreatedAt":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.CreatedAt).UnmarshalJSON(data))
@@ -111,6 +134,22 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels(out *jwriter.Writer, in
 		const prefix string = ",\"Subscribers\":"
 		out.RawString(prefix)
 		out.Int(int(in.Subscribers))
+	}
+	{
+		const prefix string = ",\"Preferences\":"
+		out.RawString(prefix)
+		if in.Preferences == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v2, v3 := range in.Preferences {
+				if v2 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v3))
+			}
+			out.RawByte(']')
+		}
 	}
 	{
 		const prefix string = ",\"CreatedAt\":"
@@ -818,6 +857,29 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels9(in *jlexer.Lexer, out 
 			out.Description = string(in.String())
 		case "image":
 			out.Image = string(in.String())
+		case "tags":
+			if in.IsNull() {
+				in.Skip()
+				out.Tags = nil
+			} else {
+				in.Delim('[')
+				if out.Tags == nil {
+					if !in.IsDelim(']') {
+						out.Tags = make([]string, 0, 4)
+					} else {
+						out.Tags = []string{}
+					}
+				} else {
+					out.Tags = (out.Tags)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v4 string
+					v4 = string(in.String())
+					out.Tags = append(out.Tags, v4)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -882,6 +944,20 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels9(out *jwriter.Writer, i
 		const prefix string = ",\"image\":"
 		out.RawString(prefix)
 		out.String(string(in.Image))
+	}
+	if len(in.Tags) != 0 {
+		const prefix string = ",\"tags\":"
+		out.RawString(prefix)
+		{
+			out.RawByte('[')
+			for v5, v6 := range in.Tags {
+				if v5 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v6))
+			}
+			out.RawByte(']')
+		}
 	}
 	out.RawByte('}')
 }
@@ -1276,17 +1352,17 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels13(in *jlexer.Lexer, out
 					out.Pins = (out.Pins)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v1 *ResponsePin
+					var v7 *ResponsePin
 					if in.IsNull() {
 						in.Skip()
-						v1 = nil
+						v7 = nil
 					} else {
-						if v1 == nil {
-							v1 = new(ResponsePin)
+						if v7 == nil {
+							v7 = new(ResponsePin)
 						}
-						(*v1).UnmarshalEasyJSON(in)
+						(*v7).UnmarshalEasyJSON(in)
 					}
-					out.Pins = append(out.Pins, v1)
+					out.Pins = append(out.Pins, v7)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -1340,14 +1416,14 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels13(out *jwriter.Writer, 
 		out.RawString(prefix)
 		{
 			out.RawByte('[')
-			for v2, v3 := range in.Pins {
-				if v2 > 0 {
+			for v8, v9 := range in.Pins {
+				if v8 > 0 {
 					out.RawByte(',')
 				}
-				if v3 == nil {
+				if v9 == nil {
 					out.RawString("null")
 				} else {
-					(*v3).MarshalEasyJSON(out)
+					(*v9).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
@@ -1415,6 +1491,29 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels14(in *jlexer.Lexer, out
 			out.Description = string(in.String())
 		case "Image":
 			out.Image = string(in.String())
+		case "Tags":
+			if in.IsNull() {
+				in.Skip()
+				out.Tags = nil
+			} else {
+				in.Delim('[')
+				if out.Tags == nil {
+					if !in.IsDelim(']') {
+						out.Tags = make([]string, 0, 4)
+					} else {
+						out.Tags = []string{}
+					}
+				} else {
+					out.Tags = (out.Tags)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v10 string
+					v10 = string(in.String())
+					out.Tags = append(out.Tags, v10)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		case "CreatedAt":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.CreatedAt).UnmarshalJSON(data))
@@ -1466,6 +1565,22 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels14(out *jwriter.Writer, 
 		const prefix string = ",\"Image\":"
 		out.RawString(prefix)
 		out.String(string(in.Image))
+	}
+	{
+		const prefix string = ",\"Tags\":"
+		out.RawString(prefix)
+		if in.Tags == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v11, v12 := range in.Tags {
+				if v11 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v12))
+			}
+			out.RawByte(']')
+		}
 	}
 	{
 		const prefix string = ",\"CreatedAt\":"
@@ -2366,6 +2481,29 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels23(in *jlexer.Lexer, out
 			}
 		case "UpdatedAt":
 			easyjsonD2b7633eDecodeDatabaseSql1(in, &out.UpdatedAt)
+		case "Tags":
+			if in.IsNull() {
+				in.Skip()
+				out.Tags = nil
+			} else {
+				in.Delim('[')
+				if out.Tags == nil {
+					if !in.IsDelim(']') {
+						out.Tags = make([]string, 0, 4)
+					} else {
+						out.Tags = []string{}
+					}
+				} else {
+					out.Tags = (out.Tags)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v13 string
+					v13 = string(in.String())
+					out.Tags = append(out.Tags, v13)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -2419,6 +2557,22 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels23(out *jwriter.Writer, 
 		const prefix string = ",\"UpdatedAt\":"
 		out.RawString(prefix)
 		easyjsonD2b7633eEncodeDatabaseSql1(out, in.UpdatedAt)
+	}
+	{
+		const prefix string = ",\"Tags\":"
+		out.RawString(prefix)
+		if in.Tags == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v14, v15 := range in.Tags {
+				if v14 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v15))
+			}
+			out.RawByte(']')
+		}
 	}
 	out.RawByte('}')
 }
@@ -2893,17 +3047,17 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels28(in *jlexer.Lexer, out
 					out.Pins = (out.Pins)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v4 *Pin
+					var v16 *Pin
 					if in.IsNull() {
 						in.Skip()
-						v4 = nil
+						v16 = nil
 					} else {
-						if v4 == nil {
-							v4 = new(Pin)
+						if v16 == nil {
+							v16 = new(Pin)
 						}
-						(*v4).UnmarshalEasyJSON(in)
+						(*v16).UnmarshalEasyJSON(in)
 					}
-					out.Pins = append(out.Pins, v4)
+					out.Pins = append(out.Pins, v16)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -2949,14 +3103,14 @@ func easyjsonD2b7633eEncode20201ColorNoiseInternalModels28(out *jwriter.Writer, 
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v5, v6 := range in.Pins {
-				if v5 > 0 {
+			for v17, v18 := range in.Pins {
+				if v17 > 0 {
 					out.RawByte(',')
 				}
-				if v6 == nil {
+				if v18 == nil {
 					out.RawString("null")
 				} else {
-					(*v6).MarshalEasyJSON(out)
+					(*v18).MarshalEasyJSON(out)
 				}
 			}
 			out.RawByte(']')
