@@ -92,6 +92,10 @@ message Pref {
   repeated string Preferences = 2;
 }
 
+message Status {
+  bool Status = 1;
+}
+
 service UserService {
     rpc Create(SignUp) returns (User) {}
     rpc GetById(UserID) returns (User) {}
@@ -101,6 +105,7 @@ service UserService {
     rpc UpdatePassword(Password) returns (Nothing) {}
     rpc UpdateAvatar(Avatar) returns (Address) {}
     rpc Follow(Following) returns (Nothing) {}
+    rpc IsFollowed(Following) returns (Status) {}
     rpc Unfollow(Following) returns (Nothing) {}
     rpc Search(Searching) returns (Users) {}
     rpc GetSubscribers(Sub) returns (Users) {}

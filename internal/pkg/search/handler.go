@@ -34,14 +34,14 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 	metric.Increase()
 
 	reqId:= r.Context().Value("ReqId")
-
+	/*
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Search: user is unauthorized")
 		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
-
+	*/
 	what := r.URL.Query().Get("what")
 	description := r.URL.Query().Get("description")
 	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
