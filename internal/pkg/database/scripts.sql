@@ -121,3 +121,11 @@ CREATE TABLE chat_messages(
                               sticker text,
                               created_at TIMESTAMP
 );
+
+CREATE OR REPLACE FUNCTION make_tsvector(name TEXT)
+    RETURNS tsvector AS $$
+BEGIN
+    RETURN (setweight(to_tsvector('russian', name),'A') ||
+            setweight(to_tsvector('english', name), 'B'));
+END
+$$ LANGUAGE 'plpgsql' IMMUTABLE;

@@ -4,6 +4,7 @@ import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
+	"time"
 )
 
 type Repository struct {
@@ -62,13 +63,28 @@ func (pr *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.
 	return result, nil
 }
 
-func (pr *Repository) GetByName(name string, start int, limit int, a string, b bool, s string) ([]*models.Pin, error) {
+func (pr *Repository) GetByName(name string, start int, limit int, date string, desc bool, most string) ([]*models.Pin, error) {
+	var since, to time.Time
 
+	switch date {
+	case "":
+		since = time.Time{}
+		to = time.Now()
+	case "day":
+		to = time.Now()
+		since = to.AddDate(0, 0, -1)
+	case "week":
+		to = time.Now()
+		since = to.AddDate(0, 0, -7)
+	case "month":
+		to = time.Now()
+		since = to.AddDate(0, -1, 0)
+	}
 
-	p := models.DataBasePin{Name: name}
-	result, err := pr.db.GetPinsByName(p)
+	p := models.DataBasePin{Name: "%" + name + "%"}
+	result, err := pr.db.GetPinsByName(p, since, to, desc, most, start, limit)
 	if err != nil {
-		return result, PinNotFound.Newf("Pins not found, user id = %s", name)
+		return result, PinNotFound.Newf("Pins not found, err = %v", err)
 	}
 
 	return result, nil
