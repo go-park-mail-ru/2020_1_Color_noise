@@ -60,7 +60,7 @@ type ResponseUser struct {
 	Id            uint   `json:"id"`
 	Email         string `json:"email,omitempty"`
 	Login         string `json:"login"`
-	About         string `json:"about,omitempty"`
+	About         string `json:"about"`
 	Avatar        string `json:"avatar,omitempty"`
 	Subscriptions int    `json:"subscriptions"`
 	Subscribers   int    `json:"subscribers"`

@@ -227,7 +227,7 @@ func TestHandler_Search(t *testing.T) {
 			}
 
 			gomock.InOrder(
-				mockPinUsecase.EXPECT().GetByName(item.Line, item.Start, item.Limit).Return(item.Pins, err),
+				mockPinUsecase.EXPECT().GetByName(item.Line, item.Start, item.Limit, "", false, "").Return(item.Pins, err),
 			)
 		}
 
