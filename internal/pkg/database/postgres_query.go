@@ -8,18 +8,19 @@ const (
 		" name = $1, description = $2, board_id = $3 " +
 		" WHERE id = $4"
 	DeletePin = "DELETE from pins WHERE id = $1 CASCADE;"
-	PinById   = "SELECT id, user_id, name, description, image, board_id, created_at " +
+	PinById   = "SELECT id, user_id, name, description, image, board_id, created_at, tags " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
 		" WHERE original = true AND id = $1"
-	PinByUser = "SELECT id, user_id, name, description, image, board_id, created_at " +
+	PinByUser = "SELECT id, user_id, name, description, image, board_id, created_at, tags " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
 		" WHERE original = true AND user_id = $1  ORDER BY id DESC"
-	PinByName = "SELECT id, user_id, name, description, image, board_id, created_at " +
+	PinByName = "SELECT id, user_id, name, description, image, board_id, created_at, tags " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
 		" WHERE original = true AND  LOWER(name) = LOWER($1);"
-	PinByBoard = "SELECT id, user_id, name, description, image, board_id, created_at " +
+	PinByBoard = "SELECT id, user_id, name, description, image, board_id, created_at, tags " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
 		" WHERE original = true AND  board_id = $1"
+	AddTags = "UPDATE pins SET tags= $1 WHERE id = $2 RETURNING 0;"
 )
 
 const (

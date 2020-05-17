@@ -56,7 +56,7 @@ func (db *PgxDB) GetPinById(pin models.DataBasePin) (models.Pin, error) {
 	var res models.DataBasePin
 
 	row := db.dbPool.QueryRow(PinById, pin.Id)
-	err := row.Scan(&res.Id, &res.UserId, &res.Name, &res.Description, &res.Image, &res.BoardId, &res.CreatedAt)
+	err := row.Scan(&res.Id, &res.UserId, &res.Name, &res.Description, &res.Image, &res.BoardId, &res.CreatedAt, &res.Tags)
 	if err != nil {
 		return models.Pin{}, errors.New("pin not found")
 	}
@@ -74,7 +74,7 @@ func (db *PgxDB) GetPinsByUserId(pin models.DataBasePin) ([]*models.Pin, error) 
 	for row.Next() {
 		var tmp models.DataBasePin
 		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
-			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt)
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags)
 		if ok != nil {
 			return nil, ok
 		}
@@ -94,7 +94,7 @@ func (db *PgxDB) GetPinsByName(pin models.DataBasePin) ([]*models.Pin, error) {
 	for row.Next() {
 		var tmp models.DataBasePin
 		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
-			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt)
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags)
 		if ok != nil {
 			return nil, ok
 		}
@@ -114,7 +114,7 @@ func (db *PgxDB) GetPinsByBoardID(board models.DataBaseBoard) ([]*models.Pin, er
 	for row.Next() {
 		var tmp models.DataBasePin
 		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
-			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt)
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags)
 		if ok != nil {
 			return nil, ok
 		}
@@ -122,4 +122,16 @@ func (db *PgxDB) GetPinsByBoardID(board models.DataBaseBoard) ([]*models.Pin, er
 		res = append(res, &p)
 	}
 	return res, nil
+}
+
+func (db *PgxDB) AddTags(pinID uint, tags []string) error {
+	var check int
+
+	res := db.dbPool.QueryRow(AddTags, tags, pinID)
+	err := res.Scan(&check)
+
+	if err != nil {
+		return errors.New("tags adding error")
+	}
+	return nil
 }
