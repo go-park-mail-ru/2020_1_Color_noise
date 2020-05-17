@@ -116,7 +116,7 @@ func (db *PgxDB) GetPinsByName(pin models.DataBasePin, since time.Time, to time.
 	for row.Next() {
 		var tmp models.DataBasePin
 		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
-			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags)
+			&tmp.Image, &tmp.CreatedAt, &tmp.Tags, &tmp.Views, &tmp.Comment)
 		if ok != nil {
 			return nil, ok
 		}

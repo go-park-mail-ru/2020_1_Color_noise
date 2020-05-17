@@ -4,7 +4,6 @@ import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
-	"sort"
 	"time"
 )
 
@@ -82,10 +81,10 @@ func (pr *Repository) GetByName(name string, start int, limit int, date string, 
 		since = to.AddDate(0, -1, 0)
 	}
 
-	p := models.DataBasePin{Name: name}
+	p := models.DataBasePin{Name: "%" + name + "%"}
 	result, err := pr.db.GetPinsByName(p, since, to, desc, most, start, limit)
 	if err != nil {
-		return result, PinNotFound.Newf("Pins not found, user id = %s", name)
+		return result, PinNotFound.Newf("Pins not found, err = %v", err)
 	}
 
 	return result, nil

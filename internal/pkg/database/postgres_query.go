@@ -29,22 +29,22 @@ const (
 	AddTags = "UPDATE pins SET tags= $1 WHERE id = $2 RETURNING 0;"
 
 	PopularDesc = "SELECT id, user_id, name, description, image, created_at, tags, views, comments" +
-		" FROM pins  WHERE name = $1  AND created_at BETWEEN $2 AND $3" +
+		" FROM pins  WHERE name LIKE $1  AND created_at BETWEEN $2 AND $3" +
 		"ORDER BY views DESC OFFSET $4 LIMIT $5;"
 	PopularAsc = "SELECT id, user_id, name, description, image, created_at, tags, views, comments" +
-		" FROM pins  WHERE name = $1  AND created_at BETWEEN $2 AND $3" +
+		" FROM pins  WHERE name LIKE $1  AND created_at BETWEEN $2 AND $3" +
 		"ORDER BY views ASC OFFSET $4 LIMIT $5;"
 	CommentsDesc = "SELECT id, user_id, name, description, image, created_at, tags, views, comments" +
-		" FROM pins  WHERE name = $1  AND created_at BETWEEN $2 AND $3" +
+		" FROM pins  WHERE name LIKE $1  AND created_at BETWEEN $2 AND $3" +
 		"ORDER BY comments DESC OFFSET $4 LIMIT $5;"
 	CommentsAsc = "SELECT id, user_id, name, description, image, created_at, tags, views, comments" +
-		" FROM pins  WHERE name = $1  AND created_at BETWEEN $2 AND $3" +
+		" FROM pins  WHERE name LIKE $1  AND created_at BETWEEN $2 AND $3" +
 		"ORDER BY comments ASC OFFSET $4 LIMIT $5;"
 	IdDesc = "SELECT id, user_id, name, description, image, created_at, tags, views, comments" +
-		" FROM pins  WHERE name = $1  AND created_at BETWEEN $2 AND $3" +
+		" FROM pins  WHERE name LIKE $1  AND created_at BETWEEN $2 AND $3" +
 		"ORDER BY id DESC OFFSET $4 LIMIT $5;"
 	IdAsc = "SELECT id, user_id, name, description, image, created_at, tags, views, comments" +
-		" FROM pins  WHERE name = $1  AND created_at BETWEEN $2 AND $3" +
+		" FROM pins  WHERE name LIKE $1  AND created_at BETWEEN $2 AND $3" +
 		"ORDER BY id ASC OFFSET $4 LIMIT $5;"
 )
 
