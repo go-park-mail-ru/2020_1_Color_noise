@@ -14,10 +14,13 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main -i cmd/main/main.go
 
 
-FROM alpine
+FROM python:3.8-slim
+
 WORKDIR /app
 
 COPY --from=builder app/main .
 COPY --from=builder app/config.json .
+
+RUN pip install torch==1.5.0+cpu torchvision==0.6.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
 CMD sleep 15 && ./main
