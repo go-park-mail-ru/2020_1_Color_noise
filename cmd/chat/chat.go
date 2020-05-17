@@ -72,7 +72,7 @@ func main() {
 
 		delivery.ServeWs(hub, zap, chatUse, w, r)
 	})
-
+	r.Use(m.PanicMiddleware)
 	r.Use(m.AccessLogMiddleware)
 	//r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)

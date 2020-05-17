@@ -170,6 +170,7 @@ func main() {
 	r.HandleFunc("/api/notifications", notificationsDelivery.GetNotifications).Methods("GET")
 
 	r.Handle("/api/metric", promhttp.Handler())
+	r.Use(m.PanicMiddleware)
 	r.Use(m.AccessLogMiddleware)
 	//r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)
