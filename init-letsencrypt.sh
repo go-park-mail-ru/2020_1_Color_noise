@@ -1,6 +1,6 @@
 #!/bin/bash
 
-domains=(zinterest.ru www.zinterest.ru)
+domains=(zinterest.ru)
 rsa_key_size=4096
 data_path="./server/certbot"
 email="proj9007@gmail.com" # Adding a valid address is strongly recommended
