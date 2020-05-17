@@ -9,7 +9,7 @@ import (
 
 func (db *PgxDB) CreateUser(user models.DataBaseUser) (uint, error) {
 	res := db.dbPool.QueryRow(InsertUser, user.Email, user.Login, user.EncryptedPassword, user.About,
-		user.Avatar, user.Subscribers, user.Subscriptions, time.Now())
+		user.Avatar, user.Subscribers, user.Subscriptions, time.Now(), []string{})
 	var id uint
 	err := res.Scan(&id)
 
@@ -72,7 +72,7 @@ func (db *PgxDB) GetUserById(user models.DataBaseUser) (models.User, error) {
 	var res models.DataBaseUser
 	row := db.dbPool.QueryRow(UserById, user.Id)
 	err := row.Scan(&res.Id, &res.Email, &res.Login, &res.EncryptedPassword,
-		&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt)
+		&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt, &res.Tags)
 
 	if err != nil {
 		return models.User{}, errors.New("user not found")
@@ -92,7 +92,7 @@ func (db *PgxDB) GetUserByLogin(user models.DataBaseUser, start int, limit int) 
 	for row.Next() {
 		var res models.DataBaseUser
 		ok := row.Scan(&res.Id, &res.Email, &res.Login, &res.EncryptedPassword,
-			&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt)
+			&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt, &res.Tags)
 		if ok != nil {
 			return nil, errors.New("user not found")
 		}
@@ -107,7 +107,7 @@ func (db *PgxDB) GetUserByName(user models.DataBaseUser) (models.User, error) {
 
 	row := db.dbPool.QueryRow(UserByLoginSearch, user.Login)
 	err := row.Scan(&res.Id, &res.Email, &res.Login, &res.EncryptedPassword,
-		&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt)
+		&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt, &res.Tags)
 	if err != nil {
 		return models.User{}, errors.New("user not found")
 	}
@@ -119,7 +119,7 @@ func (db *PgxDB) GetUserByEmail(user models.DataBaseUser) (models.User, error) {
 
 	row := db.dbPool.QueryRow(UserByEmail, user.Email)
 	err := row.Scan(&res.Id, &res.Email, &res.Login, &res.EncryptedPassword,
-		&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt)
+		&res.About, &res.Avatar, &res.Subscriptions, &res.Subscribers, &res.CreatedAt, &res.Tags)
 
 	if err != nil {
 		return models.User{}, errors.New("user not found")
@@ -229,4 +229,16 @@ func (db *PgxDB) GetUserSupUsers(user models.DataBaseUser) ([]*models.User, erro
 		users = append(users, &r)
 	}
 	return users, nil
+}
+
+func (db *PgxDB) AddUserTags(userID uint, tags []string) error {
+	var check int
+
+	res := db.dbPool.QueryRow(AddUserTags, tags, userID)
+	err := res.Scan(&check)
+
+	if err != nil {
+		return errors.New("user tags adding error")
+	}
+	return nil
 }

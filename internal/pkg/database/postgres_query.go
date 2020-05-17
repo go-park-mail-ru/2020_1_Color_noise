@@ -1,8 +1,8 @@
 package database
 
 const (
-	InsertPin = "INSERT INTO pins(user_id, name, description, image, created_at) " +
-		"VALUES($1, $2, $3, $4, $5) RETURNING id"
+	InsertPin = "INSERT INTO pins(user_id, name, description, image, created_at, tags) " +
+		"VALUES($1, $2, $3, $4, $5, $6) RETURNING id"
 	InsertBoardsPin = "INSERT INTO boards_pins(image_id, board_id, original) VALUES ($1, $2, $3) RETURNING 0;"
 	UpdatePin       = "UPDATE pins SET " +
 		" name = $1, description = $2, board_id = $3 " +
@@ -25,8 +25,8 @@ const (
 
 const (
 	InsertUser = "INSERT INTO users(email, login, encrypted_password, about, avatar, " +
-		"subscriptions, subscribers, created_at) " +
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
+		"subscriptions, subscribers, created_at, tags) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id"
 	UpdateUser = "UPDATE users SET " +
 		"email = $1, login = $2 " +
 		"WHERE id = $3 RETURNING id"
@@ -40,7 +40,7 @@ const (
 		"avatar = $1 " +
 		"WHERE id = $2 RETURNING id;"
 	DeleteUser = "DELETE FROM users WHERE id = $1;"
-	UserById   = "SELECT id, email, login, encrypted_password, about, avatar, subscriptions, subscribers, created_at FROM users WHERE id = $1"
+	UserById   = "SELECT id, email, login, encrypted_password, about, avatar, subscriptions, subscribers, created_at, tags FROM users WHERE id = $1"
 	//это поиск
 	UserByLogin = "SELECT * FROM users WHERE LOWER(login) = LOWER($1) LIMIT $2 OFFSET $3"
 	//это точный поиск
@@ -62,6 +62,7 @@ const (
 	UpdateFollowA     = "UPDATE users SET subscriptions = subscriptions + 1 WHERE id = $1 RETURNING 0;"
 	UpdateUnfollowB   = "UPDATE users SET subscribers = subscribers - 1 WHERE id = $1 RETURNING 0;"
 	UpdateFollowB     = "UPDATE users SET subscribers = subscribers + 1 WHERE id =  $1 RETURNING 0;"
+	AddUserTags = "UPDATE users SET tags= $1 WHERE id = $2 RETURNING 0;"
 )
 
 const (

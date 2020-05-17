@@ -12,7 +12,11 @@ type Repository struct {
 	bd            database.DBInterface
 }
 
-func NewRepo(bd database.DBInterface) *Repository {
+  func (ur *Repository) UpdatePreferences(userId uint, preferences []string) error {
+	  panic("implement me")
+  }
+
+  func NewRepo(bd database.DBInterface) *Repository {
 	return &Repository{
 		bd:            bd,
 	}

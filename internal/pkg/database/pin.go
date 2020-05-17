@@ -10,7 +10,7 @@ import (
 func (db *PgxDB) CreatePin(pin models.DataBasePin) (uint, error) {
 	var id, check uint
 
-	res := db.dbPool.QueryRow(InsertPin, pin.UserId, pin.Name, pin.Description, pin.Image, time.Now())
+	res := db.dbPool.QueryRow(InsertPin, pin.UserId, pin.Name, pin.Description, pin.Image, time.Now(), []string{})
 	err := res.Scan(&id)
 
 	if err != nil {

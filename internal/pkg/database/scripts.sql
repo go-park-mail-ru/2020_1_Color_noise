@@ -28,7 +28,8 @@ CREATE TABLE users(
                       avatar text,
                       subscriptions int,
                       subscribers int,
-                      created_at TIMESTAMP NOT NULL
+                      created_at TIMESTAMP NOT NULL,
+                      tags text[] NOT NULL
 );
 
 CREATE TABLE sessions (
@@ -55,7 +56,7 @@ CREATE TABLE pins (
                       description text,
                       image text NOT NULL,
                       created_at timestamp,
-                      tags text[]
+                      tags text[] NOT NULL
 );
 
 CREATE TABLE boards_pins (

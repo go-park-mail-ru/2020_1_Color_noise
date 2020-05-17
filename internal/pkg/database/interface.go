@@ -42,6 +42,7 @@ type DBInterface interface {
 	GetUserSupUsers(user models.DataBaseUser) ([]*models.User, error)
 	Follow(who, whom uint) error
 	Unfollow(who, whom uint) error
+	AddUserTags(userID uint, tags []string) error
 
 	CreateComment(cm models.DataBaseComment) (uint, error)
 	UpdateComment(cm models.DataBaseComment) error
