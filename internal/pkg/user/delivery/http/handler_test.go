@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"net/http"
+	boardMock "2020_1_Color_noise/internal/pkg/board/mock"
 	userServMock "2020_1_Color_noise/internal/pkg/proto/user/mock"
 	authServMock "2020_1_Color_noise/internal/pkg/proto/session/mock"
 	userServ "2020_1_Color_noise/internal/pkg/proto/user"
@@ -45,6 +46,7 @@ func TestHandler_Create(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	mockBoard := boardMock.NewMockIUsecase(ctl)
 	mockUserService := userServMock.NewMockUserServiceClient(ctl)
 	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
@@ -59,7 +61,7 @@ func TestHandler_Create(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, mockBoard, zap)
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
@@ -244,6 +246,7 @@ func TestHandler_GetUser(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	mockBoard := boardMock.NewMockIUsecase(ctl)
 	mockUserService := userServMock.NewMockUserServiceClient(ctl)
 	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
@@ -258,7 +261,7 @@ func TestHandler_GetUser(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, mockBoard, zap)
 
 
 	cases := []TestCaseGetUser{
@@ -367,6 +370,7 @@ func TestHandler_GetOtherUser(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	mockBoard := boardMock.NewMockIUsecase(ctl)
 	mockUserService := userServMock.NewMockUserServiceClient(ctl)
 	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
@@ -381,7 +385,7 @@ func TestHandler_GetOtherUser(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, mockBoard, zap)
 
 	cases := []TestCaseGetUser{
 		TestCaseGetUser{
@@ -496,6 +500,7 @@ func TestHandler_UpdateProfile(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	mockBoard := boardMock.NewMockIUsecase(ctl)
 	mockUserService := userServMock.NewMockUserServiceClient(ctl)
 	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
@@ -510,7 +515,7 @@ func TestHandler_UpdateProfile(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, mockBoard, zap)
 
 	cases := []TestCaseUpdateProfile{
 		TestCaseUpdateProfile{
@@ -606,7 +611,7 @@ func TestHandler_UpdateProfile(t *testing.T) {
 
 			gomock.InOrder(
 				mockUserService.EXPECT().UpdateProfile(r.Context(), input).Return(
-					&userServ.Nothing{Error:false}, err),
+					&userServ.Nothing{}, err),
 			)
 
 		}
@@ -660,6 +665,7 @@ func TestHandler_UpdateDescription(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	mockBoard := boardMock.NewMockIUsecase(ctl)
 	mockUserService := userServMock.NewMockUserServiceClient(ctl)
 	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
@@ -674,7 +680,7 @@ func TestHandler_UpdateDescription(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, mockBoard, zap)
 
 	cases := []TestCaseUpdateDescription{
 		TestCaseUpdateDescription{
@@ -747,7 +753,7 @@ func TestHandler_UpdateDescription(t *testing.T) {
 
 			gomock.InOrder(
 				mockUserService.EXPECT().UpdateDescription(r.Context(), input).Return(
-					&userServ.Nothing{Error: false}, err),
+					&userServ.Nothing{}, err),
 			)
 
 		}
@@ -803,6 +809,7 @@ func TestHandler_UpdatePassword(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	mockBoard := boardMock.NewMockIUsecase(ctl)
 	mockUserService := userServMock.NewMockUserServiceClient(ctl)
 	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
@@ -817,7 +824,7 @@ func TestHandler_UpdatePassword(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, mockBoard, zap)
 
 	cases := []TestCaseUpdatePassword{
 		TestCaseUpdatePassword{
@@ -897,7 +904,7 @@ func TestHandler_UpdatePassword(t *testing.T) {
 
 			gomock.InOrder(
 				mockUserService.EXPECT().UpdatePassword(r.Context(), input).Return(
-					&userServ.Nothing{Error: false}, err))
+					&userServ.Nothing{}, err))
 
 		}
 
@@ -952,6 +959,7 @@ func TestHandler_Follow(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	mockBoard := boardMock.NewMockIUsecase(ctl)
 	mockUserService := userServMock.NewMockUserServiceClient(ctl)
 	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
@@ -966,7 +974,7 @@ func TestHandler_Follow(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, mockBoard, zap)
 
 	cases := []TestCaseFollow{
 		TestCaseFollow{
@@ -1042,7 +1050,7 @@ func TestHandler_Follow(t *testing.T) {
 					&userServ.Following{
 					Id: &userServ.UserID{Id: int64(item.UserId)},
 					SubId: &userServ.UserID{Id: int64(item.SubId)},
-					}).Return(&userServ.Nothing{Error: false}, err),
+					}).Return(&userServ.Nothing{}, err),
 			)
 
 		}
@@ -1088,6 +1096,7 @@ func TestHandler_Unfollow(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	mockBoard := boardMock.NewMockIUsecase(ctl)
 	mockUserService := userServMock.NewMockUserServiceClient(ctl)
 	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
@@ -1102,7 +1111,7 @@ func TestHandler_Unfollow(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, mockBoard, zap)
 
 	cases := []TestCaseFollow{
 		TestCaseFollow{
@@ -1176,7 +1185,7 @@ func TestHandler_Unfollow(t *testing.T) {
 					&userServ.Following{
 						Id: &userServ.UserID{Id: int64(item.UserId)},
 						SubId: &userServ.UserID{Id: int64(item.SubId)},
-					}).Return(&userServ.Nothing{Error: false}, err),
+					}).Return(&userServ.Nothing{}, err),
 			)
 
 		}
@@ -1229,6 +1238,7 @@ func TestHandler_GetSubscribers(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	mockBoard := boardMock.NewMockIUsecase(ctl)
 	mockUserService := userServMock.NewMockUserServiceClient(ctl)
 	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
@@ -1243,7 +1253,7 @@ func TestHandler_GetSubscribers(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, mockBoard, zap)
 
 	cases := []TestCaseGet{
 		TestCaseGet{
@@ -1369,6 +1379,7 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
+	mockBoard := boardMock.NewMockIUsecase(ctl)
 	mockUserService := userServMock.NewMockUserServiceClient(ctl)
 	mockAuthService := authServMock.NewMockAuthSeviceClient(ctl)
 
@@ -1383,7 +1394,7 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := NewHandler(mockUserService, mockAuthService, zap)
+	userDelivery := NewHandler(mockUserService, mockAuthService, mockBoard, zap)
 
 	cases := []TestCaseGet{
 		TestCaseGet{

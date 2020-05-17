@@ -77,12 +77,15 @@ func (bh Handler) Create(w http.ResponseWriter, r *http.Request) {
 func (bh Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
+	/*
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get board: user is unauthorized")
 		error.ErrorHandler(w, r, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
+
+	 */
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -133,12 +136,15 @@ func (bh Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 func (bh Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
+	/*
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Get name of board: user is unauthorized")
 		error.ErrorHandler(w, r, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
+
+	 */
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -175,12 +181,14 @@ func (bh Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 func (bh Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
+	/*
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Fetch boards: user is unauthorized")
 		error.ErrorHandler(w, r, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
+	 */
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])

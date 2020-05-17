@@ -105,7 +105,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			Name:    "csrf_token",
 			Value:   sess.Token,
 			Expires: time.Now().Add(5 * time.Hour),
-			Domain:  r.Host,
+			Domain:  "/",
 	}
 
 

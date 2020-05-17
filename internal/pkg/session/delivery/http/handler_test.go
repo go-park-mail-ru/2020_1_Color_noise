@@ -315,7 +315,7 @@ func TestHandler_Logout(t *testing.T) {
 
 			gomock.InOrder(
 				mockAuthService.EXPECT().Delete(r.Context(), gomock.Any()).Return(
-					&authServ.Nothing{Error: false}, err),
+					&authServ.Nothing{}, err),
 			)
 		}
 
