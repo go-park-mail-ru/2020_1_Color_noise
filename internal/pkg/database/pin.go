@@ -123,3 +123,15 @@ func (db *PgxDB) GetPinsByBoardID(board models.DataBaseBoard) ([]*models.Pin, er
 	}
 	return res, nil
 }
+
+func (db *PgxDB) AddTags(pinID uint, tags []string) error {
+	var check int
+
+	res := db.dbPool.QueryRow(AddTags, tags, pinID)
+	err := res.Scan(&check)
+
+	if err != nil {
+		return errors.New("tags adding error")
+	}
+	return nil
+}

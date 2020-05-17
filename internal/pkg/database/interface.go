@@ -24,6 +24,7 @@ type DBInterface interface {
 	GetPinsByUserId(pin models.DataBasePin) ([]*models.Pin, error)
 	GetPinsByName(pin models.DataBasePin) ([]*models.Pin, error)
 	GetPinsByBoardID(board models.DataBaseBoard) ([]*models.Pin, error)
+	AddTags(pinID uint, tags []string) error
 
 	CreateUser(user models.DataBaseUser) (uint, error)
 	UpdateUser(user models.DataBaseUser) error

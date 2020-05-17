@@ -20,6 +20,7 @@ const (
 	PinByBoard = "SELECT id, user_id, name, description, image, board_id, created_at " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
 		" WHERE original = true AND  board_id = $1"
+	AddTags = "UPDATE pins SET tags= $1 WHERE id = $2 RETURNING 0;"
 )
 
 const (

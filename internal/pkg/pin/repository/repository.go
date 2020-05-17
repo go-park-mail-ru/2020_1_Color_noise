@@ -62,7 +62,7 @@ func (pr *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.
 	return result, nil
 }
 
-func (pr *Repository) GetByName(name string, start int, limit int) ([]*models.Pin, error) {
+func (pr *Repository) GetByName(name string, start int, limit int, a string, b bool, s string) ([]*models.Pin, error) {
 
 
 	p := models.DataBasePin{Name: name}
@@ -93,6 +93,14 @@ func (pr *Repository) Delete(pinId uint, userId uint) error {
 	err := pr.db.DeletePin(p)
 	if err != nil {
 		return PinNotFound.Newf("Pin not found, id: %d", pinId)
+	}
+	return nil
+}
+
+func (pr *Repository) AddTags(pinId uint, tags []string) error {
+	err := pr.db.AddTags(pinId, tags)
+	if err != nil {
+		return NoType.Newf("Tags error: %v", err)
 	}
 	return nil
 }
