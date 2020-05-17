@@ -71,4 +71,5 @@ type DBInterface interface {
 	AddMessage(send, rec int, mess string, sticker string) (*models.Message, error)
 	GetMessages(userId, otherId uint, start int, limit int) ([]*models.Message, error)
 	GetUsers(userId uint, start int, limit int) ([]*models.User, error)
+	IsFollowing(id uint, id2 uint) (bool, error)
 }

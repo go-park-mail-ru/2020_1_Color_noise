@@ -69,6 +69,7 @@ const (
 	UpdateUnfollowB   = "UPDATE users SET subscribers = subscribers - 1 WHERE id = $1 RETURNING 0;"
 	UpdateFollowB     = "UPDATE users SET subscribers = subscribers + 1 WHERE id =  $1 RETURNING 0;"
 	AddUserTags = "UPDATE users SET tags= $1 WHERE id = $2 RETURNING 0;"
+	IsFollowing =  "SELECT id FROM subscriptions WHERE user_id = $1 AND subscribed_at = $2;"
 )
 
 const (

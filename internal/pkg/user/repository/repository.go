@@ -236,3 +236,8 @@ func (ur *Repository) GetSubscriptions(id uint, start int, limit int) ([]*models
 	}
 	return users, nil
 }
+
+func (ur *Repository) IsFollowed(id uint, subId uint) (bool, error) {
+
+	return  ur.bd.IsFollowing(id, subId)
+}
