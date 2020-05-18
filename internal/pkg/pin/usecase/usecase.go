@@ -56,23 +56,15 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
-	go pu.imageUs.Analyze(pin.Id, pin.UserId, name)
+	go pu.imageUs.Analyze(id, pin.UserId, name)
 
 	return id, nil
 }
 
-func (pu *Usecase) Save(pinId uint, userId uint) error {
-	boards, err := pu.repoBoard.GetByUserID(userId, 0, 1)
+func (pu *Usecase) Save(pinId uint, boardId uint) error {
+	err := pu.repoPin.Save(pinId, boardId)
 	if err != nil {
-		return Wrapf(err, "Saving pin error, userId: %d", userId)
-	}
-	if len(boards) == 0 {
-		return Wrapf(BoardNotFound.New("default board not found"), "Saving pin by error, userId: %d", userId)
-	}
-
-	err = pu.repoPin.Save(pinId, boards[0].Id)
-	if err != nil {
-		return Wrapf(err, "Saving pin error, userId: %d", userId)
+		return Wrapf(err, "Saving pin error, boardId: %d", boardId)
 	}
 
 	return nil
