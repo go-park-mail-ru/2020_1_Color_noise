@@ -32,22 +32,22 @@ const (
 		" FROM pins " +
 		" WHERE make_tsvector(name) @@ to_tsquery($1)" +
 		" AND created_at BETWEEN $2 AND $3" +
-		"ORDER BY views DESC OFFSET $4 LIMIT $5;"
+		" ORDER BY views DESC OFFSET $4 LIMIT $5;"
 	PopularAsc = "SELECT id, user_id, name, description, image, created_at, tags, views, comments" +
 		" FROM pins  WHERE make_tsvector(name) @@ to_tsquery($1)  AND created_at BETWEEN $2 AND $3" +
-		"ORDER BY views ASC OFFSET $4 LIMIT $5;"
+		" ORDER BY views ASC OFFSET $4 LIMIT $5;"
 	CommentsDesc = "SELECT id, user_id, name, description, image, created_at, tags, views, comments" +
 		" FROM pins  WHERE name LIKE $1  AND created_at BETWEEN $2 AND $3" +
-		"ORDER BY comments DESC OFFSET $4 LIMIT $5;"
+		" ORDER BY comments DESC OFFSET $4 LIMIT $5;"
 	CommentsAsc = "SELECT id, user_id, name, description, image, created_at, tags, views, comments" +
 		" FROM pins  WHERE make_tsvector(name) @@ to_tsquery($1)  AND created_at BETWEEN $2 AND $3" +
-		"ORDER BY comments ASC OFFSET $4 LIMIT $5;"
+		" ORDER BY comments ASC OFFSET $4 LIMIT $5;"
 	IdDesc = "SELECT id, user_id, name, description, image, created_at, tags, views, comments" +
 		" FROM pins  WHERE make_tsvector(name) @@ to_tsquery($1)  AND created_at BETWEEN $2 AND $3" +
-		"ORDER BY id DESC OFFSET $4 LIMIT $5;"
+		" ORDER BY id DESC OFFSET $4 LIMIT $5;"
 	IdAsc = "SELECT id, user_id, name, description, image, created_at, tags, views, comments" +
 		" FROM pins  WHERE make_tsvector(name) @@ to_tsquery($1)  AND created_at BETWEEN $2 AND $3" +
-		"ORDER BY id ASC OFFSET $4 LIMIT $5;"
+		" ORDER BY id ASC OFFSET $4 LIMIT $5;"
 )
 
 const (
@@ -70,8 +70,8 @@ const (
 	UserById   = "SELECT id, email, login, encrypted_password, about, avatar, subscriptions, subscribers, created_at, tags FROM users WHERE id = $1"
 	//это поиск
 	UserByLogin = "SELECT * FROM users " +
-		"WHERE make_tsvector(login) @@ to_tsquery($1) " +
-		"LIMIT $2 OFFSET $3"
+		" WHERE make_tsvector(login) @@ to_tsquery($1) " +
+		" LIMIT $2 OFFSET $3"
 	//это точный поиск
 	UserByLoginSearch = "SELECT * FROM users WHERE login = $1"
 	UserByEmail       = "SELECT * FROM users WHERE email = $1"
