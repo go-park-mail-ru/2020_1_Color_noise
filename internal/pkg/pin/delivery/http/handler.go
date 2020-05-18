@@ -265,13 +265,6 @@ func (ph *Handler) Save(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, ok := r.Context().Value("Id").(uint)
-	if !ok {
-		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
-
 	vars := mux.Vars(r)
 	pinId, err := strconv.Atoi(vars["id"])
 	if err != nil {
