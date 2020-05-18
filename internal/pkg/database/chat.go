@@ -63,7 +63,7 @@ func (db *PgxDB) GetMessages(userId, otherId uint, start int, limit int) ([]*mod
 
 		ok := row.Scan(&author, &tmp.Message, &tmp.Stickers, &tmp.CreatedAt)
 		if ok != nil {
-			return res, nil
+			return res, ok
 		}
 
 		if author == sender.Id {
