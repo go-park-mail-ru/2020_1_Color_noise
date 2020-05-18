@@ -20,6 +20,8 @@ WORKDIR /app
 
 COPY --from=builder app/main .
 COPY --from=builder app/config.json .
+COPY --from=builder app/internal/pkg/image/analyze.py .
+COPY --from=builder app/internal/pkg/image/data.csv .
 
 RUN pip install torch==1.5.0+cpu torchvision==0.6.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 

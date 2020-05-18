@@ -16,8 +16,8 @@ import (
 
 var table [][]string
 
-func Init() {
-	data, err := ioutil.ReadFile("./internal/pkg/image/data.csv")
+func init() {
+	data, err := ioutil.ReadFile("data.csv")
 	if err != nil {
 		log.Println("data.csv is not found ", err.Error())
 		return
@@ -40,7 +40,6 @@ type ImageUsecase struct {
 }
 
 func NewImageUsecase(repoPin pin.IRepository, repoBoard board.IRepository, us userService.UserServiceClient) *ImageUsecase {
-	Init()
 	return &ImageUsecase{
 		repoPin,
 		repoBoard,
@@ -49,12 +48,12 @@ func NewImageUsecase(repoPin pin.IRepository, repoBoard board.IRepository, us us
 }
 
 func (im *ImageUsecase) Analyze(pinId uint, userId uint, image string) {
-	cmd := exec.Command("python3", "./internal/pkg/image/analyze.py", "../storage/" + image)
+	cmd := exec.Command("python3", "analyze.py", "../storage/" + image)
 	out, _ := cmd.CombinedOutput()
 
 	i, err := strconv.Atoi(string(out))
 	if err != nil {
-		log.Println("Analazing error: bad return from script")
+		log.Println("Analazing error: bad return from script ", string(out))
 	}
 
 	if len(table) <= i {

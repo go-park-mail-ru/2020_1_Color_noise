@@ -6,7 +6,7 @@ import (
 
 type IUsecase interface {
 	Create(input *models.InputPin, userId uint) (uint, error)
-	Save(pinId uint, userId uint) error
+	Save(pinId uint, boardId uint) error
 	GetById(id uint) (*models.Pin, error)
 	GetByUserId(id uint, start int, limit int) ([]*models.Pin, error)
 	GetByName(name string, start int, limit int, date string, desc bool, most string) ([]*models.Pin, error)

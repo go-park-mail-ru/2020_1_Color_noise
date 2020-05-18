@@ -265,13 +265,6 @@ func (ph *Handler) Save(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, ok := r.Context().Value("Id").(uint)
-	if !ok {
-		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
-
 	vars := mux.Vars(r)
 	pinId, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -280,7 +273,16 @@ func (ph *Handler) Save(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ph.pinUsecase.Save(uint(pinId), userId)
+	input := &models.InputPin{}
+
+	err = easyjson.UnmarshalFromReader(r.Body, input)
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during saving pin"), "Wrong body of request")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	err = ph.pinUsecase.Save(uint(pinId), uint(input.BoardId))
 	if err != nil {
 		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return

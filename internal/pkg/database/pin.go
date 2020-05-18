@@ -3,6 +3,7 @@ package database
 import (
 	"2020_1_Color_noise/internal/models"
 	"errors"
+	"fmt"
 	"github.com/jackc/pgx"
 	"time"
 )
@@ -148,12 +149,12 @@ func (db *PgxDB) GetPinsByBoardID(board models.DataBaseBoard) ([]*models.Pin, er
 
 func (db *PgxDB) AddTags(pinID uint, tags []string) error {
 	var check int
-
+	fmt.Println(tags, pinID)
 	res := db.dbPool.QueryRow(AddTags, tags, pinID)
 	err := res.Scan(&check)
 
 	if err != nil {
-		return errors.New("tags adding error")
+		return err
 	}
 	return nil
 }

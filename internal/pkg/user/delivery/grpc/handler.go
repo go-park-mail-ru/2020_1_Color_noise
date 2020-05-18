@@ -67,7 +67,6 @@ func (us *UserService) GetByLogin(ctx context.Context, in *userService.Login) (*
 		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC GetById error").Error())
 	}
 
-
 	userProto := &userService.User{
 		Id:     int64(u.Id),
 		Email:  u.Email,

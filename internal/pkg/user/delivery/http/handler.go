@@ -210,6 +210,42 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 	response.Respond(w, http.StatusOK, resp )
 }
 
+func (ud *Handler) GetSupport(w http.ResponseWriter, r *http.Request) {
+
+	reqId := r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+		if isAuth != true {
+			err := error.Unauthorized.New("Get other user: user is unauthorized")
+			error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId) )
+			return
+	}
+
+	us, err := ud.us.GetByLogin(r.Context(), &userService.Login{Login: "Support"})
+	if err != nil {
+		e := error.NoType
+		errStatus, ok := status.FromError(err)
+		msg := "Unknown GRPC error"
+		if ok == true {
+			e = error.Cast(int(errStatus.Code()))
+			msg = errStatus.Message()
+		}
+		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(e.New(msg), "request id: %s", reqId))
+		return
+	}
+
+	resp := models.ResponseUser{
+		Id:            uint(us.Id),
+		Login:         us.Login,
+		About:         us.About,
+		Avatar:        us.Avatar,
+		Subscribers:   int(us.Subscribers),
+		Subscriptions: int(us.Subscriptions),
+	}
+
+	response.Respond(w, http.StatusOK, resp )
+}
+
 func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	  
 	reqId := r.Context().Value("ReqId")
