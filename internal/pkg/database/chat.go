@@ -104,9 +104,11 @@ func (db *PgxDB) GetUsers(userId uint, start int, limit int) ([]*models.User, er
 		}
 
 		if send.Id == userId {
-			m[receive.Id] = &receive
+			receiver, _ := db.GetUserById(models.GetBUser(receive))
+			m[receive.Id] = &receiver
 		} else {
-			m[send.Id] = &send
+			sender, _ := db.GetUserById(models.GetBUser(send))
+			m[send.Id] = &sender
 		}
 	}
 	for _, val := range m {

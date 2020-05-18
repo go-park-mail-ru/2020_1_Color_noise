@@ -221,7 +221,7 @@ func (ud *Handler) GetSupport(w http.ResponseWriter, r *http.Request) {
 			return
 	}
 
-	us, err := ud.us.GetByLogin(r.Context(), &userService.Login{Login: "Подркжка"})
+	us, err := ud.us.GetByLogin(r.Context(), &userService.Login{Login: "Support"})
 	if err != nil {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
