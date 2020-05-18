@@ -142,7 +142,7 @@ const (
 		" WHERE subscriptions.user_id = $1  AND original = true ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
 	Main  = "SELECT id, user_id, name, description, image, board_id, created_at " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
-		" WHERE original = true ORDER BY created_at DESC LIMIT $1  OFFSET $2;"
+		" WHERE original = true ORDER BY created_at ASC LIMIT $1  OFFSET $2;"
 	Recommendation = "SELECT id, user_id, name, description, image, board_id, created_at " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
 		" WHERE original = true ORDER BY created_at DESC LIMIT $1  OFFSET $2;"
