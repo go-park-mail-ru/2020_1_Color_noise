@@ -12,14 +12,18 @@ type Repository struct {
 	bd            database.DBInterface
 }
 
-  func (ur *Repository) UpdatePreferences(userId uint, preferences []string) error {
-	  panic("implement me")
-  }
+
 
   func NewRepo(bd database.DBInterface) *Repository {
 	return &Repository{
 		bd:            bd,
 	}
+}
+
+
+func (ur *Repository) UpdatePreferences(userId uint, preferences []string) error {
+
+	return ur.bd.AddTags(userId, preferences)
 }
 
 func (ur *Repository) Create(user *models.User) (*models.User, error){
