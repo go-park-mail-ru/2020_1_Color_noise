@@ -13,6 +13,8 @@ services:
       context: .
       dockerfile: build/main.Dockerfile
 
+    image: zinterest/main:${GITHUB_SHA::8}
+
     volumes:
       - type: bind
         source: ../storage
@@ -28,6 +30,8 @@ services:
       context: .
       dockerfile: build/auth.Dockerfile
 
+    image: zinterest/auth:${GITHUB_SHA::8}
+
     volumes:
       - type: bind
         source: ../storage
@@ -40,6 +44,8 @@ services:
     build:
       context: .
       dockerfile: ./build/chat.Dockerfile
+
+    image: zinterest/chat:${GITHUB_SHA::8}
 
     volumes:
       - type: bind
@@ -55,6 +61,8 @@ services:
       context: .
       dockerfile: ./build/user.Dockerfile
 
+    image: zinterest/user:${GITHUB_SHA::8}
+
     volumes:
       - type: bind
         source: ../storage
@@ -65,10 +73,6 @@ services:
 
   nginx:
     image: nginx:1.15.3
-
-    restart: unless-stopped
-
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
     links:
       - main:main
