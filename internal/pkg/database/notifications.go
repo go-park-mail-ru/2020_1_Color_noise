@@ -18,10 +18,15 @@ func (db *PgxDB) GetNotifications(user models.DataBaseUser, start, limit int) ([
 		var tmp models.Notification
 		var fromUser = models.User{}
 		ok := row.Scan(&tmp.Message, &fromUser.Id)
-		tmp.User, _ = db.GetUserById(models.GetBUser(fromUser))
+
 		if ok != nil {
 			return res, nil
 		}
+		tmp.User, err = db.GetUserById(models.GetBUser(fromUser))
+		if err != nil {
+			return res, errors.New("user not found")
+		}
+
 		res = append(res, &tmp)
 	}
 
@@ -30,13 +35,17 @@ func (db *PgxDB) GetNotifications(user models.DataBaseUser, start, limit int) ([
 
 func (db *PgxDB) PutNotifications(com models.DataBaseComment) (uint, error) {
 
-	pin, _ := db.GetPinById(models.DataBasePin{Id: com.PinId})
-	user, _ := db.GetUserById(models.DataBaseUser{Id: com.UserId})
+	pin, err := db.GetPinById(models.DataBasePin{Id: com.PinId})
+	user, ok := db.GetUserById(models.DataBaseUser{Id: com.UserId})
+
+	if err != nil || ok  != nil {
+		return 0, errors.New("incorrect data ")
+	}
 
 	text := "Новый комментарий от " + fmt.Sprint(user.Login) + " на ваш пин " + fmt.Sprint(pin.Name) + " : " + fmt.Sprint(com.Text)
 	res := db.dbPool.QueryRow(PutNoti, pin.UserId, text, com.UserId, time.Now())
 	var id uint
-	err := res.Scan(&id)
+	err = res.Scan(&id)
 	if err != nil {
 		return 0, errors.New("no notifications")
 	}

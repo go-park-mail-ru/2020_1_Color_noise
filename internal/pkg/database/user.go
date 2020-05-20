@@ -137,10 +137,18 @@ func (db *PgxDB) Follow(who, whom uint) error {
 	}
 
 	row = db.dbPool.QueryRow(UpdateFollowA, who)
-	_ = row.Scan(&id)
+	err = row.Scan(&id)
+	if err != nil {
+		return errors.New("follow error")
+	}
 
 	row = db.dbPool.QueryRow(UpdateFollowB, whom)
-	_ = row.Scan(&id)
+	err = row.Scan(&id)
+	if err != nil {
+		return errors.New("follow error")
+	}
+
+
 
 	return err
 }
@@ -154,10 +162,16 @@ func (db *PgxDB) Unfollow(who, whom uint) error {
 	}
 
 	row = db.dbPool.QueryRow(UpdateUnfollowA, who)
-	_ = row.Scan(&id)
+	err = row.Scan(&id)
+	if err != nil {
+		return errors.New("unfollow error")
+	}
 
 	row = db.dbPool.QueryRow(UpdateUnfollowB, whom)
-	_ = row.Scan(&id)
+	err = row.Scan(&id)
+	if err != nil {
+		return errors.New("unfollow error")
+	}
 
 	return err
 }
