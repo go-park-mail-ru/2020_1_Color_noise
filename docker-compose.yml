@@ -13,7 +13,7 @@ services:
       context: .
       dockerfile: build/main.Dockerfile
 
-    image: zinterest/main:${GITHUB_SHA::8}
+    image: zinterest/main:$GITHUB_SHA::8
 
     volumes:
       - type: bind
