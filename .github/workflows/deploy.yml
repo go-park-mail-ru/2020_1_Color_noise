@@ -14,4 +14,6 @@ jobs:
       - name: Login to DockerHub
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       - name: Push Docker Image
+        env:
+          SHA: ${GITHUB_SHA::8}
         run: docker-compose push main
