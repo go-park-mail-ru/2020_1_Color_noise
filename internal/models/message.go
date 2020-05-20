@@ -27,7 +27,6 @@ type InputMessage struct {
 	Stickers       string `json:"stickers"`
 }
 
-
 type ResponseMessage struct {
 	SendUser  *ResponseUser `json:"user_send"`
 	RecUser   *ResponseUser `json:"user_rec"`
@@ -36,7 +35,7 @@ type ResponseMessage struct {
 	CreatedAt time.Time     `json:"created_at"`
 }
 
-func GetDMessage(message Message)  DMessage{
+func GetDMessage(message Message) DMessage {
 	tmp := DMessage{
 		SendUser:  message.SendUser,
 		RecUser:   message.RecUser,
@@ -56,7 +55,7 @@ func GetDMessage(message Message)  DMessage{
 	return tmp
 }
 
-func GetMessage(message DMessage)  Message{
+func GetMessage(message DMessage) Message {
 	tmp := Message{
 		SendUser:  message.SendUser,
 		RecUser:   message.RecUser,

@@ -21,14 +21,14 @@ import (
 )
 
 type TestCaseFetch struct {
-	IsAuth     bool
-	UserId     uint
-	Pins	   []*models.Pin
-	Response   string
-	IdErr      bool
-	GetErr     bool
-	Start      int
-	Limit 	   int
+	IsAuth   bool
+	UserId   uint
+	Pins     []*models.Pin
+	Response string
+	IdErr    bool
+	GetErr   bool
+	Start    int
+	Limit    int
 }
 
 func TestHandler_GetSubList(t *testing.T) {
@@ -52,43 +52,43 @@ func TestHandler_GetSubList(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			IsAuth:     false,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			IsAuth:   false,
+			UserId:   1,
+			Start:    1,
+			Limit:    15,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			IdErr:		true,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
+			IsAuth: true,
+			IdErr:  true,
+			UserId: 1,
+			Start:  1,
+			Limit:  15,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			GetErr:     true,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
-			Pins:       nil,
+			IsAuth: true,
+			GetErr: true,
+			UserId: 1,
+			Start:  1,
+			Limit:  15,
+			Pins:   nil,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
-			Pins:       []*models.Pin {
-				&models.Pin {
-					Id: 		 1,
+			IsAuth: true,
+			UserId: 1,
+			Start:  1,
+			Limit:  15,
+			Pins: []*models.Pin{
+				&models.Pin{
+					Id:          1,
 					BoardId:     2,
 					UserId:      1,
 					Name:        "name1",
 					Description: "desc1",
 					Image:       "image.jpg",
 				},
-				&models.Pin {
-					Id: 		 2,
+				&models.Pin{
+					Id:          2,
 					BoardId:     5,
 					UserId:      1,
 					Name:        "name2",
@@ -180,43 +180,43 @@ func TestHandler_GetRecommendationList(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			IsAuth:     false,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			IsAuth:   false,
+			UserId:   1,
+			Start:    1,
+			Limit:    15,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			IdErr:		true,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
+			IsAuth: true,
+			IdErr:  true,
+			UserId: 1,
+			Start:  1,
+			Limit:  15,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			GetErr:     true,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
-			Pins:       nil,
+			IsAuth: true,
+			GetErr: true,
+			UserId: 1,
+			Start:  1,
+			Limit:  15,
+			Pins:   nil,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
-			Pins:       []*models.Pin {
-				&models.Pin {
-					Id: 		 1,
+			IsAuth: true,
+			UserId: 1,
+			Start:  1,
+			Limit:  15,
+			Pins: []*models.Pin{
+				&models.Pin{
+					Id:          1,
 					BoardId:     2,
 					UserId:      1,
 					Name:        "name1",
 					Description: "desc1",
 					Image:       "image.jpg",
 				},
-				&models.Pin {
-					Id: 		 2,
+				&models.Pin{
+					Id:          2,
 					BoardId:     5,
 					UserId:      1,
 					Name:        "name2",
@@ -308,28 +308,28 @@ func TestHandler_GetMainList(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			GetErr:     true,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
-			Pins:       nil,
+			GetErr: true,
+			UserId: 1,
+			Start:  1,
+			Limit:  15,
+			Pins:   nil,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
-			Pins:       []*models.Pin {
-				&models.Pin {
-					Id: 		 1,
+			IsAuth: true,
+			UserId: 1,
+			Start:  1,
+			Limit:  15,
+			Pins: []*models.Pin{
+				&models.Pin{
+					Id:          1,
 					BoardId:     2,
 					UserId:      1,
 					Name:        "name1",
 					Description: "desc1",
 					Image:       "image.jpg",
 				},
-				&models.Pin {
-					Id: 		 2,
+				&models.Pin{
+					Id:          2,
 					BoardId:     5,
 					UserId:      1,
 					Name:        "name2",
@@ -389,4 +389,3 @@ func TestHandler_GetMainList(t *testing.T) {
 		}
 	}
 }
-

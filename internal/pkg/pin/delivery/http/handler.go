@@ -15,10 +15,10 @@ import (
 
 type Handler struct {
 	pinUsecase pin.IUsecase
-	logger  *zap.SugaredLogger
+	logger     *zap.SugaredLogger
 }
 
-func NewHandler(usecase pin.IUsecase, logger  *zap.SugaredLogger) *Handler {
+func NewHandler(usecase pin.IUsecase, logger *zap.SugaredLogger) *Handler {
 	return &Handler{
 		pinUsecase: usecase,
 		logger:     logger,
@@ -26,7 +26,7 @@ func NewHandler(usecase pin.IUsecase, logger  *zap.SugaredLogger) *Handler {
 }
 
 func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -76,16 +76,16 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	/*
-	isAuth := r.Context().Value("IsAuth")
-	if isAuth != true {
-		err := error.Unauthorized.New("Get pin: user is unauthorized")
-		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
+		isAuth := r.Context().Value("IsAuth")
+		if isAuth != true {
+			err := error.Unauthorized.New("Get pin: user is unauthorized")
+			error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+			return
+		}
 	*/
 
 	vars := mux.Vars(r)
@@ -115,7 +115,7 @@ func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -163,7 +163,7 @@ func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -219,7 +219,7 @@ func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ph *Handler) DeletePin(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")

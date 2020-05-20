@@ -16,10 +16,10 @@ type Middleware struct {
 	logger *zap.SugaredLogger
 }
 
-func NewMiddleware(as authService.AuthSeviceClient, logger  *zap.SugaredLogger) Middleware {
+func NewMiddleware(as authService.AuthSeviceClient, logger *zap.SugaredLogger) Middleware {
 	return Middleware{
-		as: as,
-		logger:   logger,
+		as:     as,
+		logger: logger,
 	}
 }
 
@@ -34,7 +34,7 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 			ctx = context.WithValue(ctx, "IsAuth", false)
 		} else {
 			session, err := m.as.GetByCookie(context.Background(),
-				&authService.Cookie{Cookie:cookie.Value})
+				&authService.Cookie{Cookie: cookie.Value})
 			if err != nil {
 				ctx = context.WithValue(ctx, "IsAuth", false)
 				m.logger.Info(r.URL.Path,

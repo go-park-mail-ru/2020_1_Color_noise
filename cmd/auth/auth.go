@@ -29,7 +29,6 @@ func main() {
 	sessionUse := sessionUsecase.NewUsecase(sessionRepo)
 	sessionDelivery := sessionDeliveryGRPC.NewSessionManager(sessionUse)
 
-
 	lis, err := net.Listen("tcp", ":8000")
 	if err != nil {
 		log.Fatalln("cant listet port", err)
@@ -37,7 +36,7 @@ func main() {
 
 	server := grpc.NewServer()
 
-	session.RegisterAuthSeviceServer(server, sessionDelivery )
+	session.RegisterAuthSeviceServer(server, sessionDelivery)
 
 	fmt.Println("starting server at :8000")
 	server.Serve(lis)

@@ -13,7 +13,7 @@ var db = database.NewPgxDB()
 var repo = NewRepo(db)
 
 type NotiCase struct {
-	n models.Notification
+	n      models.Notification
 	answer error
 }
 
@@ -38,26 +38,24 @@ func TestRepository_GetNotifications(t *testing.T) {
 	})
 
 	db.PutNotifications(models.DataBaseComment{
-		UserId:    id,
-		PinId:     pid,
-		Text:      "",
+		UserId: id,
+		PinId:  pid,
+		Text:   "",
 	})
-
 
 	cases := []NotiCase{
 		{
-			n:      models.Notification{
-				User:    models.User{
-					Id:id,
+			n: models.Notification{
+				User: models.User{
+					Id: id,
 				},
 				Message: "hello",
 			},
 			answer: nil,
 		},
 		{
-			n:      models.Notification{
-				User:    models.User{
-				},
+			n: models.Notification{
+				User:    models.User{},
 				Message: "hello",
 			},
 			answer: nil,
@@ -66,12 +64,12 @@ func TestRepository_GetNotifications(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := repo.GetNotifications(item.n.User.Id, 0, 2)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}

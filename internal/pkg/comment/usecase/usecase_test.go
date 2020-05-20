@@ -26,31 +26,31 @@ func TestHandler_Create(t *testing.T) {
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
-			CommentId:  0,
-			UserId:     2,
-			Comment: 	&models.InputComment{
-				Text:   "comment",
-				PinId:	1,
+			CommentId: 0,
+			UserId:    2,
+			Comment: &models.InputComment{
+				Text:  "comment",
+				PinId: 1,
 			},
-			ErrFunc:   NoType.New("error"),
+			ErrFunc: NoType.New("error"),
 		},
 		TestCaseCreate{
-			CommentId:  1,
-			UserId:     2,
-			Comment: 	&models.InputComment{
-				Text:   "comment",
-				PinId:	 1,
+			CommentId: 1,
+			UserId:    2,
+			Comment: &models.InputComment{
+				Text:  "comment",
+				PinId: 1,
 			},
-			ErrFunc:   nil,
+			ErrFunc: nil,
 		},
 	}
 
 	for caseNum, item := range cases {
 
 		comment := &models.Comment{
-			UserId:      item.UserId,
-			PinId: 		 item.Comment.PinId,
-			Text:        item.Comment.Text,
+			UserId: item.UserId,
+			PinId:  item.Comment.PinId,
+			Text:   item.Comment.Text,
 		}
 
 		gomock.InOrder(
@@ -74,10 +74,10 @@ func TestHandler_Create(t *testing.T) {
 }
 
 type TestCaseGet struct {
-	ErrFunc       error
-	CommentFunc   *models.Comment
-	CommentExp    *models.Comment
-	CommentId        uint
+	ErrFunc     error
+	CommentFunc *models.Comment
+	CommentExp  *models.Comment
+	CommentId   uint
 }
 
 func TestHandler_GetById(t *testing.T) {
@@ -90,21 +90,21 @@ func TestHandler_GetById(t *testing.T) {
 
 	cases := []TestCaseGet{
 		TestCaseGet{
-			CommentId:    1,
-			ErrFunc:      NoType.New("error"),
-			CommentFunc:  nil,
-			CommentExp:   nil,
+			CommentId:   1,
+			ErrFunc:     NoType.New("error"),
+			CommentFunc: nil,
+			CommentExp:  nil,
 		},
 		TestCaseGet{
-			CommentId:    1,
-			ErrFunc:  nil,
-			CommentFunc:  &models.Comment{
-				Text:   "comment",
-				PinId:	 1,
+			CommentId: 1,
+			ErrFunc:   nil,
+			CommentFunc: &models.Comment{
+				Text:  "comment",
+				PinId: 1,
 			},
-			CommentExp:   &models.Comment{
-				Text:   "comment",
-				PinId:	 1,
+			CommentExp: &models.Comment{
+				Text:  "comment",
+				PinId: 1,
 			},
 		},
 	}
@@ -133,13 +133,13 @@ func TestHandler_GetById(t *testing.T) {
 }
 
 type TestCaseFetch struct {
-	ErrFunc   error
+	ErrFunc     error
 	CommentFunc []*models.Comment
 	CommentExp  []*models.Comment
-	PinId	    uint
-	Text	    string
+	PinId       uint
+	Text        string
 	Start       int
-	Limit 	    int
+	Limit       int
 }
 
 func TestHandler_GetByName(t *testing.T) {
@@ -152,34 +152,34 @@ func TestHandler_GetByName(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			PinId:     1,
-			ErrFunc:    NoType.New("error"),
-			CommentFunc:  nil,
-			CommentExp:   nil,
-			Start:      5,
-			Limit:      15,
+			PinId:       1,
+			ErrFunc:     NoType.New("error"),
+			CommentFunc: nil,
+			CommentExp:  nil,
+			Start:       5,
+			Limit:       15,
 		},
 		TestCaseFetch{
 			PinId:   1,
-			ErrFunc:  nil,
-			CommentFunc:  []*models.Comment{
+			ErrFunc: nil,
+			CommentFunc: []*models.Comment{
 				&models.Comment{
-					Id:    1,
+					Id: 1,
 				},
 				&models.Comment{
-					Id:    2,
-				},
-			},
-			CommentExp:  []*models.Comment{
-				&models.Comment{
-					Id:    1,
-				},
-				&models.Comment{
-					Id:    2,
+					Id: 2,
 				},
 			},
-			Start:    5,
-			Limit:    15,
+			CommentExp: []*models.Comment{
+				&models.Comment{
+					Id: 1,
+				},
+				&models.Comment{
+					Id: 2,
+				},
+			},
+			Start: 5,
+			Limit: 15,
 		},
 	}
 
@@ -216,34 +216,34 @@ func TestHandler_GetByText(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			Text:      "comment",
-			ErrFunc:    NoType.New("error"),
-			CommentFunc:  nil,
-			CommentExp:   nil,
-			Start:      5,
-			Limit:      15,
+			Text:        "comment",
+			ErrFunc:     NoType.New("error"),
+			CommentFunc: nil,
+			CommentExp:  nil,
+			Start:       5,
+			Limit:       15,
 		},
 		TestCaseFetch{
-			Text:      "comment",
-			ErrFunc:  nil,
-			CommentFunc:  []*models.Comment{
+			Text:    "comment",
+			ErrFunc: nil,
+			CommentFunc: []*models.Comment{
 				&models.Comment{
-					Id:    1,
+					Id: 1,
 				},
 				&models.Comment{
-					Id:    2,
-				},
-			},
-			CommentExp:  []*models.Comment{
-				&models.Comment{
-					Id:    1,
-				},
-				&models.Comment{
-					Id:    2,
+					Id: 2,
 				},
 			},
-			Start:    5,
-			Limit:    15,
+			CommentExp: []*models.Comment{
+				&models.Comment{
+					Id: 1,
+				},
+				&models.Comment{
+					Id: 2,
+				},
+			},
+			Start: 5,
+			Limit: 15,
 		},
 	}
 
@@ -269,4 +269,3 @@ func TestHandler_GetByText(t *testing.T) {
 		}
 	}
 }
-

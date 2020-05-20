@@ -58,8 +58,8 @@ func (br *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.
 
 	for _, board := range boards {
 		b.Id = board.Id
-		pin, err := br.db.GetBoardLastPin(b)
-		if err == nil {
+		pin, ok := br.db.GetBoardLastPin(b)
+		if ok == nil {
 			board.LastPin = pin
 		}
 	}
@@ -97,8 +97,8 @@ func (br *Repository) GetByName(name string, start int, limit int) ([]*models.Bo
 
 	for _, board := range boards {
 		b.Id = board.Id
-		pin, err := br.db.GetBoardLastPin(b)
-		if err == nil {
+		pin, ok := br.db.GetBoardLastPin(b)
+		if ok == nil {
 			board.LastPin = pin
 		}
 	}

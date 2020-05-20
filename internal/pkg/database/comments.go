@@ -15,7 +15,11 @@ func (db *PgxDB) CreateComment(cm models.DataBaseComment) (uint, error) {
 		return 0, errors.New("comment error")
 	}
 
-	db.UpdateComments(cm.PinId)
+	update := db.UpdateComments(cm.PinId)
+	if update != nil {
+		return 0, errors.New("comment update error")
+	}
+
 	return id, err
 }
 

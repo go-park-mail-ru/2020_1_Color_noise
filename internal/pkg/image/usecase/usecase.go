@@ -34,9 +34,9 @@ func init() {
 }
 
 type ImageUsecase struct {
-	repoPin pin.IRepository
+	repoPin   pin.IRepository
 	repoBoard board.IRepository
-	us      userService.UserServiceClient
+	us        userService.UserServiceClient
 }
 
 func NewImageUsecase(repoPin pin.IRepository, repoBoard board.IRepository, us userService.UserServiceClient) *ImageUsecase {
@@ -48,7 +48,7 @@ func NewImageUsecase(repoPin pin.IRepository, repoBoard board.IRepository, us us
 }
 
 func (im *ImageUsecase) Analyze(pinId uint, userId uint, image string) {
-	cmd := exec.Command("python3", "analyze.py", "../storage/" + image)
+	cmd := exec.Command("python3", "analyze.py", "../storage/"+image)
 	out, _ := cmd.CombinedOutput()
 
 	i, err := strconv.Atoi(string(out))
@@ -121,7 +121,7 @@ func (im *ImageUsecase) Analyze(pinId uint, userId uint, image string) {
 
 	pref := make([]string, 0, maxPref)
 
-	for i := 0; i < maxPref; i++  {
+	for i := 0; i < maxPref; i++ {
 		pref = append(pref, kvs[i].Key)
 
 	}

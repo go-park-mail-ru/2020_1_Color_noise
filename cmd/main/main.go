@@ -95,8 +95,6 @@ func main() {
 		zap.String("logger", "ZAP"),
 	)
 
-
-
 	sessionDelivery := sessionDeliveryHttp.NewHandler(sessManager, userService, zap)
 
 	boardRepo := boardRepository.NewRepo(db)

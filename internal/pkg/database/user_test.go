@@ -28,14 +28,14 @@ func TestUserCreate(t *testing.T) {
 	cases := []UserCreateTestCase{
 		{
 			user: models.DataBaseUser{
-				Login:             login,
+				Login: login,
 			},
 			answer: nil,
 		},
 		{
 			//корректные, отправлены второй раз, нарушают
 			user: models.DataBaseUser{
-				Login:             login,
+				Login: login,
 			},
 			answer: fmt.Errorf("user is not unique"),
 		},
@@ -43,12 +43,12 @@ func TestUserCreate(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := dbTest.CreateUser(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -90,12 +90,12 @@ func TestUserDelete(t *testing.T) {
 
 	for i, item := range cases {
 		answer := dbTest.DeleteUser(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -126,7 +126,7 @@ func TestUserUpdate(t *testing.T) {
 		{
 			//данные есть
 			user: models.DataBaseUser{
-				Id:id,
+				Id:    id,
 				Email: "new_email@mail.ru",
 				Login: login,
 			},
@@ -153,12 +153,12 @@ func TestUserUpdate(t *testing.T) {
 
 	for i, item := range cases {
 		answer := dbTest.UpdateUser(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -194,12 +194,12 @@ func TestUpdateUserPassword(t *testing.T) {
 
 	for i, item := range cases {
 		answer := dbTest.UpdateUserPassword(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -240,12 +240,12 @@ func TestUpdateUserDescription(t *testing.T) {
 
 	for i, item := range cases {
 		answer := dbTest.UpdateUserDescription(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -286,12 +286,12 @@ func TestUpdateUserAvatar(t *testing.T) {
 
 	for i, item := range cases {
 		answer := dbTest.UpdateUserAvatar(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -317,15 +317,14 @@ func TestGetUserById(t *testing.T) {
 
 	cases := []UserSimpleSelectTestCase{
 		{
-			user:   models.DataBaseUser{
-				Id:id,
+			user: models.DataBaseUser{
+				Id: id,
 			},
 			output: models.User{},
 			answer: nil,
 		},
 		{
-			user:   models.DataBaseUser{
-			},
+			user:   models.DataBaseUser{},
 			output: models.User{},
 			answer: fmt.Errorf("user not found"),
 		},
@@ -333,12 +332,12 @@ func TestGetUserById(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := dbTest.GetUserById(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -358,15 +357,14 @@ func TestGetUserByName(t *testing.T) {
 
 	cases := []UserSimpleSelectTestCase{
 		{
-			user:   models.DataBaseUser{
+			user: models.DataBaseUser{
 				Login: "testing",
 			},
 			output: models.User{},
 			answer: nil,
 		},
 		{
-			user:   models.DataBaseUser{
-			},
+			user:   models.DataBaseUser{},
 			output: models.User{},
 			answer: fmt.Errorf("user not found"),
 		},
@@ -374,12 +372,12 @@ func TestGetUserByName(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := dbTest.GetUserByName(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -404,8 +402,8 @@ func TestGetUserByEmail(t *testing.T) {
 			answer: nil,
 		},
 		{
-			user:   models.DataBaseUser{
-				Email:"email",
+			user: models.DataBaseUser{
+				Email: "email",
 			},
 			output: models.User{},
 			answer: nil,
@@ -414,12 +412,12 @@ func TestGetUserByEmail(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := dbTest.GetUserByEmail(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -443,12 +441,12 @@ func TestGetUserSubscriptions(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := dbTest.GetUserSubscriptions(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -473,12 +471,12 @@ func TestGetUserSubscribers(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := dbTest.GetUserSubscribers(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -508,12 +506,12 @@ func TestGetUserSubUsers(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := dbTest.GetUserSubUsers(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -538,12 +536,12 @@ func TestGetUserSupUsers(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := dbTest.GetUserSupUsers(item.user)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -568,8 +566,8 @@ func TestGetUserByLogin(t *testing.T) {
 			answer: nil,
 		},
 		{
-			user:   models.DataBaseUser{
-				Login:"loginsearch",
+			user: models.DataBaseUser{
+				Login: "loginsearch",
 			},
 			output: nil,
 			answer: nil,
@@ -578,12 +576,12 @@ func TestGetUserByLogin(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := dbTest.GetUserByLogin(item.user, 0, 1)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -598,11 +596,11 @@ func TestPgxDB_Follow(t *testing.T) {
 	dbTest.Open(c)
 
 	id, _ := dbTest.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()),
+		Login: fmt.Sprint(time.Now()),
 	})
 
 	sid, _ := dbTest.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()),
+		Login: fmt.Sprint(time.Now()),
 	})
 
 	dbTest.Follow(id, sid)
@@ -616,11 +614,11 @@ func TestPgxDB_Unfollow(t *testing.T) {
 	dbTest.Open(c)
 
 	id, _ := dbTest.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()),
+		Login: fmt.Sprint(time.Now()),
 	})
 
 	sid, _ := dbTest.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()),
+		Login: fmt.Sprint(time.Now()),
 	})
 
 	dbTest.Unfollow(id, sid)

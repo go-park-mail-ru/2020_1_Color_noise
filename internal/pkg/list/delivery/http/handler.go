@@ -63,7 +63,7 @@ func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -110,7 +110,7 @@ func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")

@@ -14,9 +14,9 @@ import (
 )
 
 type Handler struct {
-	as             authService.AuthSeviceClient
-	us             userService.UserServiceClient
-	logger         *zap.SugaredLogger
+	as     authService.AuthSeviceClient
+	us     userService.UserServiceClient
+	logger *zap.SugaredLogger
 }
 
 func NewHandler(as authService.AuthSeviceClient, us userService.UserServiceClient, logger *zap.SugaredLogger) *Handler {
@@ -47,25 +47,25 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
-/*
-	user, err := sh.as.GetByLogin(input.Login)
-	if err != nil {
-		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
+	/*
+		user, err := sh.as.GetByLogin(input.Login)
+		if err != nil {
+			error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+			return
+		}
 
-	if err = sh.userUsecase.ComparePassword(user, input.Password); err != nil {
-		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
+		if err = sh.userUsecase.ComparePassword(user, input.Password); err != nil {
+			error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+			return
+		}
 
-	session, err := sh.sessionUsecase.Create(user.Id)
-	if err != nil {
-		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
- */
-	u, err := sh.us.GetByLogin(r.Context(), &userService.Login{Login:input.Login})
+		session, err := sh.sessionUsecase.Create(user.Id)
+		if err != nil {
+			error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+			return
+		}
+	*/
+	u, err := sh.us.GetByLogin(r.Context(), &userService.Login{Login: input.Login})
 	if err != nil {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
@@ -80,17 +80,17 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 	sess, err := sh.as.Login(r.Context(), &authService.SignIn{
 		User: &authService.User{
-			Id:            u.Id,
-			Email:         u.Email,
-			Login:         u.Login,
+			Id:                u.Id,
+			Email:             u.Email,
+			Login:             u.Login,
 			EncryptedPassword: u.EncryptedPassword,
-			About:         u.About,
-			Avatar:        u.Avatar,
-			Subscribers:   u.Subscribers,
-			Subscriptions: u.Subscriptions,
+			About:             u.About,
+			Avatar:            u.Avatar,
+			Subscribers:       u.Subscribers,
+			Subscriptions:     u.Subscriptions,
 		},
 		Password: input.Password,
-		})
+	})
 	if err != nil {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
@@ -121,7 +121,6 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie)
 	http.SetCookie(w, token)
 
-
 	resp := models.ResponseUser{
 		Id:            uint(u.Id),
 		Email:         u.Email,
@@ -136,7 +135,7 @@ func (sh *Handler) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -152,13 +151,13 @@ func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
-/*
-	token, err := r.Cookie("token")
-	if err != nil {
-		err := error.Wrap(err,"Received bad token from context")
-		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
+	/*
+		token, err := r.Cookie("token")
+		if err != nil {
+			err := error.Wrap(err,"Received bad token from context")
+			error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+			return
+		}
 	*/
 
 	_, err = sh.as.Delete(r.Context(), &authService.Cookie{

@@ -10,10 +10,10 @@ import (
 )
 
 type TestCaseGet struct {
-	ErrFunc   error
-	SessFunc  *models.Session
-	SessExp   *models.Session
-	Cookie	  string
+	ErrFunc  error
+	SessFunc *models.Session
+	SessExp  *models.Session
+	Cookie   string
 }
 
 func TestHandler_GetByCookie(t *testing.T) {
@@ -69,9 +69,9 @@ func TestHandler_GetByCookie(t *testing.T) {
 }
 
 type TestCaseUpdate struct {
-	ErrFunc   error
-	Sess      *models.Session
-	Token     string
+	ErrFunc error
+	Sess    *models.Session
+	Token   string
 }
 
 func TestHandler_UpdateToken(t *testing.T) {
@@ -84,20 +84,20 @@ func TestHandler_UpdateToken(t *testing.T) {
 
 	cases := []TestCaseUpdate{
 		TestCaseUpdate{
-			Token:    "token1",
-			Sess: 	   &models.Session{
+			Token: "token1",
+			Sess: &models.Session{
 				Cookie: "token",
 				Token:  "cookie",
 			},
-			ErrFunc:   NoType.New("error"),
+			ErrFunc: NoType.New("error"),
 		},
 		TestCaseUpdate{
-			Token:    "token1",
-			Sess: 	   &models.Session{
+			Token: "token1",
+			Sess: &models.Session{
 				Cookie: "token",
 				Token:  "cookie",
 			},
-			ErrFunc:   nil,
+			ErrFunc: nil,
 		},
 	}
 
@@ -129,12 +129,12 @@ func TestHandler_Delete(t *testing.T) {
 
 	cases := []TestCaseGet{
 		TestCaseGet{
-			Cookie:    "cookie",
-			ErrFunc:   NoType.New("error"),
+			Cookie:  "cookie",
+			ErrFunc: NoType.New("error"),
 		},
 		TestCaseGet{
-			Cookie:    "cookie",
-			ErrFunc:   nil,
+			Cookie:  "cookie",
+			ErrFunc: nil,
 		},
 	}
 

@@ -10,11 +10,11 @@ import (
 )
 
 type TestCaseGet struct {
-	ErrFunc   error
-	UserFunc  *models.User
-	UserExp   *models.User
-	UserId    uint
-	Login	  string
+	ErrFunc  error
+	UserFunc *models.User
+	UserExp  *models.User
+	UserId   uint
+	Login    string
 }
 
 func TestHandler_GetById(t *testing.T) {
@@ -27,18 +27,18 @@ func TestHandler_GetById(t *testing.T) {
 
 	cases := []TestCaseGet{
 		TestCaseGet{
-			UserId:    1,
-			ErrFunc:   NoType.New("error"),
-			UserFunc:  nil,
-			UserExp:   nil,
+			UserId:   1,
+			ErrFunc:  NoType.New("error"),
+			UserFunc: nil,
+			UserExp:  nil,
 		},
 		TestCaseGet{
-			UserId:    1,
-			ErrFunc:   nil,
-			UserFunc:  &models.User{
+			UserId:  1,
+			ErrFunc: nil,
+			UserFunc: &models.User{
 				Id: 1,
 			},
-			UserExp:   &models.User{
+			UserExp: &models.User{
 				Id: 1,
 			},
 		},
@@ -76,22 +76,22 @@ func TestHandler_GetByLogin(t *testing.T) {
 
 	cases := []TestCaseGet{
 		TestCaseGet{
-			UserId:    1,
-			Login: 	   "login1",
-			ErrFunc:   NoType.New("error"),
-			UserFunc:  nil,
-			UserExp:   nil,
+			UserId:   1,
+			Login:    "login1",
+			ErrFunc:  NoType.New("error"),
+			UserFunc: nil,
+			UserExp:  nil,
 		},
 		TestCaseGet{
-			UserId:    1,
-			Login: 	   "login1",
-			ErrFunc:   nil,
-			UserFunc:  &models.User{
-				Id: 1,
+			UserId:  1,
+			Login:   "login1",
+			ErrFunc: nil,
+			UserFunc: &models.User{
+				Id:    1,
 				Login: "login1",
 			},
-			UserExp:   &models.User{
-				Id: 1,
+			UserExp: &models.User{
+				Id:    1,
 				Login: "login1",
 			},
 		},
@@ -121,13 +121,13 @@ func TestHandler_GetByLogin(t *testing.T) {
 }
 
 type TestCaseSearch struct {
-	ErrFunc   error
-	UserFunc  []*models.User
-	UserExp   []*models.User
-	UserId    uint
-	Login	  string
-	Start	  int
-	Limit     int
+	ErrFunc  error
+	UserFunc []*models.User
+	UserExp  []*models.User
+	UserId   uint
+	Login    string
+	Start    int
+	Limit    int
 }
 
 func TestHandler_Search(t *testing.T) {
@@ -140,34 +140,34 @@ func TestHandler_Search(t *testing.T) {
 
 	cases := []TestCaseSearch{
 		TestCaseSearch{
-			UserId:    1,
-			Start:     5,
-			Limit:     15,
-			Login: 	   "login1",
-			ErrFunc:   NoType.New("error"),
-			UserFunc:  nil,
-			UserExp:   nil,
+			UserId:   1,
+			Start:    5,
+			Limit:    15,
+			Login:    "login1",
+			ErrFunc:  NoType.New("error"),
+			UserFunc: nil,
+			UserExp:  nil,
 		},
 		TestCaseSearch{
-			UserId:    1,
-			Start:     5,
-			Limit:     15,
-			Login: 	   "login1",
-			ErrFunc:   nil,
-			UserFunc:  []*models.User{
+			UserId:  1,
+			Start:   5,
+			Limit:   15,
+			Login:   "login1",
+			ErrFunc: nil,
+			UserFunc: []*models.User{
 				&models.User{
-				Id:    1,
-				Login: "login1",
+					Id:    1,
+					Login: "login1",
 				},
 				&models.User{
 					Id:    2,
 					Login: "login2",
 				},
 			},
-			UserExp:   []*models.User{
+			UserExp: []*models.User{
 				&models.User{
-				Id:    1,
-				Login: "login1",
+					Id:    1,
+					Login: "login1",
 				},
 				&models.User{
 					Id:    2,
@@ -200,10 +200,10 @@ func TestHandler_Search(t *testing.T) {
 }
 
 type TestCaseUpdate struct {
-	ErrValid  error
-	ErrFunc   error
-	User      *models.UpdateProfileInput
-	UserId    uint
+	ErrValid error
+	ErrFunc  error
+	User     *models.UpdateProfileInput
+	UserId   uint
 }
 
 func TestHandler_UpdateProfile(t *testing.T) {
@@ -216,30 +216,30 @@ func TestHandler_UpdateProfile(t *testing.T) {
 
 	cases := []TestCaseUpdate{
 		TestCaseUpdate{
-			ErrValid:  nil,
-			UserId:    1,
-			User: 	   &models.UpdateProfileInput{
+			ErrValid: nil,
+			UserId:   1,
+			User: &models.UpdateProfileInput{
 				Login: "login1",
 				Email: "email@ad.com",
 			},
-			ErrFunc:   NoType.New("error"),
+			ErrFunc: NoType.New("error"),
 		},
 		TestCaseUpdate{
-			ErrValid:  nil,
-			UserId:    1,
-			User: 	   &models.UpdateProfileInput{
+			ErrValid: nil,
+			UserId:   1,
+			User: &models.UpdateProfileInput{
 				Login: "login1",
 				Email: "email@ad.com",
 			},
-			ErrFunc:   nil,
+			ErrFunc: nil,
 		},
 	}
 
 	for caseNum, item := range cases {
 
-			gomock.InOrder(
-				mockUserRepository.EXPECT().UpdateProfile(item.UserId, item.User.Email, item.User.Login).Return(item.ErrFunc),
-			)
+		gomock.InOrder(
+			mockUserRepository.EXPECT().UpdateProfile(item.UserId, item.User.Email, item.User.Login).Return(item.ErrFunc),
+		)
 
 		err := userUsecase.UpdateProfile(item.UserId, item.User)
 		if item.ErrFunc == nil && err != nil {
@@ -254,9 +254,9 @@ func TestHandler_UpdateProfile(t *testing.T) {
 }
 
 type TestCaseDescription struct {
-	ErrFunc   error
-	Desc      *models.UpdateDescriptionInput
-	UserId    uint
+	ErrFunc error
+	Desc    *models.UpdateDescriptionInput
+	UserId  uint
 }
 
 func TestHandler_UpdateDescription(t *testing.T) {
@@ -269,18 +269,18 @@ func TestHandler_UpdateDescription(t *testing.T) {
 
 	cases := []TestCaseDescription{
 		TestCaseDescription{
-			UserId:    1,
-			Desc: 	   &models.UpdateDescriptionInput{
+			UserId: 1,
+			Desc: &models.UpdateDescriptionInput{
 				Description: "desc1",
 			},
-			ErrFunc:   NoType.New("error"),
+			ErrFunc: NoType.New("error"),
 		},
 		TestCaseDescription{
-			UserId:    1,
-			Desc: 	   &models.UpdateDescriptionInput{
+			UserId: 1,
+			Desc: &models.UpdateDescriptionInput{
 				Description: "desc1",
 			},
-			ErrFunc:   nil,
+			ErrFunc: nil,
 		},
 	}
 
@@ -312,12 +312,12 @@ func TestHandler_Delete(t *testing.T) {
 
 	cases := []TestCaseGet{
 		TestCaseGet{
-			UserId:    1,
-			ErrFunc:   NoType.New("error"),
+			UserId:  1,
+			ErrFunc: NoType.New("error"),
 		},
 		TestCaseGet{
-			UserId:    1,
-			ErrFunc:   nil,
+			UserId:  1,
+			ErrFunc: nil,
 		},
 	}
 
@@ -340,9 +340,9 @@ func TestHandler_Delete(t *testing.T) {
 }
 
 type TestCaseFollow struct {
-	ErrFunc   error
-	UserId    uint
-	SubId	  uint
+	ErrFunc error
+	UserId  uint
+	SubId   uint
 }
 
 func TestHandler_Follow(t *testing.T) {
@@ -355,14 +355,14 @@ func TestHandler_Follow(t *testing.T) {
 
 	cases := []TestCaseFollow{
 		TestCaseFollow{
-			UserId:    1,
-			SubId:	   2,
-			ErrFunc:   NoType.New("error"),
+			UserId:  1,
+			SubId:   2,
+			ErrFunc: NoType.New("error"),
 		},
 		TestCaseFollow{
-			UserId:    1,
-			SubId:	   2,
-			ErrFunc:   nil,
+			UserId:  1,
+			SubId:   2,
+			ErrFunc: nil,
 		},
 	}
 
@@ -394,14 +394,14 @@ func TestHandler_Unfollow(t *testing.T) {
 
 	cases := []TestCaseFollow{
 		TestCaseFollow{
-			UserId:    1,
-			SubId:	   2,
-			ErrFunc:   NoType.New("error"),
+			UserId:  1,
+			SubId:   2,
+			ErrFunc: NoType.New("error"),
 		},
 		TestCaseFollow{
-			UserId:    1,
-			SubId:	   2,
-			ErrFunc:   nil,
+			UserId:  1,
+			SubId:   2,
+			ErrFunc: nil,
 		},
 	}
 
@@ -424,12 +424,12 @@ func TestHandler_Unfollow(t *testing.T) {
 }
 
 type TestCaseSub struct {
-	ErrFunc   error
-	UserFunc  []*models.User
-	UserExp   []*models.User
-	UserId    uint
-	Start	  int
-	Limit     int
+	ErrFunc  error
+	UserFunc []*models.User
+	UserExp  []*models.User
+	UserId   uint
+	Start    int
+	Limit    int
 }
 
 func TestHandler_GetSubscribers(t *testing.T) {
@@ -442,19 +442,19 @@ func TestHandler_GetSubscribers(t *testing.T) {
 
 	cases := []TestCaseSub{
 		TestCaseSub{
-			UserId:    3,
-			Start:     5,
-			Limit:     15,
-			ErrFunc:   NoType.New("error"),
-			UserFunc:  nil,
-			UserExp:   nil,
+			UserId:   3,
+			Start:    5,
+			Limit:    15,
+			ErrFunc:  NoType.New("error"),
+			UserFunc: nil,
+			UserExp:  nil,
 		},
 		TestCaseSub{
-			UserId:    3,
-			Start:     5,
-			Limit:     15,
-			ErrFunc:   nil,
-			UserFunc:  []*models.User{
+			UserId:  3,
+			Start:   5,
+			Limit:   15,
+			ErrFunc: nil,
+			UserFunc: []*models.User{
 				&models.User{
 					Id:    1,
 					Login: "login1",
@@ -464,7 +464,7 @@ func TestHandler_GetSubscribers(t *testing.T) {
 					Login: "login2",
 				},
 			},
-			UserExp:   []*models.User{
+			UserExp: []*models.User{
 				&models.User{
 					Id:    1,
 					Login: "login1",
@@ -509,19 +509,19 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 
 	cases := []TestCaseSub{
 		TestCaseSub{
-			UserId:    3,
-			Start:     5,
-			Limit:     15,
-			ErrFunc:   NoType.New("error"),
-			UserFunc:  nil,
-			UserExp:   nil,
+			UserId:   3,
+			Start:    5,
+			Limit:    15,
+			ErrFunc:  NoType.New("error"),
+			UserFunc: nil,
+			UserExp:  nil,
 		},
 		TestCaseSub{
-			UserId:    3,
-			Start:     5,
-			Limit:     15,
-			ErrFunc:   nil,
-			UserFunc:  []*models.User{
+			UserId:  3,
+			Start:   5,
+			Limit:   15,
+			ErrFunc: nil,
+			UserFunc: []*models.User{
 				&models.User{
 					Id:    1,
 					Login: "login1",
@@ -531,7 +531,7 @@ func TestHandler_GetSubscriptions(t *testing.T) {
 					Login: "login2",
 				},
 			},
-			UserExp:   []*models.User{
+			UserExp: []*models.User{
 				&models.User{
 					Id:    1,
 					Login: "login1",
@@ -571,6 +571,7 @@ type TestCasePassword struct {
 	Pass string
 	User *models.User
 }
+
 /*
 func TestHandler_ComparePassword(t *testing.T) {
 	t.Helper()
@@ -613,5 +614,4 @@ func TestHandler_ComparePassword(t *testing.T) {
 	}
 }
 
- */
-
+*/

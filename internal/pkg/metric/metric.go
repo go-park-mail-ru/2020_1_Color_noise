@@ -23,10 +23,9 @@ var (
 	errors = prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: "errors_vector",
 	}, []string{"status_code", "path"})
-
 )
 
-func Register()  {
+func Register() {
 	prometheus.MustRegister(hits)
 	prometheus.MustRegister(rps)
 	prometheus.MustRegister(er)
@@ -34,18 +33,18 @@ func Register()  {
 	prometheus.MustRegister(errors)
 }
 
-func Increase()  {
+func Increase() {
 	hits.Add(1)
 }
 
-func IncreaseError()  {
+func IncreaseError() {
 	er.Add(1)
 }
 
-func WorkTime(method, path string, time time.Duration)  {
+func WorkTime(method, path string, time time.Duration) {
 	rps.WithLabelValues(method, path).Observe(float64(time))
 }
 
-func Errors(st, path string)  {
+func Errors(st, path string) {
 	errors.WithLabelValues(st, path).Inc()
 }

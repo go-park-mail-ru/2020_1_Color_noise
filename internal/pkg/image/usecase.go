@@ -1,5 +1,5 @@
 package image
 
-type IUsecase interface{
+type IUsecase interface {
 	Analyze(pinId uint, userId uint, image string)
 }

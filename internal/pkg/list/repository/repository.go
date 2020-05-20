@@ -38,7 +38,7 @@ func (lr *Repository) GetSubList(id uint, start int, limit int) ([]*models.Pin, 
 }
 
 func (lr *Repository) GetRecommendationList(id uint, start int, limit int) ([]*models.Pin, error) {
-	p := models.DataBaseUser{Id:id}
+	p := models.DataBaseUser{Id: id}
 	user, err := lr.db.GetUserById(p)
 	if err != nil {
 		return nil, UserNotFound.Newf("User not found, user id = %d", user.Id)
@@ -46,11 +46,13 @@ func (lr *Repository) GetRecommendationList(id uint, start int, limit int) ([]*m
 
 	result := make([]*models.Pin, 0)
 	for _, tags := range user.Tags {
-		pin := models.DataBasePin{Name:tags}
-		pins, _ := lr.db.GetPinsByName(pin, time.Time{}, time.Now(), true, "", start, limit)
-		for _, pin := range pins {
-			result = append(result, pin)
+		pin := models.DataBasePin{Name: tags}
+		pins, ok := lr.db.GetPinsByName(pin, time.Time{}, time.Now(), true, "", start, limit)
+		if ok != nil {
+			break
 		}
+		result = append(result, pins...)
+
 	}
 
 	if len(result) > limit {

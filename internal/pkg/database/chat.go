@@ -22,7 +22,7 @@ func (db *PgxDB) AddMessage(sid, rid int, msg string, sticker string) (*models.M
 		SendUser:  &sender,
 		RecUser:   &receiver,
 		Message:   msg,
-		Stickers: sticker,
+		Stickers:  sticker,
 		CreatedAt: time.Now(),
 	}
 
@@ -104,11 +104,15 @@ func (db *PgxDB) GetUsers(userId uint, start int, limit int) ([]*models.User, er
 		}
 
 		if send.Id == userId {
-			receiver, _ := db.GetUserById(models.GetBUser(receive))
-			m[receive.Id] = &receiver
+			receiver, ok := db.GetUserById(models.GetBUser(receive))
+			if ok == nil {
+				m[receive.Id] = &receiver
+			}
 		} else {
-			sender, _ := db.GetUserById(models.GetBUser(send))
-			m[send.Id] = &sender
+			sender, ok := db.GetUserById(models.GetBUser(send))
+			if ok == nil {
+				m[send.Id] = &sender
+			}
 		}
 	}
 	for _, val := range m {

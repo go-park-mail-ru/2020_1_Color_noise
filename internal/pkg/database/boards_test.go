@@ -36,19 +36,19 @@ func TestPgxDB_CreateBoard(t *testing.T) {
 		},
 		{answer: fmt.Errorf("user not found"),
 			b: models.DataBaseBoard{
-				Name:      fmt.Sprint(time.Now()),
+				Name: fmt.Sprint(time.Now()),
 			},
 		},
 	}
 
 	for i, item := range cases {
 		_, answer := BDB.CreateBoard(item.b)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -63,7 +63,7 @@ func TestPgxDB_DeleteBoard(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_DeleteBoard",
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_DeleteBoard",
 	})
 
 	bid, _ := BDB.CreateBoard(models.DataBaseBoard{
@@ -83,12 +83,12 @@ func TestPgxDB_DeleteBoard(t *testing.T) {
 
 	for i, item := range cases {
 		answer := BDB.DeleteBoard(item.b)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -104,7 +104,7 @@ func TestPgxDB_GetBoardById(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_GetBoardById",
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_GetBoardById",
 	})
 
 	bid, _ := BDB.CreateBoard(models.DataBaseBoard{
@@ -118,19 +118,18 @@ func TestPgxDB_GetBoardById(t *testing.T) {
 			},
 		},
 		{answer: fmt.Errorf("board not found"),
-			b: models.DataBaseBoard{
-			},
+			b: models.DataBaseBoard{},
 		},
 	}
 
 	for i, item := range cases {
 		_, answer := BDB.GetBoardById(item.b)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -146,7 +145,7 @@ func TestPgxDB_GetBoardLastPin(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_GetBoardLastPin",
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_GetBoardLastPin",
 	})
 
 	bid, _ := BDB.CreateBoard(models.DataBaseBoard{
@@ -154,8 +153,8 @@ func TestPgxDB_GetBoardLastPin(t *testing.T) {
 	})
 
 	_, _ = BDB.CreatePin(models.DataBasePin{
-		BoardId:bid,
-		UserId:id,
+		BoardId: bid,
+		UserId:  id,
 	})
 
 	cases := []BoardCase{
@@ -165,19 +164,18 @@ func TestPgxDB_GetBoardLastPin(t *testing.T) {
 			},
 		},
 		{answer: fmt.Errorf("board not found"),
-			b: models.DataBaseBoard{
-			},
+			b: models.DataBaseBoard{},
 		},
 	}
 
 	for i, item := range cases {
 		_, answer := BDB.GetBoardLastPin(item.b)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -192,7 +190,7 @@ func TestPgxDB_UpdateBoard(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_UpdateBoard",
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_UpdateBoard",
 	})
 
 	bid, _ := BDB.CreateBoard(models.DataBaseBoard{
@@ -207,19 +205,18 @@ func TestPgxDB_UpdateBoard(t *testing.T) {
 			},
 		},
 		{answer: nil,
-			b: models.DataBaseBoard{
-			},
+			b: models.DataBaseBoard{},
 		},
 	}
 
 	for i, item := range cases {
 		answer := BDB.UpdateBoard(item.b)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -234,12 +231,12 @@ func TestPgxDB_GetBoardsByName(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_GetBoardsByName",
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_GetBoardsByName",
 	})
 
 	_, _ = BDB.CreateBoard(models.DataBaseBoard{
 		UserId: id,
-		Name: "board",
+		Name:   "board",
 	})
 
 	cases := []BoardCase{
@@ -257,12 +254,12 @@ func TestPgxDB_GetBoardsByName(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := BDB.GetBoardsByName(item.b, 0, 5)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -277,7 +274,7 @@ func TestPgxDB_GetBoardsByUserId(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_GetBoardsByUserId",
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_GetBoardsByUserId",
 	})
 
 	_, _ = BDB.CreateBoard(models.DataBaseBoard{
@@ -302,12 +299,12 @@ func TestPgxDB_GetBoardsByUserId(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := BDB.GetBoardsByUserId(item.b, 0, i)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -322,7 +319,7 @@ func TestPgxDB_GetPinsByBoardID(t *testing.T) {
 	BDB.Open(c)
 
 	id, _ := BDB.CreateUser(models.DataBaseUser{
-		Login:             fmt.Sprint(time.Now()) + "TestPgxDB_GetPinsByBoardID",
+		Login: fmt.Sprint(time.Now()) + "TestPgxDB_GetPinsByBoardID",
 	})
 
 	bid, _ := BDB.CreateBoard(models.DataBaseBoard{
@@ -330,8 +327,8 @@ func TestPgxDB_GetPinsByBoardID(t *testing.T) {
 	})
 
 	_, _ = BDB.CreatePin(models.DataBasePin{
-		UserId:      id,
-		BoardId:     bid,
+		UserId:  id,
+		BoardId: bid,
 	})
 
 	cases := []BoardCase{
@@ -347,12 +344,12 @@ func TestPgxDB_GetPinsByBoardID(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := BDB.GetPinsByBoardID(item.b)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}

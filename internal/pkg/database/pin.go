@@ -22,7 +22,7 @@ func (db *PgxDB) CreatePin(pin models.DataBasePin) (uint, error) {
 	return id, err
 }
 
-func (db *PgxDB) Save(pinId, boardId uint) ( error) {
+func (db *PgxDB) Save(pinId, boardId uint) error {
 	var check uint
 
 	res := db.dbPool.QueryRow(InsertBoardsPin, pinId, boardId, false)
@@ -62,7 +62,10 @@ func (db *PgxDB) GetPinById(pin models.DataBasePin) (models.Pin, error) {
 		return models.Pin{}, errors.New("pin not found")
 	}
 
-	db.UpdateViews(pin.Id)
+	update := db.UpdateViews(pin.Id)
+	if update != nil {
+		return models.Pin{}, errors.New("view update error")
+	}
 	return models.GetPin(res), nil
 }
 
@@ -88,7 +91,7 @@ func (db *PgxDB) GetPinsByUserId(pin models.DataBasePin) ([]*models.Pin, error) 
 
 func (db *PgxDB) GetPinsByName(pin models.DataBasePin, since time.Time, to time.Time, desc bool, st string, start int, limit int) ([]*models.Pin, error) {
 	var res []*models.Pin
-	Query := PinByName
+	var Query string
 
 	if desc {
 		switch st {

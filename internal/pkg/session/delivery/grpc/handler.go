@@ -27,9 +27,9 @@ func (sm *SessionManager) Create(ctx context.Context, in *authService.UserID) (*
 	}
 
 	sess := &authService.Session{
-		Id: int64(s.Id),
+		Id:     int64(s.Id),
 		Cookie: s.Cookie,
-		Token: s.Token,
+		Token:  s.Token,
 	}
 
 	return sess, nil
@@ -41,10 +41,10 @@ func (sm *SessionManager) GetByCookie(ctx context.Context, in *authService.Cooki
 		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GPRC GetByCoolie: Getting session error").Error())
 	}
 
-	sess := &authService.Session {
-		Id: int64(s.Id),
+	sess := &authService.Session{
+		Id:     int64(s.Id),
 		Cookie: s.Cookie,
-		Token: s.Token,
+		Token:  s.Token,
 	}
 
 	return sess, nil
@@ -76,14 +76,14 @@ func (sm *SessionManager) Delete(ctx context.Context, in *authService.Cookie) (*
 
 func (sm *SessionManager) Login(ctx context.Context, in *authService.SignIn) (*authService.Session, error) {
 	us := &models.User{
-		Id:            uint(in.User.Id),
-		Email:         in.User.Email,
-		Login:         in.User.Login,
+		Id:                uint(in.User.Id),
+		Email:             in.User.Email,
+		Login:             in.User.Login,
 		EncryptedPassword: in.User.EncryptedPassword,
-		About:         in.User.About,
-		Avatar:        in.User.Avatar,
-		Subscribers:   int(in.User.Subscribers),
-		Subscriptions: int(in.User.Subscriptions),
+		About:             in.User.About,
+		Avatar:            in.User.Avatar,
+		Subscribers:       int(in.User.Subscribers),
+		Subscriptions:     int(in.User.Subscriptions),
 	}
 
 	s, err := sm.usecase.Login(us, in.Password)
@@ -91,12 +91,11 @@ func (sm *SessionManager) Login(ctx context.Context, in *authService.SignIn) (*a
 		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC Login: Login error").Error())
 	}
 
-
 	sess := &authService.Session{
-			Id:     int64(s.Id),
-			Cookie: s.Cookie,
-			Token:  s.Token,
-		}
+		Id:     int64(s.Id),
+		Cookie: s.Cookie,
+		Token:  s.Token,
+	}
 
 	return sess, nil
 }

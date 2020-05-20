@@ -1,4 +1,4 @@
-  package repository
+package repository
 
 import (
 	"2020_1_Color_noise/internal/models"
@@ -9,24 +9,21 @@ import (
 )
 
 type Repository struct {
-	bd            database.DBInterface
+	bd database.DBInterface
 }
 
-
-
-  func NewRepo(bd database.DBInterface) *Repository {
+func NewRepo(bd database.DBInterface) *Repository {
 	return &Repository{
-		bd:            bd,
+		bd: bd,
 	}
 }
-
 
 func (ur *Repository) UpdatePreferences(userId uint, preferences []string) error {
 
 	return ur.bd.AddTags(userId, preferences)
 }
 
-func (ur *Repository) Create(user *models.User) (*models.User, error){
+func (ur *Repository) Create(user *models.User) (*models.User, error) {
 	fmt.Println(*user)
 
 	_, err := ur.checkLogin(user.Login)
@@ -243,5 +240,5 @@ func (ur *Repository) GetSubscriptions(id uint, start int, limit int) ([]*models
 
 func (ur *Repository) IsFollowed(id uint, subId uint) (bool, error) {
 
-	return  ur.bd.IsFollowing(id, subId)
+	return ur.bd.IsFollowing(id, subId)
 }

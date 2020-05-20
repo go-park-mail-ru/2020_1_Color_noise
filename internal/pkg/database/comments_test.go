@@ -56,12 +56,12 @@ func TestPgxDB_CreateComment(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := CommentDB.CreateComment(item.cm)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -113,12 +113,12 @@ func TestPgxDB_UpdateComment(t *testing.T) {
 
 	for i, item := range cases {
 		answer := CommentDB.UpdateComment(item.cm)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -169,12 +169,12 @@ func TestPgxDB_DeleteComment(t *testing.T) {
 
 	for i, item := range cases {
 		answer := CommentDB.DeleteComment(item.cm)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -224,8 +224,7 @@ func TestPgxDB_GetCommentById(t *testing.T) {
 			answer: nil,
 		},
 		{
-			in: models.DataBaseComment{
-			},
+			in:     models.DataBaseComment{},
 			out:    models.Comment{},
 			answer: fmt.Errorf("comment not found"),
 		},
@@ -233,12 +232,12 @@ func TestPgxDB_GetCommentById(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := CommentDB.GetCommentById(item.in)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -277,7 +276,6 @@ func TestPgxDB_GetCommentsByPinId(t *testing.T) {
 		Text:   "text",
 	})
 
-
 	cases := []ComplicatedCase{
 		{
 			in: models.DataBaseComment{
@@ -287,8 +285,7 @@ func TestPgxDB_GetCommentsByPinId(t *testing.T) {
 			answer: nil,
 		},
 		{
-			in: models.DataBaseComment{
-			},
+			in:     models.DataBaseComment{},
 			out:    nil,
 			answer: nil,
 		},
@@ -296,12 +293,12 @@ func TestPgxDB_GetCommentsByPinId(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := CommentDB.GetCommentsByPinId(item.in, 0, 2)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -334,12 +331,12 @@ func TestPgxDB_GetCommentsByText(t *testing.T) {
 
 	for i, item := range cases {
 		_, answer := CommentDB.GetCommentsByText(item.in, 0, 2)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
