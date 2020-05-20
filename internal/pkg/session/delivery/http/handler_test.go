@@ -3,10 +3,10 @@ package http
 import (
 	"2020_1_Color_noise/internal/models"
 	. "2020_1_Color_noise/internal/pkg/error"
-	userServMock "2020_1_Color_noise/internal/pkg/proto/user/mock"
+	authServ "2020_1_Color_noise/internal/pkg/proto/session"
 	authServMock "2020_1_Color_noise/internal/pkg/proto/session/mock"
 	userServ "2020_1_Color_noise/internal/pkg/proto/user"
-	authServ "2020_1_Color_noise/internal/pkg/proto/session"
+	userServMock "2020_1_Color_noise/internal/pkg/proto/user/mock"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -59,7 +59,7 @@ func TestHandler_Login(t *testing.T) {
 
 	cases := []TestCaseLogin{
 		TestCaseLogin{
-			IsAuth: true,
+			IsAuth:   true,
 			Response: `{"status":200,"body":{"message":"Ok"}}`,
 		},
 		TestCaseLogin{
@@ -96,9 +96,9 @@ func TestHandler_Login(t *testing.T) {
 			User: &models.User{
 				Id: 1,
 			},
-			Login:    "Login1",
-			Password: "Password",
-			Response: `{"status":200,"body":{"id":1,"login":"","subscriptions":0,"subscribers":0}}`,
+			Login:      "Login1",
+			Password:   "Password",
+			Response:   `{"status":200,"body":{"id":1,"login":"","subscriptions":0,"subscribers":0}}`,
 			CookieName: "session_id",
 			Cookie:     "cookie",
 			//TokenName:  "csrf_token",
@@ -145,25 +145,24 @@ func TestHandler_Login(t *testing.T) {
 				if item.CompareErr {
 					err = NoType.New("")
 				}
-					/*session := &models.Session{
-						Id:     item.User.Id,
-						Cookie: item.Cookie,
-						//Token:  item.Token,
-					}*/
+				/*session := &models.Session{
+					Id:     item.User.Id,
+					Cookie: item.Cookie,
+					//Token:  item.Token,
+				}*/
 
-					if item.CreateErr {
-						err = NoType.New("")
-					}
+				if item.CreateErr {
+					err = NoType.New("")
+				}
 
-					gomock.InOrder(
-						mockAuthService.EXPECT().Login(
-							r.Context(), &authServ.SignIn{
-								User: &authServ.User{Id: int64(item.User.Id)},
-								Password: item.Password,
-							},
-							).Return(&authServ.Session{Id: int64(item.User.Id,), Cookie: item.Cookie}, err),
-					)
-
+				gomock.InOrder(
+					mockAuthService.EXPECT().Login(
+						r.Context(), &authServ.SignIn{
+							User:     &authServ.User{Id: int64(item.User.Id)},
+							Password: item.Password,
+						},
+					).Return(&authServ.Session{Id: int64(item.User.Id), Cookie: item.Cookie}, err),
+				)
 
 			}
 		}
@@ -265,7 +264,7 @@ func TestHandler_Logout(t *testing.T) {
 
 	cases := []TestCaseLogout{
 		TestCaseLogout{
-			IsAuth: false,
+			IsAuth:   false,
 			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseLogout{
@@ -276,8 +275,8 @@ func TestHandler_Logout(t *testing.T) {
 			DeleteErr: true,
 		},
 		TestCaseLogout{
-			IsAuth: true,
-			Response: `{"status":200,"body":{"message":"Ok"}}`,
+			IsAuth:     true,
+			Response:   `{"status":200,"body":{"message":"Ok"}}`,
 			CookieName: "session_id",
 			Cookie:     "cookie",
 			//TokenName:  "csrf_token",

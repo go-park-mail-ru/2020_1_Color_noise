@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-const(
+const (
 	NoType = ErrorType(iota)
 	BadRequest
 	PinNotFound
@@ -43,14 +43,16 @@ func Cast(d int) ErrorType {
 }
 
 type Error struct {
-	errorType ErrorType
+	errorType     ErrorType
 	originalError error
-	message string
+	message       string
 }
+
 // Error returns the mssage of a customError
 func (error Error) Error() string {
 	return error.originalError.Error()
 }
+
 // New creates a new customError
 func (e ErrorType) New(msg string) error {
 	return Error{errorType: e,
@@ -90,9 +92,9 @@ func Wrapf(err error, msg string, args ...interface{}) error {
 	wrappedError := errors.Wrapf(err, msg, args...)
 	if customErr, ok := err.(Error); ok {
 		return Error{
-			errorType: customErr.errorType,
+			errorType:     customErr.errorType,
 			originalError: wrappedError,
-			message: customErr.message,
+			message:       customErr.message,
 		}
 	}
 
@@ -121,7 +123,7 @@ func ErrorHandler(w http.ResponseWriter, r *http.Request, logger *zap.SugaredLog
 	var message string
 
 	metric.IncreaseError()
-	
+
 	switch GetType(err) {
 	case BadRequest:
 		status = http.StatusBadRequest
@@ -172,7 +174,7 @@ func ErrorHandler(w http.ResponseWriter, r *http.Request, logger *zap.SugaredLog
 		zap.String("error:", err.Error()),
 	)
 
-	response.Respond(w, status, map[string]string {
+	response.Respond(w, status, map[string]string{
 		"error": message,
 	})
 }

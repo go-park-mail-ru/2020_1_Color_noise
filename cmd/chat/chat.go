@@ -62,7 +62,6 @@ func main() {
 	chatUse := chatUsecase.NewUsecase(chatRepo)
 	chatDelivery := chatDeliveryHttp.NewHandler(chatUse, zap)
 
-
 	m := middleware.NewMiddleware(sessManager, zap)
 
 	r.HandleFunc("/api/chat/users", chatDelivery.GetUsers).Methods("GET")

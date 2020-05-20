@@ -13,14 +13,14 @@ var (
 )
 
 type DataBaseConfig struct {
-	Host string `json:"host"`
-	Port int `json:"port"`
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
 	Database string `json:"database"`
-	User string `json:"user"`
+	User     string `json:"user"`
 	Password string `json:"password"`
 }
 
-func GetDBConfing() (DataBaseConfig, error){
+func GetDBConfing() (DataBaseConfig, error) {
 	v := viper.New()
 	c := DataBaseConfig{}
 
@@ -31,7 +31,6 @@ func GetDBConfing() (DataBaseConfig, error){
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %v \n", err))
 	}
-
 
 	c.User = v.GetString("db.user")
 	c.Password = v.GetString("db.password")
@@ -47,9 +46,7 @@ func GetDBConfing() (DataBaseConfig, error){
 	return c, err
 }
 
-
-
-func GetTestConfing() (DataBaseConfig, error){
+func GetTestConfing() (DataBaseConfig, error) {
 	v := viper.New()
 	c := DataBaseConfig{}
 
@@ -62,7 +59,6 @@ func GetTestConfing() (DataBaseConfig, error){
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %v \n", err))
 	}
-
 
 	c.User = v.GetString("test.user")
 	c.Password = v.GetString("test.password")

@@ -10,12 +10,12 @@ import (
 )
 
 type TestCaseGet struct {
-	ErrFunc    error
-	NotFunc    []*models.Notification
-	NotExp     []*models.Notification
-	UserId     uint
-	Start      int
-	Limit      int
+	ErrFunc error
+	NotFunc []*models.Notification
+	NotExp  []*models.Notification
+	UserId  uint
+	Start   int
+	Limit   int
 }
 
 func TestHandler_GetByName(t *testing.T) {
@@ -28,17 +28,17 @@ func TestHandler_GetByName(t *testing.T) {
 
 	cases := []TestCaseGet{
 		TestCaseGet{
-			UserId:    1,
-			ErrFunc:   NoType.New("error"),
-			NotFunc:  nil,
-			NotExp:   nil,
-			Start:    5,
-			Limit:    15,
+			UserId:  1,
+			ErrFunc: NoType.New("error"),
+			NotFunc: nil,
+			NotExp:  nil,
+			Start:   5,
+			Limit:   15,
 		},
 		TestCaseGet{
-			UserId:   1,
-			ErrFunc:  nil,
-			NotFunc:  []*models.Notification{
+			UserId:  1,
+			ErrFunc: nil,
+			NotFunc: []*models.Notification{
 				&models.Notification{
 					User: models.User{
 						Id: 3,
@@ -52,7 +52,7 @@ func TestHandler_GetByName(t *testing.T) {
 					Message: "comment",
 				},
 			},
-			NotExp:  []*models.Notification{
+			NotExp: []*models.Notification{
 				&models.Notification{
 					User: models.User{
 						Id: 3,
@@ -66,8 +66,8 @@ func TestHandler_GetByName(t *testing.T) {
 					Message: "comment",
 				},
 			},
-			Start:    5,
-			Limit:    15,
+			Start: 5,
+			Limit: 15,
 		},
 	}
 

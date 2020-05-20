@@ -15,8 +15,8 @@ type Pin struct {
 	Tags        []string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	Views uint
-	Comment uint
+	Views       uint
+	Comment     uint
 }
 
 type DataBasePin struct {
@@ -29,8 +29,8 @@ type DataBasePin struct {
 	CreatedAt   time.Time
 	UpdatedAt   sql.NullTime //не гарантируется, что пин был обновлен
 	Tags        []string
-	Views uint
-	Comment uint
+	Views       uint
+	Comment     uint
 }
 
 type InputPin struct {
@@ -47,13 +47,13 @@ type UpdatePin struct {
 }
 
 type ResponsePin struct {
-	Id          uint   `json:"id,omitempty"`
-	UserId      uint   `json:"user_id,omitempty"`
-	BoardId     uint   `json:"board_id,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description"`
-	Image       string `json:"image,omitempty"`
-	Tags 		[]string `json:"tags,omitempty"`
+	Id          uint     `json:"id,omitempty"`
+	UserId      uint     `json:"user_id,omitempty"`
+	BoardId     uint     `json:"board_id,omitempty"`
+	Name        string   `json:"name,omitempty"`
+	Description string   `json:"description"`
+	Image       string   `json:"image,omitempty"`
+	Tags        []string `json:"tags,omitempty"`
 }
 
 func GetPin(pin DataBasePin) Pin {
@@ -64,9 +64,9 @@ func GetPin(pin DataBasePin) Pin {
 		Name:      pin.Name,
 		Image:     pin.Image,
 		CreatedAt: pin.CreatedAt,
-		Tags: pin.Tags,
-		Views: pin.Views,
-		Comment: pin.Comment,
+		Tags:      pin.Tags,
+		Views:     pin.Views,
+		Comment:   pin.Comment,
 	}
 
 	if pin.Description.Valid {
@@ -87,9 +87,9 @@ func GetBPin(pin Pin) DataBasePin {
 		Name:      pin.Name,
 		Image:     pin.Image,
 		CreatedAt: pin.CreatedAt,
-		Tags: pin.Tags,
-		Views: pin.Views,
-		Comment: pin.Comment,
+		Tags:      pin.Tags,
+		Views:     pin.Views,
+		Comment:   pin.Comment,
 	}
 	if !pin.UpdatedAt.IsZero() {
 		tmp.UpdatedAt.Valid = true

@@ -22,7 +22,7 @@ func (db *PgxDB) CreatePin(pin models.DataBasePin) (uint, error) {
 	return id, err
 }
 
-func (db *PgxDB) Save(pinId, boardId uint) ( error) {
+func (db *PgxDB) Save(pinId, boardId uint) error {
 	var check uint
 
 	res := db.dbPool.QueryRow(InsertBoardsPin, pinId, boardId, false)

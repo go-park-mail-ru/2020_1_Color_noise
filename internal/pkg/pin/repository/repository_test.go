@@ -1,5 +1,11 @@
 package repository
 
+import _ "2020_1_Color_noise/internal/pkg/database"
+
+/*
+import "2020_1_Color_noise/internal/pkg/database"
+
+
 import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/config"
@@ -307,3 +313,4 @@ func TestRepository_GetByUserID(t *testing.T) {
 	}
 
 }
+*/

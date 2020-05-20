@@ -22,7 +22,7 @@ func (db *PgxDB) AddMessage(sid, rid int, msg string, sticker string) (*models.M
 		SendUser:  &sender,
 		RecUser:   &receiver,
 		Message:   msg,
-		Stickers: sticker,
+		Stickers:  sticker,
 		CreatedAt: time.Now(),
 	}
 

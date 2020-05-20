@@ -24,12 +24,12 @@ func TestPgxDB_Open(t *testing.T) {
 
 	for i, item := range cases {
 		answer := dbServiceTest.Open(c)
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
@@ -43,12 +43,12 @@ func TestPgxDB_Close(t *testing.T) {
 
 	for i, item := range cases {
 		answer := dbServiceTest.Close()
-		if answer != nil && item.answer  != nil{
+		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		} else {
-			if item.answer != nil || answer != nil{
+			if item.answer != nil || answer != nil {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}

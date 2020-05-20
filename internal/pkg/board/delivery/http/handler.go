@@ -44,7 +44,6 @@ func (bh Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	input := &models.InputBoard{}
 
-
 	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation board"), "Wrong body of request")
@@ -78,14 +77,14 @@ func (bh Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	/*
-	isAuth := r.Context().Value("IsAuth")
-	if isAuth != true {
-		err := error.Unauthorized.New("Get board: user is unauthorized")
-		error.ErrorHandler(w, r, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
+		isAuth := r.Context().Value("IsAuth")
+		if isAuth != true {
+			err := error.Unauthorized.New("Get board: user is unauthorized")
+			error.ErrorHandler(w, r, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+			return
+		}
 
-	 */
+	*/
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -137,14 +136,14 @@ func (bh Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	/*
-	isAuth := r.Context().Value("IsAuth")
-	if isAuth != true {
-		err := error.Unauthorized.New("Get name of board: user is unauthorized")
-		error.ErrorHandler(w, r, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
+		isAuth := r.Context().Value("IsAuth")
+		if isAuth != true {
+			err := error.Unauthorized.New("Get name of board: user is unauthorized")
+			error.ErrorHandler(w, r, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+			return
+		}
 
-	 */
+	*/
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -165,7 +164,7 @@ func (bh Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 		UserId:      board.UserId,
 		Name:        board.Name,
 		Description: board.Description,
-		LastPin:     &models.ResponsePin{
+		LastPin: &models.ResponsePin{
 			Id:          board.LastPin.Id,
 			BoardId:     board.LastPin.BoardId,
 			UserId:      board.LastPin.UserId,
@@ -182,13 +181,13 @@ func (bh Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	/*
-	isAuth := r.Context().Value("IsAuth")
-	if isAuth != true {
-		err := error.Unauthorized.New("Fetch boards: user is unauthorized")
-		error.ErrorHandler(w, r, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
-	 */
+		isAuth := r.Context().Value("IsAuth")
+		if isAuth != true {
+			err := error.Unauthorized.New("Fetch boards: user is unauthorized")
+			error.ErrorHandler(w, r, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+			return
+		}
+	*/
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -219,7 +218,7 @@ func (bh Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 			UserId:      board.UserId,
 			Name:        board.Name,
 			Description: board.Description,
-			LastPin:     &models.ResponsePin{
+			LastPin: &models.ResponsePin{
 				Id:          board.LastPin.Id,
 				BoardId:     board.LastPin.BoardId,
 				UserId:      board.LastPin.UserId,
@@ -234,7 +233,7 @@ func (bh Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (bh Handler) Update(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
@@ -270,7 +269,7 @@ func (bh Handler) Update(w http.ResponseWriter, r *http.Request) {
 	_, err = govalidator.ValidateStruct(input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
-			"Name shouldn't be empty and longer 60 characters. " +
+			"Name shouldn't be empty and longer 60 characters. "+
 				"Description shouldn't be empty and longer 1000 characters.")
 		error.ErrorHandler(w, r, bh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
@@ -282,13 +281,13 @@ func (bh Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, http.StatusOK, map[string]string {
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }
 
 func (bh Handler) Delete(w http.ResponseWriter, r *http.Request) {
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
@@ -318,7 +317,7 @@ func (bh Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Respond(w, http.StatusOK, map[string]string {
+	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
 }

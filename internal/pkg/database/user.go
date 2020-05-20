@@ -243,7 +243,7 @@ func (db *PgxDB) AddUserTags(userID uint, tags []string) error {
 	return nil
 }
 
-func (db *PgxDB) IsFollowing(id uint, id2 uint) (bool, error)  {
+func (db *PgxDB) IsFollowing(id uint, id2 uint) (bool, error) {
 
 	res, err := db.dbPool.Exec(IsFollowing, id, id2)
 	if err != nil {

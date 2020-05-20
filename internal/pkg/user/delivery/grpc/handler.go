@@ -22,10 +22,10 @@ func NewUserService(usecase user.IUsecase) *UserService {
 
 func (us *UserService) Create(ctx context.Context, in *userService.SignUp) (*userService.User, error) {
 	input := &models.SignUpInput{
-		Email: in.Email,
-		Login: in.Login,
+		Email:    in.Email,
+		Login:    in.Login,
 		Password: in.Password,
-		}
+	}
 
 	u, err := us.usecase.Create(input)
 	if err != nil {
@@ -49,12 +49,12 @@ func (us *UserService) GetById(ctx context.Context, in *userService.UserID) (*us
 	}
 
 	userProto := &userService.User{
-		Id:     int64(u.Id),
-		Email:  u.Email,
-		Login:  u.Login,
-		Avatar: u.Avatar,
-		About:  u.About,
-		Subscribers: int64(u.Subscribers),
+		Id:            int64(u.Id),
+		Email:         u.Email,
+		Login:         u.Login,
+		Avatar:        u.Avatar,
+		About:         u.About,
+		Subscribers:   int64(u.Subscribers),
 		Subscriptions: int64(u.Subscriptions),
 	}
 
@@ -68,21 +68,21 @@ func (us *UserService) GetByLogin(ctx context.Context, in *userService.Login) (*
 	}
 
 	userProto := &userService.User{
-		Id:     int64(u.Id),
-		Email:  u.Email,
+		Id:                int64(u.Id),
+		Email:             u.Email,
 		EncryptedPassword: u.EncryptedPassword,
-		Login:  u.Login,
-		Avatar: u.Avatar,
-		About:  u.About,
-		Subscribers: int64(u.Subscribers),
-		Subscriptions: int64(u.Subscriptions),
+		Login:             u.Login,
+		Avatar:            u.Avatar,
+		About:             u.About,
+		Subscribers:       int64(u.Subscribers),
+		Subscriptions:     int64(u.Subscriptions),
 	}
 
 	return userProto, nil
 }
 
 func (us *UserService) UpdateProfile(ctx context.Context, in *userService.Profile) (*userService.Nothing, error) {
-	input := &models.UpdateProfileInput {
+	input := &models.UpdateProfileInput{
 		Email: in.Input.Email,
 		Login: in.Input.Login,
 	}
@@ -166,15 +166,15 @@ func (us *UserService) GetSubscribers(ctx context.Context, in *userService.Sub) 
 	for _, user := range users {
 		u.Users = append(u.Users,
 			&userService.User{
-				Id:     int64(user.Id),
-				Email:  user.Email,
-				Login:  user.Login,
-				Avatar: user.Avatar,
-				About:  user.About,
-				Subscribers: int64(user.Subscribers),
+				Id:            int64(user.Id),
+				Email:         user.Email,
+				Login:         user.Login,
+				Avatar:        user.Avatar,
+				About:         user.About,
+				Subscribers:   int64(user.Subscribers),
 				Subscriptions: int64(user.Subscriptions),
 			},
-			)
+		)
 	}
 
 	return u, nil
@@ -190,12 +190,12 @@ func (us *UserService) GetSubscriptions(ctx context.Context, in *userService.Sub
 	for _, user := range users {
 		u.Users = append(u.Users,
 			&userService.User{
-				Id:     int64(user.Id),
-				Email:  user.Email,
-				Login:  user.Login,
-				Avatar: user.Avatar,
-				About:  user.About,
-				Subscribers: int64(user.Subscribers),
+				Id:            int64(user.Id),
+				Email:         user.Email,
+				Login:         user.Login,
+				Avatar:        user.Avatar,
+				About:         user.About,
+				Subscribers:   int64(user.Subscribers),
 				Subscriptions: int64(user.Subscriptions),
 			},
 		)
@@ -214,12 +214,12 @@ func (us *UserService) Search(ctx context.Context, in *userService.Searching) (*
 	for _, user := range users {
 		u.Users = append(u.Users,
 			&userService.User{
-				Id:     int64(user.Id),
-				Email:  user.Email,
-				Login:  user.Login,
-				Avatar: user.Avatar,
-				About:  user.About,
-				Subscribers: int64(user.Subscribers),
+				Id:            int64(user.Id),
+				Email:         user.Email,
+				Login:         user.Login,
+				Avatar:        user.Avatar,
+				About:         user.About,
+				Subscribers:   int64(user.Subscribers),
 				Subscriptions: int64(user.Subscriptions),
 			},
 		)

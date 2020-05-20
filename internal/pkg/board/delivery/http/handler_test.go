@@ -26,14 +26,14 @@ import (
 )
 
 type TestCaseCreate struct {
-	IsAuth     bool
-	UserId     uint
-	Board	   *models.Board
-	Response   string
-	IdErr      bool
-	InputErr   bool
-	ValidErr   bool
-	CreateErr  bool
+	IsAuth    bool
+	UserId    uint
+	Board     *models.Board
+	Response  string
+	IdErr     bool
+	InputErr  bool
+	ValidErr  bool
+	CreateErr bool
 }
 
 func TestHandler_Create(t *testing.T) {
@@ -41,11 +41,10 @@ func TestHandler_Create(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-
 	//topicDebugging := zapcore.AddSync(ioutil.Discard)
 	kafkaEncoder := zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
 
-	core := zapcore.NewCore(kafkaEncoder,zapcore.AddSync(ioutil.Discard), zapcore.InfoLevel)
+	core := zapcore.NewCore(kafkaEncoder, zapcore.AddSync(ioutil.Discard), zapcore.InfoLevel)
 	logger := zap.New(core)
 	logger.Debug("test")
 	defer logger.Sync()
@@ -60,78 +59,78 @@ func TestHandler_Create(t *testing.T) {
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
-			Board:        &models.Board{},
-			IsAuth:     false,
-			UserId:     1,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			Board:    &models.Board{},
+			IsAuth:   false,
+			UserId:   1,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			IdErr:      true,
-			Board:      &models.Board{},
-			UserId:     1,
-			Response:	`{"status":500,"body":{"error":"Internal server error"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			Board:    &models.Board{},
+			UserId:   1,
+			Response: `{"status":500,"body":{"error":"Internal server error"}}`,
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			InputErr:   true,
-			UserId:     1,
-			Board:      &models.Board{},
-			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}`,
+			IsAuth:   true,
+			InputErr: true,
+			UserId:   1,
+			Board:    &models.Board{},
+			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			ValidErr:   true,
-			UserId:     1,
-			Board:		&models.Board{
-				Name:	     "",
+			IsAuth:   true,
+			ValidErr: true,
+			UserId:   1,
+			Board: &models.Board{
+				Name:        "",
 				Description: "desc",
 			},
-			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
+			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
 				`Description shouldn't be empty and longer 1000 characters."}}`,
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			ValidErr:   true,
-			UserId:     1,
-			Board:		&models.Board{
-				Name:	     "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+			IsAuth:   true,
+			ValidErr: true,
+			UserId:   1,
+			Board: &models.Board{
+				Name:        "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
 				Description: "desc",
 			},
-			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
+			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
 				`Description shouldn't be empty and longer 1000 characters."}}`,
 		},
 		/*TestCaseCreate{
-			IsAuth:     true,
-			ValidErr:   true,
-			UserId:     1,
-			Board:		&models.Board{
-				Name:	     "name",
-				Description: "",
-			},
-			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
-				`Description shouldn't be empty and longer 1000 characters."}}
-`,
-		},*/
+					IsAuth:     true,
+					ValidErr:   true,
+					UserId:     1,
+					Board:		&models.Board{
+						Name:	     "name",
+						Description: "",
+					},
+					Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
+						`Description shouldn't be empty and longer 1000 characters."}}
+		`,
+				},*/
 		TestCaseCreate{
-			IsAuth:     true,
-			CreateErr:   true,
-			UserId:     1,
-			Board:		&models.Board{
-				Id:			 1,
-				Name:	     "name",
+			IsAuth:    true,
+			CreateErr: true,
+			UserId:    1,
+			Board: &models.Board{
+				Id:          1,
+				Name:        "name",
 				Description: "desc",
 			},
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			UserId:     1,
-			Board:		&models.Board{
-				Id:			 1,
-				Name:	     "name",
+			IsAuth: true,
+			UserId: 1,
+			Board: &models.Board{
+				Id:          1,
+				Name:        "name",
 				Description: "desc",
 			},
-			Response:	`{"status":201,"body":{"id":1}}`,
+			Response: `{"status":201,"body":{"id":1}}`,
 		},
 	}
 
@@ -159,8 +158,8 @@ func TestHandler_Create(t *testing.T) {
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
 
 			input := &models.InputBoard{
-				Name:        	item.Board.Name,
-				Description:    item.Board.Description,
+				Name:        item.Board.Name,
+				Description: item.Board.Description,
 			}
 
 			var err error = nil
@@ -208,12 +207,12 @@ func TestHandler_Create(t *testing.T) {
 }
 
 type TestCaseGetBoard struct {
-	IsAuth     bool
-	UserId     uint
-	Board      *models.Board
-	Response   string
-	IdErr      bool
-	GetErr     bool
+	IsAuth   bool
+	UserId   uint
+	Board    *models.Board
+	Response string
+	IdErr    bool
+	GetErr   bool
 }
 
 func TestHandler_GetBoard(t *testing.T) {
@@ -237,29 +236,29 @@ func TestHandler_GetBoard(t *testing.T) {
 
 	cases := []TestCaseGetBoard{
 		TestCaseGetBoard{
-			IsAuth:     false,
-			Board:       &models.Board{},
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			IsAuth:   false,
+			Board:    &models.Board{},
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseGetBoard{
-			IsAuth:     true,
-			IdErr:      true,
-			Board:       &models.Board{},
-			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			Board:    &models.Board{},
+			Response: `{"status":400,"body":{"error":"Bad id"}}`,
 		},
 		TestCaseGetBoard{
-			IsAuth:     true,
-			GetErr:     true,
-			Board:       &models.Board{},
+			IsAuth: true,
+			GetErr: true,
+			Board:  &models.Board{},
 		},
 		TestCaseGetBoard{
-			IsAuth:     true,
-			Board:      &models.Board{
+			IsAuth: true,
+			Board: &models.Board{
 				Id:          2,
 				UserId:      3,
 				Name:        "name",
 				Description: "desc",
-				Pins:        []*models.Pin{
+				Pins: []*models.Pin{
 					&models.Pin{
 						Id:          1,
 						BoardId:     2,
@@ -364,35 +363,35 @@ func TestHandler_GetNameBoard(t *testing.T) {
 
 	cases := []TestCaseGetBoard{
 		TestCaseGetBoard{
-			IsAuth:     false,
-			Board:       &models.Board{},
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			IsAuth:   false,
+			Board:    &models.Board{},
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseGetBoard{
-			IsAuth:     true,
-			IdErr:      true,
-			Board:       &models.Board{},
-			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			Board:    &models.Board{},
+			Response: `{"status":400,"body":{"error":"Bad id"}}`,
 		},
 		TestCaseGetBoard{
-			IsAuth:     true,
-			GetErr:     true,
-			Board:       &models.Board{},
+			IsAuth: true,
+			GetErr: true,
+			Board:  &models.Board{},
 		},
 		TestCaseGetBoard{
-			IsAuth:     true,
-			Board:      &models.Board{
+			IsAuth: true,
+			Board: &models.Board{
 				Id:          2,
 				UserId:      3,
 				Name:        "name",
 				Description: "desc",
-				LastPin:      models.Pin{
-						Id:          1,
-						BoardId:     2,
-						UserId:      3,
-						Name:        "name1",
-						Description: "desc1",
-						Image:       "image.jpg",
+				LastPin: models.Pin{
+					Id:          1,
+					BoardId:     2,
+					UserId:      3,
+					Name:        "name1",
+					Description: "desc1",
+					Image:       "image.jpg",
 				},
 			},
 			Response: `{"status":200,"body":{"id":2,"user_id":3,"name":"name","description":"desc","last_pin":{"id":1,"user_id":3,"board_id":2,"name":"name1","description":"desc1","image":"image.jpg"}}}`,
@@ -460,16 +459,15 @@ func TestHandler_GetNameBoard(t *testing.T) {
 }
 
 type TestCaseFetch struct {
-	IsAuth     bool
-	UserId     uint
-	Boards	   []*models.Board
-	Response   string
-	IdErr      bool
-	GetErr     bool
-	Start      int
-	Limit 	   int
+	IsAuth   bool
+	UserId   uint
+	Boards   []*models.Board
+	Response string
+	IdErr    bool
+	GetErr   bool
+	Start    int
+	Limit    int
 }
-
 
 func TestHandler_Fetch(t *testing.T) {
 	t.Helper()
@@ -492,40 +490,40 @@ func TestHandler_Fetch(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			IsAuth:     false,
-			UserId:     3,
-			Start:		1,
-			Limit:		15,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			IsAuth:   false,
+			UserId:   3,
+			Start:    1,
+			Limit:    15,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			IdErr:		true,
-			UserId:     3,
-			Start:		1,
-			Limit:		15,
-			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			UserId:   3,
+			Start:    1,
+			Limit:    15,
+			Response: `{"status":400,"body":{"error":"Bad id"}}`,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			GetErr:     true,
-			UserId:     3,
-			Start:		1,
-			Limit:		15,
-			Boards:     nil,
+			IsAuth: true,
+			GetErr: true,
+			UserId: 3,
+			Start:  1,
+			Limit:  15,
+			Boards: nil,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			UserId:     3,
-			Start:		1,
-			Limit:		15,
-			Boards:     []*models.Board {
+			IsAuth: true,
+			UserId: 3,
+			Start:  1,
+			Limit:  15,
+			Boards: []*models.Board{
 				&models.Board{
 					Id:          2,
 					UserId:      3,
 					Name:        "name1",
 					Description: "desc1",
-					LastPin:      models.Pin{
+					LastPin: models.Pin{
 						Id:          1,
 						BoardId:     2,
 						UserId:      3,
@@ -539,7 +537,7 @@ func TestHandler_Fetch(t *testing.T) {
 					UserId:      3,
 					Name:        "name2",
 					Description: "desc2",
-					LastPin:      models.Pin{
+					LastPin: models.Pin{
 						Id:          6,
 						BoardId:     4,
 						UserId:      3,
@@ -555,7 +553,7 @@ func TestHandler_Fetch(t *testing.T) {
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("GET", fmt.Sprintf("/api/board/user/%d/?start=%d&limit=%d",item.UserId, item.Start, item.Limit), strings.NewReader(""))
+		r := httptest.NewRequest("GET", fmt.Sprintf("/api/board/user/%d/?start=%d&limit=%d", item.UserId, item.Start, item.Limit), strings.NewReader(""))
 		if !item.IdErr {
 			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.UserId)})
 		} else {
@@ -615,15 +613,15 @@ func TestHandler_Fetch(t *testing.T) {
 }
 
 type TestCaseUpdate struct {
-	IsAuth     bool
-	UserId     uint
-	Board	   *models.Board
-	Response   string
-	UserIdErr  bool
-	IdErr      bool
-	InputErr   bool
-	ValidErr   bool
-	UpdateErr  bool
+	IsAuth    bool
+	UserId    uint
+	Board     *models.Board
+	Response  string
+	UserIdErr bool
+	IdErr     bool
+	InputErr  bool
+	ValidErr  bool
+	UpdateErr bool
 }
 
 func TestHandler_Update(t *testing.T) {
@@ -647,51 +645,51 @@ func TestHandler_Update(t *testing.T) {
 
 	cases := []TestCaseUpdate{
 		TestCaseUpdate{
-			Board:      &models.Board{},
-			IsAuth:     false,
-			UserId:     1,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			Board:    &models.Board{},
+			IsAuth:   false,
+			UserId:   1,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseUpdate{
-			IsAuth:     true,
-			UserIdErr:  true,
-			UserId:     1,
-			Board:      &models.Board{},
+			IsAuth:    true,
+			UserIdErr: true,
+			UserId:    1,
+			Board:     &models.Board{},
 		},
 		TestCaseUpdate{
-			IsAuth:     true,
-			IdErr:		true,
-			UserId:     1,
-			Board:      &models.Board{},
-			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			UserId:   1,
+			Board:    &models.Board{},
+			Response: `{"status":400,"body":{"error":"Bad id"}}`,
 		},
 		TestCaseUpdate{
-			IsAuth:     true,
-			InputErr:   true,
-			UserId:     1,
-			Board:      &models.Board{},
-			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}`,
+			IsAuth:   true,
+			InputErr: true,
+			UserId:   1,
+			Board:    &models.Board{},
+			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
 		},
 		TestCaseUpdate{
-			IsAuth:     true,
-			ValidErr:   true,
-			UserId:     1,
-			Board:      &models.Board{
-				Name:	     "",
+			IsAuth:   true,
+			ValidErr: true,
+			UserId:   1,
+			Board: &models.Board{
+				Name:        "",
 				Description: "desc",
 			},
-			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
+			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
 				`Description shouldn't be empty and longer 1000 characters."}}`,
 		},
 		TestCaseUpdate{
-			IsAuth:     true,
-			ValidErr:   true,
-			UserId:     1,
-			Board:      &models.Board{
-				Name:	     "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+			IsAuth:   true,
+			ValidErr: true,
+			UserId:   1,
+			Board: &models.Board{
+				Name:        "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
 				Description: "desc",
 			},
-			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
+			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
 				`Description shouldn't be empty and longer 1000 characters."}}`,
 		},
 		/*TestCaseUpdate{
@@ -706,24 +704,24 @@ func TestHandler_Update(t *testing.T) {
 				`Description shouldn't be empty and longer 1000 characters."}}`,
 		},*/
 		TestCaseUpdate{
-			IsAuth:     true,
-			UpdateErr:  true,
-			UserId:     1,
-			Board:      &models.Board{
-				Id:			 1,
-				Name:	     "name",
+			IsAuth:    true,
+			UpdateErr: true,
+			UserId:    1,
+			Board: &models.Board{
+				Id:          1,
+				Name:        "name",
 				Description: "desc",
 			},
 		},
 		TestCaseUpdate{
-			IsAuth:     true,
-			UserId:     1,
-			Board:      &models.Board{
-				Id:			 1,
-				Name:	     "name",
+			IsAuth: true,
+			UserId: 1,
+			Board: &models.Board{
+				Id:          1,
+				Name:        "name",
 				Description: "desc",
 			},
-			Response:	`{"status":200,"body":{"message":"Ok"}}`,
+			Response: `{"status":200,"body":{"message":"Ok"}}`,
 		},
 	}
 
@@ -757,8 +755,8 @@ func TestHandler_Update(t *testing.T) {
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr && !item.UserIdErr {
 
 			input := &models.InputBoard{
-				Name:        	item.Board.Name,
-				Description:    item.Board.Description,
+				Name:        item.Board.Name,
+				Description: item.Board.Description,
 			}
 
 			var err error = nil
@@ -777,7 +775,7 @@ func TestHandler_Update(t *testing.T) {
 		body, _ := ioutil.ReadAll(resp.Body)
 		bodyStr := string(body)
 
-		if item.UpdateErr || item.UserIdErr  {
+		if item.UpdateErr || item.UserIdErr {
 			var output map[string]interface{}
 
 			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
@@ -806,13 +804,13 @@ func TestHandler_Update(t *testing.T) {
 }
 
 type TestCaseDelete struct {
-	IsAuth     bool
-	UserId     uint
-	BoardId	   uint
-	Response   string
-	UserIdErr  bool
-	IdErr      bool
-	DeleteErr  bool
+	IsAuth    bool
+	UserId    uint
+	BoardId   uint
+	Response  string
+	UserIdErr bool
+	IdErr     bool
+	DeleteErr bool
 }
 
 func TestHandler_DeletePin(t *testing.T) {
@@ -836,33 +834,33 @@ func TestHandler_DeletePin(t *testing.T) {
 
 	cases := []TestCaseDelete{
 		TestCaseDelete{
-			IsAuth:     false,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			IsAuth:   false,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseDelete{
-			IsAuth:     true,
-			UserIdErr:  true,
-			BoardId:    1,
-			UserId:		1,
+			IsAuth:    true,
+			UserIdErr: true,
+			BoardId:   1,
+			UserId:    1,
 		},
 		TestCaseDelete{
-			IsAuth:     true,
-			IdErr:		true,
-			BoardId:    1,
-			UserId:		1,
-			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			BoardId:  1,
+			UserId:   1,
+			Response: `{"status":400,"body":{"error":"Bad id"}}`,
 		},
 		TestCaseDelete{
-			IsAuth:     true,
-			DeleteErr:  true,
-			BoardId:    1,
-			UserId:		1,
+			IsAuth:    true,
+			DeleteErr: true,
+			BoardId:   1,
+			UserId:    1,
 		},
 		TestCaseDelete{
-			IsAuth:     true,
-			BoardId:    1,
-			UserId:		1,
-			Response:	`{"status":200,"body":{"message":"Ok"}}`,
+			IsAuth:   true,
+			BoardId:  1,
+			UserId:   1,
+			Response: `{"status":200,"body":{"message":"Ok"}}`,
 		},
 	}
 
@@ -904,7 +902,7 @@ func TestHandler_DeletePin(t *testing.T) {
 		body, _ := ioutil.ReadAll(resp.Body)
 		bodyStr := string(body)
 
-		if item.DeleteErr || item.UserIdErr  {
+		if item.DeleteErr || item.UserIdErr {
 			var output map[string]interface{}
 
 			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)

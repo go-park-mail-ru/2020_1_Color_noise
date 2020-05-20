@@ -15,7 +15,7 @@ type Handler struct {
 	logger  *zap.SugaredLogger
 }
 
-func NewHandler(usecase notifications.IUsecase, logger  *zap.SugaredLogger) *Handler {
+func NewHandler(usecase notifications.IUsecase, logger *zap.SugaredLogger) *Handler {
 	return &Handler{
 		usecase: usecase,
 		logger:  logger,
@@ -23,7 +23,7 @@ func NewHandler(usecase notifications.IUsecase, logger  *zap.SugaredLogger) *Han
 }
 
 func (nh *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")

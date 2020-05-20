@@ -17,15 +17,15 @@ import (
 type Handler struct {
 	commentUsecase comment.IUsecase
 	pinUsecase     pin.IUsecase
- 	us             userService.UserServiceClient
+	us             userService.UserServiceClient
 	logger         *zap.SugaredLogger
 }
 
-func NewHandler(commentUsecase comment.IUsecase, pinUsecase pin.IUsecase, us userService.UserServiceClient, logger  *zap.SugaredLogger) *Handler {
+func NewHandler(commentUsecase comment.IUsecase, pinUsecase pin.IUsecase, us userService.UserServiceClient, logger *zap.SugaredLogger) *Handler {
 	return &Handler{
 		commentUsecase: commentUsecase,
 		pinUsecase:     pinUsecase,
-		us:    us,
+		us:             us,
 		logger:         logger,
 	}
 }
@@ -33,14 +33,14 @@ func NewHandler(commentUsecase comment.IUsecase, pinUsecase pin.IUsecase, us use
 func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 	metric.Increase()
 
-	reqId:= r.Context().Value("ReqId")
+	reqId := r.Context().Value("ReqId")
 	/*
-	isAuth := r.Context().Value("IsAuth")
-	if isAuth != true {
-		err := error.Unauthorized.New("Search: user is unauthorized")
-		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
+		isAuth := r.Context().Value("IsAuth")
+		if isAuth != true {
+			err := error.Unauthorized.New("Search: user is unauthorized")
+			error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+			return
+		}
 	*/
 	what := r.URL.Query().Get("what")
 	description := r.URL.Query().Get("description")
@@ -61,7 +61,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		}
 
 		resp := make([]models.ResponseComment, 0)
-		for _, comment := range  comments {
+		for _, comment := range comments {
 			resp = append(resp, models.ResponseComment{
 				Id:        comment.Id,
 				UserId:    comment.UserId,
@@ -113,10 +113,10 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	case "user":
 		users, err := sh.us.Search(r.Context(), &userService.Searching{
-		Login: &userService.Login{Login: description},
-		Start: int64(start),
-		Limit: int64(limit),
-			})
+			Login: &userService.Login{Login: description},
+			Start: int64(start),
+			Limit: int64(limit),
+		})
 		if err != nil {
 			e := error.NoType
 			errStatus, ok := status.FromError(err)
@@ -133,9 +133,9 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		for _, user := range users.Users {
 			resp = append(resp, models.ResponseUser{
 				Id:            uint(user.Id),
-				Login:  	   user.Login,
-				About:  	   user.About,
-				Avatar: 	   user.Avatar,
+				Login:         user.Login,
+				About:         user.About,
+				Avatar:        user.Avatar,
 				Subscribers:   int(user.Subscribers),
 				Subscriptions: int(user.Subscriptions),
 			})
@@ -144,7 +144,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		response.Respond(w, http.StatusOK, resp)
 		return
 	default:
-		err = error.WithMessage(error.SearchNotFound.New( "Bad id when in during searching"), "Bad parametrs")
+		err = error.WithMessage(error.SearchNotFound.New("Bad id when in during searching"), "Bad parametrs")
 		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 	}
 }

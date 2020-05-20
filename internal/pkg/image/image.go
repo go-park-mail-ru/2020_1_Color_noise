@@ -6,7 +6,6 @@ import (
 	"os"
 )
 
-
 func SaveImage(b *[]byte) (string, error) {
 	name := utils.RandStringRunes(30) + ".jpg"
 	path := "../storage/" + name

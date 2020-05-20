@@ -102,8 +102,8 @@ func (c *Client) writePump() {
 				return
 			}
 
-			resp := &models.ResponseMessage {
-				SendUser: &models.ResponseUser {
+			resp := &models.ResponseMessage{
+				SendUser: &models.ResponseUser{
 					Id:            message.SendUser.Id,
 					Login:         message.SendUser.Login,
 					About:         message.SendUser.About,
@@ -112,7 +112,7 @@ func (c *Client) writePump() {
 					Subscriptions: message.SendUser.Subscriptions,
 				},
 
-				RecUser: &models.ResponseUser {
+				RecUser: &models.ResponseUser{
 					Id:            message.SendUser.Id,
 					Login:         message.SendUser.Login,
 					About:         message.SendUser.About,
@@ -128,9 +128,9 @@ func (c *Client) writePump() {
 				CreatedAt: message.CreatedAt,
 			}
 
-			result := response.Response {
+			result := response.Response{
 				Status: 200,
-				Body: resp,
+				Body:   resp,
 			}
 
 			err := c.conn.WriteJSON(result)
@@ -148,7 +148,7 @@ func (c *Client) writePump() {
 }
 
 // serveWs handles websocket requests from the peer.
-func ServeWs(hub *Hub, logger  *zap.SugaredLogger, usecase chat.IUsecase, w http.ResponseWriter, r *http.Request) {
+func ServeWs(hub *Hub, logger *zap.SugaredLogger, usecase chat.IUsecase, w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -165,7 +165,6 @@ func ServeWs(hub *Hub, logger  *zap.SugaredLogger, usecase chat.IUsecase, w http
 		e.ErrorHandler(w, r, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
-
 
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	conn, err := upgrader.Upgrade(w, r, nil)

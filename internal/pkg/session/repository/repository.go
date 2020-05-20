@@ -7,7 +7,7 @@ import (
 )
 
 type Repository struct {
-	db  database.DBInterface
+	db database.DBInterface
 }
 
 func NewRepo(d database.DBInterface) *Repository {

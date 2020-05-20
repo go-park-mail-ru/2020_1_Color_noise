@@ -29,7 +29,7 @@ func (pr *Repository) Create(pin *models.Pin) (uint, error) {
 	return id, err
 }
 
-func (pr *Repository) Save(pinId uint, boardId uint) (error) {
+func (pr *Repository) Save(pinId uint, boardId uint) error {
 	//добавить в пины
 	//добавить в таблицу
 	err := pr.db.Save(pinId, boardId)
@@ -52,7 +52,6 @@ func (pr *Repository) GetByID(id uint) (*models.Pin, error) {
 }
 
 func (pr *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.Pin, error) {
-
 
 	p := models.DataBasePin{UserId: userId}
 	result, err := pr.db.GetPinsByUserId(p)

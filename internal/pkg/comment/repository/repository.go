@@ -22,7 +22,7 @@ func (cr *Repository) Create(comment *models.Comment) (uint, error) {
 	comment.Id = id
 	_, _ = cr.db.PutNotifications(models.GetBComment(*comment))
 	if err != nil {
-		return 0, CommentNotFound.Wrap( err, "Comment can not be created")
+		return 0, CommentNotFound.Wrap(err, "Comment can not be created")
 	}
 	return id, nil
 }

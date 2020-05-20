@@ -7,10 +7,10 @@ const (
 	UpdatePin       = "UPDATE pins SET " +
 		" name = $1, description = $2, board_id = $3 " +
 		" WHERE id = $4"
-	UpdateViews      = "UPDATE pins SET " +
+	UpdateViews = "UPDATE pins SET " +
 		" views = views + 1" +
 		" WHERE id = $1"
-	UpdateComments     = "UPDATE pins SET " +
+	UpdateComments = "UPDATE pins SET " +
 		" comments = comments + 1" +
 		" WHERE id = $1"
 	DeletePin = "DELETE from pins WHERE id = $1 CASCADE;"
@@ -91,8 +91,8 @@ const (
 	UpdateFollowA     = "UPDATE users SET subscriptions = subscriptions + 1 WHERE id = $1 RETURNING 0;"
 	UpdateUnfollowB   = "UPDATE users SET subscribers = subscribers - 1 WHERE id = $1 RETURNING 0;"
 	UpdateFollowB     = "UPDATE users SET subscribers = subscribers + 1 WHERE id =  $1 RETURNING 0;"
-	AddUserTags = "UPDATE users SET tags= $1 WHERE id = $2 RETURNING 0;"
-	IsFollowing =  "SELECT id FROM subscriptions WHERE user_id = $1 AND subscribed_at = $2;"
+	AddUserTags       = "UPDATE users SET tags= $1 WHERE id = $2 RETURNING 0;"
+	IsFollowing       = "SELECT id FROM subscriptions WHERE user_id = $1 AND subscribed_at = $2;"
 )
 
 const (
@@ -140,7 +140,7 @@ const (
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
 		" JOIN subscriptions ON subscriptions.subscribed_at = pins.user_id" +
 		" WHERE subscriptions.user_id = $1  AND original = true ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
-	Main  = "SELECT id, user_id, name, description, image, board_id, created_at " +
+	Main = "SELECT id, user_id, name, description, image, board_id, created_at " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
 		" WHERE original = true ORDER BY views DESC LIMIT $1  OFFSET $2;"
 	Recommendation = "SELECT id, user_id, name, description, image, board_id, created_at " +

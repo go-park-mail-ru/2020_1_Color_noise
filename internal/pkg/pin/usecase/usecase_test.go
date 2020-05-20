@@ -1,6 +1,13 @@
 package usecase
 
 import (
+	_ "2020_1_Color_noise/internal/models"
+	_ "github.com/golang/mock/gomock"
+	_ "testing"
+)
+
+/*
+import (
 	"2020_1_Color_noise/internal/models"
 	. "2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/pin/mock"
@@ -313,3 +320,5 @@ func TestHandler_Delete(t *testing.T) {
 		}
 	}
 }
+
+*/

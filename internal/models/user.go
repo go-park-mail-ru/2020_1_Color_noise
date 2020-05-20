@@ -16,7 +16,7 @@ type User struct {
 	Subscribers       int
 	Preferences       []string
 	CreatedAt         time.Time
-	Tags []string
+	Tags              []string
 }
 
 type DataBaseUser struct {
@@ -29,7 +29,7 @@ type DataBaseUser struct {
 	Subscriptions     int
 	Subscribers       int
 	CreatedAt         time.Time
-	Tags []string
+	Tags              []string
 }
 
 type SignUpInput struct {
@@ -91,7 +91,7 @@ func GetUser(u DataBaseUser) User {
 		Subscriptions:     u.Subscriptions,
 		Subscribers:       u.Subscribers,
 		CreatedAt:         u.CreatedAt,
-		Tags: u.Tags,
+		Tags:              u.Tags,
 	}
 
 	if u.Avatar.Valid {
@@ -113,7 +113,7 @@ func GetBUser(u User) DataBaseUser {
 		Subscriptions:     u.Subscriptions,
 		Subscribers:       u.Subscribers,
 		CreatedAt:         u.CreatedAt,
-		Tags: u.Tags,
+		Tags:              u.Tags,
 	}
 
 	if u.Avatar != "" {

@@ -16,10 +16,10 @@ const (
 	UpdateUserAv = "UPDATE users SET " +
 		"avatar = $1 " +
 		"WHERE id = $2 RETURNING id;"
-	DeleteUser        = "DELETE FROM users WHERE id = $1;"
-	UserById          = "SELECT * FROM users WHERE id = $1"
+	DeleteUser = "DELETE FROM users WHERE id = $1;"
+	UserById   = "SELECT * FROM users WHERE id = $1"
 	//это поиск
-	UserByLogin       = "SELECT * FROM users WHERE LOWER(login) = LOWER($1) LIMIT $2 OFFSET $3"
+	UserByLogin = "SELECT * FROM users WHERE LOWER(login) = LOWER($1) LIMIT $2 OFFSET $3"
 	//это точный поиск
 	UserByLoginSearch = "SELECT * FROM users WHERE login = $1"
 	UserByEmail       = "SELECT * FROM users WHERE email = $1"
