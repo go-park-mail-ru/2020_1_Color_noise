@@ -47,10 +47,12 @@ func (lr *Repository) GetRecommendationList(id uint, start int, limit int) ([]*m
 	result := make([]*models.Pin, 0)
 	for _, tags := range user.Tags {
 		pin := models.DataBasePin{Name: tags}
-		pins, _ := lr.db.GetPinsByName(pin, time.Time{}, time.Now(), true, "", start, limit)
-		for _, pin := range pins {
-			result = append(result, pin)
+		pins, ok := lr.db.GetPinsByName(pin, time.Time{}, time.Now(), true, "", start, limit)
+		if ok != nil {
+			break
 		}
+		result = append(result, pins...)
+
 	}
 
 	if len(result) > limit {
