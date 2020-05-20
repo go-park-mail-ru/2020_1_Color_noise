@@ -2,11 +2,11 @@ version: "3.3"
 
 services:
 
-  database:
+  #database:
 
-    build:
-      context: .
-      dockerfile: ./build/db.Dockerfile
+   # build:
+    #  context: .
+     # dockerfile: ./build/db.Dockerfile
 
   main:
     build:

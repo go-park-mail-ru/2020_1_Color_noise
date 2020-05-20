@@ -16,4 +16,4 @@ jobs:
       - name: Build Docker Images
         run: docker-compose build
       - name: Push Docker Image
-        run: docker-compose push main
+        run: docker-compose push main auth chat user
