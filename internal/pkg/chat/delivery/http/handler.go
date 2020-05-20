@@ -5,7 +5,6 @@ import (
 	"2020_1_Color_noise/internal/pkg/chat"
 	"2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/response"
-	"fmt"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"io/ioutil"
@@ -109,8 +108,6 @@ func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
-
-	fmt.Println("messages after usecase: ", messages)
 
 	resp := make([]models.ResponseMessage, 0)
 
