@@ -1,5 +1,6 @@
 run:
   concurency: 4
+  tests: false
 
 output:
   # colored-line-number|line-number|json|tab|checkstyle|code-climate, default is "colored-line-number"
@@ -11,8 +12,6 @@ output:
   # print linter name in the end of issue text, default is true
   print-linter-name: true
 
-
-
   # all available settings of specific linters
 linters-settings:
   errcheck:
@@ -22,7 +21,7 @@ linters-settings:
 
     # report about assignment of errors to blank identifier: `num, _ := strconv.Atoi(numStr)`;
     # default is false: such cases aren't reported by default.
-    check-blank: false
+    check-blank: true
 
   govet:
     # report about shadowed variables
@@ -46,7 +45,7 @@ linters-settings:
   goimports:
     # put imports beginning with prefix after 3rd-party packages;
     # it's a comma-separated list of prefixes
-    local-prefixes: 2019_1_OPG_plus_2
+    local-prefixes: 2020_1_Color_noise
   gocyclo:
     # minimal code complexity to report, 30 by default (but we recommend 10-20)
     min-complexity: 10
@@ -60,7 +59,7 @@ linters-settings:
     # minimal length of string constant, 3 by default
     min-len: 3
     # minimal occurrences count to trigger, 3 by default
-    min-occurrences: 3
+    min-occurrences: 1
   depguard:
     list-type: blacklist
     include-go-root: false
@@ -124,7 +123,7 @@ linters-settings:
     disable-all: false
     presets:
       - bugs
-     # - unused
+      - unused
     fast: false
 
 issues:
