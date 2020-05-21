@@ -64,7 +64,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -85,7 +85,7 @@ func (ud *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -144,7 +144,7 @@ func (ud *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -189,7 +189,7 @@ func (ud *Handler) GetOtherUser(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -225,7 +225,7 @@ func (ud *Handler) GetSupport(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -282,7 +282,7 @@ func (ud *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -330,7 +330,7 @@ func (ud *Handler) UpdateDescription(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok  {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -378,7 +378,7 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -439,7 +439,7 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -492,7 +492,7 @@ func (ud *Handler) Follow(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -545,7 +545,7 @@ func (ud *Handler) IsFollowed(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok  {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -604,7 +604,7 @@ func (ud *Handler) Unfollow(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -652,7 +652,7 @@ func (uh *Handler) GetSubscribers(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok  {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
@@ -711,7 +711,7 @@ func (uh *Handler) GetSubscribtions(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}

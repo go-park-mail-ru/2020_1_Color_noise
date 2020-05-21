@@ -167,7 +167,7 @@ func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		e := error.NoType
 		errStatus, ok := status.FromError(err)
 		msg := "Unknown GRPC error"
-		if ok == true {
+		if ok {
 			e = error.Cast(int(errStatus.Code()))
 			msg = errStatus.Message()
 		}
