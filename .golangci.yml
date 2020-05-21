@@ -128,4 +128,4 @@ linters-settings:
 
 issues:
   exclude:
-    - structtag
+    - w.Write
