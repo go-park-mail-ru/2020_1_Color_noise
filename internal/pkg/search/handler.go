@@ -53,8 +53,8 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 
 	switch what {
 	case "comment":
-		comments, err := sh.commentUsecase.GetByText(description, start, limit)
-		if err != nil {
+		comments, ok := sh.commentUsecase.GetByText(description, start, limit)
+		if ok != nil {
 			err = error.Wrap(err, "Error searching comments")
 			error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 			return
@@ -90,8 +90,8 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 			most = ""
 		}
 
-		pins, err := sh.pinUsecase.GetByName(description, start, limit, date, desc, most)
-		if err != nil {
+		pins, ok := sh.pinUsecase.GetByName(description, start, limit, date, desc, most)
+		if ok != nil {
 			err = error.Wrap(err, "Error searching pins")
 			error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 			return
@@ -112,12 +112,12 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		response.Respond(w, http.StatusOK, resp)
 		return
 	case "user":
-		users, err := sh.us.Search(r.Context(), &userService.Searching{
+		users, ok := sh.us.Search(r.Context(), &userService.Searching{
 			Login: &userService.Login{Login: description},
 			Start: int64(start),
 			Limit: int64(limit),
 		})
-		if err != nil {
+		if ok != nil {
 			e := error.NoType
 			errStatus, ok := status.FromError(err)
 			msg := "Unknown GRPC error"

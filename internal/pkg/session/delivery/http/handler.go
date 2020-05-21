@@ -147,7 +147,7 @@ func (sh *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
-		err := error.Wrap(err, "Received bad cookie from context")
+		err = error.Wrap(err, "Received bad cookie from context")
 		error.ErrorHandler(w, r, sh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}

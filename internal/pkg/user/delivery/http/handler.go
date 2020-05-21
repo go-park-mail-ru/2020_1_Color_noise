@@ -404,21 +404,21 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseMultipartForm(5 * 1024 * 1025)
 	if err != nil {
-		err := error.Wrap(err, "Decoding error during updating password")
+		err = error.Wrap(err, "Decoding error during updating password")
 		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
-		err := error.NoType.New("Received bad id from context")
+		err = error.NoType.New("Received bad id from context")
 		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	file, _, err := r.FormFile("image")
 	if err != nil {
-		err := error.Wrap(err, "Reading image from form error")
+		err = error.Wrap(err, "Reading image from form error")
 		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
