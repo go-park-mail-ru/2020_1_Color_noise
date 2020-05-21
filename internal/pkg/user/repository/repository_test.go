@@ -249,41 +249,39 @@ func TestRepository_UpdatePassword(t *testing.T) {
 
 func TestRepository_Follow(t *testing.T) {
 
-		c, err := config.GetTestConfing()
-		if err != nil {
-			t.SkipNow()
-		}
-		db.Open(c)
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
-		cases := []FollowCase{
-			{
-				u: models.User{
-				},
-				s: models.User{},
-				answer: fmt.Errorf("User not found, id: 0"),
-			},
-		}
+	cases := []FollowCase{
+		{
+			u:      models.User{},
+			s:      models.User{},
+			answer: fmt.Errorf("User not found, id: 0"),
+		},
+	}
 
-		for i, item := range cases {
-			_, _ = repo.Create(&item.u)
-			_, _ = repo.Create(&item.s)
-			answer := repo.Follow(item.u.Id, item.s.Id)
-			if answer != nil && item.answer != nil {
-				if answer.Error() != item.answer.Error() {
-					t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
-				}
-			} else {
-				if item.answer != nil || answer != nil {
-					t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
-				}
+	for i, item := range cases {
+		_, _ = repo.Create(&item.u)
+		_, _ = repo.Create(&item.s)
+		answer := repo.Follow(item.u.Id, item.s.Id)
+		if answer != nil && item.answer != nil {
+			if answer.Error() != item.answer.Error() {
+				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
+			}
+		} else {
+			if item.answer != nil || answer != nil {
+				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
-
+	}
 
 }
 
 func TestRepository_Unfollow(t *testing.T) {
-		/*
+	/*
 		c, err := config.GetTestConfing()
 		if err != nil {
 			t.SkipNow()
@@ -322,9 +320,7 @@ func TestRepository_Unfollow(t *testing.T) {
 			}
 		}
 
-		 */
-
-
+	*/
 
 }
 
@@ -373,12 +369,12 @@ func TestRepository_GetByID(t *testing.T) {
 			}
 		}
 
-	 */
+	*/
 
 }
 
 func TestRepository_GetByLogin(t *testing.T) {
-/*
+	/*
 
 		c, err := config.GetTestConfing()
 		if err != nil {
@@ -429,9 +425,8 @@ func TestRepository_GetByLogin(t *testing.T) {
 			}
 		}
 
-	
- */
 
+	*/
 
 }
 
@@ -445,44 +440,41 @@ func TestRepository_GetSubscriptions(t *testing.T) {
 
 func TestRepository_Search(t *testing.T) {
 
+	c, err := config.GetTestConfing()
+	if err != nil {
+		t.SkipNow()
+	}
+	db.Open(c)
 
-		c, err := config.GetTestConfing()
-		if err != nil {
-			t.SkipNow()
-		}
-		db.Open(c)
-
-		login := fmt.Sprint(time.Now())
-		cases := []UserCase{
-			{
-				u: models.User{
-					Login: fmt.Sprint(time.Now()),
-					Email: "email@email.com",
-				},
+	login := fmt.Sprint(time.Now())
+	cases := []UserCase{
+		{
+			u: models.User{
+				Login: fmt.Sprint(time.Now()),
+				Email: "email@email.com",
 			},
-			{
-				u: models.User{
-					Login: login,
-					Email: login + "@mail.com",
-				},
+		},
+		{
+			u: models.User{
+				Login: login,
+				Email: login + "@mail.com",
 			},
-		}
+		},
+	}
 
-		for i, item := range cases {
-			id, _ := repo.Create(&item.u)
-			item.u.Id = id.Id
-			_, answer := repo.Search(item.u.Login, 0, 2)
-			if answer != nil && item.answer != nil {
-				if answer.Error() != item.answer.Error() {
-					t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
-				}
-			} else {
-				if item.answer != nil || answer != nil {
-					t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
-				}
+	for i, item := range cases {
+		id, _ := repo.Create(&item.u)
+		item.u.Id = id.Id
+		_, answer := repo.Search(item.u.Login, 0, 2)
+		if answer != nil && item.answer != nil {
+			if answer.Error() != item.answer.Error() {
+				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
+			}
+		} else {
+			if item.answer != nil || answer != nil {
+				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
 			}
 		}
-
-
+	}
 
 }

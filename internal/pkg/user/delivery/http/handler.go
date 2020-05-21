@@ -553,7 +553,7 @@ func (ud *Handler) IsFollowed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if s.Status == true {
+	if s.Status {
 		response.Respond(w, http.StatusCreated, map[string]string{
 			"is_followed": "true",
 		})

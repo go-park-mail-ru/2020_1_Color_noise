@@ -129,10 +129,14 @@ func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+	start, err := strconv.Atoi(r.URL.Query().Get("start"))
 
-	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
+		err = nil
+	}
+
+	limit, ok := strconv.Atoi(r.URL.Query().Get("limit"))
+	if ok != nil {
 		limit = 10
 	}
 

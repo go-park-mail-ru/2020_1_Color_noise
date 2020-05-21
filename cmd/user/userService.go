@@ -29,8 +29,8 @@ func main() {
 	userUse := userUsecase.NewUsecase(userRepo)
 	userDelivery := userDeliveryGRPC.NewUserService(userUse)
 
-	lis, err := net.Listen("tcp", ":8000")
-	if err != nil {
+	lis, ok := net.Listen("tcp", ":8000")
+	if ok != nil {
 		log.Fatalln("cant listet port", err)
 	}
 

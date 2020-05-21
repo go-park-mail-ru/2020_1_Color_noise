@@ -33,11 +33,11 @@ func main() {
 		panic(err)
 	}
 
-	grcpSessionConn, err := grpc.Dial(
+	grcpSessionConn, ok := grpc.Dial(
 		"auth:8000",
 		grpc.WithInsecure(),
 	)
-	if err != nil {
+	if ok != nil {
 		log.Fatalf("cant connect to sessionService")
 	}
 	defer grcpSessionConn.Close()

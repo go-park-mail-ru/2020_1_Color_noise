@@ -39,6 +39,7 @@ type TestCaseCreate struct {
 	CreateErr  bool
 	SessErr    bool
 }
+
 /*
 func TestHandler_Create(t *testing.T) {
 	t.Helper()
@@ -93,29 +94,29 @@ func TestHandler_Create(t *testing.T) {
 			Password: "Passw",
 		},*/
 /*
-		TestCaseCreate{
-			CreateErr: true,
-			Email:     "hello@exam.com",
-			Login:     "Login1",
-			Password:  "Password",
-		},
-		TestCaseCreate{
-			SessErr:  true,
-			Email:    "hello@exam.com",
-			Login:    "Login1",
-			Password: "Password",
-		},
-		TestCaseCreate{
-			Email:      "hello@exam.com",
-			Login:      "Login1",
-			Password:   "Password",
-			Response:   `{"status":201,"body":{"id":1,"login":"","subscriptions":0,"subscribers":0}}`,
-			CookieName: "session_id",
-			Cookie:     "cookie",
-			*/
-			//TokenName:  "csrf_token",
-			//Token:      "token",
-		/*
+	TestCaseCreate{
+		CreateErr: true,
+		Email:     "hello@exam.com",
+		Login:     "Login1",
+		Password:  "Password",
+	},
+	TestCaseCreate{
+		SessErr:  true,
+		Email:    "hello@exam.com",
+		Login:    "Login1",
+		Password: "Password",
+	},
+	TestCaseCreate{
+		Email:      "hello@exam.com",
+		Login:      "Login1",
+		Password:   "Password",
+		Response:   `{"status":201,"body":{"id":1,"login":"","subscriptions":0,"subscribers":0}}`,
+		CookieName: "session_id",
+		Cookie:     "cookie",
+*/
+//TokenName:  "csrf_token",
+//Token:      "token",
+/*
 		},
 	}
 
@@ -218,20 +219,20 @@ func TestHandler_Create(t *testing.T) {
 					t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
 						caseNum, cookies[0].Value, item.Cookie)
 				}
-				*/
+*/
 
-				/*
-					if cookies[1].Name != item.TokenName {
-						t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
-							caseNum, cookies[1].Name, item.TokenName)
-					}
+/*
+	if cookies[1].Name != item.TokenName {
+		t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
+			caseNum, cookies[1].Name, item.TokenName)
+	}
 
-					if cookies[1].Value != item.Token {
-						t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
-							caseNum, cookies[1].Value, item.Token)
-					}
-				*/
-				/*
+	if cookies[1].Value != item.Token {
+		t.Errorf("[%d] wrong Cookie: got %+v, expected %+v",
+			caseNum, cookies[1].Value, item.Token)
+	}
+*/
+/*
 			}
 		}
 	}
