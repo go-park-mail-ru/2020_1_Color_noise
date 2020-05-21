@@ -19,7 +19,6 @@ type Case struct {
 
 func TestRepository_Add(t *testing.T) {
 
-
 	c, err := config.GetTestConfing()
 	if err != nil {
 		t.SkipNow()
@@ -33,7 +32,7 @@ func TestRepository_Add(t *testing.T) {
 	cases := []Case{
 		{
 			s: models.Session{
-				Id:id,
+				Id:         id,
 				Cookie:     "",
 				Token:      "",
 				CreatedAt:  time.Time{},
@@ -43,7 +42,7 @@ func TestRepository_Add(t *testing.T) {
 		},
 		{
 			s: models.Session{
-				Id:id,
+				Id:         id,
 				Cookie:     "cookie",
 				Token:      "token",
 				CreatedAt:  time.Time{},
@@ -116,11 +115,10 @@ func TestRepository_Update(t *testing.T) {
 		Login: fmt.Sprint(time.Now()),
 	})
 
-
 	cases := []Case{
 		{
 			s: models.Session{
-				Id: id,
+				Id:         id,
 				Cookie:     "",
 				Token:      "",
 				CreatedAt:  time.Time{},

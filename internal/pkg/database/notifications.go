@@ -38,7 +38,7 @@ func (db *PgxDB) PutNotifications(com models.DataBaseComment) (uint, error) {
 	pin, err := db.GetPinById(models.DataBasePin{Id: com.PinId})
 	user, ok := db.GetUserById(models.DataBaseUser{Id: com.UserId})
 
-	if err != nil || ok  != nil {
+	if err != nil || ok != nil {
 		return 0, errors.New("incorrect data ")
 	}
 

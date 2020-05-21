@@ -148,8 +148,6 @@ func (db *PgxDB) Follow(who, whom uint) error {
 		return errors.New("follow error")
 	}
 
-
-
 	return err
 }
 

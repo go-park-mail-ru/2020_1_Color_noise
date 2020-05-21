@@ -40,7 +40,10 @@ func (nh *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+	start, err := strconv.Atoi(r.URL.Query().Get("start"))
+	if err != nil {
+		err = nil
+	}
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {

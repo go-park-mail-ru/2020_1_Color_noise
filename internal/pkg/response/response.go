@@ -29,5 +29,5 @@ func Respond(w http.ResponseWriter, status int, body interface{}) {
 	if err != nil {
 		panic(err)
 	}
-	return
+	//return
 }

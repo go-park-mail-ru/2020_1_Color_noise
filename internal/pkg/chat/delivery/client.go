@@ -66,11 +66,12 @@ func (c *Client) readPump() {
 		log.Println(err)
 	}
 	c.conn.SetPongHandler(func(string) error {
-		err := c.conn.SetReadDeadline(time.Now().Add(pongWait));
+		err := c.conn.SetReadDeadline(time.Now().Add(pongWait))
 		if err != nil {
 			log.Println(err)
 		}
-		return nil })
+		return nil
+	})
 	for {
 		input := &models.InputMessage{}
 

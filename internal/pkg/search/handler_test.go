@@ -211,7 +211,7 @@ func TestHandler_Search(t *testing.T) {
 			)
 		}
 
-		if  item.IsPin {
+		if item.IsPin {
 
 			var err error = nil
 			if item.Err {
