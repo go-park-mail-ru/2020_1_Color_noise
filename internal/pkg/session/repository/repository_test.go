@@ -19,15 +19,21 @@ type Case struct {
 
 func TestRepository_Add(t *testing.T) {
 
+
 	c, err := config.GetTestConfing()
 	if err != nil {
 		t.SkipNow()
 	}
 	db.Open(c)
 
+	id, _ := db.CreateUser(models.DataBaseUser{
+		Login: fmt.Sprint(time.Now()),
+	})
+
 	cases := []Case{
 		{
 			s: models.Session{
+				Id:id,
 				Cookie:     "",
 				Token:      "",
 				CreatedAt:  time.Time{},
@@ -37,6 +43,7 @@ func TestRepository_Add(t *testing.T) {
 		},
 		{
 			s: models.Session{
+				Id:id,
 				Cookie:     "cookie",
 				Token:      "token",
 				CreatedAt:  time.Time{},
@@ -105,9 +112,15 @@ func TestRepository_Update(t *testing.T) {
 	}
 	db.Open(c)
 
+	id, _ := db.CreateUser(models.DataBaseUser{
+		Login: fmt.Sprint(time.Now()),
+	})
+
+
 	cases := []Case{
 		{
 			s: models.Session{
+				Id: id,
 				Cookie:     "",
 				Token:      "",
 				CreatedAt:  time.Time{},
@@ -153,7 +166,7 @@ func TestRepository_GetByCookie(t *testing.T) {
 		},
 		{
 			s:      models.Session{},
-			answer: fmt.Errorf("Session is not found, cookie: "),
+			answer: nil,
 		},
 	}
 

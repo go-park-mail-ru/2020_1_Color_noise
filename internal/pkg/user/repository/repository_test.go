@@ -248,20 +248,19 @@ func TestRepository_UpdatePassword(t *testing.T) {
 }
 
 func TestRepository_Follow(t *testing.T) {
-	/*
+
 		c, err := config.GetTestConfing()
 		if err != nil {
 			t.SkipNow()
 		}
 		db.Open(c)
 
-		login := fmt.Sprint(time.Now())
 		cases := []FollowCase{
 			{
 				u: models.User{
 				},
 				s: models.User{},
-				answer: fmt.Errorf("User to get not found, id: 0"),
+				answer: fmt.Errorf("User not found, id: 0"),
 			},
 		}
 
@@ -281,12 +280,9 @@ func TestRepository_Follow(t *testing.T) {
 		}
 
 
-	*/
 }
 
 func TestRepository_Unfollow(t *testing.T) {
-
-	/*
 		c, err := config.GetTestConfing()
 		if err != nil {
 			t.SkipNow()
@@ -305,7 +301,7 @@ func TestRepository_Unfollow(t *testing.T) {
 					Login:login + "2",
 					Email: login + "2@mail.com",
 				},
-				answer: fmt.Errorf("User to get not found, id: 0"),
+				answer: fmt.Errorf("User not found, id: 0"),
 			},{
 				u: models.User{
 				},
@@ -330,12 +326,12 @@ func TestRepository_Unfollow(t *testing.T) {
 			}
 		}
 
-	*/
+
 
 }
 
 func TestRepository_GetByID(t *testing.T) {
-	/*
+
 		c, err := config.GetTestConfing()
 		if err != nil {
 			t.SkipNow()
@@ -386,12 +382,12 @@ func TestRepository_GetByID(t *testing.T) {
 			}
 		}
 
-	*/
+
 }
 
 func TestRepository_GetByLogin(t *testing.T) {
 
-	/*
+
 		c, err := config.GetTestConfing()
 		if err != nil {
 			t.SkipNow()
@@ -441,7 +437,7 @@ func TestRepository_GetByLogin(t *testing.T) {
 			}
 		}
 
-	*/
+
 
 }
 
@@ -455,7 +451,7 @@ func TestRepository_GetSubscriptions(t *testing.T) {
 
 func TestRepository_Search(t *testing.T) {
 
-	/*
+
 		c, err := config.GetTestConfing()
 		if err != nil {
 			t.SkipNow()
@@ -493,6 +489,6 @@ func TestRepository_Search(t *testing.T) {
 			}
 		}
 
-	*/
+
 
 }

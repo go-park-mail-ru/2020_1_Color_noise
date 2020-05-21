@@ -1,11 +1,5 @@
 package repository
 
-import _ "2020_1_Color_noise/internal/pkg/database"
-
-/*
-import "2020_1_Color_noise/internal/pkg/database"
-
-
 import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/config"
@@ -84,25 +78,32 @@ func TestRepository_Delete(t *testing.T) {
 		UserId: id,
 	})
 
+
+	pid, _ := db.CreatePin(models.DataBasePin{
+		UserId:  id,
+		BoardId: bid,
+	})
+
 	cases := []pinCase{
 		{
 			p:      models.Pin{
+				Id:pid,
 				UserId:      id,
 				BoardId:     bid,
 			},
-			answer: nil,
+			answer: fmt.Errorf("Pin not found, id: %d", id),
 		},
 		{
 			p:      models.Pin{
+				Id:pid,
 				UserId:      0,
 				BoardId:     bid,
 			},
-			answer: nil,
+			answer: fmt.Errorf("Pin not found, id: %d", id),
 		},
 	}
 
 	for i, item := range cases {
-		id, _ := repo.Create(&item.p)
 		answer := repo.Delete(id, item.p.UserId)
 		if answer != nil && item.answer  != nil{
 			if answer.Error() != item.answer.Error() {
@@ -137,14 +138,14 @@ func TestRepository_Update(t *testing.T) {
 				UserId:      id,
 				BoardId:     bid,
 			},
-			answer: nil,
+			answer: fmt.Errorf("Pin not found, id: %d", 0),
 		},
 		{
 			p:      models.Pin{
 				UserId:      0,
 				BoardId:     bid,
 			},
-			answer: nil,
+			answer: fmt.Errorf("Pin not found, id: %d", 0),
 		},
 	}
 
@@ -250,7 +251,7 @@ func TestRepository_GetByName(t *testing.T) {
 	for i, item := range cases {
 		id, _ := repo.Create(&item.p)
 		item.p.Id = id
-		_, answer := repo.GetByName(item.p.Name, 0, 2)
+		_, answer := repo.GetByName(item.p.Name, 0, 2, "", true, "")
 		if answer != nil && item.answer  != nil{
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
@@ -313,4 +314,4 @@ func TestRepository_GetByUserID(t *testing.T) {
 	}
 
 }
-*/
+

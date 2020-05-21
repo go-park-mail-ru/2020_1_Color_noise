@@ -2,8 +2,13 @@ package repository
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/config"
 	"2020_1_Color_noise/internal/pkg/database"
+	. "2020_1_Color_noise/internal/pkg/error"
+	"fmt"
+	"log"
 	"testing"
+	"time"
 )
 
 var db = database.NewPgxDB()
@@ -15,7 +20,7 @@ type Case struct {
 }
 
 func TestRepository_AddMessage(t *testing.T) {
-	/*c, err := config.GetTestConfing()
+	c, err := config.GetTestConfing()
 	if err != nil {
 		t.SkipNow()
 	}
@@ -44,12 +49,12 @@ func TestRepository_AddMessage(t *testing.T) {
 				Message:   "",
 				CreatedAt: time.Time{},
 			},
-			UserNotFound.Newf("User to get found, id: %d", 0),
+			UserNotFound.Newf("User not found, id: %d", 0),
 		},
 	}
 
 	for i, item := range cases {
-		_, answer := repo.AddMessage(item.c.SendUser.Id, item.c.SendUser.Id, item.c.Message)
+		_, answer := repo.AddMessage(item.c.SendUser.Id, item.c.SendUser.Id, item.c.Message, "")
 		if answer != nil && item.answer  != nil{
 			if answer.Error() != item.answer.Error() {
 				t.Errorf("error in test case №[%d], expected: [%v], got [%v]", i, item.answer, answer)
@@ -61,11 +66,11 @@ func TestRepository_AddMessage(t *testing.T) {
 		}
 	}
 
-	*/
+
 }
 
 func TestRepository_GetMessages(t *testing.T) {
-	/*
+
 		c, err := config.GetTestConfing()
 		if err != nil {
 			t.SkipNow()
@@ -93,14 +98,14 @@ func TestRepository_GetMessages(t *testing.T) {
 					Message:   "",
 					CreatedAt: time.Time{},
 				},
-				UserNotFound.Newf("User to get not found, id: %d", id),
+				UserNotFound.Newf("User not found, id: %d", id),
 			},
 		}
 
 
 
 		for i, item := range cases {
-			_, _ = repo.AddMessage(item.c.SendUser.Id, item.c.RecUser.Id, item.c.Message)
+			_, _ = repo.AddMessage(item.c.SendUser.Id, item.c.RecUser.Id, item.c.Message, "")
 
 			_, answer := repo.GetMessages(item.c.SendUser.Id, item.c.RecUser.Id, 0, 5)
 			if answer != nil && item.answer  != nil{
@@ -114,12 +119,12 @@ func TestRepository_GetMessages(t *testing.T) {
 			}
 		}
 
-	*/
+
 }
 
 func TestRepository_GetUsers(t *testing.T) {
 
-	/*
+
 		c, err := config.GetTestConfing()
 
 		if err != nil {
@@ -157,14 +162,14 @@ func TestRepository_GetUsers(t *testing.T) {
 					Message:   "",
 					CreatedAt: time.Time{},
 				},
-				UserNotFound.Newf("User to get not found, id: %d", 0),
+				UserNotFound.Newf("User not found, id: %d", 0),
 			},
 		}
 
 
 
 		for i, item := range cases {
-			_, _ = repo.AddMessage(item.c.SendUser.Id, item.c.RecUser.Id, item.c.Message)
+			_, _ = repo.AddMessage(item.c.SendUser.Id, item.c.RecUser.Id, item.c.Message, "")
 
 			_, answer := repo.GetUsers(item.c.SendUser.Id,  0, 5)
 			if answer != nil && item.answer  != nil{
@@ -177,5 +182,5 @@ func TestRepository_GetUsers(t *testing.T) {
 				}
 			}
 		}
-	*/
+
 }
