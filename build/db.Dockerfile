@@ -10,7 +10,7 @@ ENV POSTGRES_DB pinterest
 ENV POSTGRES_USER postgres
 ENV POSTGRES_PASSWORD password
 
-#EXPOSE $POSTGRES_PORT
+EXPOSE $POSTGRES_PORT
 
 RUN apt-get update && apt-get install -y postgresql-$PGVER
 
