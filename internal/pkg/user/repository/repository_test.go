@@ -283,7 +283,7 @@ func TestRepository_Follow(t *testing.T) {
 }
 
 func TestRepository_Unfollow(t *testing.T) {
-	/*
+
 		c, err := config.GetTestConfing()
 		if err != nil {
 			t.SkipNow()
@@ -303,11 +303,6 @@ func TestRepository_Unfollow(t *testing.T) {
 					Email: login + "2@mail.com",
 				},
 				answer: fmt.Errorf("User not found, id: 0"),
-			},{
-				u: models.User{
-				},
-				s: models.User{},
-				answer: fmt.Errorf("User to get not found, id: 0"),
 			},
 		}
 
@@ -327,7 +322,7 @@ func TestRepository_Unfollow(t *testing.T) {
 			}
 		}
 
-	 */
+
 
 }
 
@@ -349,13 +344,6 @@ func TestRepository_GetByID(t *testing.T) {
 				u: models.User{
 					Login: fmt.Sprint(time.Now()),
 					Email: "email",
-				},
-				answer: fmt.Errorf("User to get not found, id: 0"),
-			},
-			{
-				u: models.User{
-					Login: login,
-					Email: "email@mail.com",
 				},
 				answer: fmt.Errorf("User to get not found, id: 0"),
 			},
