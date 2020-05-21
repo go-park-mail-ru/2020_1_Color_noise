@@ -103,7 +103,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          script: cd 2020_1_Color_noise || sudo docker-compose stop || sudo docker-compose rm -f main || sudo docker-compose rm -f auth || sudo docker-compose rm -f chat || sudo docker-compose rm -f user || sudo docker rmi $(sudo docker images | grep 'zinterest')
+          script: cd 2020_1_Color_noise && sudo docker-compose stop && sudo docker-compose rm -f main && sudo docker-compose rm -f auth && sudo docker-compose rm -f chat && sudo docker-compose rm -f user && sudo docker rmi $(sudo docker images | grep 'zinterest')
       - name: deploy docker image
         uses: appleboy/ssh-action@master
         with:
