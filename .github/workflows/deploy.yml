@@ -20,7 +20,7 @@ jobs:
       - name: Upload nginx config result
         uses: actions/upload-artifact@v2
         with:
-          name: nginx
+          name: config
           path: ./server/nginx/nginx.conf
       - name: Upload docker-compose result
         uses: actions/upload-artifact@v2
@@ -48,14 +48,14 @@ jobs:
       - name: Download configs
         uses: actions/download-artifact@v1
         with:
-          name: nginx
+          name: config
       - name: Transfer nginx file to server
         uses: appleboy/scp-action@v0.0.10
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          source: "nginx/server/nginx/nginx.conf"
+          source: "config/nginx.conf"
           target: "/home/ubuntu/2020_1_Color_noise/server/nginx"
           strip_components: 1
       - name: pull docker image
