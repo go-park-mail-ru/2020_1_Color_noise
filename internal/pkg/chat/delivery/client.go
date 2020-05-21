@@ -55,11 +55,22 @@ type Client struct {
 func (c *Client) readPump() {
 	defer func() {
 		c.hub.unregister <- c
-		c.conn.Close()
+		err := c.conn.Close()
+		if err != nil {
+			log.Println(err)
+		}
 	}()
 	c.conn.SetReadLimit(maxMessageSize)
-	c.conn.SetReadDeadline(time.Now().Add(pongWait))
-	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	err := c.conn.SetReadDeadline(time.Now().Add(pongWait))
+	if err != nil {
+		log.Println(err)
+	}
+	c.conn.SetPongHandler(func(string) error {
+		err := c.conn.SetReadDeadline(time.Now().Add(pongWait));
+		if err != nil {
+			log.Println(err)
+		}
+		return nil })
 	for {
 		input := &models.InputMessage{}
 
@@ -95,7 +106,10 @@ func (c *Client) writePump() {
 	for {
 		select {
 		case message, ok := <-c.send:
-			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			err := c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			if err != nil {
+				log.Println(err)
+			}
 			if !ok {
 				// The hub closed the channel.
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
@@ -133,7 +147,7 @@ func (c *Client) writePump() {
 				Body:   resp,
 			}
 
-			err := c.conn.WriteJSON(result)
+			err = c.conn.WriteJSON(result)
 			if err != nil {
 				return
 			}
