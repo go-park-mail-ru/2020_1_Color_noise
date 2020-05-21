@@ -18,7 +18,7 @@ jobs:
       - name: Push Docker Image
         run: docker-compose push main auth chat user
       - name: Fill env file
-          run: echo "GITHUB_SHA=$GITHUB_SHA" >> .env
+        run: echo "GITHUB_SHA=$GITHUB_SHA" >> .env
       - name: Upload nginx config result
         uses: actions/upload-artifact@v2
         with:
