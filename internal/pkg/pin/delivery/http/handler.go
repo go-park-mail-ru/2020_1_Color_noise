@@ -133,7 +133,10 @@ func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+	start, ok := strconv.Atoi(r.URL.Query().Get("start"))
+	if ok != nil {
+		ok = nil
+	}
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {

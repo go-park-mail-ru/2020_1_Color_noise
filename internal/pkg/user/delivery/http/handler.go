@@ -426,7 +426,7 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 	buffer := bytes.NewBuffer(nil)
 	_, err = io.Copy(buffer, file)
 	if err != nil {
-		err := error.Wrap(err, "Coping byte form error")
+		err = error.Wrap(err, "Coping byte form error")
 		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
