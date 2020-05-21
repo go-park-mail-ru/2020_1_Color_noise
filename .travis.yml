@@ -13,5 +13,6 @@ before_script:
   - go mod tidy
 
 script:
-  - sleep 15
+  #- sleep 15
   - go test ./...
+  - golangci-lint run -c .golangci.yml
