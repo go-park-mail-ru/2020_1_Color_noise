@@ -25,7 +25,7 @@ func NewHandler(usecase board.IUsecase, logger *zap.SugaredLogger) *Handler {
 	}
 }
 
-func (bh Handler) Create(w http.ResponseWriter, r *http.Request) {
+func (bh *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -73,7 +73,7 @@ func (bh Handler) Create(w http.ResponseWriter, r *http.Request) {
 	response.Respond(w, http.StatusCreated, resp)
 }
 
-func (bh Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
+func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	/*
@@ -132,7 +132,7 @@ func (bh Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 	response.Respond(w, http.StatusOK, resp)
 }
 
-func (bh Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
+func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	/*
@@ -177,7 +177,7 @@ func (bh Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 	response.Respond(w, http.StatusOK, resp)
 }
 
-func (bh Handler) Fetch(w http.ResponseWriter, r *http.Request) {
+func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	/*
@@ -232,7 +232,7 @@ func (bh Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	response.Respond(w, http.StatusOK, resp)
 }
 
-func (bh Handler) Update(w http.ResponseWriter, r *http.Request) {
+func (bh *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -286,7 +286,7 @@ func (bh Handler) Update(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (bh Handler) Delete(w http.ResponseWriter, r *http.Request) {
+func (bh *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
