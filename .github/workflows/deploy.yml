@@ -27,6 +27,11 @@ jobs:
         with:
           name: docker
           path: ./docker-compose.yml
+      - name: Upload docker-compose result
+        uses: actions/upload-artifact@v2
+        with:
+          name: env
+          path: ./.env
 
   deploy:
     runs-on: ubuntu-latest
@@ -58,6 +63,19 @@ jobs:
           source: "config/nginx.conf"
           target: "/home/ubuntu/2020_1_Color_noise/server/nginx"
           strip_components: 1
+      - name: Download env
+        uses: actions/download-artifact@v1
+        with:
+          name: env
+      - name: Transfer nginx file to server
+        uses: appleboy/scp-action@v0.0.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          source: "env/.env"
+          target: "/home/ubuntu/2020_1_Color_noise"
+          strip_components: 1
       - name: pull docker image
         uses: appleboy/ssh-action@master
         with:
@@ -73,4 +91,5 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          script: cd 2020_1_Color_noise && sudo docker-compose up
+          script: sudo docker-compose stop && sudo docker-compose rm -f main && sudo docker-compose rm -f auth && |
+            sudo docker-compose rm -f chat && sudo docker-compose rm -f user && sudo docker-compose up
