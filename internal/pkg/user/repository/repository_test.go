@@ -372,13 +372,13 @@ func TestRepository_GetByID(t *testing.T) {
 				}
 			}
 		}
-	
+
 	 */
 
 }
 
 func TestRepository_GetByLogin(t *testing.T) {
-
+/*
 
 		c, err := config.GetTestConfing()
 		if err != nil {
@@ -429,6 +429,8 @@ func TestRepository_GetByLogin(t *testing.T) {
 			}
 		}
 
+	
+ */
 
 
 }
