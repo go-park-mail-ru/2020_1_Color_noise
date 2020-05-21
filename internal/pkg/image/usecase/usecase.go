@@ -49,7 +49,10 @@ func NewImageUsecase(repoPin pin.IRepository, repoBoard board.IRepository, us us
 
 func (im *ImageUsecase) Analyze(pinId uint, userId uint, image string) {
 	cmd := exec.Command("python3", "analyze.py", "../storage/"+image)
-	out, _ := cmd.CombinedOutput()
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Println(err)
+	}
 
 	i, err := strconv.Atoi(string(out))
 	if err != nil {

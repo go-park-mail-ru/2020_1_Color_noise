@@ -33,7 +33,10 @@ func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
 		return
 	}*/
 
-	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+	start, err := strconv.Atoi(r.URL.Query().Get("start"))
+	if err != nil {
+		start = 0
+	}
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
@@ -80,7 +83,10 @@ func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+	start, err := strconv.Atoi(r.URL.Query().Get("start"))
+	if err != nil {
+		start = 0
+	}
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
@@ -127,7 +133,10 @@ func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+	start, err := strconv.Atoi(r.URL.Query().Get("start"))
+	if err != nil {
+		start = 0
+	}
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {

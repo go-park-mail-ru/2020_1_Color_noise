@@ -168,12 +168,12 @@ func ErrorHandler(w http.ResponseWriter, r *http.Request, logger *zap.SugaredLog
 		status = http.StatusInternalServerError
 		message = "Internal server error"
 	}
-
+/*
 	logger.Error(
 		zap.String("reqId:", fmt.Sprintf("%v", reqId)),
 		zap.String("error:", err.Error()),
 	)
-
+*/
 	response.Respond(w, status, map[string]string{
 		"error": message,
 	})
