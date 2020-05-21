@@ -78,14 +78,14 @@ jobs:
           source: "env/.env"
           target: "/home/ubuntu/2020_1_Color_noise"
           strip_components: 1
-      - name: pull docker image
+      - name: delete docker image
         uses: appleboy/ssh-action@master
         with:
           envs: GITHUB_SHA
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          script: cd 2020_1_Color_noise && sudo docker-compose pull
+          script: cd 2020_1_Color_noise && sudo docker-compose stop && sudo docker-compose rm -f main && sudo docker-compose rm -f auth && sudo docker-compose rm -f chat && sudo docker-compose rm -f user && sudo docker rmi $(sudo docker images | grep 'zinterest')
       - name: deploy docker image
         uses: appleboy/ssh-action@master
         with:
@@ -93,5 +93,4 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          script: sudo docker-compose stop && sudo docker-compose rm -f main && sudo docker-compose rm -f auth && |
-            sudo docker-compose rm -f chat && sudo docker-compose rm -f user && sudo docker-compose up -d
+          script: cd 2020_1_Color_noise && sudo docker-compose pull && sudo docker-compose up -d
