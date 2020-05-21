@@ -73,7 +73,7 @@ func TestHandler_Create(t *testing.T) {
 			InputErr: true,
 			UserId:   1,
 			Comment:  &models.Comment{},
-			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseCreate{
 			IsAuth:   true,
@@ -85,7 +85,7 @@ func TestHandler_Create(t *testing.T) {
 				PinId:  1,
 				Text:   "",
 			},
-			Response: `{"status":400,"body":{"error":"Text shouldn't be empty and longer 2000 characters."}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseCreate{
 			IsAuth:    true,
@@ -212,15 +212,10 @@ func TestHandler_GetComment(t *testing.T) {
 
 	cases := []TestCaseGetComment{
 		TestCaseGetComment{
-			IsAuth:   false,
-			Comment:  &models.Comment{},
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
-		},
-		TestCaseGetComment{
 			IsAuth:   true,
 			IdErr:    true,
 			Comment:  &models.Comment{},
-			Response: `{"status":400,"body":{"error":"Bad id"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseGetComment{
 			IsAuth:  true,
@@ -253,7 +248,7 @@ func TestHandler_GetComment(t *testing.T) {
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
 		r = r.WithContext(ctx)
 
-		if item.IsAuth && !item.IdErr {
+		if !item.IdErr {
 
 			var err error = nil
 			if item.GetErr {
@@ -331,19 +326,12 @@ func TestHandler_Fetch(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			IsAuth:   false,
-			PinId:    1,
-			Start:    1,
-			Limit:    15,
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
-		},
-		TestCaseFetch{
 			IsAuth:   true,
 			IdErr:    true,
 			PinId:    1,
 			Start:    1,
 			Limit:    15,
-			Response: `{"status":400,"body":{"error":"Bad id"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseFetch{
 			IsAuth:   true,
@@ -391,7 +379,7 @@ func TestHandler_Fetch(t *testing.T) {
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
 		r = r.WithContext(ctx)
 
-		if item.IsAuth && !item.IdErr {
+		if !item.IdErr {
 
 			var err error = nil
 			if item.GetErr {

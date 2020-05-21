@@ -76,7 +76,7 @@ func TestHandler_Create(t *testing.T) {
 			InputErr: true,
 			UserId:   1,
 			Board:    &models.Board{},
-			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseCreate{
 			IsAuth:   true,
@@ -86,8 +86,7 @@ func TestHandler_Create(t *testing.T) {
 				Name:        "",
 				Description: "desc",
 			},
-			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
-				`Description shouldn't be empty and longer 1000 characters."}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseCreate{
 			IsAuth:   true,
@@ -97,8 +96,7 @@ func TestHandler_Create(t *testing.T) {
 				Name:        "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
 				Description: "desc",
 			},
-			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
-				`Description shouldn't be empty and longer 1000 characters."}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		/*TestCaseCreate{
 					IsAuth:     true,
@@ -130,7 +128,7 @@ func TestHandler_Create(t *testing.T) {
 				Name:        "name",
 				Description: "desc",
 			},
-			Response: `{"status":201,"body":{"id":1}}`,
+			Response: `{"status":201,"body":{"id":1,"description":""}}`,
 		},
 	}
 
@@ -236,15 +234,10 @@ func TestHandler_GetBoard(t *testing.T) {
 
 	cases := []TestCaseGetBoard{
 		TestCaseGetBoard{
-			IsAuth:   false,
-			Board:    &models.Board{},
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
-		},
-		TestCaseGetBoard{
 			IsAuth:   true,
 			IdErr:    true,
 			Board:    &models.Board{},
-			Response: `{"status":400,"body":{"error":"Bad id"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseGetBoard{
 			IsAuth: true,
@@ -296,7 +289,7 @@ func TestHandler_GetBoard(t *testing.T) {
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
 		r = r.WithContext(ctx)
 
-		if item.IsAuth && !item.IdErr {
+		if !item.IdErr {
 
 			var err error = nil
 			if item.GetErr {
@@ -363,15 +356,10 @@ func TestHandler_GetNameBoard(t *testing.T) {
 
 	cases := []TestCaseGetBoard{
 		TestCaseGetBoard{
-			IsAuth:   false,
-			Board:    &models.Board{},
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
-		},
-		TestCaseGetBoard{
 			IsAuth:   true,
 			IdErr:    true,
 			Board:    &models.Board{},
-			Response: `{"status":400,"body":{"error":"Bad id"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseGetBoard{
 			IsAuth: true,
@@ -412,7 +400,7 @@ func TestHandler_GetNameBoard(t *testing.T) {
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
 		r = r.WithContext(ctx)
 
-		if item.IsAuth && !item.IdErr {
+		if !item.IdErr {
 
 			var err error = nil
 			if item.GetErr {
@@ -490,19 +478,12 @@ func TestHandler_Fetch(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			IsAuth:   false,
-			UserId:   3,
-			Start:    1,
-			Limit:    15,
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
-		},
-		TestCaseFetch{
 			IsAuth:   true,
 			IdErr:    true,
 			UserId:   3,
 			Start:    1,
 			Limit:    15,
-			Response: `{"status":400,"body":{"error":"Bad id"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseFetch{
 			IsAuth: true,
@@ -566,7 +547,7 @@ func TestHandler_Fetch(t *testing.T) {
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
 		r = r.WithContext(ctx)
 
-		if item.IsAuth && !item.IdErr {
+		if !item.IdErr {
 
 			var err error = nil
 			if item.GetErr {
@@ -661,14 +642,14 @@ func TestHandler_Update(t *testing.T) {
 			IdErr:    true,
 			UserId:   1,
 			Board:    &models.Board{},
-			Response: `{"status":400,"body":{"error":"Bad id"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseUpdate{
 			IsAuth:   true,
 			InputErr: true,
 			UserId:   1,
 			Board:    &models.Board{},
-			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseUpdate{
 			IsAuth:   true,
@@ -678,8 +659,7 @@ func TestHandler_Update(t *testing.T) {
 				Name:        "",
 				Description: "desc",
 			},
-			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
-				`Description shouldn't be empty and longer 1000 characters."}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseUpdate{
 			IsAuth:   true,
@@ -689,8 +669,7 @@ func TestHandler_Update(t *testing.T) {
 				Name:        "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
 				Description: "desc",
 			},
-			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
-				`Description shouldn't be empty and longer 1000 characters."}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		/*TestCaseUpdate{
 			IsAuth:     true,
@@ -848,7 +827,7 @@ func TestHandler_DeletePin(t *testing.T) {
 			IdErr:    true,
 			BoardId:  1,
 			UserId:   1,
-			Response: `{"status":400,"body":{"error":"Bad id"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseDelete{
 			IsAuth:    true,

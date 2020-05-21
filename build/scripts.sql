@@ -28,7 +28,8 @@ CREATE TABLE users(
                       avatar text,
                       subscriptions int,
                       subscribers int,
-                      created_at TIMESTAMP NOT NULL
+                      created_at TIMESTAMP NOT NULL,
+                      tags text[] NOT NULL
 );
 
 CREATE TABLE sessions (
@@ -55,7 +56,9 @@ CREATE TABLE pins (
                       description text,
                       image text NOT NULL,
                       created_at timestamp,
-                      tags text[]
+                      tags text[] NOT NULL,
+                      views int NOT NULL,
+                      comments int NOT NULL
 );
 
 CREATE TABLE boards_pins (
@@ -118,3 +121,11 @@ CREATE TABLE chat_messages(
                               sticker text,
                               created_at TIMESTAMP
 );
+
+CREATE OR REPLACE FUNCTION make_tsvector(name TEXT)
+    RETURNS tsvector AS $$
+BEGIN
+    RETURN (setweight(to_tsvector('russian', name),'A') ||
+            setweight(to_tsvector('english', name), 'B'));
+END
+$$ LANGUAGE 'plpgsql' IMMUTABLE;

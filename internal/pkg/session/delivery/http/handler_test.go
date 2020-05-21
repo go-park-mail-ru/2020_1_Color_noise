@@ -66,7 +66,7 @@ func TestHandler_Login(t *testing.T) {
 			InputErr: true,
 			Login:    "Login1",
 			Password: "Password1",
-			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseLogin{
 			GetErr: true,

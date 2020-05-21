@@ -70,7 +70,7 @@ func TestHandler_Create(t *testing.T) {
 			IsAuth:   true,
 			InputErr: true,
 			Pin:      &models.Pin{},
-			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseCreate{
 			IsAuth:   true,
@@ -83,9 +83,7 @@ func TestHandler_Create(t *testing.T) {
 					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
 					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
 			},
-			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
-				`Description shouldn't be empty and longer 1000 characters. ` +
-				`Image should be base64"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseCreate{
 			IsAuth:   true,
@@ -98,9 +96,7 @@ func TestHandler_Create(t *testing.T) {
 					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
 					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
 			},
-			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
-				`Description shouldn't be empty and longer 1000 characters. ` +
-				`Image should be base64"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		/*TestCaseCreate{
 			IsAuth:     true,
@@ -128,9 +124,7 @@ func TestHandler_Create(t *testing.T) {
 					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
 					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII",
 			},
-			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
-				`Description shouldn't be empty and longer 1000 characters. ` +
-				`Image should be base64"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseCreate{
 			IsAuth:    true,
@@ -156,7 +150,7 @@ func TestHandler_Create(t *testing.T) {
 					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
 					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
 			},
-			Response: `{"status":201,"body":{"id":1}}`,
+			Response: `{"status":201,"body":{"id":1,"description":""}}`,
 		},
 	}
 
@@ -263,15 +257,10 @@ func TestHandler_GetPin(t *testing.T) {
 
 	cases := []TestCaseGetPin{
 		TestCaseGetPin{
-			IsAuth:   false,
-			Pin:      &models.Pin{},
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
-		},
-		TestCaseGetPin{
 			IsAuth:   true,
 			IdErr:    true,
 			Pin:      &models.Pin{},
-			Response: `{"status":400,"body":{"error":"Bad id"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseGetPin{
 			IsAuth: true,
@@ -306,7 +295,7 @@ func TestHandler_GetPin(t *testing.T) {
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
 		r = r.WithContext(ctx)
 
-		if item.IsAuth && !item.IdErr {
+		if !item.IdErr {
 
 			var err error = nil
 			if item.GetErr {
@@ -396,7 +385,7 @@ func TestHandler_Fetch(t *testing.T) {
 			UserId:   1,
 			Start:    1,
 			Limit:    15,
-			Response: `{"status":400,"body":{"error":"Bad id"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseFetch{
 			IsAuth: true,
@@ -541,13 +530,13 @@ func TestHandler_Update(t *testing.T) {
 			IdErr:    true,
 			UserId:   1,
 			Pin:      &models.Pin{},
-			Response: `{"status":400,"body":{"error":"Bad id"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseUpdate{
 			IsAuth:   true,
 			InputErr: true,
 			Pin:      &models.Pin{},
-			Response: `{"status":400,"body":{"error":"Wrong body of request"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseUpdate{
 			IsAuth:   true,
@@ -556,8 +545,7 @@ func TestHandler_Update(t *testing.T) {
 				Name:        "",
 				Description: "desc",
 			},
-			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
-				`Description shouldn't be empty and longer 1000 characters."}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseUpdate{
 			IsAuth:   true,
@@ -566,8 +554,7 @@ func TestHandler_Update(t *testing.T) {
 				Name:        "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
 				Description: "desc",
 			},
-			Response: `{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. ` +
-				`Description shouldn't be empty and longer 1000 characters."}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		/*TestCaseUpdate{
 			IsAuth:     true,
@@ -722,7 +709,7 @@ func TestHandler_DeletePin(t *testing.T) {
 			IdErr:    true,
 			PinId:    1,
 			UserId:   1,
-			Response: `{"status":400,"body":{"error":"Bad id"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseDelete{
 			IsAuth:    true,

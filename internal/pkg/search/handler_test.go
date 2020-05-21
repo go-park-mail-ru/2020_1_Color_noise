@@ -66,13 +66,6 @@ func TestHandler_Search(t *testing.T) {
 
 	cases := []TestCaseSearch{
 		TestCaseSearch{
-			IsAuth:   false,
-			UserId:   1,
-			Start:    1,
-			Limit:    15,
-			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
-		},
-		TestCaseSearch{
 			IsAuth:    true,
 			UserId:    1,
 			IsComment: true,
@@ -206,7 +199,7 @@ func TestHandler_Search(t *testing.T) {
 		}*/
 		r = r.WithContext(ctx)
 
-		if item.IsAuth && item.IsComment {
+		if item.IsComment {
 
 			var err error = nil
 			if item.Err {
@@ -218,7 +211,7 @@ func TestHandler_Search(t *testing.T) {
 			)
 		}
 
-		if item.IsAuth && item.IsPin {
+		if  item.IsPin {
 
 			var err error = nil
 			if item.Err {
@@ -231,7 +224,7 @@ func TestHandler_Search(t *testing.T) {
 			)
 		}
 
-		if item.IsAuth && item.IsUser {
+		if item.IsUser {
 
 			var err error = nil
 			if item.Err {
