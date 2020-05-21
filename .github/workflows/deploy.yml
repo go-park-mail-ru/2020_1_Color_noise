@@ -21,7 +21,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: nginx
-          path: ./server/
+          path: ./server/nginx/nginx.conf
       - name: Upload docker-compose result
         uses: actions/upload-artifact@v2
         with:
@@ -55,8 +55,8 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          source: "nginx/server/*"
-          target: "/home/ubuntu/2020_1_Color_noise"
+          source: "nginx/server/nginx/nginx.conf"
+          target: "/home/ubuntu/2020_1_Color_noise/server/nginx"
           strip_components: 1
       - name: pull docker image
         uses: appleboy/ssh-action@master
