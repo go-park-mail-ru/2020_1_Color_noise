@@ -26,7 +26,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: docker
-          path: ./docker-compose.yaml
+          path: ./docker-compose.yml
 
   deploy:
     runs-on: ubuntu-latest
@@ -48,3 +48,27 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           source: "nginx/server"
           target: "/home/ubuntu/2020_1_Color_noise"
+      - name: Transfer docker file to server
+        uses: appleboy/scp-action@v0.0.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          source: "docker/docker-compose.yml"
+          target: "/home/ubuntu/2020_1_Color_noise"
+      - name: pull docker image
+        uses: appleboy/ssh-action@master
+        with:
+          envs: GITHUB_SHA
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: cd 2020_1_Color_noise && sudo docker-compose pull
+      - name: deploy docker image
+        uses: appleboy/ssh-action@master
+        with:
+          envs: GITHUB_SHA
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: cd 2020_1_Color_noise && sudo docker-compose up
