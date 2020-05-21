@@ -11,6 +11,7 @@ before_script:
   - docker build -t db --file `pwd`/build/db.Dockerfile .
   - docker run -d -p 5432:5432 db
   - go mod tidy
+  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh
 
 script:
   #- sleep 15
