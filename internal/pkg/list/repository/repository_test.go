@@ -113,7 +113,7 @@ func TestRepository_GetSRecList(t *testing.T) {
 		},
 		{
 			u:      models.User{},
-			answer: nil,
+			answer: fmt.Errorf("User not found, user id = 0"),
 		},
 	}
 

@@ -435,7 +435,7 @@ func TestGetUserSubscriptions(t *testing.T) {
 		{
 			user:   models.DataBaseUser{},
 			output: models.User{},
-			answer: nil,
+			answer: fmt.Errorf("user not found"),
 		},
 	}
 
@@ -465,7 +465,7 @@ func TestGetUserSubscribers(t *testing.T) {
 		{
 			user:   models.DataBaseUser{},
 			output: models.User{},
-			answer: nil,
+			answer: fmt.Errorf("user not found"),
 		},
 	}
 

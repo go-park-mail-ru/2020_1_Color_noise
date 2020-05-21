@@ -18,7 +18,7 @@ func (rp *Repository) AddMessage(userSentId uint, userReceivedId uint, message s
 	//создать сообщение
 	msg, err := rp.db.AddMessage(int(userSentId), int(userReceivedId), message, sticker)
 	if err != nil {
-		return &models.Message{}, UserNotFound.Newf("User to get not found, id: %d", userSentId)
+		return &models.Message{}, UserNotFound.Newf("User not found, id: %d", userSentId)
 	}
 
 	return msg, nil
@@ -28,7 +28,7 @@ func (rp *Repository) GetUsers(userId uint, start int, limit int) ([]*models.Use
 	//получить чаты
 	users, err := rp.db.GetUsers(userId, start, limit)
 	if err != nil {
-		return nil, UserNotFound.Newf("User not found, err: %v", err)
+		return nil, UserNotFound.Newf("User not found, id: %v", userId)
 	}
 	return users, nil
 }
@@ -37,7 +37,7 @@ func (rp *Repository) GetMessages(userId uint, otherId uint, start int, limit in
 	//получить сообщения
 	msg, err := rp.db.GetMessages(userId, otherId, start, limit)
 	if err != nil {
-		return nil, UserNotFound.Newf("User not found, err: %v", err)
+		return nil, UserNotFound.Newf("User not found, id: %v", userId)
 	}
 	return msg, nil
 }
