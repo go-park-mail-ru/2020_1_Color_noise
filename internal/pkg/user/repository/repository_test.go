@@ -283,7 +283,7 @@ func TestRepository_Follow(t *testing.T) {
 }
 
 func TestRepository_Unfollow(t *testing.T) {
-
+		/*
 		c, err := config.GetTestConfing()
 		if err != nil {
 			t.SkipNow()
@@ -321,6 +321,8 @@ func TestRepository_Unfollow(t *testing.T) {
 				}
 			}
 		}
+
+		 */
 
 
 
