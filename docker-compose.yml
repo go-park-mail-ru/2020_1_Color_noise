@@ -13,7 +13,7 @@ services:
       context: .
       dockerfile: build/main.Dockerfile
 
-    image: zinterest/main:$GITHUB_SHA
+    image: zinterest/main:${GITHUB_SHA}
 
     volumes:
       - type: bind
@@ -30,7 +30,7 @@ services:
       context: .
       dockerfile: build/auth.Dockerfile
 
-    image: zinterest/auth:$GITHUB_SHA
+    image: zinterest/auth:${GITHUB_SHA}
 
     volumes:
       - type: bind
@@ -45,7 +45,7 @@ services:
       context: .
       dockerfile: ./build/chat.Dockerfile
 
-    image: zinterest/chat:$GITHUB_SHA
+    image: zinterest/chat:${GITHUB_SHA}
 
     volumes:
       - type: bind
@@ -61,7 +61,7 @@ services:
       context: .
       dockerfile: ./build/user.Dockerfile
 
-    image: zinterest/user:$GITHUB_SHA
+    image: zinterest/user:${GITHUB_SHA}
 
     volumes:
       - type: bind
