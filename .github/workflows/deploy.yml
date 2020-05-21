@@ -18,12 +18,12 @@ jobs:
       - name: Push Docker Image
         run: docker-compose push main auth chat user
       - name: Upload nginx config result
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: nginx
-          path: ./server
+          path: ./server/
       - name: Upload docker-compose result
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: docker
           path: ./docker-compose.yml
@@ -44,6 +44,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           source: "docker/docker-compose.yml"
           target: "/home/ubuntu/2020_1_Color_noise"
+          strip_components: 1
       - name: Download configs
         uses: actions/download-artifact@v1
         with:
@@ -54,8 +55,9 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          source: "nginx/server"
+          source: "nginx/server/*"
           target: "/home/ubuntu/2020_1_Color_noise"
+          strip_components: 1
       - name: pull docker image
         uses: appleboy/ssh-action@master
         with:
