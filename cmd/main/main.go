@@ -58,7 +58,7 @@ func main() {
 	}
 
 	db := database.NewPgxDB()
-	if err := db.Open(c); err != nil {
+	if err = db.Open(c); err != nil {
 		panic(err)
 	}
 
