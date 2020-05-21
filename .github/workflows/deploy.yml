@@ -17,6 +17,8 @@ jobs:
         run: docker-compose build
       - name: Push Docker Image
         run: docker-compose push main auth chat user
+      - name: Fill env file
+          run: echo "GITHUB_SHA=$GITHUB_SHA" >> .env
       - name: Upload nginx config result
         uses: actions/upload-artifact@v2
         with:
@@ -92,4 +94,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
           script: sudo docker-compose stop && sudo docker-compose rm -f main && sudo docker-compose rm -f auth && |
-            sudo docker-compose rm -f chat && sudo docker-compose rm -f user && sudo docker-compose up
+            sudo docker-compose rm -f chat && sudo docker-compose rm -f user && sudo docker-compose up -d
