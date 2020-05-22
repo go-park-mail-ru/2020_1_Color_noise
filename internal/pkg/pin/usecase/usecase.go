@@ -44,7 +44,9 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 	}
 
 	pin := &models.Pin{
-		UserId:      userId,
+		User:        &models.User{
+			Id: userId,
+		},
 		BoardId:     uint(input.BoardId),
 		Name:        input.Name,
 		Description: input.Description,
@@ -56,7 +58,7 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
-	go pu.imageUs.Analyze(id, pin.UserId, name)
+	//go pu.imageUs.Analyze(id, pin.UserId, name)
 
 	return id, nil
 }
@@ -100,7 +102,9 @@ func (pu *Usecase) GetByName(name string, start int, limit int, date string, des
 func (pu *Usecase) Update(input *models.UpdatePin, pinId uint, userId uint) error {
 	pin := &models.Pin{
 		Id:          pinId,
-		UserId:      userId,
+		User:        &models.User{
+			Id: userId,
+		},
 		BoardId:     uint(input.BoardId),
 		Name:        input.Name,
 		Description: input.Description,

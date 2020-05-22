@@ -4,7 +4,7 @@ import "time"
 
 type Comment struct {
 	Id        uint
-	UserId    uint
+	User      *User
 	PinId     uint
 	Text      string
 	CreatedAt time.Time
@@ -25,7 +25,7 @@ type InputComment struct {
 
 type ResponseComment struct {
 	Id        uint       `json:"id,omitempty"`
-	UserId    uint       `json:"user_id,omitempty"`
+	User      *User      `json:"user,omitempty"`
 	PindId    uint       `json:"pin_id,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	Text      string     `json:"comment,omitempty"`

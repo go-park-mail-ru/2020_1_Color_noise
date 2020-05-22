@@ -23,10 +23,11 @@ jobs:
       - name: build tests DATABASE
         run: docker build -t db --file `pwd`/build/db.Dockerfile . && docker run -d -p 5432:5432 db
       - name: RUN TESTS
-        run: go mod tidy && go test ./...
+        run: go mod tidy && go test ./... &&
 
   build:
     runs-on: ubuntu-latest
+    needs: tests
     steps:
       - uses: actions/checkout@v1
       - name: Login to DockerHub
