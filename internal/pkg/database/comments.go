@@ -41,9 +41,12 @@ func (db *PgxDB) DeleteComment(cm models.DataBaseComment) error {
 
 func (db *PgxDB) GetCommentById(cm models.DataBaseComment) (models.Comment, error) {
 	var r models.Comment
+	var usid uint
 	row := db.dbPool.QueryRow(CommentById, cm.Id)
 
-	ok := row.Scan(&r.Id, &r.UserId, &r.PinId, &r.Text, &r.CreatedAt)
+	ok := row.Scan(&r.Id, &usid, &r.PinId, &r.Text, &r.CreatedAt)
+	us, _ := db.GetUserById(models.DataBaseUser{Id:usid})
+	r.User = &us
 	if ok != nil {
 		return models.Comment{}, errors.New("comment not found")
 	}
@@ -52,6 +55,7 @@ func (db *PgxDB) GetCommentById(cm models.DataBaseComment) (models.Comment, erro
 
 func (db *PgxDB) GetCommentsByPinId(cm models.DataBaseComment, start, limit int) ([]*models.Comment, error) {
 	var res []*models.Comment
+	var usid uint
 	r, err := db.dbPool.Query(CommentByPin, cm.PinId, limit, start)
 	if err != nil {
 		return nil, errors.New("fatal error")
@@ -59,7 +63,9 @@ func (db *PgxDB) GetCommentsByPinId(cm models.DataBaseComment, start, limit int)
 
 	for r.Next() {
 		var tmp models.Comment
-		ok := r.Scan(&tmp.Id, &tmp.UserId, &tmp.PinId, &tmp.Text, &tmp.CreatedAt)
+		ok := r.Scan(&tmp.Id, &usid, &tmp.PinId, &tmp.Text, &tmp.CreatedAt)
+		us, _ := db.GetUserById(models.DataBaseUser{Id:usid})
+		tmp.User = &us
 		if ok != nil {
 			return nil, errors.New("comment not found")
 		}
@@ -70,6 +76,7 @@ func (db *PgxDB) GetCommentsByPinId(cm models.DataBaseComment, start, limit int)
 
 func (db *PgxDB) GetCommentsByText(cm models.DataBaseComment, start, limit int) ([]*models.Comment, error) {
 	var res []*models.Comment
+	var usid uint
 	r, err := db.dbPool.Query(CommentByText, cm.Text, limit, start)
 	if err != nil {
 		return nil, errors.New("db error")
@@ -77,7 +84,9 @@ func (db *PgxDB) GetCommentsByText(cm models.DataBaseComment, start, limit int) 
 
 	for r.Next() {
 		var tmp models.Comment
-		ok := r.Scan(&tmp.Id, &tmp.UserId, &tmp.PinId, &tmp.Text, &tmp.CreatedAt)
+		ok := r.Scan(&tmp.Id, &usid, &tmp.PinId, &tmp.Text, &tmp.CreatedAt)
+		us, _ := db.GetUserById(models.DataBaseUser{Id:usid})
+		tmp.User = &us
 		if ok != nil {
 			return nil, errors.New("comment not found")
 		}

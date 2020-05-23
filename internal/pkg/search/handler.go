@@ -64,7 +64,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 		for _, comment := range comments {
 			resp = append(resp, models.ResponseComment{
 				Id:        comment.Id,
-				UserId:    comment.UserId,
+				User:    comment.User,
 				PindId:    comment.PinId,
 				Text:      comment.Text,
 				CreatedAt: &comment.CreatedAt,
@@ -102,7 +102,7 @@ func (sh *Handler) Search(w http.ResponseWriter, r *http.Request) {
 			resp = append(resp, models.ResponsePin{
 				Id:          pin.Id,
 				BoardId:     pin.BoardId,
-				UserId:      pin.UserId,
+				User:      pin.User,
 				Name:        pin.Name,
 				Description: pin.Description,
 				Image:       pin.Image,

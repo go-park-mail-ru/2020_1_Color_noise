@@ -10,7 +10,6 @@ import (
 	"2020_1_Color_noise/internal/pkg/utils"
 	"context"
 	"encoding/base64"
-	"fmt"
 	"log"
 	"strings"
 )

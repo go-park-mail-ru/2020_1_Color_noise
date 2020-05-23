@@ -59,7 +59,6 @@ type ResponsePin struct {
 func GetPin(pin DataBasePin) Pin {
 	tmp := Pin{
 		Id:        pin.Id,
-		UserId:    pin.UserId,
 		BoardId:   pin.BoardId,
 		Name:      pin.Name,
 		Image:     pin.Image,
@@ -82,7 +81,6 @@ func GetPin(pin DataBasePin) Pin {
 func GetBPin(pin Pin) DataBasePin {
 	tmp := DataBasePin{
 		Id:        pin.Id,
-		UserId:    pin.UserId,
 		BoardId:   pin.BoardId,
 		Name:      pin.Name,
 		Image:     pin.Image,

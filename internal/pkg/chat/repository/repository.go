@@ -16,6 +16,11 @@ func NewRepository(db database.DBInterface) *Repository {
 
 func (rp *Repository) AddMessage(userSentId uint, userReceivedId uint, message string, sticker string) (*models.Message, error) {
 	//создать сообщение
+
+	if message == "" && sticker == "" {
+		return &models.Message{}, StupidUser.Newf("User is doing it wrong, id: %d", userSentId)
+	}
+
 	msg, err := rp.db.AddMessage(int(userSentId), int(userReceivedId), message, sticker)
 	if err != nil {
 		return &models.Message{}, UserNotFound.Newf("User not found, id: %d", userSentId)

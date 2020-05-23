@@ -26,6 +26,7 @@ const (
 	Unauthorized
 	TooMuchSize
 	SearchNotFound
+	StupidUser
 )
 
 type ErrorType uint
@@ -164,6 +165,9 @@ func ErrorHandler(w http.ResponseWriter, r *http.Request, logger *zap.SugaredLog
 	case FollowingIsNotYetDone:
 		status = http.StatusBadRequest
 		message = "Following is not yet done"
+	case StupidUser:
+		status = http.StatusTeapot
+		message = "Why are you even trying to do this?"
 	default:
 		status = http.StatusInternalServerError
 		message = "Internal server error"

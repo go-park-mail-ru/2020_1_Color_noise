@@ -67,9 +67,10 @@ func (db *PgxDB) DeletePin(pin models.DataBasePin) error {
 
 func (db *PgxDB) GetPinById(pin models.DataBasePin) (models.Pin, error) {
 	var res models.DataBasePin
+	var us models.DataBaseUser
 
 	row := db.dbPool.QueryRow(PinById, pin.Id)
-	err := row.Scan(&res.Id, &res.UserId, &res.Name, &res.Description, &res.Image, &res.BoardId, &res.CreatedAt, &res.Tags)
+	err := row.Scan(&res.Id, &res.Name, &res.Description, &res.Image, &res.BoardId, &res.CreatedAt, &res.Tags, &us.Login, &us.Avatar)
 	if err != nil {
 		return models.Pin{}, errors.New("pin not found")
 	}
@@ -78,7 +79,11 @@ func (db *PgxDB) GetPinById(pin models.DataBasePin) (models.Pin, error) {
 	if update != nil {
 		return models.Pin{}, errors.New("view update error")
 	}
-	return models.GetPin(res), nil
+	rp := models.GetPin(res)
+	ru := models.GetUser(us)
+	rp.User = &ru
+
+	return rp, nil
 }
 
 func (db *PgxDB) GetPinsByUserId(pin models.DataBasePin) ([]*models.Pin, error) {
@@ -90,12 +95,15 @@ func (db *PgxDB) GetPinsByUserId(pin models.DataBasePin) ([]*models.Pin, error) 
 	}
 	for row.Next() {
 		var tmp models.DataBasePin
-		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
-			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags)
+		var us models.DataBaseUser
+		ok := row.Scan(&tmp.Id, &tmp.Name, &tmp.Description,
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags,  &us.Login, &us.Avatar)
 		if ok != nil {
 			return nil, ok
 		}
+		ru := models.GetUser(us)
 		p := models.GetPin(tmp)
+		p.User = &ru
 		res = append(res, &p)
 	}
 	return res, nil
@@ -131,12 +139,15 @@ func (db *PgxDB) GetPinsByName(pin models.DataBasePin, since time.Time, to time.
 	}
 	for row.Next() {
 		var tmp models.DataBasePin
-		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
-			&tmp.Image, &tmp.CreatedAt, &tmp.Tags, &tmp.Views, &tmp.Comment)
+		var us models.DataBaseUser
+		ok := row.Scan(&tmp.Id, &tmp.Name, &tmp.Description,
+			&tmp.Image, &tmp.CreatedAt, &tmp.Tags, &tmp.Views, &tmp.Comment, &us.Login, &us.Avatar)
 		if ok != nil {
 			return nil, ok
 		}
+		ru := models.GetUser(us)
 		p := models.GetPin(tmp)
+		p.User = &ru
 		res = append(res, &p)
 	}
 	return res, nil
@@ -151,12 +162,15 @@ func (db *PgxDB) GetPinsByBoardID(board models.DataBaseBoard) ([]*models.Pin, er
 	}
 	for row.Next() {
 		var tmp models.DataBasePin
-		ok := row.Scan(&tmp.Id, &tmp.UserId, &tmp.Name, &tmp.Description,
-			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags)
+		var us models.DataBaseUser
+		ok := row.Scan(&tmp.Id, &tmp.Name, &tmp.Description,
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags,  &us.Login, &us.Avatar)
 		if ok != nil {
 			return nil, ok
 		}
+		ru := models.GetUser(us)
 		p := models.GetPin(tmp)
+		p.User = &ru
 		res = append(res, &p)
 	}
 	return res, nil

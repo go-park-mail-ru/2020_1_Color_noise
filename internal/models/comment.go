@@ -32,11 +32,22 @@ type ResponseComment struct {
 }
 
 func GetBComment(c Comment) DataBaseComment {
-	tmp := DataBaseComment(c)
+	tmp := DataBaseComment{
+	}
+
+	tmp.Id = c.Id
+	tmp.PinId = c.PinId
+	tmp.Text = c.Text
+	tmp.UserId = c.User.Id
 	return tmp
 }
 
 func GetComment(c DataBaseComment) Comment {
-	tmp := Comment(c)
+	tmp := Comment{
+	}
+
+	tmp.Id = c.Id
+	tmp.PinId = c.PinId
+	tmp.Text = c.Text
 	return tmp
 }

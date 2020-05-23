@@ -29,16 +29,16 @@ func (pr *Repository) Create(pin *models.Pin) (uint, error) {
 	return id, err
 }
 
-func (pr *Repository) Save(pinId uint, boardId uint) error {
+func (pr *Repository) Save(pinId uint, boardId uint) (bool, error) {
 	//добавить в пины
 	//добавить в таблицу
 	state, err := pr.db.Save(pinId, boardId)
 
 	if err != nil {
-		return PinNotFound.Newf("Pin can not be saved, err: %v", err)
+		return state, PinNotFound.Newf("Pin can not be saved, err: %v", err)
 	}
 
-	return err
+	return state, err
 }
 
 func (pr *Repository) GetByID(id uint) (*models.Pin, error) {

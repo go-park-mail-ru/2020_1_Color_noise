@@ -43,7 +43,7 @@ func (db *PgxDB) PutNotifications(com models.DataBaseComment) (uint, error) {
 	}
 
 	text := "Новый комментарий от " + fmt.Sprint(user.Login) + " на ваш пин " + fmt.Sprint(pin.Name) + " : " + fmt.Sprint(com.Text)
-	res := db.dbPool.QueryRow(PutNoti, pin.UserId, text, com.UserId, time.Now())
+	res := db.dbPool.QueryRow(PutNoti, pin.User.Id, text, com.UserId, time.Now())
 	var id uint
 	err = res.Scan(&id)
 	if err != nil {
