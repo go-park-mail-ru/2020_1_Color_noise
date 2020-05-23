@@ -104,7 +104,14 @@ func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
 	resp := &models.ResponsePin{
 		Id:          pin.Id,
 		BoardId:     pin.BoardId,
-		User:        pin.User,
+		User:        &models.ResponseUser{
+			Id: pin.User.Id,
+			Login: pin.User.Login,
+			About: pin.User.About,
+			Avatar: pin.User.Avatar,
+			Subscriptions: pin.User.Subscriptions,
+			Subscribers: pin.User.Subscribers,
+		},
 		Name:        pin.Name,
 		Description: pin.Description,
 		Image:       pin.Image,
@@ -154,7 +161,14 @@ func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 		resp = append(resp, models.ResponsePin{
 			Id:          pin.Id,
 			BoardId:     pin.BoardId,
-			User:        pin.User,
+			User:        &models.ResponseUser{
+				Id: pin.User.Id,
+				Login: pin.User.Login,
+				About: pin.User.About,
+				Avatar: pin.User.Avatar,
+				Subscriptions: pin.User.Subscriptions,
+				Subscribers: pin.User.Subscribers,
+			},
 			Name:        pin.Name,
 			Description: pin.Description,
 			Image:       pin.Image,

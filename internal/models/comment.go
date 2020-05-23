@@ -24,11 +24,11 @@ type InputComment struct {
 }
 
 type ResponseComment struct {
-	Id        uint       `json:"id,omitempty"`
-	User      *User      `json:"user,omitempty"`
-	PindId    uint       `json:"pin_id,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	Text      string     `json:"comment,omitempty"`
+	Id        uint          `json:"id,omitempty"`
+	User      *ResponseUser `json:"user,omitempty"`
+	PindId    uint          `json:"pin_id,omitempty"`
+	CreatedAt *time.Time    `json:"created_at,omitempty"`
+	Text      string        `json:"comment,omitempty"`
 }
 
 func GetBComment(c Comment) DataBaseComment {

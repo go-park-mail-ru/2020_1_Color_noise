@@ -47,13 +47,13 @@ type UpdatePin struct {
 }
 
 type ResponsePin struct {
-	Id          uint     `json:"id,omitempty"`
-	User        *User    `json:"user,omitempty"`
-	BoardId     uint     `json:"board_id,omitempty"`
-	Name        string   `json:"name,omitempty"`
-	Description string   `json:"description"`
-	Image       string   `json:"image,omitempty"`
-	Tags        []string `json:"tags,omitempty"`
+	Id          uint          `json:"id,omitempty"`
+	User        *ResponseUser `json:"user,omitempty"`
+	BoardId     uint          `json:"board_id,omitempty"`
+	Name        string        `json:"name,omitempty"`
+	Description string        `json:"description"`
+	Image       string        `json:"image,omitempty"`
+	Tags        []string      `json:"tags,omitempty"`
 }
 
 func GetPin(pin DataBasePin) Pin {

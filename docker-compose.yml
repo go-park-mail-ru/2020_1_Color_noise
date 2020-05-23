@@ -114,7 +114,6 @@ services:
     links:
       - nginx:nginx
 
-    restart: always
 
   grafana:
     image: grafana/grafana
@@ -122,5 +121,5 @@ services:
       - prometheus
     ports:
       - 3000:3000
-    restart: always
+
 

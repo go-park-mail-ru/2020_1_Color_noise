@@ -100,7 +100,14 @@ func (ch *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
 
 	resp := &models.ResponseComment{
 		Id:        comment.Id,
-		User:      comment.User,
+		User:        &models.ResponseUser{
+			Id: comment.User.Id,
+			Login: comment.User.Login,
+			About: comment.User.About,
+			Avatar: comment.User.Avatar,
+			Subscriptions: comment.User.Subscriptions,
+			Subscribers: comment.User.Subscribers,
+		},
 		PindId:    comment.PinId,
 		Text:      comment.Text,
 		CreatedAt: &comment.CreatedAt,
@@ -151,7 +158,14 @@ func (ch *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	for _, comment := range comments {
 		resp = append(resp, models.ResponseComment{
 			Id:        comment.Id,
-			User:      comment.User,
+			User:        &models.ResponseUser{
+				Id: comment.User.Id,
+				Login: comment.User.Login,
+				About: comment.User.About,
+				Avatar: comment.User.Avatar,
+				Subscriptions: comment.User.Subscriptions,
+				Subscribers: comment.User.Subscribers,
+			},
 			PindId:    comment.PinId,
 			Text:      comment.Text,
 			CreatedAt: &comment.CreatedAt,
