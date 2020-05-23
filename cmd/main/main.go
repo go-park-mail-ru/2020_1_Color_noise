@@ -7,6 +7,7 @@ import (
 	"2020_1_Color_noise/internal/pkg/metric"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
+	"2020_1_Color_noise/internal/pkg/proto/image"
 	"2020_1_Color_noise/internal/pkg/proto/session"
 	"2020_1_Color_noise/internal/pkg/proto/user"
 
@@ -30,8 +31,6 @@ import (
 	pinDeliveryHttp "2020_1_Color_noise/internal/pkg/pin/delivery/http"
 	pinRepository "2020_1_Color_noise/internal/pkg/pin/repository"
 	pinUsecase "2020_1_Color_noise/internal/pkg/pin/usecase"
-
-	imageUsecase "2020_1_Color_noise/internal/pkg/image/usecase"
 
 	searchHandler "2020_1_Color_noise/internal/pkg/search"
 
@@ -80,9 +79,20 @@ func main() {
 	if err != nil {
 		log.Fatalf("cant connect to user grpc")
 	}
-	defer grcpSessConn.Close()
+	defer grcpUserConn.Close()
 
 	userService := user.NewUserServiceClient(grcpUserConn)
+
+	grcpImageConn, err := grpc.Dial(
+		"image:8000",
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatalf("cant connect to user grpc")
+	}
+	defer grcpImageConn.Close()
+
+	imageService := image.NewImageServiceClient(grcpImageConn)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -103,8 +113,7 @@ func main() {
 
 	pinRepo := pinRepository.NewRepo(db)
 
-	imageUse := imageUsecase.NewImageUsecase(pinRepo, boardRepo, userService)
-	pinUse := pinUsecase.NewUsecase(pinRepo, boardRepo, imageUse)
+	pinUse := pinUsecase.NewUsecase(pinRepo, boardRepo, imageService, userService)
 	pinDelivery := pinDeliveryHttp.NewHandler(pinUse, zap)
 
 	commentRepo := commentRepository.NewRepo(db)

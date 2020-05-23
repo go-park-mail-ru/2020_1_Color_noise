@@ -25,6 +25,18 @@ services:
       - auth
       - user
 
+  image:
+    build:
+      context: .
+      dockerfile: build/image.Dockerfile
+
+    image: zinterest/image:${GITHUB_SHA}
+
+    volumes:
+      - type: bind
+        source: ../storage
+        target: /storage
+
   auth:
     build:
       context: .

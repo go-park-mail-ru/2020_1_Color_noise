@@ -7,7 +7,7 @@ import (
 
 type Pin struct {
 	Id          uint
-	UserId      uint
+	User        *User
 	BoardId     uint
 	Name        string
 	Description string
@@ -48,7 +48,7 @@ type UpdatePin struct {
 
 type ResponsePin struct {
 	Id          uint     `json:"id,omitempty"`
-	UserId      uint     `json:"user_id,omitempty"`
+	User        *User    `json:"user,omitempty"`
 	BoardId     uint     `json:"board_id,omitempty"`
 	Name        string   `json:"name,omitempty"`
 	Description string   `json:"description"`

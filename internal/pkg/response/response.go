@@ -12,12 +12,6 @@ type Response struct {
 }
 
 func Respond(w http.ResponseWriter, status int, body interface{}) {
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Println("Error while marshalling, error: ", r)
-		}
-	}()
-
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Real-Status", fmt.Sprint(status))
 	response := &Response{
@@ -25,9 +19,5 @@ func Respond(w http.ResponseWriter, status int, body interface{}) {
 		Body:   body,
 	}
 
-	_, _, err := easyjson.MarshalToHTTPResponseWriter(response, w)
-	if err != nil {
-		panic(err)
-	}
-	//return
+	easyjson.MarshalToHTTPResponseWriter(response, w)
 }

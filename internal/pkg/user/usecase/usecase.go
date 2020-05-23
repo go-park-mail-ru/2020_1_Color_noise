@@ -3,7 +3,6 @@ package usecase
 import (
 	"2020_1_Color_noise/internal/models"
 	. "2020_1_Color_noise/internal/pkg/error"
-	"2020_1_Color_noise/internal/pkg/image"
 	"2020_1_Color_noise/internal/pkg/user"
 	"2020_1_Color_noise/internal/pkg/utils"
 	"github.com/asaskevich/govalidator"
@@ -131,7 +130,7 @@ func (uu *UserUsecase) UpdateDescription(id uint, input *models.UpdateDescriptio
 }
 
 func (uu *UserUsecase) UpdateAvatar(id uint, buffer []byte) (string, error) {
-	path, err := image.SaveImage(&buffer)
+	path, err := utils.SaveImage(&buffer)
 	if err != nil {
 		return "", Wrapf(err, "Updating avatar error, id:%d", id)
 	}
