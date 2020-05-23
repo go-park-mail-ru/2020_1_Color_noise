@@ -1,6 +1,8 @@
 # 2020_1_Color_noise
 Бэкенд проекта Pinterest
 
+[![Actions Status](https://github.com/go-park-mail-ru/2020_1_Color_noise/workflows/Zinterest%20build/badge.svg?branch=develop)](https://github.com/go-park-mail-ru/2020_1_Color_noise/actions)
+
 [![Build Status](https://travis-ci.com/go-park-mail-ru/2020_1_Color_noise.svg?branch=develop)](https://travis-ci.com/go-park-mail-ru/2020_1_Color_noise)
 
 
