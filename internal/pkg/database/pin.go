@@ -70,7 +70,9 @@ func (db *PgxDB) GetPinById(pin models.DataBasePin) (models.Pin, error) {
 	var us models.DataBaseUser
 
 	row := db.dbPool.QueryRow(PinById, pin.Id)
-	err := row.Scan(&res.Id, &res.Name, &res.Description, &res.Image, &res.BoardId, &res.CreatedAt, &res.Tags, &us.Login, &us.Avatar)
+	err := row.Scan(&res.Id, &res.Name, &res.Description,
+		&res.Image, &res.BoardId, &res.CreatedAt, &res.Tags,
+		&us.Id, &us.Login, &us.Avatar)
 	if err != nil {
 		return models.Pin{}, errors.New("pin not found")
 	}
@@ -97,7 +99,7 @@ func (db *PgxDB) GetPinsByUserId(pin models.DataBasePin) ([]*models.Pin, error) 
 		var tmp models.DataBasePin
 		var us models.DataBaseUser
 		ok := row.Scan(&tmp.Id, &tmp.Name, &tmp.Description,
-			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags,  &us.Login, &us.Avatar)
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags,   &us.Id, &us.Login, &us.Avatar)
 		if ok != nil {
 			return nil, ok
 		}
@@ -141,7 +143,8 @@ func (db *PgxDB) GetPinsByName(pin models.DataBasePin, since time.Time, to time.
 		var tmp models.DataBasePin
 		var us models.DataBaseUser
 		ok := row.Scan(&tmp.Id, &tmp.Name, &tmp.Description,
-			&tmp.Image, &tmp.CreatedAt, &tmp.Tags, &tmp.Views, &tmp.Comment, &us.Login, &us.Avatar)
+			&tmp.Image, &tmp.CreatedAt, &tmp.Tags, &tmp.Views, &tmp.Comment,
+			&us.Id, &us.Login, &us.Avatar)
 		if ok != nil {
 			return nil, ok
 		}
@@ -164,7 +167,8 @@ func (db *PgxDB) GetPinsByBoardID(board models.DataBaseBoard) ([]*models.Pin, er
 		var tmp models.DataBasePin
 		var us models.DataBaseUser
 		ok := row.Scan(&tmp.Id, &tmp.Name, &tmp.Description,
-			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags,  &us.Login, &us.Avatar)
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags,
+			&us.Id, &us.Login, &us.Avatar)
 		if ok != nil {
 			return nil, ok
 		}

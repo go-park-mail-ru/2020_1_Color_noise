@@ -892,7 +892,7 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels9(in *jlexer.Lexer, out 
 				out.User = nil
 			} else {
 				if out.User == nil {
-					out.User = new(User)
+					out.User = new(ResponseUser)
 				}
 				(*out.User).UnmarshalEasyJSON(in)
 			}
@@ -1258,7 +1258,7 @@ func easyjsonD2b7633eDecode20201ColorNoiseInternalModels12(in *jlexer.Lexer, out
 				out.User = nil
 			} else {
 				if out.User == nil {
-					out.User = new(User)
+					out.User = new(ResponseUser)
 				}
 				(*out.User).UnmarshalEasyJSON(in)
 			}

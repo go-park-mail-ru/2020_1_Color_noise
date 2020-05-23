@@ -81,6 +81,7 @@ func GetPin(pin DataBasePin) Pin {
 func GetBPin(pin Pin) DataBasePin {
 	tmp := DataBasePin{
 		Id:        pin.Id,
+		UserId: pin.User.Id,
 		BoardId:   pin.BoardId,
 		Name:      pin.Name,
 		Image:     pin.Image,

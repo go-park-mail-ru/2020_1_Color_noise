@@ -14,53 +14,53 @@ const (
 		" comments = comments + 1" +
 		" WHERE id = $1"
 	DeletePin = "DELETE from pins WHERE id = $1 CASCADE;"
-	PinById   = "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.login, users.avatar" +
+	PinById   = "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 		" JOIN users ON pins.user_id = users.id" +
 		" WHERE original = true AND pins.id = $1"
-	PinByUser =  "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.login, users.avatar" +
+	PinByUser =  "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 		" JOIN users ON pins.user_id = users.id" +
 		" WHERE original = true AND user_id = $1  ORDER BY id DESC"
-	PinByBoard =  "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.login, users.avatar" +
+	PinByBoard =  "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 		" JOIN users ON pins.user_id = users.id" +
 		" WHERE board_id = $1"
 	AddTags = "UPDATE pins SET tags= $1 WHERE id = $2 RETURNING 0;"
 
 	PopularDesc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
-		"users.login, users.avatar" +
+		" users.id, users.login, users.avatar" +
 		" FROM pins " +
 		" JOIN users ON pins.user_id = users.id" +
 		" WHERE make_tsvector(name) @@ to_tsquery($1)" +
 		" AND pins.created_at BETWEEN $2 AND $3" +
 		" ORDER BY pins.views DESC OFFSET $4 LIMIT $5;"
 	PopularAsc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
-		" users.login, users.avatar" +
+		" users.id, users.login, users.avatar" +
 		" FROM pins " +
 		" JOIN users ON pins.user_id = users.id" +
 		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
 		" ORDER BY pins.views ASC OFFSET $4 LIMIT $5;"
 	CommentsDesc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
-		" users.login, users.avatar" +
+		" users.id, users.login, users.avatar" +
 		" FROM pins " +
 		" JOIN users ON pins.user_id = users.id" +
 		" WHERE name LIKE $1  AND pins.created_at BETWEEN $2 AND $3" +
 		" ORDER BY pins.comments DESC OFFSET $4 LIMIT $5;"
 	CommentsAsc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
-		" users.login, users.avatar" +
+		" users.id, users.login, users.avatar" +
 		" FROM pins " +
 		" JOIN users ON pins.user_id = users.id" +
 		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
 		" ORDER BY pins.comments ASC OFFSET $4 LIMIT $5;"
 	IdDesc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
-		" users.login, users.avatar" +
+		" users.id, users.login, users.avatar" +
 		" FROM pins " +
 		" JOIN users ON pins.user_id = users.id" +
 		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
 		" ORDER BY pins.id DESC OFFSET $4 LIMIT $5;"
 	IdAsc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
-		" users.login, users.avatar" +
+		" users.id, users.login, users.avatar" +
 		" FROM pins  " +
 		" JOIN users ON pins.user_id = users.id" +
 		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
