@@ -22,12 +22,24 @@ func (db *PgxDB) CreatePin(pin models.DataBasePin) (uint, error) {
 	return id, err
 }
 
-func (db *PgxDB) Save(pinId, boardId uint) error {
+func (db *PgxDB) Save(pinId, boardId uint) (bool, error) {
 	var check uint
 
 	res := db.dbPool.QueryRow(InsertBoardsPin, pinId, boardId, false)
 	err := res.Scan(&check)
-	return err
+
+	if err != nil {
+		if pqError, ok := err.(pgx.PgError); ok {
+			switch pqError.Code {
+			case ForeignKeyViolation:
+				return false, errors.New("pin or board not found")
+			default:
+				//нарушение уникальности
+				return false, errors.New("pin already added")
+			}
+		}
+	}
+	return true, err
 }
 
 func (db *PgxDB) UpdatePin(pin models.DataBasePin) error {
