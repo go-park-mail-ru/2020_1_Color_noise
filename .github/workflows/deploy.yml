@@ -27,7 +27,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: tests
+    #needs: tests
     steps:
       - uses: actions/checkout@v1
       - name: Login to DockerHub
@@ -35,7 +35,7 @@ jobs:
       - name: Build Docker Images
         run: docker-compose build
       - name: Push Docker Image
-        run: docker-compose push main auth chat user
+        run: docker-compose push main auth chat user image
       - name: Fill env file
         run: echo "GITHUB_SHA=$GITHUB_SHA" >> .env
       - name: Upload nginx config result
