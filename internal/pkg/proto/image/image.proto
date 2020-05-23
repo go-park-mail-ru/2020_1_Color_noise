@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package image;
+
+message Address {
+  string Image = 1;
+}
+
+message Tags {
+  repeated string Tags = 1;
+}
+
+service ImageService {
+  rpc Analyze(Address) returns (Tags) {}
+}

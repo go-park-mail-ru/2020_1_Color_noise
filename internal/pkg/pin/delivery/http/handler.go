@@ -13,7 +13,7 @@ import (
 	"strconv"
 )
 
-type Handler struct {
+type Handler struct{
 	pinUsecase pin.IUsecase
 	logger     *zap.SugaredLogger
 }
@@ -26,7 +26,6 @@ func NewHandler(usecase pin.IUsecase, logger *zap.SugaredLogger) *Handler {
 }
 
 func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
-
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -285,13 +284,19 @@ func (ph *Handler) Save(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ph.pinUsecase.Save(uint(pinId), uint(input.BoardId))
+	status, err := ph.pinUsecase.Save(uint(pinId), uint(input.BoardId))
 	if err != nil {
 		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	response.Respond(w, http.StatusCreated, map[string]string{
-		"message": "Ok",
-	})
+	if status {
+		response.Respond(w, http.StatusCreated, map[string]string{
+			"message": "OK",
+		})
+	} else {
+		response.Respond(w, http.StatusOK, map[string]string{
+			"message": "OK",
+		})
+	}
 }
