@@ -56,12 +56,12 @@ func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
 			Id:          pin.Id,
 			BoardId:     pin.BoardId,
 			User:        &models.ResponseUser{
-				/*Id: pin.User.Id,
+				Id: pin.User.Id,
 				Login: pin.User.Login,
 				About: pin.User.About,
 				Avatar: pin.User.Avatar,
 				Subscriptions: pin.User.Subscriptions,
-				Subscribers: pin.User.Subscribers,*/
+				Subscribers: pin.User.Subscribers,
 			},
 			Name:        pin.Name,
 			Description: pin.Description,
