@@ -91,6 +91,9 @@ func (db *PgxDB) GetBoardLastPin(board models.DataBaseBoard) (models.Pin, error)
 	if err != nil {
 		return models.Pin{}, errors.New("board not found")
 	}
+	p := models.GetPin(res)
+	us, _ := db.GetUserById(models.DataBaseUser{Id:res.UserId})
+	p.User = &us
 
-	return models.GetPin(res), nil
+	return p, nil
 }

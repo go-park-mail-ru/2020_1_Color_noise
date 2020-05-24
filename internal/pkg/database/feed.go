@@ -20,6 +20,8 @@ func (db *PgxDB) GetSubFeed(user models.DataBaseUser, start, limit int) ([]*mode
 			return nil, errors.New("pin not found")
 		}
 		p := models.GetPin(tmp)
+		us, _ := db.GetUserById(models.DataBaseUser{Id:tmp.UserId})
+		p.User = &us
 		res = append(res, &p)
 	}
 	return res, nil
@@ -40,6 +42,8 @@ func (db *PgxDB) GetMainFeed(user models.DataBaseUser, start, limit int) ([]*mod
 			return res, nil
 		}
 		p := models.GetPin(tmp)
+		us, _ := db.GetUserById(models.DataBaseUser{Id:tmp.UserId})
+		p.User = &us
 		res = append(res, &p)
 	}
 	return res, nil
@@ -60,6 +64,8 @@ func (db *PgxDB) GetRecFeed(user models.DataBaseUser, start, limit int) ([]*mode
 			return res, nil
 		}
 		p := models.GetPin(tmp)
+		us, _ := db.GetUserById(models.DataBaseUser{Id:tmp.UserId})
+		p.User = &us
 		res = append(res, &p)
 	}
 	return res, nil
