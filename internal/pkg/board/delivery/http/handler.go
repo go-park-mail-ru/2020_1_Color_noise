@@ -106,7 +106,14 @@ func (bh *Handler) GetBoard(w http.ResponseWriter, r *http.Request) {
 		respPin = append(respPin, &models.ResponsePin{
 			Id:          pin.Id,
 			BoardId:     pin.BoardId,
-			User:      pin.User,
+			User:        &models.ResponseUser{
+				Id: pin.User.Id,
+				Login: pin.User.Login,
+				About: pin.User.About,
+				Avatar: pin.User.Avatar,
+				Subscriptions: pin.User.Subscriptions,
+				Subscribers: pin.User.Subscribers,
+			},
 			Name:        pin.Name,
 			Description: pin.Description,
 			Image:       pin.Image,
@@ -167,7 +174,14 @@ func (bh *Handler) GetNameBoard(w http.ResponseWriter, r *http.Request) {
 		LastPin: &models.ResponsePin{
 			Id:          board.LastPin.Id,
 			BoardId:     board.LastPin.BoardId,
-			User:      board.LastPin.User,
+			User:        &models.ResponseUser{
+				Id: board.LastPin.User.Id,
+				Login: board.LastPin.User.Login,
+				About: board.LastPin.User.About,
+				Avatar: board.LastPin.User.Avatar,
+				Subscribers: board.LastPin.User.Subscribers,
+				Subscriptions: board.LastPin.User.Subscriptions,
+			},
 			Name:        board.LastPin.Name,
 			Description: board.LastPin.Description,
 			Image:       board.LastPin.Image,
@@ -221,7 +235,14 @@ func (bh *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 			LastPin: &models.ResponsePin{
 				Id:          board.LastPin.Id,
 				BoardId:     board.LastPin.BoardId,
-				User:      board.LastPin.User,
+				User:        &models.ResponseUser{
+					Id: board.LastPin.User.Id,
+					Login: board.LastPin.User.Login,
+					About: board.LastPin.User.About,
+					Avatar: board.LastPin.User.Avatar,
+					Subscribers: board.LastPin.User.Subscribers,
+					Subscriptions: board.LastPin.User.Subscriptions,
+				},
 				Name:        board.LastPin.Name,
 				Description: board.LastPin.Description,
 				Image:       board.LastPin.Image,
