@@ -54,7 +54,7 @@ func (pr *Repository) GetByID(id uint) (*models.Pin, error) {
 func (pr *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.Pin, error) {
 
 	p := models.DataBasePin{UserId: userId}
-	result, err := pr.db.GetPinsByUserId(p)
+	result, err := pr.db.GetPinsByUserId(p, start, limit)
 	if err != nil {
 		return result, PinNotFound.Newf("Pins not found, user id = %d", userId)
 	}

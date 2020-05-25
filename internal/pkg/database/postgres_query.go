@@ -21,7 +21,7 @@ const (
 	PinByUser =  "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 		" JOIN users ON pins.user_id = users.id" +
-		" WHERE original = true AND user_id = $1  ORDER BY pins.id DESC"
+		" WHERE original = true AND user_id = $1  ORDER BY pins.id DESC OFFSET $2 LIMIT $3;"
 	PinByBoard =  "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 		" JOIN users ON pins.user_id = users.id" +
