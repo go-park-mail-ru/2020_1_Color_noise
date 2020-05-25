@@ -56,6 +56,20 @@ type ResponsePin struct {
 	Tags        []string      `json:"tags,omitempty"`
 }
 
+func GetResponsePin(pin *Pin) *ResponsePin {
+	if pin == nil {
+		return nil
+	}
+	return &ResponsePin{
+		Id:          pin.Id,
+		BoardId:     pin.BoardId,
+		User:        GetResponseUser(pin.User),
+		Name:        pin.Name,
+		Description: pin.Description,
+		Image:       pin.Image,
+	}
+}
+
 func GetPin(pin DataBasePin) Pin {
 	tmp := Pin{
 		Id:        pin.Id,

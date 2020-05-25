@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"2020_1_Color_noise/internal/pkg/metric"
+	"2020_1_Color_noise/internal/pkg/error"
 	authService "2020_1_Color_noise/internal/pkg/proto/session"
 	"context"
 	"fmt"
@@ -132,8 +133,10 @@ func (m *Middleware) AccessLogMiddleware(next http.Handler) http.Handler {
 func (m *Middleware) PanicMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
+			reqId := r.Context().Value("ReqId")
 			if err := recover(); err != nil {
-				fmt.Println("recovered", err)
+				e := error.NoType.Newf("recovered err: %s", err)
+				error.ErrorHandler(w, r, m.logger, reqId, e)
 			}
 		}()
 		next.ServeHTTP(w, r)

@@ -66,21 +66,21 @@ type ResponseUser struct {
 	Subscribers   int    `json:"subscribers"`
 }
 
-/*
-func ValidateEmail(email string) bool {
-	matched, _ := regexp.MatchString(`^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$`, email)
-	return matched
-}
+func GetResponseUser(u *User) *ResponseUser {
+	if u == nil {
+		return nil
+	}
 
-func ValidateLogin(login string) bool {
-	matched, _ := regexp.MatchString(`^[\w.-_@$]+$`, login)
-	return matched
+	return &ResponseUser{
+		Id:            u.Id,
+		Email:         u.Email,
+		Login:         u.Login,
+		About:         u.About,
+		Avatar:        u.Avatar,
+		Subscribers:   u.Subscribers,
+		Subscriptions: u.Subscriptions,
+	}
 }
-
-func ValidatePassword(password string) bool {
-	return len(password) > 6
-}
-*/
 
 func GetUser(u DataBaseUser) User {
 	tmp := User{
