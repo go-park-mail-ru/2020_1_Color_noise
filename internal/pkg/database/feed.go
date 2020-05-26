@@ -9,6 +9,7 @@ func (db *PgxDB) GetSubFeed(user models.DataBaseUser, start, limit int) ([]*mode
 	var res []*models.Pin
 
 	row, err := db.dbPool.Query(Feed, user.Id, limit, start)
+	defer row.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -31,6 +32,7 @@ func (db *PgxDB) GetMainFeed(user models.DataBaseUser, start, limit int) ([]*mod
 	var res []*models.Pin
 
 	row, err := db.dbPool.Query(Main, limit, start)
+	defer row.Close()
 	if err != nil {
 		return nil, errors.New("db problem")
 	}
@@ -53,6 +55,7 @@ func (db *PgxDB) GetRecFeed(user models.DataBaseUser, start, limit int) ([]*mode
 	var res []*models.Pin
 
 	row, err := db.dbPool.Query(Recommendation, limit, start)
+	defer row.Close()
 	if err != nil {
 		return nil, err
 	}

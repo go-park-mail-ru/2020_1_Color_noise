@@ -52,6 +52,7 @@ func (db *PgxDB) GetMessages(userId, otherId uint, start int, limit int) ([]*mod
 	}
 
 	row, err := db.dbPool.Query(GetMsg, sender.Id, receiver.Id, limit, start)
+	defer row.Close()
 
 	if err != nil {
 		return nil, err
@@ -87,6 +88,7 @@ func (db *PgxDB) GetUsers(userId uint, start int, limit int) ([]*models.User, er
 		return nil, err
 	}
 	row, err := db.dbPool.Query(GetChats, sender.Id, limit, start)
+	defer row.Close()
 	if err != nil {
 		return nil, err
 	}

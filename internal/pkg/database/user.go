@@ -84,6 +84,7 @@ func (db *PgxDB) GetUserByLogin(user models.DataBaseUser, start int, limit int) 
 
 	var users []*models.User
 	row, err := db.dbPool.Query(UserByLogin, user.Login, limit, start)
+	defer row.Close()
 
 	if err != nil {
 		return nil, errors.New("db error")
@@ -225,6 +226,7 @@ func (db *PgxDB) GetUserSubUsers(user models.DataBaseUser) ([]*models.User, erro
 func (db *PgxDB) GetUserSupUsers(user models.DataBaseUser) ([]*models.User, error) {
 	var users []*models.User
 	row, err := db.dbPool.Query(UserSubscriptionsUsers, user.Id)
+	defer row.Close()
 
 	if err != nil {
 		return nil, errors.New("db error")

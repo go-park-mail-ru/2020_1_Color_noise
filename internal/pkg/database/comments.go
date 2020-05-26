@@ -57,6 +57,7 @@ func (db *PgxDB) GetCommentsByPinId(cm models.DataBaseComment, start, limit int)
 	var res []*models.Comment
 	var usid uint
 	r, err := db.dbPool.Query(CommentByPin, cm.PinId, limit, start)
+	defer r.Close()
 	if err != nil {
 		return nil, errors.New("fatal error")
 	}
@@ -78,6 +79,7 @@ func (db *PgxDB) GetCommentsByText(cm models.DataBaseComment, start, limit int) 
 	var res []*models.Comment
 	var usid uint
 	r, err := db.dbPool.Query(CommentByText, cm.Text, limit, start)
+	defer r.Close()
 	if err != nil {
 		return nil, errors.New("db error")
 	}

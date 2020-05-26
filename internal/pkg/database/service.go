@@ -33,6 +33,7 @@ func (db *PgxDB) Open(con config.DataBaseConfig) (err error) {
 		AcquireTimeout: 10 * time.Second,
 		AfterConnect:   nil,
 	}
+	
 
 	if db.dbPool != nil {
 		return errors.New("pool was created already")

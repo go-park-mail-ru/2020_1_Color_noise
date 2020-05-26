@@ -11,6 +11,8 @@ func (db *PgxDB) GetNotifications(user models.DataBaseUser, start, limit int) ([
 	var res []*models.Notification
 
 	row, err := db.dbPool.Query(GetNoti, user.Id, limit, start)
+	defer row.Close()
+
 	if err != nil {
 		return nil, err
 	}
