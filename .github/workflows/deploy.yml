@@ -48,11 +48,16 @@ jobs:
         with:
           name: docker
           path: ./docker-compose.yml
-      - name: Upload docker-compose result
+      - name: Upload env result
         uses: actions/upload-artifact@v2
         with:
           name: env
           path: ./.env
+      - name: Upload prometheus file
+        uses: actions/upload-artifact@v2
+        with:
+          name: prometheus
+          path: ./prometheus.yml
 
   deploy:
     runs-on: ubuntu-latest
@@ -83,6 +88,19 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           source: "config/nginx.conf"
           target: "/home/ubuntu/2020_1_Color_noise/server/nginx"
+          strip_components: 1
+      - name: Download env
+        uses: actions/download-artifact@v1
+        with:
+          name: env
+      - name: Transfer nginx file to server
+        uses: appleboy/scp-action@v0.0.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          source: "env/.env"
+          target: "/home/ubuntu/2020_1_Color_noise"
           strip_components: 1
       - name: Download env
         uses: actions/download-artifact@v1

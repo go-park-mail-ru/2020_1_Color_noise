@@ -75,17 +75,7 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
-
 	reqId := r.Context().Value("ReqId")
-
-	/*
-		isAuth := r.Context().Value("IsAuth")
-		if isAuth != true {
-			err := error.Unauthorized.New("Get pin: user is unauthorized")
-			error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-			return
-		}
-	*/
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -95,7 +85,12 @@ func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pin, err := ph.pinUsecase.GetById(uint(id))
+	userId, ok := r.Context().Value("Id").(uint)
+	if ok == false {
+		userId = 0
+	}
+
+	pin, err := ph.pinUsecase.GetById(uint(id), userId)
 	if err != nil {
 		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return

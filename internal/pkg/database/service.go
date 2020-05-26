@@ -29,7 +29,7 @@ func (db *PgxDB) Open(con config.DataBaseConfig) (err error) {
 
 	poolConfig := pgx.ConnPoolConfig{
 		ConnConfig:     connConfig,
-		MaxConnections: 50,
+		MaxConnections: 1,
 		AcquireTimeout: 10 * time.Second,
 		AfterConnect:   nil,
 	}

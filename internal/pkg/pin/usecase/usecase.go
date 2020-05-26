@@ -11,7 +11,9 @@ import (
 	"context"
 	"encoding/base64"
 	"log"
+	"math/rand"
 	"strings"
+	"time"
 )
 
 type Usecase struct {
@@ -83,10 +85,26 @@ func (pu *Usecase) Save(pinId uint, boardId uint) (bool, error) {
 	return status, nil
 }
 
-func (pu *Usecase) GetById(id uint) (*models.Pin, error) {
+func (pu *Usecase) GetById(id uint, userId uint) (*models.Pin, error) {
 	pin, err := pu.repoPin.GetByID(id)
 	if err != nil {
 		return nil, Wrapf(err, "Getting pin by id error, pinId: %d", id)
+	}
+
+	if userId != 0 {
+		rand.Seed(time.Now().UnixNano())
+		n := rand.Intn(10)
+
+		if n < 6 {
+			go func() {
+				_, err = pu.userServ.UpdatePreferences(context.Background(), &userService.Pref{UserId: int32(userId),
+					Preferences: pin.Tags})
+				if err != nil {
+					log.Println("Getting pin error, update preferences of user: ", err)
+				}
+
+			} ()
+		}
 	}
 
 	return pin, nil
