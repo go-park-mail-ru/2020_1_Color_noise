@@ -93,7 +93,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: env
-      - name: Transfer nginx file to server
+      - name: Transfer env file to server
         uses: appleboy/scp-action@v0.0.10
         with:
           host: ${{ secrets.HOST }}
@@ -102,17 +102,17 @@ jobs:
           source: "env/.env"
           target: "/home/ubuntu/2020_1_Color_noise"
           strip_components: 1
-      - name: Download env
+      - name: Download prometheus
         uses: actions/download-artifact@v1
         with:
-          name: env
-      - name: Transfer nginx file to server
+          name: prometheus
+      - name: Transfer prometheus file to server
         uses: appleboy/scp-action@v0.0.10
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          source: "env/.env"
+          source: "prometheus/prometheus.yml"
           target: "/home/ubuntu/2020_1_Color_noise"
           strip_components: 1
       - name: delete docker image
@@ -122,7 +122,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          script: cd 2020_1_Color_noise && sudo docker-compose stop && sudo docker-compose rm -f image && sudo docker-compose rm -f main && sudo docker-compose rm -f auth && sudo docker-compose rm -f chat && sudo docker-compose rm -f user && sudo docker rmi $(sudo docker images -a | grep "zinterest" | awk '{print $3}')
+          script: cd 2020_1_Color_noise && sudo docker-compose rm -f image && sudo docker-compose rm -f main && sudo docker-compose rm -f auth && sudo docker-compose rm -f chat && sudo docker-compose rm -f user && sudo docker rmi $(sudo docker images -a | grep "zinterest" | awk '{print $3}')
       - name: deploy docker image
         uses: appleboy/ssh-action@master
         with:
