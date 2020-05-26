@@ -88,10 +88,10 @@ func (db *PgxDB) GetPinById(pin models.DataBasePin) (models.Pin, error) {
 	return rp, nil
 }
 
-func (db *PgxDB) GetPinsByUserId(pin models.DataBasePin) ([]*models.Pin, error) {
+func (db *PgxDB) GetPinsByUserId(pin models.DataBasePin, start, limit int) ([]*models.Pin, error) {
 	var res []*models.Pin
 
-	row, err := db.dbPool.Query(PinByUser, pin.UserId)
+	row, err := db.dbPool.Query(PinByUser, pin.UserId, start, limit)
 	if err != nil {
 		return nil, err
 	}
