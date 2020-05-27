@@ -4,7 +4,6 @@ import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
-	"time"
 )
 
 type Repository struct {
@@ -44,20 +43,8 @@ func (lr *Repository) GetRecommendationList(id uint, start int, limit int) ([]*m
 		return nil, UserNotFound.Newf("User not found, user id = %d", user.Id)
 	}
 
-	result := make([]*models.Pin, 0)
-	for _, tags := range user.Tags {
-		pin := models.DataBasePin{Name: tags}
-		pins, ok := lr.db.GetPinsByName(pin, time.Time{}, time.Now(), true, "", start, limit)
-		if ok != nil {
-			break
-		}
-		result = append(result, pins...)
 
-	}
+	pins, ok := lr.db.GetPinsByTag(user.Tags[0], user.Tags[1], start, limit)
 
-	if len(result) > limit {
-		return result[0:limit], nil
-	}
-
-	return result, nil
+	return pins, ok
 }

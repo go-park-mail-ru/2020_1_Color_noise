@@ -65,6 +65,12 @@ const (
 		" JOIN users ON pins.user_id = users.id" +
 		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
 		" ORDER BY pins.id ASC OFFSET $4 LIMIT $5;"
+
+	PinByTag = "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
+		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
+		" JOIN users ON pins.user_id = users.id" +
+		" WHERE pins.tags[0] = $1 or pins.tags[1] = $1" +
+		" pins.tags[0] = $2 or pins.tags[1] = $2 ORDER BY pin.views OFFSET $3 LIMIT $4;"
 )
 
 const (

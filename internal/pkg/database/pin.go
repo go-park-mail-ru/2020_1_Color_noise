@@ -10,7 +10,7 @@ import (
 func (db *PgxDB) CreatePin(pin models.DataBasePin) (uint, error) {
 	var id, check uint
 
-	res := db.dbPool.QueryRow(InsertPin, pin.UserId, pin.Name, pin.Description, pin.Image, time.Now(), []string{}, 0, 0)
+	res := db.dbPool.QueryRow(InsertPin, pin.UserId, pin.Name, pin.Description, pin.Image, time.Now(), []string{"", ""}, 0, 0)
 	err := res.Scan(&id)
 
 	if err != nil {
@@ -161,6 +161,32 @@ func (db *PgxDB) GetPinsByBoardID(board models.DataBaseBoard) ([]*models.Pin, er
 	var res []*models.Pin
 
 	row, err := db.dbPool.Query(PinByBoard, board.Id)
+	defer row.Close()
+	if err != nil {
+		return nil, err
+	}
+	for row.Next() {
+		var tmp models.DataBasePin
+		var us models.DataBaseUser
+		ok := row.Scan(&tmp.Id, &tmp.Name, &tmp.Description,
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags,
+			&us.Id, &us.Login, &us.Avatar)
+		if ok != nil {
+			return nil, ok
+		}
+		ru := models.GetUser(us)
+		p := models.GetPin(tmp)
+		p.User = &ru
+		res = append(res, &p)
+	}
+	return res, nil
+}
+
+func (db *PgxDB) GetPinsByTag(tag, tag2 string, start, limit int) ([]*models.Pin, error) {
+	var res []*models.Pin
+
+
+	row, err := db.dbPool.Query(PinByTag, tag, tag2, start, limit)
 	defer row.Close()
 	if err != nil {
 		return nil, err
