@@ -205,7 +205,7 @@ func (uu *UserUsecase) UpdatePreferences(userId uint, preferences []string) erro
 		return Wrap(err, "UpdatePreferences error")
 	}
 
-	log.Println(u.Tags)
+	log.Println(u.Tags, userId, preferences)
 
 	for _, tag := range u.Tags {
 		if len(preferences) == 10 {
