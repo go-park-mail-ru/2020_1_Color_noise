@@ -230,8 +230,10 @@ func (us *UserService) Search(ctx context.Context, in *userService.Searching) (*
 }
 
 func (us *UserService) UpdatePreferences(ctx context.Context, in *userService.Pref) (*userService.Nothing, error) {
-	log.Println("here ", in)
+	log.Println("here ", in.Preferences, in.UserId)
 	err := us.usecase.UpdatePreferences(uint(in.UserId), in.Preferences)
+	log.Println("here ", in.Preferences, in.UserId)
+	log.Println("error ", err)
 	if err != nil {
 		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC UpdatePreferences error").Error())
 	}
