@@ -9,7 +9,7 @@ import (
 
 func (db *PgxDB) CreateUser(user models.DataBaseUser) (uint, error) {
 	res := db.dbPool.QueryRow(InsertUser, user.Email, user.Login, user.EncryptedPassword, user.About,
-		user.Avatar, user.Subscribers, user.Subscriptions, time.Now(), []string{})
+		user.Avatar, user.Subscribers, user.Subscriptions, time.Now(), []string{"", ""})
 	var id uint
 	err := res.Scan(&id)
 
