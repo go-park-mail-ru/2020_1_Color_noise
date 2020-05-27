@@ -204,16 +204,32 @@ func (uu *UserUsecase) UpdatePreferences(userId uint, preferences []string) erro
 		return Wrap(err, "UpdatePreferences error")
 	}
 
-	for _, tag := range u.Tags {
-		if len(preferences) == 10 {
-			break
+	counter := 0
+	for i, tag := range u.Tags {
+		isExists := false
+
+		for _, pref := range preferences {
+			if tag == pref {
+				isExists = true
+				break
+			}
 		}
-		preferences = append(preferences, tag)
+
+		if !isExists {
+			counter++
+			if len(preferences) < 10 {
+				preferences = append(preferences, tag)
+			} else {
+				preferences[i] = tag
+			}
+		}
 	}
 
-	err = uu.repo.UpdatePreferences(userId, preferences);
-	if err != nil {
-		return Wrap(err, "UpdatePreferences error")
+	if counter != 0 {
+		err = uu.repo.UpdatePreferences(userId, preferences);
+		if err != nil {
+			return Wrap(err, "UpdatePreferences error")
+		}
 	}
 
 	return nil
