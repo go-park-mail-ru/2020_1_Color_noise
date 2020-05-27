@@ -86,7 +86,7 @@ func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
-	if ok == false {
+	if !ok  {
 		userId = 0
 	}
 

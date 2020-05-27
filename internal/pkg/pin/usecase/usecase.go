@@ -91,19 +91,21 @@ func (pu *Usecase) GetById(id uint, userId uint) (*models.Pin, error) {
 		return nil, Wrapf(err, "Getting pin by id error, pinId: %d", id)
 	}
 
+
+	log.Println("userID: ", userId)
 	if userId != 0 {
 		rand.Seed(time.Now().UnixNano())
 		n := rand.Intn(10)
 
 		if n < 6 {
-			go func() {
-				_, err = pu.userServ.UpdatePreferences(context.Background(), &userService.Pref{UserId: int32(userId),
-					Preferences: pin.Tags})
+			go func(id uint, tags []string) {
+				_, err = pu.userServ.UpdatePreferences(context.Background(), &userService.Pref{Preferences: tags,
+					UserId: int32(id)})
 				if err != nil {
 					log.Println("Getting pin error, update preferences of user: ", err)
 				}
 
-			} ()
+			} (userId, pin.Tags)
 		}
 	}
 

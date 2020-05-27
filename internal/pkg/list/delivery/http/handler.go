@@ -169,14 +169,7 @@ func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request)
 		resp = append(resp, models.ResponsePin{
 			Id:          pin.Id,
 			BoardId:     pin.BoardId,
-			User:        &models.ResponseUser{
-				Id: pin.User.Id,
-				Login: pin.User.Login,
-				About: pin.User.About,
-				Avatar: pin.User.Avatar,
-				Subscriptions: pin.User.Subscriptions,
-				Subscribers: pin.User.Subscribers,
-			},
+			User:        models.GetResponseUser(pin.User),
 			Name:        pin.Name,
 			Description: pin.Description,
 			Image:       pin.Image,

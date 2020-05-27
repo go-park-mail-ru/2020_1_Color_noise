@@ -88,8 +88,8 @@ message Users {
 }
 
 message Pref {
-  int32 UserId = 1;
-  repeated string Preferences = 2;
+  repeated string Preferences = 1;
+  int32 UserId = 2;
 }
 
 message Status {

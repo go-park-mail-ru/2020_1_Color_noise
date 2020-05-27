@@ -64,7 +64,8 @@ CREATE TABLE pins (
 CREATE TABLE boards_pins (
                              image_id int REFERENCES pins(id) NOT NULL ,
                              board_id int REFERENCES boards(id) NOT NULL,
-                             original boolean
+                             original boolean,
+                             UNIQUE (image_id, board_id)
 );
 
 
