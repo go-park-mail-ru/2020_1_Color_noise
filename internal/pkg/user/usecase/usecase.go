@@ -6,7 +6,6 @@ import (
 	"2020_1_Color_noise/internal/pkg/user"
 	"2020_1_Color_noise/internal/pkg/utils"
 	"github.com/asaskevich/govalidator"
-	"log"
 )
 
 type UserUsecase struct {
@@ -204,8 +203,6 @@ func (uu *UserUsecase) UpdatePreferences(userId uint, preferences []string) erro
 	if err != nil {
 		return Wrap(err, "UpdatePreferences error")
 	}
-
-	log.Println(u.Tags, userId, preferences)
 
 	for _, tag := range u.Tags {
 		if len(preferences) == 10 {

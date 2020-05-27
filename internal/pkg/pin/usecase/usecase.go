@@ -96,8 +96,7 @@ func (pu *Usecase) GetById(id uint, userId uint) (*models.Pin, error) {
 	if userId != 0 {
 		rand.Seed(time.Now().UnixNano())
 		n := rand.Intn(10)
-		log.Println("random: ", n)
-		log.Println("tags: ", pin.Tags)
+
 		if n < 6 {
 			go func(id uint, tags []string) {
 				_, err = pu.userServ.UpdatePreferences(context.Background(), &userService.Pref{Preferences: tags,

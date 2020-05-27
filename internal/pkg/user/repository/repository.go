@@ -5,7 +5,6 @@ import (
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
 	"database/sql"
-	"fmt"
 )
 
 type Repository struct {
@@ -19,13 +18,15 @@ func NewRepo(bd database.DBInterface) *Repository {
 }
 
 func (ur *Repository) UpdatePreferences(userId uint, preferences []string) error {
+	err := ur.bd.AddUserTags(userId, preferences)
+	if err != nil {
+		return Wrap(err, "Repo: Error in during Update Preferences")
+	}
 
-	return ur.bd.AddTags(userId, preferences)
+	return nil
 }
 
 func (ur *Repository) Create(user *models.User) (*models.User, error) {
-	fmt.Println(*user)
-
 	_, err := ur.checkLogin(user.Login)
 	if err == nil {
 		return nil, LoginIsExist.New("Repo: Error in during creating")
