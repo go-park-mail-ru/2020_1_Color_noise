@@ -69,8 +69,8 @@ const (
 	PinByTag = "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 		" JOIN users ON pins.user_id = users.id" +
-		" WHERE pins.tags[0] = $1 or pins.tags[1] = $1" +
-		" pins.tags[0] = $2 or pins.tags[1] = $2 ORDER BY pin.views OFFSET $3 LIMIT $4;"
+		" WHERE pins.tags[0] = $1 or pins.tags[1] = $1 or" +
+		" pins.tags[0] = $2 or pins.tags[1] = $2 ORDER BY pins.views OFFSET $3 LIMIT $4;"
 )
 
 const (
