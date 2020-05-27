@@ -8,6 +8,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"log"
 )
 
 type UserService struct {
@@ -229,6 +230,7 @@ func (us *UserService) Search(ctx context.Context, in *userService.Searching) (*
 }
 
 func (us *UserService) UpdatePreferences(ctx context.Context, in *userService.Pref) (*userService.Nothing, error) {
+	log.Println("here ", in)
 	err := us.usecase.UpdatePreferences(uint(in.UserId), in.Preferences)
 	if err != nil {
 		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC UpdatePreferences error").Error())
