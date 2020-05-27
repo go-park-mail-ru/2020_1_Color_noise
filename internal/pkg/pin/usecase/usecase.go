@@ -99,15 +99,14 @@ func (pu *Usecase) GetById(id uint, userId uint) (*models.Pin, error) {
 		log.Println("random: ", n)
 		log.Println("tags: ", pin.Tags)
 		if n < 6 {
-			go func() {
-				pin.Tags = append(pin.Tags, "hello")
-				_, err = pu.userServ.UpdatePreferences(context.Background(), &userService.Pref{UserId: int32(userId),
-					Preferences: pin.Tags})
+			go func(id uint, tags []string) {
+				_, err = pu.userServ.UpdatePreferences(context.Background(), &userService.Pref{Preferences: tags,
+					UserId: int32(id)})
 				if err != nil {
 					log.Println("Getting pin error, update preferences of user: ", err)
 				}
 
-			} ()
+			} (userId, pin.Tags)
 		}
 	}
 
