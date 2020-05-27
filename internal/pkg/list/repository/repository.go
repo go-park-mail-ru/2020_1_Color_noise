@@ -44,7 +44,7 @@ func (lr *Repository) GetRecommendationList(id uint, start int, limit int) ([]*m
 	}
 
 
-	pins, ok := lr.db.GetPinsByTag(user.Tags[0], user.Tags[1], start, limit)
+	pins, ok := lr.db.GetPinsByTag(user.Tags, start, limit)
 
 	return pins, ok
 }

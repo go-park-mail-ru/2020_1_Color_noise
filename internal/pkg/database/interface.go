@@ -30,7 +30,7 @@ type DBInterface interface {
 	AddTags(pinID uint, tags []string) error
 	UpdateComments(pinID uint) error
 	UpdateViews(pinID uint) error
-	GetPinsByTag(tag, tag2 string, start, limit int) ([]*models.Pin, error)
+	GetPinsByTag(tags []string, start, limit int) ([]*models.Pin, error)
 
 	CreateUser(user models.DataBaseUser) (uint, error)
 	UpdateUser(user models.DataBaseUser) error

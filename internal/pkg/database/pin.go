@@ -182,11 +182,11 @@ func (db *PgxDB) GetPinsByBoardID(board models.DataBaseBoard) ([]*models.Pin, er
 	return res, nil
 }
 
-func (db *PgxDB) GetPinsByTag(tag, tag2 string, start, limit int) ([]*models.Pin, error) {
+func (db *PgxDB) GetPinsByTag(tags []string, start, limit int) ([]*models.Pin, error) {
 	var res []*models.Pin
 
 
-	row, err := db.dbPool.Query(PinByTag, tag, tag2, start, limit)
+	row, err := db.dbPool.Query(PinByTag, tags, start, limit)
 	defer row.Close()
 	if err != nil {
 		return nil, err
