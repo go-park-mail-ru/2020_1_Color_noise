@@ -74,10 +74,30 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 	return id, nil
 }
 */
-func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, error) {
-	name, err := utils.SaveImage(buffer)
+
+func (pu *Usecase) CreatePin(input *models.InputPin, id uint, userId uint) (uint, error) {
+	p := &models.Pin{
+		Id: id,
+		User:        &models.User{
+			Id: userId,
+		},
+		BoardId:     uint(input.BoardId),
+		Name:        input.Name,
+		Description: input.Description,
+	}
+
+	id, err := pu.repoPin.CreatePin(p)
 	if err != nil {
 		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
+	}
+
+	return id, nil
+}
+
+func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, []string, error) {
+	name, err := utils.SaveImage(buffer)
+	if err != nil {
+		return 0, []string{}, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
 	p := &models.Pin {
@@ -90,26 +110,46 @@ func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, error) {
 
 	id, err := pu.repoPin.SaveImage(p)
 	if err != nil {
-		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
+		return 0, []string{}, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
+
+	timer := time.NewTimer(15 * time.Minute)
+
+	go func(t *time.Timer, pinId uint, pu *Usecase) {
+		select {
+		case <-timer.C:
+			p, err := pu.repoPin.GetByID(id)
+			if err != nil {
+				log.Println("error in timer: getting pin error ", pinId)
+				return
+			}
+
+			if p.Name == "" || p.BoardId < 1 {
+				err = pu.repoPin.Delete(pinId, p.User.Id)
+				if err != nil {
+					log.Println("error in timer: deleting pin error ", pinId)
+				}
+
+				err = utils.DeleteImage(p.Image)
+				if err != nil {
+					log.Println("error in timer: deleting image error ", pinId)
+				}
+			}
+		}
+	} (timer, id, pu)
 
 	err = pu.Analyze(id, name)
 	if err != nil {
-		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
+		log.Println(err, " Creating pin error, userId ", userId)
+		return id, []string{}, nil
 	}
 
-	return id, nil
+	return id, []string{}, nil
 }
 
 
 func (pu *Usecase) Save(pinId uint, boardId uint) (bool, error) {
 	return false, nil
-}
-
-
-func (pu *Usecase) CreatePin(input *models.InputPin, userId uint) (uint, error) {
-
-	return 0, nil
 }
 
 func (pu *Usecase) GetById(id uint, userId uint) (*models.Pin, error) {
@@ -118,8 +158,6 @@ func (pu *Usecase) GetById(id uint, userId uint) (*models.Pin, error) {
 		return nil, Wrapf(err, "Getting pin by id error, pinId: %d", id)
 	}
 
-
-	log.Println("userID: ", userId)
 	if userId != 0 {
 		rand.Seed(time.Now().UnixNano())
 		n := rand.Intn(10)

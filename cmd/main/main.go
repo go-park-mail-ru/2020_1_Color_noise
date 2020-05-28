@@ -152,7 +152,8 @@ func main() {
 	r.HandleFunc("/api/user/following/{id:[0-9]+}/status", userDelivery.IsFollowed).Methods("GET")
 	//r.HandleFunc("/api/user", userDelivery.Delete).Methods("DELETE")
 
-	r.HandleFunc("/api/pin", pinDelivery.Create).Methods("POST")
+	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.CreatePin).Methods("POST")
+	r.HandleFunc("/api/pin/image", pinDelivery.CreateImage).Methods("POST")
 	r.HandleFunc("/api/pin/saving/{id:[0-9]+}", pinDelivery.Save).Methods("POST")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.GetPin).Methods("GET")
 	r.HandleFunc("/api/pin/user/{id:[0-9]+}", pinDelivery.Fetch).Methods("GET")

@@ -27,7 +27,8 @@ func NewHandler(usecase pin.IUsecase, logger *zap.SugaredLogger) *Handler {
 	}
 }
 
-func (ph *Handler) CreatePin(w http.ResponseWriter, r *http.Request) {
+/*
+func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -75,6 +76,64 @@ func (ph *Handler) CreatePin(w http.ResponseWriter, r *http.Request) {
 
 	response.Respond(w, http.StatusCreated, resp)
 }
+*/
+
+func (ph *Handler) CreatePin(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Create pin: user is unauthorized")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting a pin"), "Bad id")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	userId, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	input := &models.InputPin{}
+
+	err = easyjson.UnmarshalFromReader(r.Body, input)
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation pin"), "Wrong body of request")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	_, err = govalidator.ValidateStruct(input)
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
+			"Name shouldn't be empty and longer 60 characters. "+
+				"Description shouldn't be empty and longer 1000 characters. "+
+				"Image should be base64")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	pinId, err := ph.pinUsecase.CreatePin(input, uint(id), userId)
+	if err != nil {
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	resp := &models.ResponsePin{
+		Id: pinId,
+	}
+
+	response.Respond(w, http.StatusCreated, resp)
+}
 
 func (ph *Handler) CreateImage(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
@@ -95,7 +154,7 @@ func (ph *Handler) CreateImage(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseMultipartForm(5 * 1024 * 1025)
 	if err != nil {
-		err = error.Wrap(err, "Decoding error during updating password")
+		err = error.TooMuchSize.Wrap(err, "Decoding error during updating password")
 		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
@@ -116,14 +175,15 @@ func (ph *Handler) CreateImage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	b := buffer.Bytes()
-	id, err := ph.pinUsecase.SaveImage(userId, &b)
+	id, names, err := ph.pinUsecase.SaveImage(userId, &b)
 	if err != nil {
 		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	resp := &models.ResponsePin{
-		Id: id,
+	resp :=  map[string]interface{}{
+		"id": id,
+		"names": names,
 	}
 
 	response.Respond(w, http.StatusCreated, resp)
