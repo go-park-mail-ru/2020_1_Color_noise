@@ -127,7 +127,7 @@ func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels1(in *jlexer.Lexer, out 
 				if out.User == nil {
 					out.User = new(ResponseUser)
 				}
-				easyjsonD6aedbb7Decode20201ColorNoiseInternalModels2(in, out.User)
+				(*out.User).UnmarshalEasyJSON(in)
 			}
 		case "board_id":
 			out.BoardId = uint(in.Uint())
@@ -188,7 +188,7 @@ func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels1(out *jwriter.Writer, i
 		} else {
 			out.RawString(prefix)
 		}
-		easyjsonD6aedbb7Encode20201ColorNoiseInternalModels2(out, *in.User)
+		(*in.User).MarshalEasyJSON(out)
 	}
 	if in.BoardId != 0 {
 		const prefix string = ",\"board_id\":"
@@ -265,91 +265,7 @@ func (v *ResponsePin) UnmarshalJSON(data []byte) error {
 func (v *ResponsePin) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels1(l, v)
 }
-func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels2(in *jlexer.Lexer, out *ResponseUser) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeString()
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "id":
-			out.Id = uint(in.Uint())
-		case "email":
-			out.Email = string(in.String())
-		case "login":
-			out.Login = string(in.String())
-		case "about":
-			out.About = string(in.String())
-		case "avatar":
-			out.Avatar = string(in.String())
-		case "subscriptions":
-			out.Subscriptions = int(in.Int())
-		case "subscribers":
-			out.Subscribers = int(in.Int())
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels2(out *jwriter.Writer, in ResponseUser) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"id\":"
-		out.RawString(prefix[1:])
-		out.Uint(uint(in.Id))
-	}
-	if in.Email != "" {
-		const prefix string = ",\"email\":"
-		out.RawString(prefix)
-		out.String(string(in.Email))
-	}
-	{
-		const prefix string = ",\"login\":"
-		out.RawString(prefix)
-		out.String(string(in.Login))
-	}
-	{
-		const prefix string = ",\"about\":"
-		out.RawString(prefix)
-		out.String(string(in.About))
-	}
-	if in.Avatar != "" {
-		const prefix string = ",\"avatar\":"
-		out.RawString(prefix)
-		out.String(string(in.Avatar))
-	}
-	{
-		const prefix string = ",\"subscriptions\":"
-		out.RawString(prefix)
-		out.Int(int(in.Subscriptions))
-	}
-	{
-		const prefix string = ",\"subscribers\":"
-		out.RawString(prefix)
-		out.Int(int(in.Subscribers))
-	}
-	out.RawByte('}')
-}
-func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels3(in *jlexer.Lexer, out *Pin) {
+func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels2(in *jlexer.Lexer, out *Pin) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -378,7 +294,7 @@ func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels3(in *jlexer.Lexer, out 
 				if out.User == nil {
 					out.User = new(User)
 				}
-				easyjsonD6aedbb7Decode20201ColorNoiseInternalModels4(in, out.User)
+				(*out.User).UnmarshalEasyJSON(in)
 			}
 		case "BoardId":
 			out.BoardId = uint(in.Uint())
@@ -423,6 +339,8 @@ func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels3(in *jlexer.Lexer, out 
 			out.Views = uint(in.Uint())
 		case "Comment":
 			out.Comment = uint(in.Uint())
+		case "IsVisible":
+			out.IsVisible = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -433,7 +351,7 @@ func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels3(in *jlexer.Lexer, out 
 		in.Consumed()
 	}
 }
-func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels3(out *jwriter.Writer, in Pin) {
+func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels2(out *jwriter.Writer, in Pin) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -448,7 +366,7 @@ func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels3(out *jwriter.Writer, i
 		if in.User == nil {
 			out.RawString("null")
 		} else {
-			easyjsonD6aedbb7Encode20201ColorNoiseInternalModels4(out, *in.User)
+			(*in.User).MarshalEasyJSON(out)
 		}
 	}
 	{
@@ -507,211 +425,38 @@ func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels3(out *jwriter.Writer, i
 		out.RawString(prefix)
 		out.Uint(uint(in.Comment))
 	}
+	{
+		const prefix string = ",\"IsVisible\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsVisible))
+	}
 	out.RawByte('}')
 }
 
 // MarshalJSON supports json.Marshaler interface
 func (v Pin) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD6aedbb7Encode20201ColorNoiseInternalModels3(&w, v)
+	easyjsonD6aedbb7Encode20201ColorNoiseInternalModels2(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Pin) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD6aedbb7Encode20201ColorNoiseInternalModels3(w, v)
+	easyjsonD6aedbb7Encode20201ColorNoiseInternalModels2(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Pin) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels3(&r, v)
+	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels2(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Pin) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels3(l, v)
+	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels2(l, v)
 }
-func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels4(in *jlexer.Lexer, out *User) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeString()
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "Id":
-			out.Id = uint(in.Uint())
-		case "Email":
-			out.Email = string(in.String())
-		case "Login":
-			out.Login = string(in.String())
-		case "EncryptedPassword":
-			out.EncryptedPassword = string(in.String())
-		case "About":
-			out.About = string(in.String())
-		case "Avatar":
-			out.Avatar = string(in.String())
-		case "Subscriptions":
-			out.Subscriptions = int(in.Int())
-		case "Subscribers":
-			out.Subscribers = int(in.Int())
-		case "Preferences":
-			if in.IsNull() {
-				in.Skip()
-				out.Preferences = nil
-			} else {
-				in.Delim('[')
-				if out.Preferences == nil {
-					if !in.IsDelim(']') {
-						out.Preferences = make([]string, 0, 4)
-					} else {
-						out.Preferences = []string{}
-					}
-				} else {
-					out.Preferences = (out.Preferences)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v7 string
-					v7 = string(in.String())
-					out.Preferences = append(out.Preferences, v7)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "CreatedAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.CreatedAt).UnmarshalJSON(data))
-			}
-		case "Tags":
-			if in.IsNull() {
-				in.Skip()
-				out.Tags = nil
-			} else {
-				in.Delim('[')
-				if out.Tags == nil {
-					if !in.IsDelim(']') {
-						out.Tags = make([]string, 0, 4)
-					} else {
-						out.Tags = []string{}
-					}
-				} else {
-					out.Tags = (out.Tags)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v8 string
-					v8 = string(in.String())
-					out.Tags = append(out.Tags, v8)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels4(out *jwriter.Writer, in User) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"Id\":"
-		out.RawString(prefix[1:])
-		out.Uint(uint(in.Id))
-	}
-	{
-		const prefix string = ",\"Email\":"
-		out.RawString(prefix)
-		out.String(string(in.Email))
-	}
-	{
-		const prefix string = ",\"Login\":"
-		out.RawString(prefix)
-		out.String(string(in.Login))
-	}
-	{
-		const prefix string = ",\"EncryptedPassword\":"
-		out.RawString(prefix)
-		out.String(string(in.EncryptedPassword))
-	}
-	{
-		const prefix string = ",\"About\":"
-		out.RawString(prefix)
-		out.String(string(in.About))
-	}
-	{
-		const prefix string = ",\"Avatar\":"
-		out.RawString(prefix)
-		out.String(string(in.Avatar))
-	}
-	{
-		const prefix string = ",\"Subscriptions\":"
-		out.RawString(prefix)
-		out.Int(int(in.Subscriptions))
-	}
-	{
-		const prefix string = ",\"Subscribers\":"
-		out.RawString(prefix)
-		out.Int(int(in.Subscribers))
-	}
-	{
-		const prefix string = ",\"Preferences\":"
-		out.RawString(prefix)
-		if in.Preferences == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
-			out.RawByte('[')
-			for v9, v10 := range in.Preferences {
-				if v9 > 0 {
-					out.RawByte(',')
-				}
-				out.String(string(v10))
-			}
-			out.RawByte(']')
-		}
-	}
-	{
-		const prefix string = ",\"CreatedAt\":"
-		out.RawString(prefix)
-		out.Raw((in.CreatedAt).MarshalJSON())
-	}
-	{
-		const prefix string = ",\"Tags\":"
-		out.RawString(prefix)
-		if in.Tags == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
-			out.RawByte('[')
-			for v11, v12 := range in.Tags {
-				if v11 > 0 {
-					out.RawByte(',')
-				}
-				out.String(string(v12))
-			}
-			out.RawByte(']')
-		}
-	}
-	out.RawByte('}')
-}
-func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels5(in *jlexer.Lexer, out *InputPin) {
+func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels3(in *jlexer.Lexer, out *InputPin) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -748,7 +493,7 @@ func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels5(in *jlexer.Lexer, out 
 		in.Consumed()
 	}
 }
-func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels5(out *jwriter.Writer, in InputPin) {
+func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels3(out *jwriter.Writer, in InputPin) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -778,27 +523,27 @@ func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels5(out *jwriter.Writer, i
 // MarshalJSON supports json.Marshaler interface
 func (v InputPin) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD6aedbb7Encode20201ColorNoiseInternalModels5(&w, v)
+	easyjsonD6aedbb7Encode20201ColorNoiseInternalModels3(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v InputPin) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD6aedbb7Encode20201ColorNoiseInternalModels5(w, v)
+	easyjsonD6aedbb7Encode20201ColorNoiseInternalModels3(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *InputPin) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels5(&r, v)
+	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels3(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *InputPin) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels5(l, v)
+	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels3(l, v)
 }
-func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels6(in *jlexer.Lexer, out *DataBasePin) {
+func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels4(in *jlexer.Lexer, out *DataBasePin) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -824,7 +569,7 @@ func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels6(in *jlexer.Lexer, out 
 		case "BoardId":
 			out.BoardId = uint(in.Uint())
 		case "Name":
-			out.Name = string(in.String())
+			easyjsonD6aedbb7DecodeDatabaseSql(in, &out.Name)
 		case "Description":
 			easyjsonD6aedbb7DecodeDatabaseSql(in, &out.Description)
 		case "Image":
@@ -851,9 +596,9 @@ func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels6(in *jlexer.Lexer, out 
 					out.Tags = (out.Tags)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v13 string
-					v13 = string(in.String())
-					out.Tags = append(out.Tags, v13)
+					var v7 string
+					v7 = string(in.String())
+					out.Tags = append(out.Tags, v7)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -872,7 +617,7 @@ func easyjsonD6aedbb7Decode20201ColorNoiseInternalModels6(in *jlexer.Lexer, out 
 		in.Consumed()
 	}
 }
-func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels6(out *jwriter.Writer, in DataBasePin) {
+func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels4(out *jwriter.Writer, in DataBasePin) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -894,7 +639,7 @@ func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels6(out *jwriter.Writer, i
 	{
 		const prefix string = ",\"Name\":"
 		out.RawString(prefix)
-		out.String(string(in.Name))
+		easyjsonD6aedbb7EncodeDatabaseSql(out, in.Name)
 	}
 	{
 		const prefix string = ",\"Description\":"
@@ -923,11 +668,11 @@ func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels6(out *jwriter.Writer, i
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v14, v15 := range in.Tags {
-				if v14 > 0 {
+			for v8, v9 := range in.Tags {
+				if v8 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v15))
+				out.String(string(v9))
 			}
 			out.RawByte(']')
 		}
@@ -948,25 +693,25 @@ func easyjsonD6aedbb7Encode20201ColorNoiseInternalModels6(out *jwriter.Writer, i
 // MarshalJSON supports json.Marshaler interface
 func (v DataBasePin) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD6aedbb7Encode20201ColorNoiseInternalModels6(&w, v)
+	easyjsonD6aedbb7Encode20201ColorNoiseInternalModels4(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v DataBasePin) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD6aedbb7Encode20201ColorNoiseInternalModels6(w, v)
+	easyjsonD6aedbb7Encode20201ColorNoiseInternalModels4(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *DataBasePin) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels6(&r, v)
+	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels4(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *DataBasePin) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels6(l, v)
+	easyjsonD6aedbb7Decode20201ColorNoiseInternalModels4(l, v)
 }
 func easyjsonD6aedbb7DecodeDatabaseSql1(in *jlexer.Lexer, out *sql.NullTime) {
 	isTopLevel := in.IsStart()
