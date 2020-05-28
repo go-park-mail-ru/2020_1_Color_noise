@@ -17,10 +17,36 @@ func NewRepo(d database.DBInterface) *Repository {
 	}
 }
 
+/*
 func (pr *Repository) Create(pin *models.Pin) (uint, error) {
 	//добавить в пины
 	//добавить в таблицу
 	id, err := pr.db.CreatePin(models.GetBPin(*pin))
+
+	if err != nil {
+		return 0, PinNotFound.Newf("Pin can not be created, err: %v", err)
+	}
+
+	return id, err
+}
+
+ */
+
+func (pr *Repository) CreatePin(pin *models.Pin) (uint, error) {
+
+	state, err := pr.db.CreatePinByImage(models.GetBPin(*pin))
+
+	if err != nil {
+		return 0, PinNotFound.Newf("Pin can not be created, err: %v", err)
+	}
+
+	return state, err
+
+}
+
+func (pr *Repository) SaveImage(pin *models.Pin) (uint, error) {
+	//добавить в пины
+	id, err := pr.db.CreateImage(models.GetBPin(*pin))
 
 	if err != nil {
 		return 0, PinNotFound.Newf("Pin can not be created, err: %v", err)

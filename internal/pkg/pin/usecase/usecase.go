@@ -101,13 +101,15 @@ func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, error) {
 	return id, nil
 }
 
-func (pu *Usecase) Save(pinId uint, boardId uint) (bool, error) {
-	status, err := pu.repoPin.Save(pinId, boardId)
-	if err != nil {
-		return false, Wrapf(err, "Saving pin error, boardId: %d", boardId)
-	}
 
-	return status, nil
+func (pu *Usecase) Save(pinId uint, boardId uint) (bool, error) {
+	return false, nil
+}
+
+
+func (pu *Usecase) CreatePin(input *models.InputPin, userId uint) (uint, error) {
+
+	return 0, nil
 }
 
 func (pu *Usecase) GetById(id uint, userId uint) (*models.Pin, error) {
