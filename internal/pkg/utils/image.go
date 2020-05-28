@@ -25,3 +25,14 @@ func SaveImage(b *[]byte) (string, error) {
 
 	return name, nil
 }
+
+func DeleteImage(name string) (error) {
+	path := "../storage/" + name
+
+	err := os.Remove(path)
+	if err != nil {
+		return Wrap(err, "Deleting image error")
+	}
+
+	return nil
+}

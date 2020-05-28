@@ -157,8 +157,8 @@ func ErrorHandler(w http.ResponseWriter, r *http.Request, logger *zap.SugaredLog
 		status = http.StatusUnauthorized
 		message = "User is unauthorized"
 	case TooMuchSize:
-		status = http.StatusUnauthorized
-		message = "Image size should be less than 10 MB"
+		status = http.StatusRequestEntityTooLarge
+		message = "Image size should be less than 7 MB"
 	case FollowingIsAlreadyDone:
 		status = http.StatusBadRequest
 		message = "Following is already done"
