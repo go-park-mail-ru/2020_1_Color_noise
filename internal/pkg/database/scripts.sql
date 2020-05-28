@@ -69,6 +69,10 @@ CREATE TABLE boards_pins (
                              UNIQUE (image_id, board_id)
 );
 
+ALTER TABLE boards_pins DROP CONSTRAINT  boards_pins_image_id_fkey;
+ALTER TABLE boards_pins ADD CONSTRAINT boards_pins_image_id_fkey
+    FOREIGN KEY (image_id) REFERENCES pins(id)
+        ON DELETE CASCADE ON UPDATE CASCADE;
 
 CREATE TABLE subscriptions (
                                id serial PRIMARY KEY,
