@@ -58,7 +58,8 @@ CREATE TABLE pins (
                       created_at timestamp,
                       tags text[] NOT NULL,
                       views int NOT NULL,
-                      comments int NOT NULL
+                      comments int NOT NULL,
+                      visible boolean NOT NULL
 );
 
 CREATE TABLE boards_pins (

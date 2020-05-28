@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// WARNING: устаревший метод
 func (db *PgxDB) CreatePin(pin models.DataBasePin) (uint, error) {
 	var id, check uint
 
@@ -20,6 +21,39 @@ func (db *PgxDB) CreatePin(pin models.DataBasePin) (uint, error) {
 	err = res.Scan(&check)
 	return id, err
 }
+
+
+func (db *PgxDB) CreateImage(pin models.DataBasePin) (uint, error) {
+	var id uint
+
+	res := db.dbPool.QueryRow(InsertImage, pin.UserId, pin.Image, time.Now(), []string{"", ""}, 0, 0, false)
+	err := res.Scan(&id)
+
+	if err != nil {
+		return 0, errors.New("image creation error")
+	}
+
+	return id, err
+}
+
+func (db *PgxDB) CreatePinByImage(pin models.DataBasePin) (uint, error) {
+	var check uint
+
+	row, err := db.dbPool.Exec(PinCreation, pin.Id, pin.Name, pin.Description, true, pin.UserId)
+
+	if row.RowsAffected() == 0 {
+		return 0, errors.New("pin creation error")
+	}
+	res := db.dbPool.QueryRow(InsertBoardsPin, pin.Id, pin.BoardId, true)
+	err = res.Scan(&check)
+
+	if err != nil {
+		return 0, errors.New("pin-board creation error")
+	}
+
+	return pin.Id, err
+}
+
 
 func (db *PgxDB) Save(pinId, boardId uint) (bool, error) {
 	var check uint
@@ -57,7 +91,7 @@ func (db *PgxDB) UpdatePin(pin models.DataBasePin) error {
 }
 
 func (db *PgxDB) DeletePin(pin models.DataBasePin) error {
-	_, err := db.dbPool.Exec(DeletePin, pin.Id)
+	_, err := db.dbPool.Exec(DeletePin, pin.Id, pin.UserId)
 	if err != nil {
 		return err
 	}
