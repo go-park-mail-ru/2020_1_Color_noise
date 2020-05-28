@@ -3,6 +3,14 @@ package database
 const (
 	InsertPin = "INSERT INTO pins(user_id, name, description, image, created_at, tags, views, comments) " +
 		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
+
+	InsertImage = "INSERT INTO pins(user_id, image, created_at, tags, views, comments, visible) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id"
+
+	PinCreation = "UPDATE pins SET " +
+		" name = $2, description = $3, visible = $4" +
+		" WHERE id = $1"
+
 	InsertBoardsPin = "INSERT INTO boards_pins(image_id, board_id, original) VALUES ($1, $2, $3) RETURNING 0;"
 	UpdatePin       = "UPDATE pins SET " +
 		" name = $1, description = $2, board_id = $3 " +
