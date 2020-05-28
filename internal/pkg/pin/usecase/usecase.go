@@ -113,12 +113,12 @@ func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, []string, error
 		return 0, []string{}, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
-	timer := time.NewTimer(15 * time.Minute)
+	timer := time.NewTimer(5 * time.Minute)
 
 	go func(t *time.Timer, pinId uint, pu *Usecase) {
 		select {
 		case <-timer.C:
-			p, err := pu.repoPin.GetByID(pinId)
+			p, err := pu.repoPin.GetImageByID(pinId)
 			if err != nil {
 				log.Println("error in timer: getting pin error: ", pinId, err)
 				return
@@ -234,7 +234,7 @@ func (pu *Usecase) Analyze(pinId uint, name string) error {
 		return Wrap(err, "adding tags pin error")
 	}
 
-	
+
 
 	return nil
 }
