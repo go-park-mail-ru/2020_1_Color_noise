@@ -24,7 +24,7 @@ type DataBasePin struct {
 	Id          uint
 	UserId      uint
 	BoardId     uint
-	Name        string
+	Name        sql.NullString //это теперь тоже не гарантируется
 	Description sql.NullString //не гарантируется, что есть описание
 	Image       string
 	CreatedAt   time.Time
@@ -75,12 +75,15 @@ func GetPin(pin DataBasePin) Pin {
 	tmp := Pin{
 		Id:        pin.Id,
 		BoardId:   pin.BoardId,
-		Name:      pin.Name,
 		Image:     pin.Image,
 		CreatedAt: pin.CreatedAt,
 		Tags:      pin.Tags,
 		Views:     pin.Views,
 		Comment:   pin.Comment,
+	}
+
+	if pin.Name.Valid {
+		tmp.Name = pin.Name.String
 	}
 
 	if pin.Description.Valid {
@@ -98,7 +101,6 @@ func GetBPin(pin Pin) DataBasePin {
 		Id:        pin.Id,
 		UserId: pin.User.Id,
 		BoardId:   pin.BoardId,
-		Name:      pin.Name,
 		Image:     pin.Image,
 		CreatedAt: pin.CreatedAt,
 		Tags:      pin.Tags,
@@ -114,5 +116,11 @@ func GetBPin(pin Pin) DataBasePin {
 		tmp.Description.Valid = true
 		tmp.Description.String = pin.Description
 	}
+
+	if pin.Name != "" {
+		tmp.Name.Valid = true
+		tmp.Name.String = pin.Name
+	}
+
 	return tmp
 }

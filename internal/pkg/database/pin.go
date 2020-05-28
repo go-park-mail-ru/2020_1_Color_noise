@@ -66,8 +66,9 @@ func (db *PgxDB) Save(pinId, boardId uint) (bool, error) {
 			switch pqError.Code {
 			case ForeignKeyViolation:
 				return false, errors.New("pin or board not found")
+			case UniqueViolation:
+				return false, nil
 			default:
-				//нарушение уникальности
 				return false, errors.New("pin already added")
 			}
 		}
@@ -120,6 +121,25 @@ func (db *PgxDB) GetPinById(pin models.DataBasePin) (models.Pin, error) {
 
 	return rp, nil
 }
+
+func (db *PgxDB) GetImageById(pin models.DataBasePin) (models.Pin, error) {
+	var res models.DataBasePin
+	var us models.DataBaseUser
+	row := db.dbPool.QueryRow(ImageById, pin.Id)
+	err := row.Scan(&res.Id, &res.Name, &res.Description,
+		&res.Image, &res.CreatedAt, &res.Tags,
+		&us.Id, &us.Login, &us.Avatar)
+	if err != nil {
+		return models.Pin{}, errors.New("image not found")
+	}
+
+	rp := models.GetPin(res)
+	ru := models.GetUser(us)
+	rp.User = &ru
+
+	return rp, nil
+}
+
 
 func (db *PgxDB) GetPinsByUserId(pin models.DataBasePin, start, limit int) ([]*models.Pin, error) {
 	var res []*models.Pin
