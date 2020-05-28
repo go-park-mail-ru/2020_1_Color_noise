@@ -25,15 +25,15 @@ const (
 	PinById   = "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 		" JOIN users ON pins.user_id = users.id" +
-		" WHERE original = true AND pins.id = $1"
+		" WHERE original = true AND pins.id = $1 AND visible = true"
 	PinByUser =  "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 		" JOIN users ON pins.user_id = users.id" +
-		" WHERE original = true AND user_id = $1  ORDER BY pins.id DESC OFFSET $2 LIMIT $3;"
+		" WHERE original = true AND visible = true AND user_id = $1  ORDER BY pins.id DESC OFFSET $2 LIMIT $3;"
 	PinByBoard =  "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 		" JOIN users ON pins.user_id = users.id" +
-		" WHERE board_id = $1"
+		" WHERE board_id = $1 AND visible = true"
 	AddTags = "UPDATE pins SET tags= $1 WHERE id = $2 RETURNING 0;"
 
 	PopularDesc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
@@ -41,43 +41,43 @@ const (
 		" FROM pins " +
 		" JOIN users ON pins.user_id = users.id" +
 		" WHERE make_tsvector(name) @@ to_tsquery($1)" +
-		" AND pins.created_at BETWEEN $2 AND $3" +
+		" AND pins.created_at BETWEEN $2 AND $3 AND visible = true" +
 		" ORDER BY pins.views DESC OFFSET $4 LIMIT $5;"
 	PopularAsc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
 		" users.id, users.login, users.avatar" +
 		" FROM pins " +
 		" JOIN users ON pins.user_id = users.id" +
-		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
+		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3 AND visible = true" +
 		" ORDER BY pins.views ASC OFFSET $4 LIMIT $5;"
 	CommentsDesc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
 		" users.id, users.login, users.avatar" +
 		" FROM pins " +
 		" JOIN users ON pins.user_id = users.id" +
-		" WHERE name LIKE $1  AND pins.created_at BETWEEN $2 AND $3" +
+		" WHERE name LIKE $1  AND pins.created_at BETWEEN $2 AND $3 AND visible = true" +
 		" ORDER BY pins.comments DESC OFFSET $4 LIMIT $5;"
 	CommentsAsc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
 		" users.id, users.login, users.avatar" +
 		" FROM pins " +
 		" JOIN users ON pins.user_id = users.id" +
-		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
+		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3 AND visible = true" +
 		" ORDER BY pins.comments ASC OFFSET $4 LIMIT $5;"
 	IdDesc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
 		" users.id, users.login, users.avatar" +
 		" FROM pins " +
 		" JOIN users ON pins.user_id = users.id" +
-		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
+		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3 AND visible = true" +
 		" ORDER BY pins.id DESC OFFSET $4 LIMIT $5;"
 	IdAsc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
 		" users.id, users.login, users.avatar" +
 		" FROM pins  " +
 		" JOIN users ON pins.user_id = users.id" +
-		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
+		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3 AND visible = true" +
 		" ORDER BY pins.id ASC OFFSET $4 LIMIT $5;"
 
 	PinByTag = "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
 	" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 	" JOIN users ON pins.user_id = users.id" +
-	" WHERE pins.tags[0] = ANY ($1 ) OR pins.tags[1] = ANY ($1 )" +
+	" WHERE pins.tags[0] = ANY ($1 ) OR pins.tags[1] = ANY ($1 ) AND visible = true" +
 		" ORDER BY pins.views OFFSET $2 LIMIT $3;"
 )
 
@@ -149,7 +149,7 @@ const (
 	BoardsByUserId     = "SELECT * FROM boards WHERE user_id = $1 ORDER BY id ASC LIMIT $2 OFFSET $3"
 	BoardsByNameSearch = "SELECT * FROM boards WHERE name = $1 LIMIT $2 OFFSET $3"
 	LastPin            = "SELECT id, user_id, name, description, image, board_id, created_at " +
-		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id WHERE board_id = $1 ORDER BY created_at DESC LIMIT 1;"
+		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id WHERE board_id = $1 AND visible = true ORDER BY created_at DESC LIMIT 1;"
 )
 
 const (
@@ -170,13 +170,13 @@ const (
 	Feed = "SELECT pins.id, pins.user_id, name, description, image, board_id, created_at " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
 		" JOIN subscriptions ON subscriptions.subscribed_at = pins.user_id" +
-		" WHERE subscriptions.user_id = $1  AND original = true ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
+		" WHERE subscriptions.user_id = $1  AND original = true AND visible = true ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
 	Main = "SELECT id, user_id, name, description, image, board_id, created_at " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
-		" WHERE original = true ORDER BY views DESC LIMIT $1  OFFSET $2;"
+		" WHERE original = true AND visible = true ORDER BY views DESC LIMIT $1  OFFSET $2;"
 	Recommendation = "SELECT id, user_id, name, description, image, board_id, created_at " +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
-		" WHERE original = true ORDER BY created_at DESC LIMIT $1  OFFSET $2;"
+		" WHERE original = true AND visible = true ORDER BY created_at DESC LIMIT $1  OFFSET $2;"
 )
 
 const (
