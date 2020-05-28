@@ -26,6 +26,11 @@ const (
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 		" JOIN users ON pins.user_id = users.id" +
 		" WHERE original = true AND pins.id = $1 AND visible = true"
+	ImageById   = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, " +
+		" users.id, users.login, users.avatar" +
+		" FROM pins JOIN users ON pins.user_id = users.id" +
+		" WHERE pins.id = $1 "
+
 	PinByUser =  "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 		" JOIN users ON pins.user_id = users.id" +

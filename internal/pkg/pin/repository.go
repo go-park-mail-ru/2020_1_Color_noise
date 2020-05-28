@@ -9,6 +9,7 @@ type IRepository interface {
 	CreatePin(pin *models.Pin) (uint, error)
 	SaveImage(pin *models.Pin) (uint, error)
 	GetByID(id uint) (*models.Pin, error)
+	GetImageByID(id uint) (*models.Pin, error)
 	GetByUserID(userId uint, start int, limit int) ([]*models.Pin, error)
 	GetByName(name string, start int, limit int, date string, desc bool, most string) ([]*models.Pin, error)
 	Update(pin *models.Pin) error

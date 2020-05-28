@@ -24,6 +24,7 @@ type DBInterface interface {
 	UpdatePin(pin models.DataBasePin) error
 	DeletePin(pin models.DataBasePin) error
 	GetPinById(pin models.DataBasePin) (models.Pin, error)
+	GetImageById(pin models.DataBasePin) (models.Pin, error)
 	GetPinsByUserId(pin models.DataBasePin, start, limit int) ([]*models.Pin, error)
 	GetPinsByName(pin models.DataBasePin, since time.Time, to time.Time,
 		desc bool, st string,

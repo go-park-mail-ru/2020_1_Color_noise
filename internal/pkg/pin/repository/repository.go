@@ -77,6 +77,18 @@ func (pr *Repository) GetByID(id uint) (*models.Pin, error) {
 	return &pin, err
 }
 
+
+func (pr *Repository) GetImageByID(id uint) (*models.Pin, error) {
+	p := models.DataBasePin{Id: id}
+	pin, err := pr.db.GetImageById(p)
+
+	if err != nil {
+		return nil, PinNotFound.Newf("Image not found, id: %d", id)
+	}
+
+	return &pin, err
+}
+
 func (pr *Repository) GetByUserID(userId uint, start int, limit int) ([]*models.Pin, error) {
 
 	p := models.DataBasePin{UserId: userId}
