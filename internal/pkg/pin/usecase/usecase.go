@@ -149,7 +149,12 @@ func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, []string, error
 
 
 func (pu *Usecase) Save(pinId uint, boardId uint) (bool, error) {
-	return false, nil
+	status, err := pu.repoPin.Save(pinId, boardId)
+	if err != nil {
+		return false, Wrapf(err, "Saving pin error, boardId: %d", boardId)
+	}
+
+	return status, nil
 }
 
 func (pu *Usecase) GetById(id uint, userId uint) (*models.Pin, error) {
