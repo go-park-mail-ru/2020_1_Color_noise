@@ -113,21 +113,21 @@ func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, []string, error
 		return 0, []string{}, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
-	timer := time.NewTimer(15 * time.Minute)
+	timer := time.NewTimer(5 * time.Minute)
 
 	go func(t *time.Timer, pinId uint, pu *Usecase) {
 		select {
 		case <-timer.C:
-			p, err := pu.repoPin.GetByID(id)
+			p, err := pu.repoPin.GetImageByID(pinId)
 			if err != nil {
-				log.Println("error in timer: getting pin error ", pinId)
+				log.Println("error in timer: getting pin error: ", pinId, err)
 				return
 			}
 
-			if p.Name == "" || p.BoardId < 1 {
+			if p.Name == "" {
 				err = pu.repoPin.Delete(pinId, p.User.Id)
 				if err != nil {
-					log.Println("error in timer: deleting pin error ", pinId)
+					log.Println("error in timer: deleting pin error pinId:", pinId, " ", err )
 				}
 
 				err = utils.DeleteImage(p.Image)
@@ -229,10 +229,12 @@ func (pu *Usecase) Analyze(pinId uint, name string) error {
 		return Wrap(err, "analyzing pin error")
 	}
 
-	err = pu.repoPin.AddTags(pinId, tags.Tags)
+	err = pu.repoPin.AddTags(pinId, tags.Tags[:2])
 	if err != nil {
 		return Wrap(err, "adding tags pin error")
 	}
+
+
 
 	return nil
 }

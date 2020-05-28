@@ -37,7 +37,7 @@ class ImageServiceServicer(image_pb2_grpc.ImageServiceServicer):
 
         a = torch.nn.functional.softmax(output[0], dim=0).tolist()
 
-        return image_pb2.Tags(Tags=table[a.index(max(a))][:2])
+        return image_pb2.Tags(Tags=table[a.index(max(a))])
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=8))
