@@ -9,7 +9,7 @@ const (
 
 	PinCreation = "UPDATE pins SET " +
 		" name = $2, description = $3, visible = $4" +
-		" WHERE id = $1"
+		" WHERE id = $1 and user_id = $5"
 
 	InsertBoardsPin = "INSERT INTO boards_pins(image_id, board_id, original) VALUES ($1, $2, $3) RETURNING 0;"
 	UpdatePin       = "UPDATE pins SET " +
@@ -21,7 +21,7 @@ const (
 	UpdateComments = "UPDATE pins SET " +
 		" comments = comments + 1" +
 		" WHERE id = $1"
-	DeletePin = "DELETE from pins WHERE id = $1 CASCADE;"
+	DeletePin = "DELETE from pins WHERE id = $1 AND user_id = $2 CASCADE;"
 	PinById   = "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
 		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 		" JOIN users ON pins.user_id = users.id" +

@@ -39,7 +39,7 @@ func (db *PgxDB) CreateImage(pin models.DataBasePin) (uint, error) {
 func (db *PgxDB) CreatePinByImage(pin models.DataBasePin) (uint, error) {
 	var check uint
 
-	row, err := db.dbPool.Exec(PinCreation, pin.Id, pin.Name, pin.Description, true)
+	row, err := db.dbPool.Exec(PinCreation, pin.Id, pin.Name, pin.Description, true, pin.UserId)
 
 	if row.RowsAffected() == 0 {
 		return 0, errors.New("pin creation error")
@@ -91,7 +91,7 @@ func (db *PgxDB) UpdatePin(pin models.DataBasePin) error {
 }
 
 func (db *PgxDB) DeletePin(pin models.DataBasePin) error {
-	_, err := db.dbPool.Exec(DeletePin, pin.Id)
+	_, err := db.dbPool.Exec(DeletePin, pin.Id, pin.UserId)
 	if err != nil {
 		return err
 	}
