@@ -118,7 +118,11 @@ func (pr *Repository) GetByName(name string, start int, limit int, date string, 
 		since = to.AddDate(0, -1, 0)
 	}
 
-	p := models.DataBasePin{Name: name}
+	p := models.DataBasePin{Name: struct {
+		String string
+		Valid  bool
+	}{String:name , Valid: true}}
+	
 	result, err := pr.db.GetPinsByName(p, since, to, desc, most, start, limit)
 	if err != nil {
 		return result, PinNotFound.Newf("Pins not found, err = %v", err)
