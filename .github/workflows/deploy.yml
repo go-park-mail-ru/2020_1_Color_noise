@@ -35,7 +35,7 @@ jobs:
       - name: Build Docker Images
         run: docker-compose build
       - name: Push Docker Image
-        run: docker-compose push main auth chat user image
+        run: docker-compose push main auth chat user image predictions
       - name: Fill env file
         run: echo "GITHUB_SHA=$GITHUB_SHA" >> .env
       - name: Upload nginx config result

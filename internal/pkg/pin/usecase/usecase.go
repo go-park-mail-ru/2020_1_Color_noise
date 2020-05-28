@@ -6,6 +6,7 @@ import (
 	. "2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/pin"
 	imageService "2020_1_Color_noise/internal/pkg/proto/image"
+	predictionsService "2020_1_Color_noise/internal/pkg/proto/predictions"
 	userService "2020_1_Color_noise/internal/pkg/proto/user"
 	"2020_1_Color_noise/internal/pkg/utils"
 	"context"
@@ -19,14 +20,17 @@ type Usecase struct {
 	repoBoard    board.IRepository
 	imageService imageService.ImageServiceClient
 	userServ     userService.UserServiceClient
+	predServ     predictionsService.PredictionsServiceClient
 }
 
-func NewUsecase(repoPin pin.IRepository, repoBoard board.IRepository, imageServ imageService.ImageServiceClient, userServ userService.UserServiceClient) *Usecase {
+func NewUsecase(repoPin pin.IRepository, repoBoard board.IRepository, imageServ imageService.ImageServiceClient,
+	userServ userService.UserServiceClient, predServ predictionsService.PredictionsServiceClient) *Usecase {
 	return &Usecase{
 		repoPin,
 		repoBoard,
 		imageServ,
 		userServ,
+		predServ,
 	}
 }
 /*
@@ -94,10 +98,10 @@ func (pu *Usecase) CreatePin(input *models.InputPin, id uint, userId uint) (uint
 	return id, nil
 }
 
-func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, []string, error) {
+func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, *[]string, error) {
 	name, err := utils.SaveImage(buffer)
 	if err != nil {
-		return 0, []string{}, Wrapf(err, "Creating pin error, userId: %d", userId)
+		return 0, &[]string{}, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
 	p := &models.Pin {
@@ -110,7 +114,7 @@ func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, []string, error
 
 	id, err := pu.repoPin.SaveImage(p)
 	if err != nil {
-		return 0, []string{}, Wrapf(err, "Creating pin error, userId: %d", userId)
+		return 0, &[]string{}, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
 	timer := time.NewTimer(5 * time.Minute)
@@ -138,13 +142,19 @@ func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, []string, error
 		}
 	} (timer, id, pu)
 
-	err = pu.Analyze(id, name)
+	tags, err := pu.Analyze(id, name)
 	if err != nil {
 		log.Println(err, " Creating pin error, userId ", userId)
-		return id, []string{}, nil
+		return id, &[]string{}, nil
 	}
 
-	return id, []string{}, nil
+	pr, err := pu.predServ.Predict(context.Background(), &predictionsService.Tags{Tags: *tags})
+	if err != nil {
+		log.Println(err, " Predictions error, userId ", userId)
+		return id, &[]string{}, nil
+	}
+
+	return id, &pr.Predictions, nil
 }
 
 
@@ -228,18 +238,16 @@ func (pu *Usecase) Delete(pinId uint, userId uint) error {
 	return nil
 }
 
-func (pu *Usecase) Analyze(pinId uint, name string) error {
+func (pu *Usecase) Analyze(pinId uint, name string) (*[]string, error) {
 	tags, err := pu.imageService.Analyze(context.Background(), &imageService.Address{Image: name})
 	if err != nil {
-		return Wrap(err, "analyzing pin error")
+		return &[]string{}, Wrap(err, "analyzing pin error")
 	}
 
 	err = pu.repoPin.AddTags(pinId, tags.Tags[:2])
 	if err != nil {
-		return Wrap(err, "adding tags pin error")
+		return &[]string{}, Wrap(err, "adding tags pin error")
 	}
 
-
-
-	return nil
+	return &tags.Tags, nil
 }

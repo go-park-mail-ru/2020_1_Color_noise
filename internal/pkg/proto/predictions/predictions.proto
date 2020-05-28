@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package predictions;
+
+message Tags {
+  repeated string Tags = 1;
+}
+
+message Predictions {
+  repeated string Predictions = 1;
+}
+
+service PredictionsService {
+  rpc Predict(Tags) returns (Predictions) {}
+}

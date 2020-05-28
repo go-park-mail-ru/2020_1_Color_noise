@@ -8,6 +8,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"2020_1_Color_noise/internal/pkg/proto/image"
+	"2020_1_Color_noise/internal/pkg/proto/predictions"
 	"2020_1_Color_noise/internal/pkg/proto/session"
 	"2020_1_Color_noise/internal/pkg/proto/user"
 
@@ -61,6 +62,17 @@ func main() {
 		panic(err)
 	}
 
+	grcpPredictionsConn, err := grpc.Dial(
+		"predictions:8000",
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatalf("cant connect to session grpc")
+	}
+	defer grcpPredictionsConn.Close()
+
+	predictionsService := predictions.NewPredictionsServiceClient(grcpPredictionsConn)
+
 	grcpSessConn, err := grpc.Dial(
 		"auth:8000",
 		grpc.WithInsecure(),
@@ -113,7 +125,7 @@ func main() {
 
 	pinRepo := pinRepository.NewRepo(db)
 
-	pinUse := pinUsecase.NewUsecase(pinRepo, boardRepo, imageService, userService)
+	pinUse := pinUsecase.NewUsecase(pinRepo, boardRepo, imageService, userService, predictionsService)
 	pinDelivery := pinDeliveryHttp.NewHandler(pinUse, zap)
 
 	commentRepo := commentRepository.NewRepo(db)

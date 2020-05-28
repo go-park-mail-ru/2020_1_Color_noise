@@ -31,7 +31,7 @@ func main() {
 
 	lis, ok := net.Listen("tcp", ":8000")
 	if ok != nil {
-		log.Fatalln("cant listet port", err)
+		log.Fatalln("cant listet port", ok)
 	}
 
 	server := grpc.NewServer()
