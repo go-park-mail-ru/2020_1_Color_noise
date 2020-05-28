@@ -152,12 +152,6 @@ func (pu *Usecase) Save(pinId uint, boardId uint) (bool, error) {
 	return false, nil
 }
 
-
-func (pu *Usecase) CreatePin(input *models.InputPin, userId uint) (uint, error) {
-
-	return 0, nil
-}
-
 func (pu *Usecase) GetById(id uint, userId uint) (*models.Pin, error) {
 	pin, err := pu.repoPin.GetByID(id)
 	if err != nil {
