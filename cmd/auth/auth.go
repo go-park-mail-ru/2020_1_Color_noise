@@ -21,7 +21,7 @@ func main() {
 	}
 
 	db := database.NewPgxDB()
-	if err := db.Open(c); err != nil {
+	if err = db.Open(c); err != nil {
 		panic(err)
 	}
 
@@ -29,16 +29,15 @@ func main() {
 	sessionUse := sessionUsecase.NewUsecase(sessionRepo)
 	sessionDelivery := sessionDeliveryGRPC.NewSessionManager(sessionUse)
 
-
-	lis, err := net.Listen("tcp", ":8003")
-	if err != nil {
+	lis, ok := net.Listen("tcp", ":8000")
+	if ok != nil {
 		log.Fatalln("cant listet port", err)
 	}
 
 	server := grpc.NewServer()
 
-	session.RegisterAuthSeviceServer(server, sessionDelivery )
+	session.RegisterAuthSeviceServer(server, sessionDelivery)
 
-	fmt.Println("starting server at :8003")
+	fmt.Println("starting server at :8000")
 	server.Serve(lis)
 }

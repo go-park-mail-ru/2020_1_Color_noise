@@ -1,5 +1,6 @@
 package database
 
+/*
 import (
 	"2020_1_Color_noise/internal/models"
 	"2020_1_Color_noise/internal/pkg/config"
@@ -118,3 +119,6 @@ func TestPgxDB_GetNotifications(t *testing.T) {
 		}
 	}
 }
+
+
+*/

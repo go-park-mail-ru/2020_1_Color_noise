@@ -5,22 +5,28 @@ import (
 	"2020_1_Color_noise/internal/pkg/database"
 	. "2020_1_Color_noise/internal/pkg/error"
 	"database/sql"
-	"fmt"
 )
 
 type Repository struct {
-	bd            database.DBInterface
+	bd database.DBInterface
 }
 
 func NewRepo(bd database.DBInterface) *Repository {
 	return &Repository{
-		bd:            bd,
+		bd: bd,
 	}
 }
 
-func (ur *Repository) Create(user *models.User) (*models.User, error){
-	fmt.Println(*user)
+func (ur *Repository) UpdatePreferences(userId uint, preferences []string) error {
+	err := ur.bd.AddUserTags(userId, preferences)
+	if err != nil {
+		return Wrap(err, "Repo: Error in during Update Preferences")
+	}
 
+	return nil
+}
+
+func (ur *Repository) Create(user *models.User) (*models.User, error) {
 	_, err := ur.checkLogin(user.Login)
 	if err == nil {
 		return nil, LoginIsExist.New("Repo: Error in during creating")
@@ -175,40 +181,42 @@ func (ur *Repository) Delete(id uint) error {
 func (ur *Repository) Follow(id uint, subId uint) error {
 	_, err := ur.GetByID(id)
 	if err != nil {
-		return err
+		return UserNotFound.Newf("User not found, id: %d", id)
 	}
 
 	_, err = ur.GetByID(subId)
 	if err != nil {
-		return err
+		return UserNotFound.Newf("User not found, id: %d", id)
 	}
 
 	err = ur.bd.Follow(id, subId)
 	if err != nil {
-		return err
+		return FollowingIsAlreadyDone.New("Following is already done")
 	}
 
 	//TODO: обновить
+
 	return nil
 }
 
 func (ur *Repository) Unfollow(id uint, subId uint) error {
 	_, err := ur.GetByID(id)
 	if err != nil {
-		return err
+		return UserNotFound.Newf("User not found, id: %d", id)
 	}
 
 	_, err = ur.GetByID(subId)
 	if err != nil {
-		return err
+		return UserNotFound.Newf("User not found, id: %d", id)
 	}
 
 	err = ur.bd.Unfollow(id, subId)
 	if err != nil {
-		return err
+		return FollowingIsNotYetDone.New("Following is not yet done")
 
 	}
 	//TODO: обновить
+
 	return nil
 
 }
@@ -229,4 +237,9 @@ func (ur *Repository) GetSubscriptions(id uint, start int, limit int) ([]*models
 		return nil, UserNotFound.Newf("User was not found, id %d", id)
 	}
 	return users, nil
+}
+
+func (ur *Repository) IsFollowed(id uint, subId uint) (bool, error) {
+
+	return ur.bd.IsFollowing(id, subId)
 }

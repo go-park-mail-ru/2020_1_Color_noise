@@ -2,11 +2,10 @@ package database
 
 import (
 	"2020_1_Color_noise/internal/models"
-	"sort"
 	"time"
 )
 
-func (db *PgxDB) AddMessage(sid, rid int, msg string) (*models.Message, error) {
+func (db *PgxDB) AddMessage(sid, rid int, msg string, sticker string) (*models.Message, error) {
 	var id uint
 
 	sender, err := db.GetUserById(models.DataBaseUser{Id: uint(sid)})
@@ -23,10 +22,13 @@ func (db *PgxDB) AddMessage(sid, rid int, msg string) (*models.Message, error) {
 		SendUser:  &sender,
 		RecUser:   &receiver,
 		Message:   msg,
+		Stickers:  sticker,
 		CreatedAt: time.Now(),
 	}
 
-	res := db.dbPool.QueryRow(AddMsg, ms.SendUser.Id, ms.RecUser.Id, ms.Message, ms.CreatedAt)
+	dms := models.GetDMessage(ms)
+
+	res := db.dbPool.QueryRow(AddMsg, dms.SendUser.Id, dms.RecUser.Id, dms.Message, dms.Stickers, dms.CreatedAt)
 	err = res.Scan(&id)
 	if err != nil {
 		return &models.Message{}, err
@@ -50,18 +52,19 @@ func (db *PgxDB) GetMessages(userId, otherId uint, start int, limit int) ([]*mod
 	}
 
 	row, err := db.dbPool.Query(GetMsg, sender.Id, receiver.Id, limit, start)
+	defer row.Close()
 
 	if err != nil {
 		return nil, err
 	}
 
 	for row.Next() {
-		var tmp models.Message
+		var tmp models.DMessage
 		var author uint
 
-		ok := row.Scan(&author, &tmp.Message, &tmp.CreatedAt)
+		ok := row.Scan(&author, &tmp.Message, &tmp.Stickers, &tmp.CreatedAt)
 		if ok != nil {
-			return res, nil
+			return res, ok
 		}
 
 		if author == sender.Id {
@@ -72,26 +75,27 @@ func (db *PgxDB) GetMessages(userId, otherId uint, start int, limit int) ([]*mod
 			tmp.RecUser = &sender
 		}
 
-
-		res = append(res, &tmp)
+		ms := models.GetMessage(tmp)
+		res = append(res, &ms)
 	}
 
 	return res, nil
 }
 
 func (db *PgxDB) GetUsers(userId uint, start int, limit int) ([]*models.User, error) {
-
-	var res []*models.User
-	var ids []int
-
 	sender, err := db.GetUserById(models.DataBaseUser{Id: uint(userId)})
 	if err != nil {
 		return nil, err
 	}
 	row, err := db.dbPool.Query(GetChats, sender.Id, limit, start)
+	defer row.Close()
 	if err != nil {
 		return nil, err
 	}
+
+	var res []*models.User
+	m := make(map[uint]*models.User)
+
 	for row.Next() {
 		var send models.User
 		var receive models.User
@@ -100,18 +104,21 @@ func (db *PgxDB) GetUsers(userId uint, start int, limit int) ([]*models.User, er
 		if ok != nil {
 			return res, nil
 		}
-		//если мы написали
-		if send.Id == sender.Id && sort.SearchInts(ids, int(send.Id)) == len(ids) {
-			receiver, _ := db.GetUserById(models.GetBUser(receive))
-			res = append(res, &receiver)
-			ids = append(ids, int(send.Id))
-		} else if sort.SearchInts(ids, int(send.Id)) == len(ids){
-			//если нам написали
-			receiver, _ := db.GetUserById(models.GetBUser(send))
-			res = append(res, &receiver)
-			ids = append(ids, int(receive.Id))
+
+		if send.Id == userId {
+			receiver, ok := db.GetUserById(models.GetBUser(receive))
+			if ok == nil {
+				m[receive.Id] = &receiver
+			}
+		} else {
+			sender, ok := db.GetUserById(models.GetBUser(send))
+			if ok == nil {
+				m[send.Id] = &sender
+			}
 		}
-		sort.Ints(ids)
+	}
+	for _, val := range m {
+		res = append(res, val)
 	}
 
 	return res, nil

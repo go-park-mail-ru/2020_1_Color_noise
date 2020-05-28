@@ -12,9 +12,8 @@ import (
 var db = database.NewPgxDB()
 var repo = NewRepo(db)
 
-
 type Case struct {
-	c    models.Comment
+	c      models.Comment
 	answer error
 }
 
@@ -39,10 +38,10 @@ func TestRepository_Create(t *testing.T) {
 
 	cases := []Case{
 		{
-			c:      models.Comment{
-				UserId:    id,
-				PinId:     pid,
-				Text:      "text",
+			c: models.Comment{
+				UserId: id,
+				PinId:  pid,
+				Text:   "text",
 			},
 			answer: nil,
 		},
@@ -83,24 +82,24 @@ func TestRepository_Update(t *testing.T) {
 
 	cases := []Case{
 		{
-			c:      models.Comment{
-				UserId:    id,
-				PinId:     pid,
-				Text:      "text",
+			c: models.Comment{
+				UserId: id,
+				PinId:  pid,
+				Text:   "text",
 			},
 			answer: nil,
 		},
 		{
-			c:      models.Comment{
-				PinId:     pid,
-				Text:      "text",
+			c: models.Comment{
+				PinId: pid,
+				Text:  "text",
 			},
 			answer: nil,
 		},
 	}
 
 	for i, item := range cases {
-		id , _ = repo.Create(&item.c)
+		id, _ = repo.Create(&item.c)
 		item.c.Id = id
 		answer := repo.Update(&item.c)
 		if answer != nil && item.answer != nil {
@@ -138,25 +137,25 @@ func TestRepository_Delete(t *testing.T) {
 
 	cases := []Case{
 		{
-			c:      models.Comment{
-				UserId:    id,
-				PinId:     pid,
-				Text:      "text",
+			c: models.Comment{
+				UserId: id,
+				PinId:  pid,
+				Text:   "text",
 			},
 			answer: nil,
 		},
 
 		{
-			c:      models.Comment{
-				PinId:     pid,
-				Text:      "text",
+			c: models.Comment{
+				PinId: pid,
+				Text:  "text",
 			},
 			answer: nil,
 		},
 	}
 
 	for i, item := range cases {
-		id , _ = repo.Create(&item.c)
+		id, _ = repo.Create(&item.c)
 		item.c.Id = id
 		answer := repo.Delete(item.c.Id)
 		if answer != nil && item.answer != nil {
@@ -173,7 +172,6 @@ func TestRepository_Delete(t *testing.T) {
 
 func TestRepository_GetByID(t *testing.T) {
 
-
 	c, err := config.GetTestConfing()
 	if err != nil {
 		t.SkipNow()
@@ -194,23 +192,22 @@ func TestRepository_GetByID(t *testing.T) {
 
 	cases := []Case{
 		{
-			c:      models.Comment{
-				UserId:    id,
-				PinId:     pid,
-				Text:      "text",
+			c: models.Comment{
+				UserId: id,
+				PinId:  pid,
+				Text:   "text",
 			},
 			answer: nil,
 		},
 
 		{
-			c:      models.Comment{
-			},
+			c:      models.Comment{},
 			answer: fmt.Errorf("Repo: Getting by id comment error, id: 0"),
 		},
 	}
 
 	for i, item := range cases {
-		id , _ = repo.Create(&item.c)
+		id, _ = repo.Create(&item.c)
 		item.c.Id = id
 		_, answer := repo.GetByID(item.c.Id)
 		if answer != nil && item.answer != nil {
@@ -227,7 +224,6 @@ func TestRepository_GetByID(t *testing.T) {
 
 func TestRepository_GetByPinID(t *testing.T) {
 
-
 	c, err := config.GetTestConfing()
 	if err != nil {
 		t.SkipNow()
@@ -248,22 +244,21 @@ func TestRepository_GetByPinID(t *testing.T) {
 
 	cases := []Case{
 		{
-			c:      models.Comment{
-				UserId:    id,
-				PinId:     pid,
-				Text:      "text",
+			c: models.Comment{
+				UserId: id,
+				PinId:  pid,
+				Text:   "text",
 			},
 			answer: nil,
 		},
 		{
-			c:      models.Comment{
-			},
+			c:      models.Comment{},
 			answer: nil,
 		},
 	}
 
 	for i, item := range cases {
-		_ , _ = repo.Create(&item.c)
+		_, _ = repo.Create(&item.c)
 		_, answer := repo.GetByPinID(item.c.PinId, 0, 2)
 		if answer != nil && item.answer != nil {
 			if answer.Error() != item.answer.Error() {
@@ -279,7 +274,6 @@ func TestRepository_GetByPinID(t *testing.T) {
 
 func TestRepository_GetByText(t *testing.T) {
 
-
 	c, err := config.GetTestConfing()
 	if err != nil {
 		t.SkipNow()
@@ -300,22 +294,21 @@ func TestRepository_GetByText(t *testing.T) {
 
 	cases := []Case{
 		{
-			c:      models.Comment{
-				UserId:    id,
-				PinId:     pid,
-				Text:      "text",
+			c: models.Comment{
+				UserId: id,
+				PinId:  pid,
+				Text:   "text",
 			},
 			answer: nil,
 		},
 		{
-			c:      models.Comment{
-			},
+			c:      models.Comment{},
 			answer: nil,
 		},
 	}
 
 	for i, item := range cases {
-		id , _ = repo.Create(&item.c)
+		id, _ = repo.Create(&item.c)
 		item.c.Id = id
 		_, answer := repo.GetByText(item.c.Text, 0, 2)
 		if answer != nil && item.answer != nil {

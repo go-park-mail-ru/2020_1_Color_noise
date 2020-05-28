@@ -13,12 +13,12 @@ import (
 	"strconv"
 )
 
-type Handler struct {
+type Handler struct{
 	pinUsecase pin.IUsecase
-	logger  *zap.SugaredLogger
+	logger     *zap.SugaredLogger
 }
 
-func NewHandler(usecase pin.IUsecase, logger  *zap.SugaredLogger) *Handler {
+func NewHandler(usecase pin.IUsecase, logger *zap.SugaredLogger) *Handler {
 	return &Handler{
 		pinUsecase: usecase,
 		logger:     logger,
@@ -26,20 +26,19 @@ func NewHandler(usecase pin.IUsecase, logger  *zap.SugaredLogger) *Handler {
 }
 
 func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Create pin: user is unauthorized")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -48,7 +47,7 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	err := easyjson.UnmarshalFromReader(r.Body, input)
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation pin"), "Wrong body of request")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -58,13 +57,13 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			"Name shouldn't be empty and longer 60 characters. "+
 				"Description shouldn't be empty and longer 1000 characters. "+
 				"Image should be base64")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, err := ph.pinUsecase.Create(input, userId)
 	if err != nil {
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -76,34 +75,38 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
-	
 	reqId := r.Context().Value("ReqId")
-
-	isAuth := r.Context().Value("IsAuth")
-	if isAuth != true {
-		err := error.Unauthorized.New("Get pin: user is unauthorized")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
-		return
-	}
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting a pin"), "Bad id")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	pin, err := ph.pinUsecase.GetById(uint(id))
+	userId, ok := r.Context().Value("Id").(uint)
+	if !ok  {
+		userId = 0
+	}
+
+	pin, err := ph.pinUsecase.GetById(uint(id), userId)
 	if err != nil {
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	resp := &models.ResponsePin{
 		Id:          pin.Id,
 		BoardId:     pin.BoardId,
-		UserId:      pin.UserId,
+		User:        &models.ResponseUser{
+			Id: pin.User.Id,
+			Login: pin.User.Login,
+			About: pin.User.About,
+			Avatar: pin.User.Avatar,
+			Subscriptions: pin.User.Subscriptions,
+			Subscribers: pin.User.Subscribers,
+		},
 		Name:        pin.Name,
 		Description: pin.Description,
 		Image:       pin.Image,
@@ -113,13 +116,13 @@ func (ph *Handler) GetPin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Fetch pin: user is unauthorized")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -127,11 +130,14 @@ func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting pins for user"), "Bad id")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+	start, ok := strconv.Atoi(r.URL.Query().Get("start"))
+	if ok != nil {
+		ok = nil
+	}
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
@@ -140,7 +146,7 @@ func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 
 	pins, err := ph.pinUsecase.GetByUserId(uint(userId), start, limit)
 	if err != nil {
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -150,7 +156,14 @@ func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 		resp = append(resp, models.ResponsePin{
 			Id:          pin.Id,
 			BoardId:     pin.BoardId,
-			UserId:      pin.UserId,
+			User:        &models.ResponseUser{
+				Id: pin.User.Id,
+				Login: pin.User.Login,
+				About: pin.User.About,
+				Avatar: pin.User.Avatar,
+				Subscriptions: pin.User.Subscriptions,
+				Subscribers: pin.User.Subscribers,
+			},
 			Name:        pin.Name,
 			Description: pin.Description,
 			Image:       pin.Image,
@@ -161,20 +174,20 @@ func (ph *Handler) Fetch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Update pin: user is unauthorized")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -182,7 +195,7 @@ func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	pinId, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during updating pin"), "Bad id")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -192,7 +205,7 @@ func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during creation pin"), "Wrong body of request")
 		err = error.Wrap(err, "Decoding error during updating pin")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -201,13 +214,13 @@ func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		err = error.WithMessage(error.BadRequest.Wrapf(err, "request id: %s", "5"),
 			"Name shouldn't be empty and longer 60 characters. "+
 				"Description shouldn't be empty and longer 1000 characters.")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	err = ph.pinUsecase.Update(input, uint(pinId), userId)
 	if err != nil {
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -217,20 +230,20 @@ func (ph *Handler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ph *Handler) DeletePin(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Delete pin: user is unauthorized")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -238,17 +251,61 @@ func (ph *Handler) DeletePin(w http.ResponseWriter, r *http.Request) {
 	pinId, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during deleting pin"), "Bad id")
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	err = ph.pinUsecase.Delete(uint(pinId), userId)
 	if err != nil {
-		error.ErrorHandler(w, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	response.Respond(w, http.StatusOK, map[string]string{
 		"message": "Ok",
 	})
+}
+
+func (ph *Handler) Save(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Save pin: user is unauthorized")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	vars := mux.Vars(r)
+	pinId, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during saving a pin"), "Bad id")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	input := &models.InputPin{}
+
+	err = easyjson.UnmarshalFromReader(r.Body, input)
+	if err != nil {
+		err = error.WithMessage(error.BadRequest.Wrap(err, "Decoding error during saving pin"), "Wrong body of request")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	status, err := ph.pinUsecase.Save(uint(pinId), uint(input.BoardId))
+	if err != nil {
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	if status {
+		response.Respond(w, http.StatusCreated, map[string]string{
+			"message": "OK",
+		})
+	} else {
+		response.Respond(w, http.StatusOK, map[string]string{
+			"message": "OK",
+		})
+	}
 }

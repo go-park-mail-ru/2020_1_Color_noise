@@ -1,6 +1,7 @@
 package error
 
 import (
+	"2020_1_Color_noise/internal/pkg/metric"
 	"2020_1_Color_noise/internal/pkg/response"
 	"fmt"
 	"github.com/pkg/errors"
@@ -8,7 +9,7 @@ import (
 	"net/http"
 )
 
-const(
+const (
 	NoType = ErrorType(iota)
 	BadRequest
 	PinNotFound
@@ -25,19 +26,34 @@ const(
 	Unauthorized
 	TooMuchSize
 	SearchNotFound
+	StupidUser
 )
 
 type ErrorType uint
 
-type Error struct {
-	errorType ErrorType
-	originalError error
-	message string
+var array = [...]ErrorType{NoType, BadRequest, PinNotFound, BoardNotFound, UserNotFound, CommentNotFound,
+	BadLogin, BadPassword, BadEmail, FollowingIsAlreadyDone, FollowingIsNotYetDone, LoginIsExist,
+	EmailIsExist, Unauthorized, TooMuchSize, SearchNotFound}
+
+func Cast(d int) ErrorType {
+	if d >= len(array) || d < 0 {
+		return NoType
+	}
+
+	return array[d]
 }
+
+type Error struct {
+	errorType     ErrorType
+	originalError error
+	message       string
+}
+
 // Error returns the mssage of a customError
 func (error Error) Error() string {
 	return error.originalError.Error()
 }
+
 // New creates a new customError
 func (e ErrorType) New(msg string) error {
 	return Error{errorType: e,
@@ -77,9 +93,9 @@ func Wrapf(err error, msg string, args ...interface{}) error {
 	wrappedError := errors.Wrapf(err, msg, args...)
 	if customErr, ok := err.(Error); ok {
 		return Error{
-			errorType: customErr.errorType,
+			errorType:     customErr.errorType,
 			originalError: wrappedError,
-			message: customErr.message,
+			message:       customErr.message,
 		}
 	}
 
@@ -103,15 +119,16 @@ func WithMessage(err error, message string) error {
 	return Error{errorType: NoType, originalError: err, message: message}
 }
 
-func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interface{}, err error) {
+func ErrorHandler(w http.ResponseWriter, r *http.Request, logger *zap.SugaredLogger, reqId interface{}, err error) {
 	var status int
 	var message string
 
-	e, _ := err.(Error)
+	metric.IncreaseError()
+
 	switch GetType(err) {
 	case BadRequest:
 		status = http.StatusBadRequest
-		message = e.message
+		message = "Bad request"
 	case SearchNotFound:
 		status = http.StatusNotFound
 		message = "Not found"
@@ -148,19 +165,20 @@ func ErrorHandler(w http.ResponseWriter, logger *zap.SugaredLogger, reqId interf
 	case FollowingIsNotYetDone:
 		status = http.StatusBadRequest
 		message = "Following is not yet done"
+	case StupidUser:
+		status = http.StatusTeapot
+		message = "Why are you even trying to do this?"
 	default:
 		status = http.StatusInternalServerError
 		message = "Internal server error"
 	}
-
-	/*logger.Error(
-		zap.String("reqId:", fmt.Sprintf("%v", reqId)),
-		zap.String("error:", err.Error()),
-	)
-	 */
-
-
-	response.Respond(w, status, map[string]string {
+	/*
+		logger.Error(
+			zap.String("reqId:", fmt.Sprintf("%v", reqId)),
+			zap.String("error:", err.Error()),
+		)
+	*/
+	response.Respond(w, status, map[string]string{
 		"error": message,
 	})
 }

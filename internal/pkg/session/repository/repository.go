@@ -7,7 +7,7 @@ import (
 )
 
 type Repository struct {
-	db  database.DBInterface
+	db database.DBInterface
 }
 
 func NewRepo(d database.DBInterface) *Repository {
@@ -17,8 +17,7 @@ func NewRepo(d database.DBInterface) *Repository {
 }
 
 func (sr *Repository) Add(session *models.Session) error {
-	sr.db.CreateSession(models.GetBSession(*session))
-	return nil
+	return sr.db.CreateSession(models.GetBSession(*session))
 }
 
 func (sr *Repository) GetByCookie(cookie string) (*models.Session, error) {
@@ -34,14 +33,13 @@ func (sr *Repository) GetByCookie(cookie string) (*models.Session, error) {
 }
 
 func (sr *Repository) Update(session *models.Session) error {
-	_ = sr.db.UpdateSession(models.GetBSession(*session))
-	return nil
+	return sr.db.UpdateSession(models.GetBSession(*session))
 }
 
 func (sr *Repository) Delete(cookie string) error {
 	dbs := models.DataBaseSession{
 		Cookie: cookie,
 	}
-	sr.db.DeleteSession(dbs)
-	return nil
+
+	return sr.db.DeleteSession(dbs)
 }

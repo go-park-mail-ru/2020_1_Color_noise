@@ -29,11 +29,14 @@ func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
 	/*isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Fetch boards: user is unauthorized")
-		error.ErrorHandler(w, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}*/
 
-	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+	start, err := strconv.Atoi(r.URL.Query().Get("start"))
+	if err != nil {
+		start = 0
+	}
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
@@ -42,7 +45,7 @@ func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
 
 	pins, err := lh.usecase.GetMainList(start, limit)
 	if err != nil {
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -52,7 +55,14 @@ func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
 		resp = append(resp, models.ResponsePin{
 			Id:          pin.Id,
 			BoardId:     pin.BoardId,
-			UserId:      pin.UserId,
+			User:        &models.ResponseUser{
+				Id: pin.User.Id,
+				Login: pin.User.Login,
+				About: pin.User.About,
+				Avatar: pin.User.Avatar,
+				Subscriptions: pin.User.Subscriptions,
+				Subscribers: pin.User.Subscribers,
+			},
 			Name:        pin.Name,
 			Description: pin.Description,
 			Image:       pin.Image,
@@ -63,24 +73,27 @@ func (lh *Handler) GetMainList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("GetSubList: user is unauthorized")
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+	start, err := strconv.Atoi(r.URL.Query().Get("start"))
+	if err != nil {
+		start = 0
+	}
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
@@ -89,7 +102,7 @@ func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
 
 	pins, err := lh.usecase.GetSubList(id, start, limit)
 	if err != nil {
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -99,7 +112,14 @@ func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
 		resp = append(resp, models.ResponsePin{
 			Id:          pin.Id,
 			BoardId:     pin.BoardId,
-			UserId:      pin.UserId,
+			User:        &models.ResponseUser{
+				Id: pin.User.Id,
+				Login: pin.User.Login,
+				About: pin.User.About,
+				Avatar: pin.User.Avatar,
+				Subscriptions: pin.User.Subscriptions,
+				Subscribers: pin.User.Subscribers,
+			},
 			Name:        pin.Name,
 			Description: pin.Description,
 			Image:       pin.Image,
@@ -110,24 +130,27 @@ func (lh *Handler) GetSubList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("GetRecommendationList: user is unauthorized")
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+	start, err := strconv.Atoi(r.URL.Query().Get("start"))
+	if err != nil {
+		start = 0
+	}
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
@@ -136,7 +159,7 @@ func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request)
 
 	pins, err := lh.usecase.GetRecommendationList(id, start, limit)
 	if err != nil {
-		error.ErrorHandler(w, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, lh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -146,7 +169,7 @@ func (lh *Handler) GetRecommendationList(w http.ResponseWriter, r *http.Request)
 		resp = append(resp, models.ResponsePin{
 			Id:          pin.Id,
 			BoardId:     pin.BoardId,
-			UserId:      pin.UserId,
+			User:        models.GetResponseUser(pin.User),
 			Name:        pin.Name,
 			Description: pin.Description,
 			Image:       pin.Image,

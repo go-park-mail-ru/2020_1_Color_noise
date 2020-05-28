@@ -20,7 +20,7 @@ func NewPgxDB() *PgxDB {
 func (db *PgxDB) Open(con config.DataBaseConfig) (err error) {
 
 	connConfig := pgx.ConnConfig{
-		Host:    con.Host,
+		Host:     con.Host,
 		Port:     uint16(con.Port),
 		Database: con.Database,
 		User:     con.User,
@@ -33,6 +33,7 @@ func (db *PgxDB) Open(con config.DataBaseConfig) (err error) {
 		AcquireTimeout: 10 * time.Second,
 		AfterConnect:   nil,
 	}
+	
 
 	if db.dbPool != nil {
 		return errors.New("pool was created already")

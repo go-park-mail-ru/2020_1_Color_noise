@@ -5,9 +5,9 @@ import (
 	"2020_1_Color_noise/internal/pkg/chat"
 	"2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/response"
-	"fmt"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 )
@@ -31,18 +31,21 @@ func (ch *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Fetch users for chat: user is unauthorized")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+	start, t := strconv.Atoi(r.URL.Query().Get("start"))
+	if t != nil {
+		t = nil
+	}
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
@@ -51,7 +54,7 @@ func (ch *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 
 	users, err := ch.usecase.GetUsers(uint(userId), start, limit)
 	if err != nil {
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -77,14 +80,14 @@ func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("Fetch messages for chat: user is unauthorized")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -92,7 +95,7 @@ func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	otherId, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		err = error.WithMessage(error.BadRequest.Wrap(err, "Bad id in during getting messages for chat"), "Bad id")
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
@@ -105,11 +108,9 @@ func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 
 	messages, err := ch.usecase.GetMessages(userId, uint(otherId), start, limit)
 	if err != nil {
-		error.ErrorHandler(w, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
-
-	fmt.Println("messages after usecase: ", messages)
 
 	resp := make([]models.ResponseMessage, 0)
 
@@ -131,12 +132,36 @@ func (ch *Handler) GetMessages(w http.ResponseWriter, r *http.Request) {
 				Subscribers:   message.RecUser.Subscribers,
 				Subscriptions: message.RecUser.Subscriptions,
 			},
+			Stickers:  message.Stickers,
 			Message:   message.Message,
 			CreatedAt: message.CreatedAt,
 		})
 	}
 
-	fmt.Println("messages in delivery: ", resp)
+	response.Respond(w, http.StatusOK, resp)
+}
+
+func (ch *Handler) GetStickers(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Fetch messages for chat: user is unauthorized")
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	files, err := ioutil.ReadDir("../static/stickers")
+	if err != nil {
+		error.ErrorHandler(w, r, ch.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	resp := make([]string, 0)
+
+	for _, file := range files {
+		resp = append(resp, "stickers/"+file.Name())
+	}
 
 	response.Respond(w, http.StatusOK, resp)
 }

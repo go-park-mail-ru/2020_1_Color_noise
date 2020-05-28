@@ -25,14 +25,14 @@ import (
 )
 
 type TestCaseCreate struct {
-	IsAuth     bool
-	UserId     uint
-	Comment	   *models.Comment
-	Response   string
-	IdErr      bool
-	InputErr   bool
-	ValidErr   bool
-	CreateErr  bool
+	IsAuth    bool
+	UserId    uint
+	Comment   *models.Comment
+	Response  string
+	IdErr     bool
+	InputErr  bool
+	ValidErr  bool
+	CreateErr bool
 }
 
 func TestHandler_Create(t *testing.T) {
@@ -56,57 +56,57 @@ func TestHandler_Create(t *testing.T) {
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
-			Comment:    &models.Comment{},
-			UserId:		1,
-			IsAuth:     false,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			Comment:  &models.Comment{},
+			UserId:   1,
+			IsAuth:   false,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			UserId:		1,
-			IdErr:      true,
-			Comment:    &models.Comment{},
-			Response:	`{"status":500,"body":{"error":"Internal server error"}}`,
+			IsAuth:   true,
+			UserId:   1,
+			IdErr:    true,
+			Comment:  &models.Comment{},
+			Response: `{"status":500,"body":{"error":"Internal server error"}}`,
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			InputErr:   true,
-			UserId:		1,
-			Comment:    &models.Comment{},
-			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}`,
+			IsAuth:   true,
+			InputErr: true,
+			UserId:   1,
+			Comment:  &models.Comment{},
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			ValidErr:   true,
-			UserId:		1,
-			Comment:	&models.Comment{
-				Id:		2,
+			IsAuth:   true,
+			ValidErr: true,
+			UserId:   1,
+			Comment: &models.Comment{
+				Id:     2,
 				UserId: 1,
-				PinId:	1,
-				Text:	"",
+				PinId:  1,
+				Text:   "",
 			},
-			Response:	`{"status":400,"body":{"error":"Text shouldn't be empty and longer 2000 characters."}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			CreateErr:  true,
-			UserId:		1,
-			Comment:	&models.Comment{
-				Id:		2,
+			IsAuth:    true,
+			CreateErr: true,
+			UserId:    1,
+			Comment: &models.Comment{
+				Id:     2,
 				UserId: 1,
-				PinId:	1,
+				PinId:  1,
 				Text:   "comment",
 			},
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			UserId:		1,
-			Comment:	&models.Comment{
-				Id:		2,
-				PinId:	1,
-				Text:	"comment",
+			IsAuth: true,
+			UserId: 1,
+			Comment: &models.Comment{
+				Id:    2,
+				PinId: 1,
+				Text:  "comment",
 			},
-			Response:	`{"status":201,"body":{"id":2}}`,
+			Response: `{"status":201,"body":{"id":2}}`,
 		},
 	}
 
@@ -134,8 +134,8 @@ func TestHandler_Create(t *testing.T) {
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
 
 			input := &models.InputComment{
-				Text:   item.Comment.Text,
-				PinId:	item.Comment.PinId,
+				Text:  item.Comment.Text,
+				PinId: item.Comment.PinId,
 			}
 
 			var err error = nil
@@ -183,12 +183,12 @@ func TestHandler_Create(t *testing.T) {
 }
 
 type TestCaseGetComment struct {
-	IsAuth     bool
-	UserId     uint
-	Comment	   *models.Comment
-	Response   string
-	IdErr      bool
-	GetErr     bool
+	IsAuth   bool
+	UserId   uint
+	Comment  *models.Comment
+	Response string
+	IdErr    bool
+	GetErr   bool
 }
 
 func TestHandler_GetComment(t *testing.T) {
@@ -212,27 +212,22 @@ func TestHandler_GetComment(t *testing.T) {
 
 	cases := []TestCaseGetComment{
 		TestCaseGetComment{
-			IsAuth:     false,
-			Comment:    &models.Comment{},
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			Comment:  &models.Comment{},
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseGetComment{
-			IsAuth:     true,
-			IdErr:      true,
-			Comment:    &models.Comment{},
-			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
+			IsAuth:  true,
+			GetErr:  true,
+			Comment: &models.Comment{},
 		},
 		TestCaseGetComment{
-			IsAuth:     true,
-			GetErr:     true,
-			Comment:    &models.Comment{},
-		},
-		TestCaseGetComment{
-			IsAuth:     true,
-			Comment:	&models.Comment{
-				Id:		2,
+			IsAuth: true,
+			Comment: &models.Comment{
+				Id:     2,
 				UserId: 1,
-				PinId:	1,
+				PinId:  1,
 				Text:   "comment",
 			},
 			Response: `{"status":200,"body":{"id":2,"user_id":1,"pin_id":1,"created_at":"0001-01-01T00:00:00Z","comment":"comment"}}`,
@@ -253,7 +248,7 @@ func TestHandler_GetComment(t *testing.T) {
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
 		r = r.WithContext(ctx)
 
-		if item.IsAuth && !item.IdErr {
+		if !item.IdErr {
 
 			var err error = nil
 			if item.GetErr {
@@ -300,14 +295,14 @@ func TestHandler_GetComment(t *testing.T) {
 }
 
 type TestCaseFetch struct {
-	IsAuth     bool
-	PinId     uint
-	Comments   []*models.Comment
-	Response   string
-	IdErr      bool
-	GetErr     bool
-	Start      int
-	Limit 	   int
+	IsAuth   bool
+	PinId    uint
+	Comments []*models.Comment
+	Response string
+	IdErr    bool
+	GetErr   bool
+	Start    int
+	Limit    int
 }
 
 func TestHandler_Fetch(t *testing.T) {
@@ -331,44 +326,37 @@ func TestHandler_Fetch(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			IsAuth:     false,
-			PinId:     1,
-			Start:		1,
-			Limit:		15,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			PinId:    1,
+			Start:    1,
+			Limit:    15,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			IdErr:		true,
-			PinId:     1,
-			Start:		1,
-			Limit:		15,
-			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
+			IsAuth:   true,
+			GetErr:   true,
+			PinId:    1,
+			Start:    1,
+			Limit:    15,
+			Comments: nil,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			GetErr:     true,
-			PinId:     1,
-			Start:		1,
-			Limit:		15,
-			Comments:       nil,
-		},
-		TestCaseFetch{
-			IsAuth:     true,
-			PinId:     1,
-			Start:		1,
-			Limit:		15,
-			Comments:       []*models.Comment {
+			IsAuth: true,
+			PinId:  1,
+			Start:  1,
+			Limit:  15,
+			Comments: []*models.Comment{
 				&models.Comment{
-					Id:		2,
+					Id:     2,
 					UserId: 1,
-					PinId:	1,
+					PinId:  1,
 					Text:   "comment",
 				},
 				&models.Comment{
-					Id:		3,
+					Id:     3,
 					UserId: 4,
-					PinId:	1,
+					PinId:  1,
 					Text:   "comment",
 				},
 			},
@@ -378,7 +366,7 @@ func TestHandler_Fetch(t *testing.T) {
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("GET", fmt.Sprintf("/api/comment/pin/%d/?start=%d&limit=%d",item.PinId, item.Start, item.Limit), strings.NewReader(""))
+		r := httptest.NewRequest("GET", fmt.Sprintf("/api/comment/pin/%d/?start=%d&limit=%d", item.PinId, item.Start, item.Limit), strings.NewReader(""))
 		if !item.IdErr {
 			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.PinId)})
 		} else {
@@ -391,7 +379,7 @@ func TestHandler_Fetch(t *testing.T) {
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
 		r = r.WithContext(ctx)
 
-		if item.IsAuth && !item.IdErr {
+		if !item.IdErr {
 
 			var err error = nil
 			if item.GetErr {
@@ -436,4 +424,3 @@ func TestHandler_Fetch(t *testing.T) {
 		}
 	}
 }
-

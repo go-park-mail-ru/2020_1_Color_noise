@@ -28,19 +28,16 @@ func main() {
 		panic(err)
 	}
 
-	c.User = "postgres"
-	c.Password = "password"
-
 	db := database.NewPgxDB()
-	if err := db.Open(c); err != nil {
+	if err = db.Open(c); err != nil {
 		panic(err)
 	}
 
-	grcpSessionConn, err := grpc.Dial(
-		"127.0.0.1:8003",
+	grcpSessionConn, ok := grpc.Dial(
+		"auth:8000",
 		grpc.WithInsecure(),
 	)
-	if err != nil {
+	if ok != nil {
 		log.Fatalf("cant connect to sessionService")
 	}
 	defer grcpSessionConn.Close()
@@ -65,16 +62,16 @@ func main() {
 	chatUse := chatUsecase.NewUsecase(chatRepo)
 	chatDelivery := chatDeliveryHttp.NewHandler(chatUse, zap)
 
-
 	m := middleware.NewMiddleware(sessManager, zap)
 
 	r.HandleFunc("/api/chat/users", chatDelivery.GetUsers).Methods("GET")
 	r.HandleFunc("/api/chat/messages/{id:[0-9]+}", chatDelivery.GetMessages).Methods("GET")
+	r.HandleFunc("/api/chat/stickers", chatDelivery.GetStickers).Methods("GET")
 	r.HandleFunc("/api/chat/ws", func(w http.ResponseWriter, r *http.Request) {
 
 		delivery.ServeWs(hub, zap, chatUse, w, r)
 	})
-
+	r.Use(m.PanicMiddleware)
 	r.Use(m.AccessLogMiddleware)
 	//r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)
@@ -84,7 +81,7 @@ func main() {
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}*/
-	err = http.ListenAndServe("127.0.0.1:8002", r)
+	err = http.ListenAndServe(":8000", r)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

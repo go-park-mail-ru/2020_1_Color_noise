@@ -10,10 +10,10 @@ import (
 )
 
 type TestCaseCreate struct {
-	ErrFunc  error
-	Board    *models.InputBoard
-	BoardId  uint
-	UserId   uint
+	ErrFunc error
+	Board   *models.InputBoard
+	BoardId uint
+	UserId  uint
 }
 
 func TestHandler_Create(t *testing.T) {
@@ -26,22 +26,22 @@ func TestHandler_Create(t *testing.T) {
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
-			BoardId:  0,
-			UserId:   2,
-			Board: 	   &models.InputBoard{
+			BoardId: 0,
+			UserId:  2,
+			Board: &models.InputBoard{
 				Name:        "name",
 				Description: "desc",
 			},
-			ErrFunc:   NoType.New("error"),
+			ErrFunc: NoType.New("error"),
 		},
 		TestCaseCreate{
-			BoardId:  1,
-			UserId:   2,
-			Board: 	   &models.InputBoard{
+			BoardId: 1,
+			UserId:  2,
+			Board: &models.InputBoard{
 				Name:        "name",
 				Description: "desc",
 			},
-			ErrFunc:   nil,
+			ErrFunc: nil,
 		},
 	}
 
@@ -75,9 +75,9 @@ func TestHandler_Create(t *testing.T) {
 
 type TestCaseGet struct {
 	ErrFunc   error
-	BoardFunc   *models.Board
-	BoardExp    *models.Board
-	BoardId     uint
+	BoardFunc *models.Board
+	BoardExp  *models.Board
+	BoardId   uint
 }
 
 func TestHandler_GetById(t *testing.T) {
@@ -90,18 +90,18 @@ func TestHandler_GetById(t *testing.T) {
 
 	cases := []TestCaseGet{
 		TestCaseGet{
-			BoardId:      1,
-			ErrFunc:    NoType.New("error"),
-			BoardFunc:  nil,
-			BoardExp:   nil,
+			BoardId:   1,
+			ErrFunc:   NoType.New("error"),
+			BoardFunc: nil,
+			BoardExp:  nil,
 		},
 		TestCaseGet{
-			BoardId:    1,
-			ErrFunc:  nil,
-			BoardFunc:  &models.Board{
+			BoardId: 1,
+			ErrFunc: nil,
+			BoardFunc: &models.Board{
 				Id: 1,
 			},
-			BoardExp:   &models.Board{
+			BoardExp: &models.Board{
 				Id: 1,
 			},
 		},
@@ -140,18 +140,18 @@ func TestHandler_GetByNameId(t *testing.T) {
 
 	cases := []TestCaseGet{
 		TestCaseGet{
-			BoardId:      1,
-			ErrFunc:    NoType.New("error"),
-			BoardFunc:  nil,
-			BoardExp:   nil,
+			BoardId:   1,
+			ErrFunc:   NoType.New("error"),
+			BoardFunc: nil,
+			BoardExp:  nil,
 		},
 		TestCaseGet{
-			BoardId:    1,
-			ErrFunc:  nil,
-			BoardFunc:  &models.Board{
+			BoardId: 1,
+			ErrFunc: nil,
+			BoardFunc: &models.Board{
 				Id: 1,
 			},
-			BoardExp:   &models.Board{
+			BoardExp: &models.Board{
 				Id: 1,
 			},
 		},
@@ -182,12 +182,12 @@ func TestHandler_GetByNameId(t *testing.T) {
 
 type TestCaseFetch struct {
 	ErrFunc   error
-	BoardFunc   []*models.Board
-	BoardExp    []*models.Board
-	UserId	  uint
-	Name	  string
+	BoardFunc []*models.Board
+	BoardExp  []*models.Board
+	UserId    uint
+	Name      string
 	Start     int
-	Limit 	  int
+	Limit     int
 }
 
 func TestHandler_GetByName(t *testing.T) {
@@ -200,36 +200,36 @@ func TestHandler_GetByName(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			UserId:     1,
-			ErrFunc:    NoType.New("error"),
-			BoardFunc:  nil,
-			Name:	   "pin",
-			BoardExp:   nil,
-			Start:      5,
-			Limit:      15,
+			UserId:    1,
+			ErrFunc:   NoType.New("error"),
+			BoardFunc: nil,
+			Name:      "pin",
+			BoardExp:  nil,
+			Start:     5,
+			Limit:     15,
 		},
 		TestCaseFetch{
-			UserId:   1,
-			Name:	  "pin",
-			ErrFunc:  nil,
-			BoardFunc:  []*models.Board{
+			UserId:  1,
+			Name:    "pin",
+			ErrFunc: nil,
+			BoardFunc: []*models.Board{
 				&models.Board{
-					Id:    1,
+					Id: 1,
 				},
 				&models.Board{
-					Id:    2,
-				},
-			},
-			BoardExp:  []*models.Board{
-				&models.Board{
-					Id:    1,
-				},
-				&models.Board{
-					Id:    2,
+					Id: 2,
 				},
 			},
-			Start:    5,
-			Limit:    15,
+			BoardExp: []*models.Board{
+				&models.Board{
+					Id: 1,
+				},
+				&models.Board{
+					Id: 2,
+				},
+			},
+			Start: 5,
+			Limit: 15,
 		},
 	}
 
@@ -266,36 +266,36 @@ func TestHandler_GetByUserId(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			UserId:     1,
-			ErrFunc:    NoType.New("error"),
-			BoardFunc:  nil,
-			Name:	   "pin",
-			BoardExp:   nil,
-			Start:      5,
-			Limit:      15,
+			UserId:    1,
+			ErrFunc:   NoType.New("error"),
+			BoardFunc: nil,
+			Name:      "pin",
+			BoardExp:  nil,
+			Start:     5,
+			Limit:     15,
 		},
 		TestCaseFetch{
-			UserId:   1,
-			Name:	  "pin",
-			ErrFunc:  nil,
-			BoardFunc:  []*models.Board{
+			UserId:  1,
+			Name:    "pin",
+			ErrFunc: nil,
+			BoardFunc: []*models.Board{
 				&models.Board{
-					Id:    1,
+					Id: 1,
 				},
 				&models.Board{
-					Id:    2,
-				},
-			},
-			BoardExp:  []*models.Board{
-				&models.Board{
-					Id:    1,
-				},
-				&models.Board{
-					Id:    2,
+					Id: 2,
 				},
 			},
-			Start:    5,
-			Limit:    15,
+			BoardExp: []*models.Board{
+				&models.Board{
+					Id: 1,
+				},
+				&models.Board{
+					Id: 2,
+				},
+			},
+			Start: 5,
+			Limit: 15,
 		},
 	}
 
@@ -323,10 +323,10 @@ func TestHandler_GetByUserId(t *testing.T) {
 }
 
 type TestCaseUpdate struct {
-	ErrFunc  error
-	Board    *models.InputBoard
-	BoardId  uint
-	UserId   uint
+	ErrFunc error
+	Board   *models.InputBoard
+	BoardId uint
+	UserId  uint
 }
 
 func TestHandler_Update(t *testing.T) {
@@ -339,22 +339,22 @@ func TestHandler_Update(t *testing.T) {
 
 	cases := []TestCaseUpdate{
 		TestCaseUpdate{
-			BoardId:    1,
-			UserId:   2,
-			Board: 	   &models.InputBoard{
+			BoardId: 1,
+			UserId:  2,
+			Board: &models.InputBoard{
 				Name:        "name",
 				Description: "desc",
 			},
-			ErrFunc:   NoType.New("error"),
+			ErrFunc: NoType.New("error"),
 		},
 		TestCaseUpdate{
-			BoardId:  1,
-			UserId:   2,
-			Board: 	   &models.InputBoard{
+			BoardId: 1,
+			UserId:  2,
+			Board: &models.InputBoard{
 				Name:        "name",
 				Description: "desc",
 			},
-			ErrFunc:   nil,
+			ErrFunc: nil,
 		},
 	}
 
@@ -384,9 +384,9 @@ func TestHandler_Update(t *testing.T) {
 }
 
 type TestCaseDelete struct {
-	ErrFunc   error
-	BoardId   uint
-	UserId    uint
+	ErrFunc error
+	BoardId uint
+	UserId  uint
 }
 
 func TestHandler_Delete(t *testing.T) {
@@ -399,14 +399,14 @@ func TestHandler_Delete(t *testing.T) {
 
 	cases := []TestCaseDelete{
 		TestCaseDelete{
-			UserId:    1,
-			BoardId:   2,
-			ErrFunc:   NoType.New("error"),
+			UserId:  1,
+			BoardId: 2,
+			ErrFunc: NoType.New("error"),
 		},
 		TestCaseDelete{
-			UserId:    1,
-			BoardId:   2,
-			ErrFunc:   nil,
+			UserId:  1,
+			BoardId: 2,
+			ErrFunc: nil,
 		},
 	}
 

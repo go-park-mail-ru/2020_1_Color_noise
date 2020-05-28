@@ -2,20 +2,33 @@ package usecase
 
 import (
 	"2020_1_Color_noise/internal/models"
+	"2020_1_Color_noise/internal/pkg/board"
 	. "2020_1_Color_noise/internal/pkg/error"
-	"2020_1_Color_noise/internal/pkg/image"
 	"2020_1_Color_noise/internal/pkg/pin"
+	imageService "2020_1_Color_noise/internal/pkg/proto/image"
+	userService "2020_1_Color_noise/internal/pkg/proto/user"
+	"2020_1_Color_noise/internal/pkg/utils"
+	"context"
 	"encoding/base64"
+	"log"
+	"math/rand"
 	"strings"
+	"time"
 )
 
 type Usecase struct {
-	repo pin.IRepository
+	repoPin      pin.IRepository
+	repoBoard    board.IRepository
+	imageService imageService.ImageServiceClient
+	userServ     userService.UserServiceClient
 }
 
-func NewUsecase(repo pin.IRepository) *Usecase {
+func NewUsecase(repoPin pin.IRepository, repoBoard board.IRepository, imageServ imageService.ImageServiceClient, userServ userService.UserServiceClient) *Usecase {
 	return &Usecase{
-		repo: repo,
+		repoPin,
+		repoBoard,
+		imageServ,
+		userServ,
 	}
 }
 
@@ -33,38 +46,74 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
-	name, err := image.SaveImage(&buffer)
+	name, err := utils.SaveImage(&buffer)
 	if err != nil {
 		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
 	pin := &models.Pin{
-		UserId:      userId,
+		User:        &models.User{
+			Id: userId,
+		},
 		BoardId:     uint(input.BoardId),
 		Name:        input.Name,
 		Description: input.Description,
 		Image:       name,
 	}
 
-	id, err := pu.repo.Create(pin)
+	id, err := pu.repoPin.Create(pin)
 	if err != nil {
 		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
 	}
 
+	go func() {
+		err := pu.Analyze(id, name)
+		if err != nil {
+			log.Println(err)
+		}
+	}()
+
 	return id, nil
 }
 
-func (pu *Usecase) GetById(id uint) (*models.Pin, error) {
-	pin, err := pu.repo.GetByID(id)
+func (pu *Usecase) Save(pinId uint, boardId uint) (bool, error) {
+	status, err := pu.repoPin.Save(pinId, boardId)
+	if err != nil {
+		return false, Wrapf(err, "Saving pin error, boardId: %d", boardId)
+	}
+
+	return status, nil
+}
+
+func (pu *Usecase) GetById(id uint, userId uint) (*models.Pin, error) {
+	pin, err := pu.repoPin.GetByID(id)
 	if err != nil {
 		return nil, Wrapf(err, "Getting pin by id error, pinId: %d", id)
+	}
+
+
+	log.Println("userID: ", userId)
+	if userId != 0 {
+		rand.Seed(time.Now().UnixNano())
+		n := rand.Intn(10)
+
+		if n < 6 {
+			go func(id uint, tags []string) {
+				_, err = pu.userServ.UpdatePreferences(context.Background(), &userService.Pref{Preferences: tags,
+					UserId: int32(id)})
+				if err != nil {
+					log.Println("Getting pin error, update preferences of user: ", err)
+				}
+
+			} (userId, pin.Tags)
+		}
 	}
 
 	return pin, nil
 }
 
 func (pu *Usecase) GetByUserId(id uint, start int, limit int) ([]*models.Pin, error) {
-	pins, err := pu.repo.GetByUserID(id, start, limit)
+	pins, err := pu.repoPin.GetByUserID(id, start, limit)
 	if err != nil {
 		return nil, Wrapf(err, "Getting pin by id error, pinId: %d", id)
 	}
@@ -72,8 +121,8 @@ func (pu *Usecase) GetByUserId(id uint, start int, limit int) ([]*models.Pin, er
 	return pins, nil
 }
 
-func (pu *Usecase) GetByName(name string, start int, limit int) ([]*models.Pin, error) {
-	pins, err := pu.repo.GetByName(name, start, limit)
+func (pu *Usecase) GetByName(name string, start int, limit int, date string, desc bool, most string) ([]*models.Pin, error) {
+	pins, err := pu.repoPin.GetByName(name, start, limit, date, desc, most)
 	if err != nil {
 		return nil, Wrapf(err, "Getting pin by id error, name: %s", name)
 	}
@@ -84,13 +133,15 @@ func (pu *Usecase) GetByName(name string, start int, limit int) ([]*models.Pin, 
 func (pu *Usecase) Update(input *models.UpdatePin, pinId uint, userId uint) error {
 	pin := &models.Pin{
 		Id:          pinId,
-		UserId:      userId,
+		User:        &models.User{
+			Id: userId,
+		},
 		BoardId:     uint(input.BoardId),
 		Name:        input.Name,
 		Description: input.Description,
 	}
 
-	err := pu.repo.Update(pin)
+	err := pu.repoPin.Update(pin)
 	if err != nil {
 		return Wrap(err, "Updating pin error")
 	}
@@ -99,9 +150,23 @@ func (pu *Usecase) Update(input *models.UpdatePin, pinId uint, userId uint) erro
 }
 
 func (pu *Usecase) Delete(pinId uint, userId uint) error {
-	err := pu.repo.Delete(pinId, userId)
+	err := pu.repoPin.Delete(pinId, userId)
 	if err != nil {
 		return Wrap(err, "Deleting pin error")
+	}
+
+	return nil
+}
+
+func (pu *Usecase) Analyze(pinId uint, name string) error {
+	tags, err := pu.imageService.Analyze(context.Background(), &imageService.Address{Image: name})
+	if err != nil {
+		return Wrap(err, "analyzing pin error")
+	}
+
+	err = pu.repoPin.AddTags(pinId, tags.Tags)
+	if err != nil {
+		return Wrap(err, "adding tags pin error")
 	}
 
 	return nil

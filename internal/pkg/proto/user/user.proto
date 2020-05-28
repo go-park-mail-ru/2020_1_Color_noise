@@ -14,19 +14,7 @@ message User {
   int64 Subscriptions = 7;
   int64 Subscribers = 8;
   google.protobuf.Timestamp CreatedAt = 9;
-}
-
-message Session {
-  int64 Id = 1;
-  string Cookie = 2;
-  string Token = 3;
-  google.protobuf.Timestamp CreatedAt = 4;
-  google.protobuf.Timestamp DeletingAt = 5;
-}
-
-message UserSession {
-  User user = 1;
-  Session session = 2;
+  int32 Error = 10;
 }
 
 message UserID {
@@ -34,7 +22,7 @@ message UserID {
 }
 
 message Nothing {
-  bool error = 1;
+  int32  Error = 1;
 }
 
 message SignUp {
@@ -70,6 +58,7 @@ message Avatar {
 
 message Address {
   string Avatar = 1;
+  int32 Error = 2;
 }
 
 message Following {
@@ -95,6 +84,16 @@ message Sub {
 
 message Users {
   repeated User Users = 1;
+  int32 Error = 2;
+}
+
+message Pref {
+  repeated string Preferences = 1;
+  int32 UserId = 2;
+}
+
+message Status {
+  bool Status = 1;
 }
 
 service UserService {
@@ -106,8 +105,10 @@ service UserService {
     rpc UpdatePassword(Password) returns (Nothing) {}
     rpc UpdateAvatar(Avatar) returns (Address) {}
     rpc Follow(Following) returns (Nothing) {}
+    rpc IsFollowed(Following) returns (Status) {}
     rpc Unfollow(Following) returns (Nothing) {}
     rpc Search(Searching) returns (Users) {}
     rpc GetSubscribers(Sub) returns (Users) {}
     rpc GetSubscriptions(Sub) returns (Users) {}
+    rpc UpdatePreferences(Pref) returns (Nothing) {}
 }

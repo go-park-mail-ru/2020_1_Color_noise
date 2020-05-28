@@ -7,13 +7,16 @@ import (
 
 type Pin struct {
 	Id          uint
-	UserId      uint
+	User        *User
 	BoardId     uint
 	Name        string
 	Description string
 	Image       string
+	Tags        []string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+	Views       uint
+	Comment     uint
 }
 
 type DataBasePin struct {
@@ -25,6 +28,9 @@ type DataBasePin struct {
 	Image       string
 	CreatedAt   time.Time
 	UpdatedAt   sql.NullTime //не гарантируется, что пин был обновлен
+	Tags        []string
+	Views       uint
+	Comment     uint
 }
 
 type InputPin struct {
@@ -41,22 +47,39 @@ type UpdatePin struct {
 }
 
 type ResponsePin struct {
-	Id          uint   `json:"id,omitempty"`
-	UserId      uint   `json:"user_id,omitempty"`
-	BoardId     uint   `json:"board_id,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Image       string `json:"image,omitempty"`
+	Id          uint          `json:"id,omitempty"`
+	User        *ResponseUser `json:"user,omitempty"`
+	BoardId     uint          `json:"board_id,omitempty"`
+	Name        string        `json:"name,omitempty"`
+	Description string        `json:"description"`
+	Image       string        `json:"image,omitempty"`
+	Tags        []string      `json:"tags,omitempty"`
+}
+
+func GetResponsePin(pin *Pin) *ResponsePin {
+	if pin == nil {
+		return nil
+	}
+	return &ResponsePin{
+		Id:          pin.Id,
+		BoardId:     pin.BoardId,
+		User:        GetResponseUser(pin.User),
+		Name:        pin.Name,
+		Description: pin.Description,
+		Image:       pin.Image,
+	}
 }
 
 func GetPin(pin DataBasePin) Pin {
 	tmp := Pin{
 		Id:        pin.Id,
-		UserId:    pin.UserId,
 		BoardId:   pin.BoardId,
 		Name:      pin.Name,
 		Image:     pin.Image,
 		CreatedAt: pin.CreatedAt,
+		Tags:      pin.Tags,
+		Views:     pin.Views,
+		Comment:   pin.Comment,
 	}
 
 	if pin.Description.Valid {
@@ -72,11 +95,14 @@ func GetPin(pin DataBasePin) Pin {
 func GetBPin(pin Pin) DataBasePin {
 	tmp := DataBasePin{
 		Id:        pin.Id,
-		UserId:    pin.UserId,
+		UserId: pin.User.Id,
 		BoardId:   pin.BoardId,
 		Name:      pin.Name,
 		Image:     pin.Image,
 		CreatedAt: pin.CreatedAt,
+		Tags:      pin.Tags,
+		Views:     pin.Views,
+		Comment:   pin.Comment,
 	}
 	if !pin.UpdatedAt.IsZero() {
 		tmp.UpdatedAt.Valid = true

@@ -5,7 +5,6 @@ import (
 	"2020_1_Color_noise/internal/pkg/chat"
 	e "2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/response"
-	"fmt"
 	"go.uber.org/zap"
 	"log"
 	"net/http"
@@ -56,11 +55,23 @@ type Client struct {
 func (c *Client) readPump() {
 	defer func() {
 		c.hub.unregister <- c
-		c.conn.Close()
+		err := c.conn.Close()
+		if err != nil {
+			log.Println(err)
+		}
 	}()
 	c.conn.SetReadLimit(maxMessageSize)
-	c.conn.SetReadDeadline(time.Now().Add(pongWait))
-	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	err := c.conn.SetReadDeadline(time.Now().Add(pongWait))
+	if err != nil {
+		log.Println(err)
+	}
+	c.conn.SetPongHandler(func(string) error {
+		err := c.conn.SetReadDeadline(time.Now().Add(pongWait))
+		if err != nil {
+			log.Println(err)
+		}
+		return nil
+	})
 	for {
 		input := &models.InputMessage{}
 
@@ -96,7 +107,10 @@ func (c *Client) writePump() {
 	for {
 		select {
 		case message, ok := <-c.send:
-			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			err := c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			if err != nil {
+				log.Println(err)
+			}
 			if !ok {
 				// The hub closed the channel.
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
@@ -124,15 +138,17 @@ func (c *Client) writePump() {
 
 				Message: message.Message,
 
+				Stickers: message.Stickers,
+
 				CreatedAt: message.CreatedAt,
 			}
 
-			result := response.Response {
+			result := response.Response{
 				Status: 200,
-				Body: resp,
+				Body:   resp,
 			}
 
-			err := c.conn.WriteJSON(result)
+			err = c.conn.WriteJSON(result)
 			if err != nil {
 				return
 			}
@@ -147,36 +163,34 @@ func (c *Client) writePump() {
 }
 
 // serveWs handles websocket requests from the peer.
-func ServeWs(hub *Hub, logger  *zap.SugaredLogger, usecase chat.IUsecase, w http.ResponseWriter, r *http.Request) {
+func ServeWs(hub *Hub, logger *zap.SugaredLogger, usecase chat.IUsecase, w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		//log.Println("User is unauthorized, reqId: ", reqId)
 		err := e.Unauthorized.New("Chatting: user is unauthorized")
-		e.ErrorHandler(w, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
+		e.ErrorHandler(w, r, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	userId, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := e.NoType.New("Received bad id from context")
-		e.ErrorHandler(w, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
+		e.ErrorHandler(w, r, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
-
 
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		err := e.NoType.New("Check origin error, chat")
-		e.ErrorHandler(w, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
+		e.ErrorHandler(w, r, logger, reqId, e.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	client := &Client{userId: userId, hub: hub, conn: conn, send: make(chan *models.Message), usecase: usecase}
 	client.hub.register <- client
-	fmt.Println("client ", client)
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
 	go client.writePump()

@@ -48,6 +48,7 @@ func (db *PgxDB) GetBoardById(board models.DataBaseBoard) (models.Board, error) 
 func (db *PgxDB) GetBoardsByUserId(board models.DataBaseBoard, start, limit int) ([]*models.Board, error) {
 	var res []*models.Board
 	row, err := db.dbPool.Query(BoardsByUserId, board.UserId, limit, start)
+	defer row.Close()
 	if err != nil {
 		return nil, errors.New("db problem")
 	}
@@ -67,6 +68,7 @@ func (db *PgxDB) GetBoardsByUserId(board models.DataBaseBoard, start, limit int)
 func (db *PgxDB) GetBoardsByName(board models.DataBaseBoard, start, limit int) ([]*models.Board, error) {
 	var res []*models.Board
 	row, err := db.dbPool.Query(BoardsByNameSearch, board.Name, limit, start)
+	defer row.Close()
 	if err != nil {
 		return nil, errors.New("db problem")
 	}
@@ -91,6 +93,9 @@ func (db *PgxDB) GetBoardLastPin(board models.DataBaseBoard) (models.Pin, error)
 	if err != nil {
 		return models.Pin{}, errors.New("board not found")
 	}
+	p := models.GetPin(res)
+	us, _ := db.GetUserById(models.DataBaseUser{Id:res.UserId})
+	p.User = &us
 
-	return models.GetPin(res), nil
+	return p, nil
 }

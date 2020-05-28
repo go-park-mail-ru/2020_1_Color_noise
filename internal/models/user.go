@@ -14,7 +14,9 @@ type User struct {
 	Avatar            string
 	Subscriptions     int
 	Subscribers       int
+	Preferences       []string
 	CreatedAt         time.Time
+	Tags              []string
 }
 
 type DataBaseUser struct {
@@ -27,6 +29,7 @@ type DataBaseUser struct {
 	Subscriptions     int
 	Subscribers       int
 	CreatedAt         time.Time
+	Tags              []string
 }
 
 type SignUpInput struct {
@@ -57,27 +60,27 @@ type ResponseUser struct {
 	Id            uint   `json:"id"`
 	Email         string `json:"email,omitempty"`
 	Login         string `json:"login"`
-	About         string `json:"about,omitempty"`
+	About         string `json:"about"`
 	Avatar        string `json:"avatar,omitempty"`
 	Subscriptions int    `json:"subscriptions"`
 	Subscribers   int    `json:"subscribers"`
 }
 
-/*
-func ValidateEmail(email string) bool {
-	matched, _ := regexp.MatchString(`^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$`, email)
-	return matched
-}
+func GetResponseUser(u *User) *ResponseUser {
+	if u == nil {
+		return nil
+	}
 
-func ValidateLogin(login string) bool {
-	matched, _ := regexp.MatchString(`^[\w.-_@$]+$`, login)
-	return matched
+	return &ResponseUser{
+		Id:            u.Id,
+		Email:         u.Email,
+		Login:         u.Login,
+		About:         u.About,
+		Avatar:        u.Avatar,
+		Subscribers:   u.Subscribers,
+		Subscriptions: u.Subscriptions,
+	}
 }
-
-func ValidatePassword(password string) bool {
-	return len(password) > 6
-}
-*/
 
 func GetUser(u DataBaseUser) User {
 	tmp := User{
@@ -88,13 +91,14 @@ func GetUser(u DataBaseUser) User {
 		Subscriptions:     u.Subscriptions,
 		Subscribers:       u.Subscribers,
 		CreatedAt:         u.CreatedAt,
+		Tags:              u.Tags,
 	}
 
 	if u.Avatar.Valid {
 		tmp.Avatar = u.Avatar.String
 	}
 	if u.About.Valid {
-		tmp.About = u.Avatar.String
+		tmp.About = u.About.String
 	}
 
 	return tmp
@@ -109,6 +113,7 @@ func GetBUser(u User) DataBaseUser {
 		Subscriptions:     u.Subscriptions,
 		Subscribers:       u.Subscribers,
 		CreatedAt:         u.CreatedAt,
+		Tags:              u.Tags,
 	}
 
 	if u.Avatar != "" {
@@ -116,7 +121,7 @@ func GetBUser(u User) DataBaseUser {
 		tmp.Avatar.Valid = true
 	}
 	if u.About != "" {
-		tmp.About.String = u.Avatar
+		tmp.About.String = u.About
 		tmp.About.Valid = true
 	}
 	return tmp

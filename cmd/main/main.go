@@ -7,6 +7,7 @@ import (
 	"2020_1_Color_noise/internal/pkg/metric"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
+	"2020_1_Color_noise/internal/pkg/proto/image"
 	"2020_1_Color_noise/internal/pkg/proto/session"
 	"2020_1_Color_noise/internal/pkg/proto/user"
 
@@ -55,16 +56,13 @@ func main() {
 		panic(err)
 	}
 
-	c.User = "postgres"
-	c.Password = "password"
-
 	db := database.NewPgxDB()
-	if err := db.Open(c); err != nil {
+	if err = db.Open(c); err != nil {
 		panic(err)
 	}
 
 	grcpSessConn, err := grpc.Dial(
-		"127.0.0.1:8003",
+		"auth:8000",
 		grpc.WithInsecure(),
 	)
 	if err != nil {
@@ -75,15 +73,26 @@ func main() {
 	sessManager := session.NewAuthSeviceClient(grcpSessConn)
 
 	grcpUserConn, err := grpc.Dial(
-		"127.0.0.1:8004",
+		"user:8000",
 		grpc.WithInsecure(),
 	)
 	if err != nil {
 		log.Fatalf("cant connect to user grpc")
 	}
-	defer grcpSessConn.Close()
+	defer grcpUserConn.Close()
 
 	userService := user.NewUserServiceClient(grcpUserConn)
+
+	grcpImageConn, err := grpc.Dial(
+		"image:8000",
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatalf("cant connect to user grpc")
+	}
+	defer grcpImageConn.Close()
+
+	imageService := image.NewImageServiceClient(grcpImageConn)
 
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -96,17 +105,16 @@ func main() {
 		zap.String("logger", "ZAP"),
 	)
 
-	userDelivery := userDeliveryHttp.NewHandler(userService, sessManager, zap)
-
 	sessionDelivery := sessionDeliveryHttp.NewHandler(sessManager, userService, zap)
-
-	pinRepo := pinRepository.NewRepo(db)
-	pinUse := pinUsecase.NewUsecase(pinRepo)
-	pinDelivery := pinDeliveryHttp.NewHandler(pinUse, zap)
 
 	boardRepo := boardRepository.NewRepo(db)
 	boardUse := boardUsecase.NewUsecase(boardRepo)
 	boardDelivery := boardDeliveryHttp.NewHandler(boardUse, zap)
+
+	pinRepo := pinRepository.NewRepo(db)
+
+	pinUse := pinUsecase.NewUsecase(pinRepo, boardRepo, imageService, userService)
+	pinDelivery := pinDeliveryHttp.NewHandler(pinUse, zap)
 
 	commentRepo := commentRepository.NewRepo(db)
 	commentUse := commentUsecase.NewUsecase(commentRepo)
@@ -121,6 +129,8 @@ func main() {
 	notificationsDelivery := notificationsDeliveryHttp.NewHandler(notificationsUse, zap)
 
 	search := searchHandler.NewHandler(commentUse, pinUse, userService, zap)
+
+	userDelivery := userDeliveryHttp.NewHandler(userService, sessManager, boardUse, zap)
 
 	m := middleware.NewMiddleware(sessManager, zap)
 
@@ -138,9 +148,12 @@ func main() {
 	r.HandleFunc("/api/user/following/{id:[0-9]+}", userDelivery.Unfollow).Methods("DELETE")
 	r.HandleFunc("/api/user/subscriptions/{id:[0-9]+}", userDelivery.GetSubscribtions).Methods("GET")
 	r.HandleFunc("/api/user/subscribers/{id:[0-9]+}", userDelivery.GetSubscribers).Methods("GET")
+	r.HandleFunc("/api/support", userDelivery.GetSupport).Methods("GET")
+	r.HandleFunc("/api/user/following/{id:[0-9]+}/status", userDelivery.IsFollowed).Methods("GET")
 	//r.HandleFunc("/api/user", userDelivery.Delete).Methods("DELETE")
 
 	r.HandleFunc("/api/pin", pinDelivery.Create).Methods("POST")
+	r.HandleFunc("/api/pin/saving/{id:[0-9]+}", pinDelivery.Save).Methods("POST")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.GetPin).Methods("GET")
 	r.HandleFunc("/api/pin/user/{id:[0-9]+}", pinDelivery.Fetch).Methods("GET")
 	r.HandleFunc("/api/pin/{id:[0-9]+}", pinDelivery.Update).Methods("PUT")
@@ -166,6 +179,7 @@ func main() {
 	r.HandleFunc("/api/notifications", notificationsDelivery.GetNotifications).Methods("GET")
 
 	r.Handle("/api/metric", promhttp.Handler())
+	r.Use(m.PanicMiddleware)
 	r.Use(m.AccessLogMiddleware)
 	//r.Use(m.CORSMiddleware)
 	r.Use(m.AuthMiddleware)
@@ -174,7 +188,7 @@ func main() {
 
 	srv := &http.Server{
 		Handler: r,
-		Addr:    ":8001",
+		Addr:    ":8000",
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,

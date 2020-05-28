@@ -6,6 +6,8 @@ import (
 	userService "2020_1_Color_noise/internal/pkg/proto/user"
 	"2020_1_Color_noise/internal/pkg/user"
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type UserService struct {
@@ -20,14 +22,14 @@ func NewUserService(usecase user.IUsecase) *UserService {
 
 func (us *UserService) Create(ctx context.Context, in *userService.SignUp) (*userService.User, error) {
 	input := &models.SignUpInput{
-		Email: in.Email,
-		Login: in.Login,
+		Email:    in.Email,
+		Login:    in.Login,
 		Password: in.Password,
-		}
+	}
 
 	u, err := us.usecase.Create(input)
 	if err != nil {
-		return &userService.User{}, Wrap(err, "GRPC create: Creating user error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC create: Creating user error").Error())
 	}
 
 	userProto := &userService.User{
@@ -43,16 +45,16 @@ func (us *UserService) Create(ctx context.Context, in *userService.SignUp) (*use
 func (us *UserService) GetById(ctx context.Context, in *userService.UserID) (*userService.User, error) {
 	u, err := us.usecase.GetById(uint(in.Id))
 	if err != nil {
-		return &userService.User{}, Wrapf(err, "GRPC GetById error, id: %d", in.Id)
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrapf(err, "GRPC GetById error, id: %d", in.Id).Error())
 	}
 
 	userProto := &userService.User{
-		Id:     int64(u.Id),
-		Email:  u.Email,
-		Login:  u.Login,
-		Avatar: u.Avatar,
-		About:  u.About,
-		Subscribers: int64(u.Subscribers),
+		Id:            int64(u.Id),
+		Email:         u.Email,
+		Login:         u.Login,
+		Avatar:        u.Avatar,
+		About:         u.About,
+		Subscribers:   int64(u.Subscribers),
 		Subscriptions: int64(u.Subscriptions),
 	}
 
@@ -62,31 +64,31 @@ func (us *UserService) GetById(ctx context.Context, in *userService.UserID) (*us
 func (us *UserService) GetByLogin(ctx context.Context, in *userService.Login) (*userService.User, error) {
 	u, err := us.usecase.GetByLogin(in.Login)
 	if err != nil {
-		return &userService.User{}, Wrap(err, "GRPC GetById error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC GetById error").Error())
 	}
 
 	userProto := &userService.User{
-		Id:     int64(u.Id),
-		Email:  u.Email,
+		Id:                int64(u.Id),
+		Email:             u.Email,
 		EncryptedPassword: u.EncryptedPassword,
-		Login:  u.Login,
-		Avatar: u.Avatar,
-		About:  u.About,
-		Subscribers: int64(u.Subscribers),
-		Subscriptions: int64(u.Subscriptions),
+		Login:             u.Login,
+		Avatar:            u.Avatar,
+		About:             u.About,
+		Subscribers:       int64(u.Subscribers),
+		Subscriptions:     int64(u.Subscriptions),
 	}
 
 	return userProto, nil
 }
 
 func (us *UserService) UpdateProfile(ctx context.Context, in *userService.Profile) (*userService.Nothing, error) {
-	input := &models.UpdateProfileInput {
+	input := &models.UpdateProfileInput{
 		Email: in.Input.Email,
 		Login: in.Input.Login,
 	}
 	err := us.usecase.UpdateProfile(uint(in.Id.Id), input)
 	if err != nil {
-		return &userService.Nothing{}, Wrap(err, "GRPC UpdateProfile error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC UpdateProfile error").Error())
 	}
 
 	return &userService.Nothing{}, nil
@@ -99,7 +101,7 @@ func (us *UserService) UpdateDescription(ctx context.Context, in *userService.De
 
 	err := us.usecase.UpdateDescription(uint(in.Id.Id), input)
 	if err != nil {
-		return &userService.Nothing{}, Wrap(err, "GRPC UpdateDescription error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC UpdateDescription error").Error())
 	}
 
 	return &userService.Nothing{}, nil
@@ -112,7 +114,7 @@ func (us *UserService) UpdatePassword(ctx context.Context, in *userService.Passw
 
 	err := us.usecase.UpdatePassword(uint(in.Id.Id), input)
 	if err != nil {
-		return &userService.Nothing{}, Wrap(err, "GRPC UpdateDPassword error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC UpdateDPassword error").Error())
 	}
 
 	return &userService.Nothing{}, nil
@@ -121,7 +123,7 @@ func (us *UserService) UpdatePassword(ctx context.Context, in *userService.Passw
 func (us *UserService) UpdateAvatar(ctx context.Context, in *userService.Avatar) (*userService.Address, error) {
 	image, err := us.usecase.UpdateAvatar(uint(in.Id.Id), in.Avatar)
 	if err != nil {
-		return &userService.Address{}, Wrap(err, "GRPC UpdateAvatar error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC UpdateAvatar error").Error())
 	}
 
 	return &userService.Address{Avatar: image}, nil
@@ -130,16 +132,25 @@ func (us *UserService) UpdateAvatar(ctx context.Context, in *userService.Avatar)
 func (us *UserService) Follow(ctx context.Context, in *userService.Following) (*userService.Nothing, error) {
 	err := us.usecase.Follow(uint(in.Id.Id), uint(in.SubId.Id))
 	if err != nil {
-		return &userService.Nothing{Error: true}, Wrap(err, "GRPC Follow error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC Follow error").Error())
 	}
 
 	return &userService.Nothing{}, nil
 }
 
+func (us *UserService) IsFollowed(ctx context.Context, in *userService.Following) (*userService.Status, error) {
+	s, err := us.usecase.IsFollowed(uint(in.Id.Id), uint(in.SubId.Id))
+	if err != nil {
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC IsFollowed error").Error())
+	}
+
+	return &userService.Status{Status: s}, nil
+}
+
 func (us *UserService) Unfollow(ctx context.Context, in *userService.Following) (*userService.Nothing, error) {
 	err := us.usecase.Unfollow(uint(in.Id.Id), uint(in.SubId.Id))
 	if err != nil {
-		return &userService.Nothing{}, Wrap(err, "GRPC UnFollow error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC Unfollow error").Error())
 	}
 
 	return &userService.Nothing{}, nil
@@ -148,22 +159,22 @@ func (us *UserService) Unfollow(ctx context.Context, in *userService.Following) 
 func (us *UserService) GetSubscribers(ctx context.Context, in *userService.Sub) (*userService.Users, error) {
 	users, err := us.usecase.GetSubscribers(uint(in.Id.Id), int(in.Start), int(in.Limit))
 	if err != nil {
-		return &userService.Users{}, Wrap(err, "GRPC GetSubscribers error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC GetSubscribers error").Error())
 	}
 
 	u := &userService.Users{}
 	for _, user := range users {
 		u.Users = append(u.Users,
 			&userService.User{
-				Id:     int64(user.Id),
-				Email:  user.Email,
-				Login:  user.Login,
-				Avatar: user.Avatar,
-				About:  user.About,
-				Subscribers: int64(user.Subscribers),
+				Id:            int64(user.Id),
+				Email:         user.Email,
+				Login:         user.Login,
+				Avatar:        user.Avatar,
+				About:         user.About,
+				Subscribers:   int64(user.Subscribers),
 				Subscriptions: int64(user.Subscriptions),
 			},
-			)
+		)
 	}
 
 	return u, nil
@@ -172,19 +183,19 @@ func (us *UserService) GetSubscribers(ctx context.Context, in *userService.Sub) 
 func (us *UserService) GetSubscriptions(ctx context.Context, in *userService.Sub) (*userService.Users, error) {
 	users, err := us.usecase.GetSubscriptions(uint(in.Id.Id), int(in.Start), int(in.Limit))
 	if err != nil {
-		return &userService.Users{}, Wrap(err, "GRPC GetSubscriptions error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC GetSubscriptions error").Error())
 	}
 
 	u := &userService.Users{}
 	for _, user := range users {
 		u.Users = append(u.Users,
 			&userService.User{
-				Id:     int64(user.Id),
-				Email:  user.Email,
-				Login:  user.Login,
-				Avatar: user.Avatar,
-				About:  user.About,
-				Subscribers: int64(user.Subscribers),
+				Id:            int64(user.Id),
+				Email:         user.Email,
+				Login:         user.Login,
+				Avatar:        user.Avatar,
+				About:         user.About,
+				Subscribers:   int64(user.Subscribers),
 				Subscriptions: int64(user.Subscriptions),
 			},
 		)
@@ -196,23 +207,32 @@ func (us *UserService) GetSubscriptions(ctx context.Context, in *userService.Sub
 func (us *UserService) Search(ctx context.Context, in *userService.Searching) (*userService.Users, error) {
 	users, err := us.usecase.Search(in.Login.Login, int(in.Start), int(in.Limit))
 	if err != nil {
-		return &userService.Users{}, Wrap(err, "GRPC Search error")
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC Search error").Error())
 	}
 
 	u := &userService.Users{}
 	for _, user := range users {
 		u.Users = append(u.Users,
 			&userService.User{
-				Id:     int64(user.Id),
-				Email:  user.Email,
-				Login:  user.Login,
-				Avatar: user.Avatar,
-				About:  user.About,
-				Subscribers: int64(user.Subscribers),
+				Id:            int64(user.Id),
+				Email:         user.Email,
+				Login:         user.Login,
+				Avatar:        user.Avatar,
+				About:         user.About,
+				Subscribers:   int64(user.Subscribers),
 				Subscriptions: int64(user.Subscriptions),
 			},
 		)
 	}
 
 	return u, nil
+}
+
+func (us *UserService) UpdatePreferences(ctx context.Context, in *userService.Pref) (*userService.Nothing, error) {
+	err := us.usecase.UpdatePreferences(uint(in.UserId), in.Preferences)
+	if err != nil {
+		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC UpdatePreferences error").Error())
+	}
+
+	return &userService.Nothing{}, nil
 }

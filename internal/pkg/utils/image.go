@@ -1,13 +1,12 @@
-package image
+package utils
 
 import (
 	. "2020_1_Color_noise/internal/pkg/error"
-	"2020_1_Color_noise/internal/pkg/utils"
 	"os"
 )
 
 func SaveImage(b *[]byte) (string, error) {
-	name := utils.RandStringRunes(30) + ".jpg"
+	name := RandStringRunes(30) + ".jpg"
 	path := "../storage/" + name
 	file, err := os.Create(path)
 	if err != nil {

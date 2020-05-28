@@ -9,14 +9,13 @@ import (
 	"testing"
 )
 
-
 type TestCaseFetch struct {
-	ErrFunc   error
-	PinFunc   []*models.Pin
-	PinExp    []*models.Pin
-	UserId	  uint
-	Start     int
-	Limit 	  int
+	ErrFunc error
+	PinFunc []*models.Pin
+	PinExp  []*models.Pin
+	UserId  uint
+	Start   int
+	Limit   int
 }
 
 func TestHandler_GetSubList(t *testing.T) {
@@ -29,34 +28,34 @@ func TestHandler_GetSubList(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			UserId:    1,
-			ErrFunc:   NoType.New("error"),
-			PinFunc:  nil,
-			PinExp:   nil,
-			Start:    5,
-			Limit:    15,
+			UserId:  1,
+			ErrFunc: NoType.New("error"),
+			PinFunc: nil,
+			PinExp:  nil,
+			Start:   5,
+			Limit:   15,
 		},
 		TestCaseFetch{
-			UserId:   1,
-			ErrFunc:  nil,
-			PinFunc:  []*models.Pin{
+			UserId:  1,
+			ErrFunc: nil,
+			PinFunc: []*models.Pin{
 				&models.Pin{
-					Id:    1,
+					Id: 1,
 				},
 				&models.Pin{
-					Id:    2,
-				},
-			},
-			PinExp:  []*models.Pin{
-				&models.Pin{
-					Id:    1,
-				},
-				&models.Pin{
-					Id:    2,
+					Id: 2,
 				},
 			},
-			Start:    5,
-			Limit:    15,
+			PinExp: []*models.Pin{
+				&models.Pin{
+					Id: 1,
+				},
+				&models.Pin{
+					Id: 2,
+				},
+			},
+			Start: 5,
+			Limit: 15,
 		},
 	}
 
@@ -83,7 +82,6 @@ func TestHandler_GetSubList(t *testing.T) {
 	}
 }
 
-
 func TestHandler_GetRecommendationList(t *testing.T) {
 	t.Helper()
 	ctl := gomock.NewController(t)
@@ -94,34 +92,34 @@ func TestHandler_GetRecommendationList(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			UserId:    1,
-			ErrFunc:   NoType.New("error"),
-			PinFunc:  nil,
-			PinExp:   nil,
-			Start:    5,
-			Limit:    15,
+			UserId:  1,
+			ErrFunc: NoType.New("error"),
+			PinFunc: nil,
+			PinExp:  nil,
+			Start:   5,
+			Limit:   15,
 		},
 		TestCaseFetch{
-			UserId:   1,
-			ErrFunc:  nil,
-			PinFunc:  []*models.Pin{
+			UserId:  1,
+			ErrFunc: nil,
+			PinFunc: []*models.Pin{
 				&models.Pin{
-					Id:    1,
+					Id: 1,
 				},
 				&models.Pin{
-					Id:    2,
-				},
-			},
-			PinExp:  []*models.Pin{
-				&models.Pin{
-					Id:    1,
-				},
-				&models.Pin{
-					Id:    2,
+					Id: 2,
 				},
 			},
-			Start:    5,
-			Limit:    15,
+			PinExp: []*models.Pin{
+				&models.Pin{
+					Id: 1,
+				},
+				&models.Pin{
+					Id: 2,
+				},
+			},
+			Start: 5,
+			Limit: 15,
 		},
 	}
 
@@ -158,34 +156,34 @@ func TestHandler_GetMainList(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			UserId:    1,
-			ErrFunc:   NoType.New("error"),
-			PinFunc:  nil,
-			PinExp:   nil,
-			Start:    5,
-			Limit:    15,
+			UserId:  1,
+			ErrFunc: NoType.New("error"),
+			PinFunc: nil,
+			PinExp:  nil,
+			Start:   5,
+			Limit:   15,
 		},
 		TestCaseFetch{
-			UserId:   1,
-			ErrFunc:  nil,
-			PinFunc:  []*models.Pin{
+			UserId:  1,
+			ErrFunc: nil,
+			PinFunc: []*models.Pin{
 				&models.Pin{
-					Id:    1,
+					Id: 1,
 				},
 				&models.Pin{
-					Id:    2,
-				},
-			},
-			PinExp:  []*models.Pin{
-				&models.Pin{
-					Id:    1,
-				},
-				&models.Pin{
-					Id:    2,
+					Id: 2,
 				},
 			},
-			Start:    5,
-			Limit:    15,
+			PinExp: []*models.Pin{
+				&models.Pin{
+					Id: 1,
+				},
+				&models.Pin{
+					Id: 2,
+				},
+			},
+			Start: 5,
+			Limit: 15,
 		},
 	}
 

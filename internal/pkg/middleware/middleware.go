@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"2020_1_Color_noise/internal/pkg/metric"
+	"2020_1_Color_noise/internal/pkg/error"
 	authService "2020_1_Color_noise/internal/pkg/proto/session"
 	"context"
 	"fmt"
@@ -16,10 +17,10 @@ type Middleware struct {
 	logger *zap.SugaredLogger
 }
 
-func NewMiddleware(as authService.AuthSeviceClient, logger  *zap.SugaredLogger) Middleware {
+func NewMiddleware(as authService.AuthSeviceClient, logger *zap.SugaredLogger) Middleware {
 	return Middleware{
-		as: as,
-		logger:   logger,
+		as:     as,
+		logger: logger,
 	}
 }
 
@@ -30,12 +31,11 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 		ctx := r.Context()
 
 		cookie, err := r.Cookie("session_id")
-		 fmt.Println("cookie ", cookie)
 		if err != nil {
 			ctx = context.WithValue(ctx, "IsAuth", false)
 		} else {
 			session, err := m.as.GetByCookie(context.Background(),
-				&authService.Cookie{Cookie:cookie.Value})
+				&authService.Cookie{Cookie: cookie.Value})
 			if err != nil {
 				ctx = context.WithValue(ctx, "IsAuth", false)
 				m.logger.Info(r.URL.Path,
@@ -88,7 +88,8 @@ func (m *Middleware) AuthMiddleware(next http.Handler) http.Handler {
 
 			}
 		}
-		next.ServeHTTP(w, r.WithContext(ctx))
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r)
 	})
 }
 
@@ -113,9 +114,10 @@ func (m *Middleware) AccessLogMiddleware(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, "ReqId", reqId)
 
 		start := time.Now()
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(ctx))
 		metric.Increase()
 		metric.WorkTime(r.Method, r.URL.Path, time.Since(start))
+		metric.Errors(w.Header().Get("Real-Status"), r.URL.Path)
 
 		m.logger.Info(r.URL.Path,
 			zap.String("reqId:", reqId),
@@ -125,5 +127,18 @@ func (m *Middleware) AccessLogMiddleware(next http.Handler) http.Handler {
 			zap.Time("start", start),
 			zap.Duration("work_time", time.Since(start)),
 		)
+	})
+}
+
+func (m *Middleware) PanicMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			reqId := r.Context().Value("ReqId")
+			if err := recover(); err != nil {
+				e := error.NoType.Newf("recovered err: %s", err)
+				error.ErrorHandler(w, r, m.logger, reqId, e)
+			}
+		}()
+		next.ServeHTTP(w, r)
 	})
 }

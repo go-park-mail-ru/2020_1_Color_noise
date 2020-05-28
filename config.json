@@ -1,15 +1,15 @@
 {
     "db": {
-    "host":     "localhost",
+    "host":     "database",
     "port":     5432,
     "database": "pinterest",
     "user":     "postgres",
     "password": "password"
   },
   "test": {
-    "host":     "localhost",
+    "host":     "127.0.0.1",
     "port":      5432,
-    "database": "test",
+    "database": "pinterest",
     "user":     "postgres",
     "password": "password"
   }

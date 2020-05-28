@@ -25,14 +25,14 @@ import (
 )
 
 type TestCaseCreate struct {
-	IsAuth     bool
-	UserId     uint
-	Pin		   *models.Pin
-	Response   string
-	IdErr      bool
-	InputErr   bool
-	ValidErr   bool
-	CreateErr  bool
+	IsAuth    bool
+	UserId    uint
+	Pin       *models.Pin
+	Response  string
+	IdErr     bool
+	InputErr  bool
+	ValidErr  bool
+	CreateErr bool
 }
 
 func TestHandler_Create(t *testing.T) {
@@ -56,51 +56,47 @@ func TestHandler_Create(t *testing.T) {
 
 	cases := []TestCaseCreate{
 		TestCaseCreate{
-			Pin:        &models.Pin{},
-			IsAuth:     false,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			Pin:      &models.Pin{},
+			IsAuth:   false,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			IdErr:      true,
-			Pin:        &models.Pin{},
-			Response:	`{"status":500,"body":{"error":"Internal server error"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			Pin:      &models.Pin{},
+			Response: `{"status":500,"body":{"error":"Internal server error"}}`,
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			InputErr:   true,
-			Pin:        &models.Pin{},
-			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}`,
+			IsAuth:   true,
+			InputErr: true,
+			Pin:      &models.Pin{},
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			ValidErr:   true,
-			Pin:		&models.Pin{
-				Name:	     "",
+			IsAuth:   true,
+			ValidErr: true,
+			Pin: &models.Pin{
+				Name:        "",
 				Description: "desc",
-				Image:		 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
-				"TUUH1ggDCwMADQ4NnwAAAFVJREFUGJWNkMEJADEIBEcbSDkXUnfSg" +
-				"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
-				"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
-			},
-			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
-				`Description shouldn't be empty and longer 1000 characters. `+
-				`Image should be base64"}}`,
-		},
-		TestCaseCreate{
-			IsAuth:     true,
-			ValidErr:   true,
-			Pin:		&models.Pin{
-				Name:	     "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-				Description: "desc",
-				Image:		 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
+				Image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
 					"TUUH1ggDCwMADQ4NnwAAAFVJREFUGJWNkMEJADEIBEcbSDkXUnfSg" +
 					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
 					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
 			},
-			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
-				`Description shouldn't be empty and longer 1000 characters. `+
-				`Image should be base64"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
+		},
+		TestCaseCreate{
+			IsAuth:   true,
+			ValidErr: true,
+			Pin: &models.Pin{
+				Name:        "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+				Description: "desc",
+				Image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
+					"TUUH1ggDCwMADQ4NnwAAAFVJREFUGJWNkMEJADEIBEcbSDkXUnfSg" +
+					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
+					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
+			},
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		/*TestCaseCreate{
 			IsAuth:     true,
@@ -118,45 +114,43 @@ func TestHandler_Create(t *testing.T) {
 				`Image should be base64"}}`,
 		},*/
 		TestCaseCreate{
-			IsAuth:     true,
-			ValidErr:   true,
-			Pin:		&models.Pin{
-				Name:	     "name",
+			IsAuth:   true,
+			ValidErr: true,
+			Pin: &models.Pin{
+				Name:        "name",
 				Description: "desc",
-				Image:		 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
+				Image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
 					"TUUH1ggDCwMADQ4NnwAAAFVJREFUGJWNkMEJADEIBEcbSDkXUnfSg" +
 					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
 					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII",
 			},
-			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
-				`Description shouldn't be empty and longer 1000 characters. `+
-				`Image should be base64"}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			CreateErr:   true,
-			Pin:		&models.Pin{
-				Id:			 1,
-				Name:	     "name",
+			IsAuth:    true,
+			CreateErr: true,
+			Pin: &models.Pin{
+				Id:          1,
+				Name:        "name",
 				Description: "desc",
-				Image:		 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
+				Image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
 					"TUUH1ggDCwMADQ4NnwAAAFVJREFUGJWNkMEJADEIBEcbSDkXUnfSg" +
 					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
 					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
 			},
 		},
 		TestCaseCreate{
-			IsAuth:     true,
-			Pin:		&models.Pin{
-				Id:			 1,
-				Name:	     "name",
+			IsAuth: true,
+			Pin: &models.Pin{
+				Id:          1,
+				Name:        "name",
 				Description: "desc",
-				Image:		 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
+				Image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJ" +
 					"TUUH1ggDCwMADQ4NnwAAAFVJREFUGJWNkMEJADEIBEcbSDkXUnfSg" +
 					"nBVeZ8LSAjiwjyEQXSFEIcHGP9oAi+H0Bymgx9MhxbFdZE2a0s9kT" +
 					"Zdw01ZhhYkABSwgmf1Z6r1SNyfFf4BZ+ZUExcNUQUAAAAASUVORK5CYII=",
 			},
-			Response:	`{"status":201,"body":{"id":1}}`,
+			Response: `{"status":201,"body":{"id":1,"description":""}}`,
 		},
 	}
 
@@ -184,9 +178,9 @@ func TestHandler_Create(t *testing.T) {
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr {
 
 			input := &models.InputPin{
-				Name:        	item.Pin.Name,
-				Description:    item.Pin.Description,
-				Image:          item.Pin.Image,
+				Name:        item.Pin.Name,
+				Description: item.Pin.Description,
+				Image:       item.Pin.Image,
 			}
 
 			var err error = nil
@@ -234,12 +228,12 @@ func TestHandler_Create(t *testing.T) {
 }
 
 type TestCaseGetPin struct {
-	IsAuth     bool
-	UserId     uint
-	Pin		   *models.Pin
-	Response   string
-	IdErr      bool
-	GetErr     bool
+	IsAuth   bool
+	UserId   uint
+	Pin      *models.Pin
+	Response string
+	IdErr    bool
+	GetErr   bool
 }
 
 func TestHandler_GetPin(t *testing.T) {
@@ -263,24 +257,19 @@ func TestHandler_GetPin(t *testing.T) {
 
 	cases := []TestCaseGetPin{
 		TestCaseGetPin{
-			IsAuth:     false,
-			Pin:        &models.Pin{},
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			Pin:      &models.Pin{},
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseGetPin{
-			IsAuth:     true,
-			IdErr:      true,
-			Pin:        &models.Pin{},
-			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
+			IsAuth: true,
+			GetErr: true,
+			Pin:    &models.Pin{},
 		},
 		TestCaseGetPin{
-			IsAuth:     true,
-			GetErr:     true,
-			Pin:        &models.Pin{},
-		},
-		TestCaseGetPin{
-			IsAuth:     true,
-			Pin:        &models.Pin{
+			IsAuth: true,
+			Pin: &models.Pin{
 				Id:          1,
 				BoardId:     2,
 				UserId:      3,
@@ -306,7 +295,7 @@ func TestHandler_GetPin(t *testing.T) {
 		ctx = context.WithValue(ctx, "IsAuth", item.IsAuth)
 		r = r.WithContext(ctx)
 
-		if item.IsAuth && !item.IdErr {
+		if !item.IdErr {
 
 			var err error = nil
 			if item.GetErr {
@@ -353,14 +342,14 @@ func TestHandler_GetPin(t *testing.T) {
 }
 
 type TestCaseFetch struct {
-	IsAuth     bool
-	UserId     uint
-	Pins	   []*models.Pin
-	Response   string
-	IdErr      bool
-	GetErr     bool
-	Start      int
-	Limit 	   int
+	IsAuth   bool
+	UserId   uint
+	Pins     []*models.Pin
+	Response string
+	IdErr    bool
+	GetErr   bool
+	Start    int
+	Limit    int
 }
 
 func TestHandler_Fetch(t *testing.T) {
@@ -384,44 +373,44 @@ func TestHandler_Fetch(t *testing.T) {
 
 	cases := []TestCaseFetch{
 		TestCaseFetch{
-			IsAuth:     false,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			IsAuth:   false,
+			UserId:   1,
+			Start:    1,
+			Limit:    15,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			IdErr:		true,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
-			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			UserId:   1,
+			Start:    1,
+			Limit:    15,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			GetErr:     true,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
-			Pins:       nil,
+			IsAuth: true,
+			GetErr: true,
+			UserId: 1,
+			Start:  1,
+			Limit:  15,
+			Pins:   nil,
 		},
 		TestCaseFetch{
-			IsAuth:     true,
-			UserId:     1,
-			Start:		1,
-			Limit:		15,
-			Pins:       []*models.Pin {
-				&models.Pin {
-					Id: 		 1,
+			IsAuth: true,
+			UserId: 1,
+			Start:  1,
+			Limit:  15,
+			Pins: []*models.Pin{
+				&models.Pin{
+					Id:          1,
 					BoardId:     2,
 					UserId:      1,
 					Name:        "name1",
 					Description: "desc1",
 					Image:       "image.jpg",
 				},
-				&models.Pin {
-					Id: 		 2,
+				&models.Pin{
+					Id:          2,
 					BoardId:     5,
 					UserId:      1,
 					Name:        "name2",
@@ -435,7 +424,7 @@ func TestHandler_Fetch(t *testing.T) {
 	}
 
 	for caseNum, item := range cases {
-		r := httptest.NewRequest("GET", fmt.Sprintf("/api/pin/user/%d/?start=%d&limit=%d",item.UserId, item.Start, item.Limit), strings.NewReader(""))
+		r := httptest.NewRequest("GET", fmt.Sprintf("/api/pin/user/%d/?start=%d&limit=%d", item.UserId, item.Start, item.Limit), strings.NewReader(""))
 		if !item.IdErr {
 			r = mux.SetURLVars(r, map[string]string{"id": fmt.Sprintf("%d", item.UserId)})
 		} else {
@@ -494,17 +483,16 @@ func TestHandler_Fetch(t *testing.T) {
 	}
 }
 
-
 type TestCaseUpdate struct {
-	IsAuth     bool
-	UserId     uint
-	Pin		   *models.Pin
-	Response   string
-	UserIdErr  bool
-	IdErr      bool
-	InputErr   bool
-	ValidErr   bool
-	UpdateErr  bool
+	IsAuth    bool
+	UserId    uint
+	Pin       *models.Pin
+	Response  string
+	UserIdErr bool
+	IdErr     bool
+	InputErr  bool
+	ValidErr  bool
+	UpdateErr bool
 }
 
 func TestHandler_Update(t *testing.T) {
@@ -528,47 +516,45 @@ func TestHandler_Update(t *testing.T) {
 
 	cases := []TestCaseUpdate{
 		TestCaseUpdate{
-			Pin:        &models.Pin{},
-			IsAuth:     false,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			Pin:      &models.Pin{},
+			IsAuth:   false,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseUpdate{
-			IsAuth:     true,
-			UserIdErr:  true,
-			Pin:        &models.Pin{},
+			IsAuth:    true,
+			UserIdErr: true,
+			Pin:       &models.Pin{},
 		},
 		TestCaseUpdate{
-			IsAuth:     true,
-			IdErr:		true,
-			UserId:     1,
-			Pin:        &models.Pin{},
-			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			UserId:   1,
+			Pin:      &models.Pin{},
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseUpdate{
-			IsAuth:     true,
-			InputErr:   true,
-			Pin:        &models.Pin{},
-			Response:	`{"status":400,"body":{"error":"Wrong body of request"}}`,
+			IsAuth:   true,
+			InputErr: true,
+			Pin:      &models.Pin{},
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseUpdate{
-			IsAuth:     true,
-			ValidErr:   true,
-			Pin:		&models.Pin{
-				Name:	     "",
+			IsAuth:   true,
+			ValidErr: true,
+			Pin: &models.Pin{
+				Name:        "",
 				Description: "desc",
 			},
-			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
-				`Description shouldn't be empty and longer 1000 characters."}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseUpdate{
-			IsAuth:     true,
-			ValidErr:   true,
-			Pin:		&models.Pin{
-				Name:	     "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+			IsAuth:   true,
+			ValidErr: true,
+			Pin: &models.Pin{
+				Name:        "nameddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
 				Description: "desc",
 			},
-			Response:	`{"status":400,"body":{"error":"Name shouldn't be empty and longer 60 characters. `+
-				`Description shouldn't be empty and longer 1000 characters."}}`,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		/*TestCaseUpdate{
 			IsAuth:     true,
@@ -581,22 +567,22 @@ func TestHandler_Update(t *testing.T) {
 				`Description shouldn't be empty and longer 1000 characters."}}`,
 		},*/
 		TestCaseUpdate{
-			IsAuth:     true,
-			UpdateErr:  true,
-			Pin:		&models.Pin{
-				Id:			 1,
-				Name:	     "name",
+			IsAuth:    true,
+			UpdateErr: true,
+			Pin: &models.Pin{
+				Id:          1,
+				Name:        "name",
 				Description: "desc",
 			},
 		},
 		TestCaseUpdate{
-			IsAuth:     true,
-			Pin:		&models.Pin{
-				Id:			 1,
-				Name:	     "name",
+			IsAuth: true,
+			Pin: &models.Pin{
+				Id:          1,
+				Name:        "name",
 				Description: "desc",
 			},
-			Response:	`{"status":200,"body":{"message":"Ok"}}`,
+			Response: `{"status":200,"body":{"message":"Ok"}}`,
 		},
 	}
 
@@ -630,8 +616,8 @@ func TestHandler_Update(t *testing.T) {
 		if item.IsAuth && !item.InputErr && !item.ValidErr && !item.IdErr && !item.UserIdErr {
 
 			input := &models.UpdatePin{
-				Name:        	item.Pin.Name,
-				Description:    item.Pin.Description,
+				Name:        item.Pin.Name,
+				Description: item.Pin.Description,
 			}
 
 			var err error = nil
@@ -650,7 +636,7 @@ func TestHandler_Update(t *testing.T) {
 		body, _ := ioutil.ReadAll(resp.Body)
 		bodyStr := string(body)
 
-		if item.UpdateErr || item.UserIdErr  {
+		if item.UpdateErr || item.UserIdErr {
 			var output map[string]interface{}
 
 			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)
@@ -679,13 +665,13 @@ func TestHandler_Update(t *testing.T) {
 }
 
 type TestCaseDelete struct {
-	IsAuth     bool
-	UserId     uint
-	PinId	   uint
-	Response   string
-	UserIdErr  bool
-	IdErr      bool
-	DeleteErr  bool
+	IsAuth    bool
+	UserId    uint
+	PinId     uint
+	Response  string
+	UserIdErr bool
+	IdErr     bool
+	DeleteErr bool
 }
 
 func TestHandler_DeletePin(t *testing.T) {
@@ -709,33 +695,33 @@ func TestHandler_DeletePin(t *testing.T) {
 
 	cases := []TestCaseDelete{
 		TestCaseDelete{
-			IsAuth:     false,
-			Response:	`{"status":401,"body":{"error":"User is unauthorized"}}`,
+			IsAuth:   false,
+			Response: `{"status":401,"body":{"error":"User is unauthorized"}}`,
 		},
 		TestCaseDelete{
-			IsAuth:     true,
-			UserIdErr:  true,
-			PinId:      1,
-			UserId:		1,
+			IsAuth:    true,
+			UserIdErr: true,
+			PinId:     1,
+			UserId:    1,
 		},
 		TestCaseDelete{
-			IsAuth:     true,
-			IdErr:		true,
-			PinId:      1,
-			UserId:		1,
-			Response:	`{"status":400,"body":{"error":"Bad id"}}`,
+			IsAuth:   true,
+			IdErr:    true,
+			PinId:    1,
+			UserId:   1,
+			Response: `{"status":400,"body":{"error":"Bad request"}}`,
 		},
 		TestCaseDelete{
-			IsAuth:     true,
-			DeleteErr:  true,
-			PinId:      1,
-			UserId:		1,
+			IsAuth:    true,
+			DeleteErr: true,
+			PinId:     1,
+			UserId:    1,
 		},
 		TestCaseDelete{
-			IsAuth:     true,
-			PinId:      1,
-			UserId:		1,
-			Response:	`{"status":200,"body":{"message":"Ok"}}`,
+			IsAuth:   true,
+			PinId:    1,
+			UserId:   1,
+			Response: `{"status":200,"body":{"message":"Ok"}}`,
 		},
 	}
 
@@ -777,7 +763,7 @@ func TestHandler_DeletePin(t *testing.T) {
 		body, _ := ioutil.ReadAll(resp.Body)
 		bodyStr := string(body)
 
-		if item.DeleteErr || item.UserIdErr  {
+		if item.DeleteErr || item.UserIdErr {
 			var output map[string]interface{}
 
 			err := json.NewDecoder(strings.NewReader(bodyStr)).Decode(&output)

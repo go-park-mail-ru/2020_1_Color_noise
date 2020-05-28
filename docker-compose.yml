@@ -2,98 +2,106 @@ version: "3.3"
 
 services:
 
-  main:
-
-    build:
-      context: .
-      dockerfile: build/main.Dockerfile
-
-    volumes:
-      - type: bind
-        source: ../storage
-        target: /storage
-
-    network_mode: host
-    #ports:
-     # - 8000:8000
-
-    #depends_on:
-     # - database
-
-  auth:
-
-    build:
-      context: .
-      dockerfile: build/auth.Dockerfile
-
-    volumes:
-      - type: bind
-        source: ../storage
-        target: /storage
-
-    network_mode: host
-      #ports:
-      # - 8000:8000
-
-      #depends_on:
-    #- database
-
-  chat:
-
-    build:
-      context: .
-      dockerfile: ./build/chat.Dockerfile
-
-    network_mode: host
-    #ports:
-     # - 8000:8000
-
-      #depends_on:
-    #- database
-
-  user:
-
-    build:
-      context: .
-      dockerfile: ./build/user.Dockerfile
-
-    network_mode: host
-    #ports:
-    # - 8000:8000
-
-      #depends_on:
-    #- database
-
-
   database:
 
-    network_mode: host
     build:
       context: .
       dockerfile: ./build/db.Dockerfile
 
-    ports:
-      - 5432:5432
+  main:
+    build:
+      context: .
+      dockerfile: build/main.Dockerfile
+
+    image: zinterest/main:${GITHUB_SHA}
+
+    volumes:
+      - type: bind
+        source: ../storage
+        target: /storage
+
+    depends_on:
+      - database
+      - auth
+      - user
+
+  image:
+    build:
+      context: .
+      dockerfile: build/image.Dockerfile
+
+    image: zinterest/image:${GITHUB_SHA}
+
+    volumes:
+      - type: bind
+        source: ../storage
+        target: /storage
+
+  auth:
+    build:
+      context: .
+      dockerfile: build/auth.Dockerfile
+
+    image: zinterest/auth:${GITHUB_SHA}
+
+    volumes:
+      - type: bind
+        source: ../storage
+        target: /storage
+
+    depends_on:
+      - database
+
+  chat:
+    build:
+      context: .
+      dockerfile: ./build/chat.Dockerfile
+
+    image: zinterest/chat:${GITHUB_SHA}
+
+    volumes:
+      - type: bind
+        source: ../static
+        target: /static
+
+    depends_on:
+      - database
+      - auth
+
+  user:
+    build:
+      context: .
+      dockerfile: ./build/user.Dockerfile
+
+    image: zinterest/user:${GITHUB_SHA}
+
+    volumes:
+      - type: bind
+        source: ../storage
+        target: /storage
+
+    depends_on:
+      - database
 
   nginx:
     image: nginx:1.15.3
 
-    #links:
-    #  - main:main
-    #  - chat:chat
-    network_mode: host
+    links:
+      - main:main
+      - chat:chat
 
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./server/nginx:/etc/nginx/conf.d
       - ../static:/static
       - ../storage:/storage
+      - ../cert:/etc/ssl
 
     ports:
       - 80:80
-
+      - 443:443
 
   prometheus:
-    image: prom/prometheus:v2.1.0
+    image: prom/prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     command:
@@ -103,9 +111,15 @@ services:
       - '--web.console.templates=/usr/share/prometheus/consoles'
     ports:
       - 9090:9090
-    network_mode: host
-    restart: always
-  #    deploy:
-  #      placement:
-  #        constraints:
-  #          - node.hostname == ${HOSTNAME}
+    links:
+      - nginx:nginx
+
+
+  grafana:
+    image: grafana/grafana
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+
+

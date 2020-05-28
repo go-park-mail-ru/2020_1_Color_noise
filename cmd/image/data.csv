@@ -1,0 +1,1000 @@
+fish;tench;рыбы;линь
+fish;goldfish;рыбы;золотая рыбка
+shark;great white shark;Акула;большая белая акула
+shark;tiger shark;Акула;тигровая акула
+shark;hammerhead;Акула;молот
+fish;electric ray;рыбы;электрический луч
+fish;stingray;рыбы;Стингрей
+bird;cock;птица;петух
+bird;hen;птица;курочка
+bird;ostrich;птица;страусиная
+bird;brambling;птица;Юрок
+bird;goldfinch;птица;щегол
+bird;house finch;птица;дом Финч
+bird;junco;птица;Юнко
+bird;indigo bunting;птица;индиго Бантинг
+bird;robin;птица;Робин
+bird;bulbul;птица;Бюльбюль
+bird;jay;птица;Джей
+bird;magpie;птица;Сороки
+bird;chickadee;птица;синица
+bird;water ouzel;птица;вода оцел
+bird;kite;птица;кайт
+bird;bald eagle;птица;белоголовый орлан
+bird;vulture;птица;гриф
+bird;great grey owl;птица;неясыть
+salamander;European fire salamander;саламандра;Европейский огненная саламандра
+salamander;common newt;саламандра;общие Ньют
+salamander;eft;саламандра;эфт
+salamander;spotted salamander;саламандра;пятнистая саламандра
+salamander;axolotl;саламандра;аксолотля
+frog;bullfrog;лягушка;буллфрог
+frog;tree frog;лягушка;квакша 
+frog;tailed frog;лягушка;хвостатые лягушки
+turtle;loggerhead;черепаха;головастая
+turtle;leatherback turtle;черепаха;кожистая черепаха
+turtle;mud turtle;черепаха;черепахе
+turtle;terrapin;черепаха;черепаха
+turtle;box turtle;черепаха;черепаха коробка 
+lizard;banded gecko;ящерица;обвязываем Гекко
+lizard;common iguana;ящерица;общие игуана
+lizard;American chameleon;ящерица;Американский хамелеон
+lizard;whiptail;ящерица;настоящих
+lizard;agama;ящерица;агама
+lizard;frilled lizard;ящерица;Плащеносная ящерица
+lizard;alligator lizard;ящерица;Аллигатор ящерица
+lizard;Gila monster;ящерица;Монстр хилы 
+lizard;green lizard;ящерица;зеленая ящерица
+lizard;African chameleon;ящерица;Африканский хамелеон
+lizard;Komodo dragon;ящерица;Комодо дракон
+crocodile;African crocodile;крокодил;Африканский крокодил
+crocodile;American alligator;крокодил;Американский аллигатор
+dinosaur;triceratops;динозавр;трицератопс
+snake;thunder snake;змея;грома змея
+snake;ringneck snake;змея;ringneck змея
+snake;hognose snake;змея;hognose змея
+snake;green snake;змея;зеленая змея
+snake;king snake;змея;королевская змея
+snake;garter snake;змея;подвязки змея
+snake;water snake;змея;водяная змея
+snake;vine snake;змея;Лоза змея
+snake;night snake;змея;Ночной Змей
+snake;boa constrictor;змея;удав
+snake;rock python;змея;рок питона
+snake;Indian cobra;змея;Индийская кобра
+snake;green mamba;змея;зеленая мамба
+fish;sea snake;рыбы;морская змея
+snake;horned viper;змея;рогатая гадюка
+snake;diamondback;змея;капустная
+snake;sidewinder;змея;Сайдвиндер
+trilobite;trilobite;трилобит;трилобит
+arachnid;harvestman;паукообразный;сенокос
+arachnid;scorpion;паукообразный;Скорпион
+arachnid;black and gold garden spider;паукообразный;черный и золотой паук на сад 
+arachnid;barn spider;паукообразный;паучью 
+arachnid;garden spider;паукообразный;сад паук 
+arachnid;black widow;паукообразный;Черная вдова
+arachnid;tarantula;паукообразный;тарантул
+arachnid;wolf spider;паукообразный;паук волк 
+bug;tick;ошибка;клеща
+bug;centipede;ошибка;сороконожка
+bird;black grouse;птица;тетерев
+bird;ptarmigan;птица;куропатка
+bird;ruffed grouse;птица;гривистый тетерев
+bird;prairie chicken;птица;прерии курица
+bird;peacock;птица;павлин
+bird;quail;птица;перепела
+bird;partridge;птица;Партридж
+bird;African grey;птица;Африканский серый
+bird;macaw;птица;Ара
+bird;sulphur-crested cockatoo;птица;серы хохлатая какаду
+bird;lorikeet;птица;лорикет
+bird;coucal;птица;коукаль
+bird;bee eater;птица;пчела людоед
+bird;hornbill;птица;Хорнбилл
+bird;hummingbird;птица;колибри
+bird;jacamar;птица;jacamar
+bird;toucan;птица;Тукан
+bird;drake;птица;Дрейк
+bird;red-breasted merganser;птица;длинноносый крохаль
+bird;goose;птица;гусь
+bird;black swan;птица;Черный лебедь
+ungulate;tusker;копытных;клыками
+monotreme;echidna;monotreme;ехидна
+monotreme;platypus;monotreme;Утконос
+marsupial;wallaby;сумчатые;валлаби
+marsupial;koala;сумчатые;коала
+marsupial;wombat;сумчатые;вомбат
+fish;jellyfish;рыбы;медузы
+coral;sea anemone;коралловый;морской анемон
+coral;brain coral;коралловый;мозг коралл
+bug;flatworm;ошибка;червь
+bug;nematode;ошибка;нематоды
+mollusk;conch;моллюск;Конч
+mollusk;snail;моллюск;улитка
+mollusk;slug;моллюск;слизень
+mollusk;sea slug;моллюск;морской слизень
+mollusk;chiton;моллюск;Хитон
+mollusk;chambered nautilus;моллюск;Наутилуса
+crustacean;Dungeness crab;рачок;Дагнесс краб
+crustacean;rock crab;рачок;рок-краб
+crustacean;fiddler crab;рачок;крабом
+crustacean;king crab;рачок;краба
+crustacean;American lobster;рачок;Американский лобстер
+crustacean;spiny lobster;рачок;лангуст
+crustacean;crayfish;рачок;Раков
+crustacean;hermit crab;рачок;отшельник 
+crustacean;isopod;рачок;изопода
+bird;white stork;птица;Белый аист
+bird;black stork;птица;черный аист
+bird;spoonbill;птица;колпица
+bird;flamingo;птица;фламинго
+bird;little blue heron;птица;маленькая голубая цапля
+bird;American egret;птица;Американская цапля
+bird;bittern;птица;выпь
+vehicle;crane;автомобиль;кран
+bird;limpkin;птица;limpkin
+bird;European gallinule;птица;Европейский султанка
+bird;American coot;птица;Американская лысуха
+bird;bustard;птица;Дрофа
+bird;ruddy turnstone;птица;камнешарка
+bird;red-backed sandpiper;птица;красно-поддержал песочник
+bird;redshank;птица;травник
+bird;dowitcher;птица;dowitcher
+bird;oystercatcher;птица;кулик-сорока
+bird;pelican;птица;Пеликан
+bird;king penguin;птица;король пингвинов
+bird;albatross;птица;Альбатрос
+marine mammals;grey whale;морских млекопитающих;серый кит
+marine mammals;killer whale;морских млекопитающих;Касатка
+marine mammals;dugong;морских млекопитающих;Дюгонь
+marine mammals;sea lion;морских млекопитающих;морской лев
+dog;Chihuahua;собака;Чихуахуа
+dog;Japanese spaniel;собака;Японский спаниель
+dog;Maltese dog;собака;Мальтезе собаки
+dog;Pekinese;собака;Пекинес
+dog;Shih-Tzu;собака;Ши-Тцу
+dog;Blenheim spaniel;собака;Бленхейм спаниель
+dog;papillon;собака;Папильон
+dog;toy terrier;собака;той-терьер
+dog;Rhodesian ridgeback;собака;Родезийский риджбек
+dog;Afghan hound;собака;Афганская борзая
+dog;basset;собака;бассет
+dog;beagle;собака;бигль
+dog;bloodhound;собака;ищейка
+dog;bluetick;собака;блутик
+dog;black-and-tan coonhound;собака;черно-подпалый кунхаунд
+dog;Walker hound;собака;Уокер хаунд
+dog;English foxhound;собака;Английский фоксхаунд
+dog;redbone;собака;Рыжуля
+dog;borzoi;собака;борзой
+dog;Irish wolfhound;собака;Ирландский волкодав
+dog;Italian greyhound;собака;Левретка
+dog;whippet;собака;уиппет
+dog;Ibizan hound;собака;Ибицы гончая
+dog;Norwegian elkhound;собака;Норвежский элкхаунд
+dog;otterhound;собака;оттерхаунд
+dog;Saluki;собака;Салюки
+dog;Scottish deerhound;собака;Дирхаунд
+dog;Weimaraner;собака;Веймаранер
+dog;Staffordshire bullterrier;собака;Стаффордширский бультерьер
+dog;American Staffordshire terrier;собака;Американский стаффордширский терьер
+dog;Bedlington terrier;собака;Бедлингтон терьер
+dog;Border terrier;собака;Бордер-терьер
+dog;Kerry blue terrier;собака;Керри-блю-терьер
+dog;Irish terrier;собака;Ирландский терьер
+dog;Norfolk terrier;собака;Норфолк терьер
+dog;Norwich terrier;собака;Норвич терьер
+dog;Yorkshire terrier;собака;Йоркширский терьер
+dog;wire-haired fox terrier;собака;жесткошерстный фокстерьер
+dog;Lakeland terrier;собака;Лейкленд терьер 
+dog;Sealyham terrier;собака;Силихем терьер
+dog;Airedale;собака;Эрдельтерьер
+dog;cairn;собака;Каирн
+dog;Australian terrier;собака;Австралийский терьер
+dog;Dandie Dinmont;собака;Денди Динмонта 
+dog;Boston bull;собака;Бульдожка
+dog;miniature schnauzer;собака;миниатюрный шнауцер
+dog;giant schnauzer;собака;ризеншнауцер
+dog;standard schnauzer;собака;стандартный шнауцер
+dog;Scotch terrier;собака;Скотч терьер
+dog;Tibetan terrier;собака;Тибетский терьер
+dog;silky terrier;собака;силки терьер
+dog;soft-coated wheaten terrier;собака;мягким покрытием пшеничный терьер
+dog;West Highland white terrier;собака;Вест хайленд уайт терьер
+dog;Lhasa;собака;Лхаса
+dog;flat-coated retriever;собака;прямошерстный ретривер
+dog;curly-coated retriever;собака;фигурные покрытием ретривер
+dog;golden retriever;собака;золотистый ретривер
+dog;Labrador retriever;собака;Лабрадор ретривер
+dog;Chesapeake Bay retriever;собака;Чесапик Бэй ретривер
+dog;German short-haired pointer;собака;Немецкий короткошерстные указатель
+dog;vizsla;собака;выжла
+dog;English setter;собака;Английский сеттер
+dog;Irish setter;собака;Ирландский сеттер
+dog;Gordon setter;собака;Гордон сеттер
+dog;Brittany spaniel;собака;Бриттани спаниель
+dog;clumber;собака;кламбер
+dog;English springer;собака;Английский спрингер
+dog;Welsh springer spaniel;собака;Вельш-спрингер-спаниель
+dog;cocker spaniel;собака;кокер спаниель
+dog;Sussex spaniel;собака;Суссекс-спаниель
+dog;Irish water spaniel;собака;Ирландский водяной спаниель
+dog;kuvasz;собака;кувас
+dog;schipperke;собака;шипперке
+dog;groenendael;собака;грюнендаль
+dog;malinois;собака;малинуа
+dog;briard;собака;бриар
+dog;kelpie;собака;келпи
+dog;komondor;собака;комондор
+dog;Old English sheepdog;собака;Старый Английский овчарка
+dog;Shetland sheepdog;собака;Шелти
+dog;collie;собака;колли
+dog;Border collie;собака;Бордер-колли
+dog;Bouvier des Flandres;собака;Фландрский бувье
+dog;Rottweiler;собака;Ротвейлер
+dog;German shepherd;собака;Немецкая овчарка
+dog;Doberman;собака;Доберман
+dog;miniature pinscher;собака;миниатюрный пинчер
+dog;Greater Swiss Mountain dog;собака;Большого швейцарского зенненхунда
+dog;Bernese mountain dog;собака;Бернский зенненхунд
+dog;Appenzeller;собака;Аппенцеллер
+dog;EntleBucher;собака;Она
+dog;boxer;собака;боксер
+dog;bull mastiff;собака;бык мастиф
+dog;Tibetan mastiff;собака;Тибетский мастиф
+dog;French bulldog;собака;Французский бульдог
+dog;Great Dane;собака;Великий Датчанин
+dog;Saint Bernard;собака;Сен-Бернар
+dog;Eskimo dog;собака;Эскимосская собака 
+dog;malamute;собака;маламут
+dog;Siberian husky;собака;Сибирский хаски
+dog;dalmatian;собака;далматин
+dog;affenpinscher;собака;Аффенпинчер
+dog;basenji;собака;басенджи
+dog;pug;собака;Моська
+dog;Leonberg;собака;Леонберг
+dog;Newfoundland;собака;Ньюфаундленд
+dog;Great Pyrenees;собака;Великий Пиренеи
+dog;Samoyed;собака;Самоед
+dog;Pomeranian;собака;Померанский шпиц
+dog;chow;собака;чау-чау
+dog;keeshond;собака;кеесхонд
+dog;Brabancon griffon;собака;Брабансон гриффон
+dog;Pembroke;собака;Пемброк
+dog;Cardigan;собака;Кардиган
+dog;toy poodle;собака;игрушка пудель
+dog;miniature poodle;собака;миниатюрный пудель
+dog;standard poodle;собака;стандартный пудель
+dog;Mexican hairless;собака;Мексиканская голая
+wild dog;timber wolf;дикая собака;волк
+wild dog;white wolf;дикая собака;Белый Волк
+wild dog;red wolf;дикая собака;красный волк
+wild dog;coyote;дикая собака;койот
+wild dog;dingo;дикая собака;динго
+wild dog;dhole;дикая собака;красный волк
+dog;African hunting dog;собака;Африканская охотничья собака
+wild dog;hyena;дикая собака;гиена
+wild dog;red fox;дикая собака;красная лиса
+wild dog;kit fox;дикая собака;лисица
+wild dog;Arctic fox;дикая собака;Песец
+wild dog;grey fox;дикая собака;серый лис
+cat;tabby;кошка;Табби
+wild cat;tiger cat;дикая кошка;тигр кошка
+cat;Persian cat;кошка;Персидская кошка
+cat;Siamese cat;кошка;Сиамская кошка
+cat;Egyptian cat;кошка;Египетская кошка
+wild cat;cougar;дикая кошка;пума
+wild cat;lynx;дикая кошка;рысь
+wild cat;leopard;дикая кошка;леопард
+wild cat;snow leopard;дикая кошка;снежный барс
+wild cat;jaguar;дикая кошка;Ягуар
+wild cat;lion;дикая кошка;Лев
+wild cat;tiger;дикая кошка;тигр
+wild cat;cheetah;дикая кошка;гепард
+bear;brown bear;медведь;бурый медведь
+bear;American black bear;медведь;Американский черный медведь
+bear;ice bear;медведь;льда медведь
+sloth;sloth bear;ленивец;губач
+mongoose;mongoose;Мангуст;Мангуст
+mongoose;meerkat;Мангуст;сурикат
+bug;tiger beetle;ошибка;Жук тигр 
+bug;ladybug;ошибка;божья коровка
+bug;ground beetle;ошибка;жужелицы
+bug;long-horned beetle;ошибка;-Жук-дровосек
+bug;leaf beetle;ошибка;листоеда 
+bug;dung beetle;ошибка;навозный жук 
+bug;rhinoceros beetle;ошибка;жук-носорог
+bug;weevil;ошибка;долгоносик
+bug;fly;ошибка;летать
+bug;bee;ошибка;пчелка
+bug;ant;ошибка;АНТ
+bug;grasshopper;ошибка;кузнечик
+bug;cricket;ошибка;сверчок
+bug;walking stick;ошибка;трость
+bug;cockroach;ошибка;таракан
+bug;mantis;ошибка;богомол
+bug;cicada;ошибка;цикада
+bug;leafhopper;ошибка;цикадки
+bug;lacewing;ошибка;златоглазки
+bug;dragonfly;ошибка;стрекоза
+bug;damselfly;ошибка;damselfly
+butterfly;admiral;бабочка;Адмирал
+butterfly;ringlet;бабочка;колечко
+butterfly;monarch;бабочка;монарх
+butterfly;cabbage butterfly;бабочка;бабочка-капустница
+butterfly;sulphur butterfly;бабочка;сера бабочка
+butterfly;lycaenid;бабочка;lycaenid
+echinoderms;starfish;иглокожие;Морская звезда
+echinoderms;sea urchin;иглокожие;морской еж
+echinoderms;sea cucumber;иглокожие;морской огурец
+rabbit;wood rabbit;кролик;дерево кролик
+rabbit;hare;кролик;заяц
+rabbit;Angora;кролик;Аген
+rodent;hamster;грызун;хомячок
+rodent;porcupine;грызун;дикобраз
+rodent;fox squirrel;грызун;лиса белочка
+rodent;marmot;грызун;сурок
+rodent;beaver;грызун;Бивер
+rodent;guinea pig;грызун;морская свинка
+plant;sorrel;завод;щавель
+ungulate;zebra;копытных;зебра
+hog;hog;кабанчик;кабанчик
+hog;wild boar;кабанчик;кабан
+hog;warthog;кабанчик;бородавочник
+ungulate;hippopotamus;копытных;гиппопотам
+ungulate;ox;копытных;бык
+ungulate;water buffalo;копытных;водяного буйвола
+ungulate;bison;копытных;Зубр
+ungulate;ram;копытных;ОЗУ
+ungulate;bighorn;копытных;Бигхорн
+ungulate;ibex;копытных;Козерог
+ungulate;hartebeest;копытных;Бубал
+ungulate;impala;копытных;Импала
+ungulate;gazelle;копытных;Газель
+ungulate;Arabian camel;копытных;Арабский верблюд
+ungulate;llama;копытных;ламы
+ferret;weasel;Ферре;ласка
+ferret;mink;Ферре;Минк
+ferret;polecat;Ферре;хорь
+ferret;black-footed ferret;Ферре;Черноногий хорек
+ferret;otter;Ферре;оттер
+ferret;skunk;Ферре;скунс
+ferret;badger;Ферре;Барсук
+armadillo;armadillo;броненосец;броненосец
+sloth;three-toed sloth;ленивец;трехпалый ленивец
+primate;orangutan;предстоятель;орангутанг
+primate;gorilla;предстоятель;горилла
+primate;chimpanzee;предстоятель;шимпанзе
+primate;gibbon;предстоятель;гиббон
+primate;siamang;предстоятель;сиаманг
+primate;guenon;предстоятель;Генон
+primate;patas;предстоятель;патас
+primate;baboon;предстоятель;бабуин
+primate;macaque;предстоятель;макаки
+primate;langur;предстоятель;лангура
+primate;colobus;предстоятель;колобус
+primate;proboscis monkey;предстоятель;хоботок обезьяна
+primate;marmoset;предстоятель;мартышка
+primate;capuchin;предстоятель;Капуцинов
+primate;howler monkey;предстоятель;ревуны
+primate;titi;предстоятель;тити
+primate;spider monkey;предстоятель;паук обезьян
+primate;squirrel monkey;предстоятель;беличья обезьяна
+mongoose;Madagascar cat;Мангуст;Мадагаскар кот
+primate;indri;предстоятель;индри
+ungulate;Indian elephant;копытных;Индийский слон
+ungulate;African elephant;копытных;Африканский слон
+bear;lesser panda;медведь;малая панда
+bear;giant panda;медведь;гигантская панда
+fish;barracouta;рыбы;barracouta
+fish;eel;рыбы;УГР
+shark;coho;Акула;кижуч
+coral;rock beauty;коралловый;рок красоты
+fish;anemone fish;рыбы;анемона рыбы
+fish;sturgeon;рыбы;осетрина
+fish;gar;рыбы;Гар
+fish;lionfish;рыбы;крылатки
+fish;puffer;рыбы;Скалозуба
+technology;abacus;технология;абак
+clothing;abaya;одежда;Абая
+clothing;academic gown;одежда;академический платье
+instrument;accordion;инструмент;гармонь
+instrument;acoustic guitar;инструмент;акустическая гитара
+boat;aircraft carrier;лодка;авианосец 
+aircraft;airliner;самолет;авиалайнер
+aircraft;airship;самолет;дирижабль
+furniture;altar;мебель;алтарь
+vehicle;ambulance;автомобиль;скорой помощи
+vehicle;amphibian;автомобиль;амфибия
+decor;analog clock;декор;аналоговые часы
+outdoor scene;apiary;Открытая сцена;пасека
+clothing;apron;одежда;фартук
+furniture;ashcan;мебель;мусорку
+weapon;assault rifle;оружие;штурмовая винтовка
+accessory;backpack;аксессуар;рюкзак
+building;bakery;дом;хлебопекарни
+sports equipment;balance beam;спортивное оборудование;бревне 
+toy;balloon;игрушка;воздушный шар
+tool;ballpoint;инструмент;шариковы
+other;Band Aid;другие;Группа Помощи
+instrument;banjo;инструмент;банджо
+furniture;bannister;мебель;Баннистер
+sports equipment;barbell;спортивное оборудование;штангой
+furniture;barber chair;мебель;парикмахерская стул
+building;barbershop;дом;парикмахерская
+building;barn;дом;сарай
+technology;barometer;технология;барометр
+container;barrel;контейнер;баррель
+tool;barrow;инструмент;Барроу
+ball;baseball;мяч;бейсбол
+ball;basketball;мяч;баскетбол
+furniture;bassinet;мебель;люлька
+instrument;bassoon;инструмент;Фагот
+hat;bathing cap;шляпа;шапочка для купания
+decor;bath towel;декор;полотенце ванны 
+furniture;bathtub;мебель;ванна
+vehicle;beach wagon;автомобиль;Бич-вагон
+building;beacon;дом;Маяк
+lab equipment;beaker;лабораторное оборудование;мензурка
+hat;bearskin;шляпа;медвежатник
+food;beer bottle;еда;бутылка пива
+food;beer glass;еда;пивной бокал
+building;bell cote;дом;колокольчик кот
+clothing;bib;одежда;нагрудник
+vehicle;bicycle;автомобиль;велосипед
+clothing;bikini;одежда;бикини
+paper;binder;бумага;Биндер
+tool;binoculars;инструмент;бинокль
+outdoor scene;birdhouse;Открытая сцена;скворечник
+building;boathouse;дом;эллинг
+vehicle;bobsled;автомобиль;Бобслей
+accessory;bolo tie;аксессуар;Боло галстук
+hat;bonnet;шляпа;капот
+furniture;bookcase;мебель;этажерка
+building;bookshop;дом;книжный магазин
+other;bottlecap;другие;колпачок
+weapon;bow;оружие;лук
+accessory;bow tie;аксессуар;галстук-бабочка
+decor;brass;декор;латунь
+clothing;brassiere;одежда;бюстгалтер
+outdoor scene;breakwater;Открытая сцена;волнорез
+clothing;breastplate;одежда;нагрудник
+tool;broom;инструмент;Брум
+tool;bucket;инструмент;ведро
+accessory;buckle;аксессуар;пряжка
+clothing;bulletproof vest;одежда;противопульная тельняшка
+train;bullet train;поезд;пуля поезд
+building;butcher shop;дом;мясной магазин
+vehicle;cab;автомобиль;такси
+cooking;caldron;приготовление;котел
+tool;candle;инструмент;свеча
+weapon;cannon;оружие;Кэннон
+boat;canoe;лодка;Байда
+tool;can opener;инструмент;открывашка
+clothing;cardigan;одежда;кардиган
+technology;car mirror;технология;зеркало автомобиля 
+building;carousel;дом;карусель
+tool;carpenter's kit;инструмент;набор плотника 
+container;carton;контейнер;коробка
+technology;car wheel;технология;колеса автомобиля
+technology;cash machine;технология;банкомат
+technology;cassette;технология;кассета
+electronics;cassette player;электроника;кассетный плеер
+building;castle;дом;замок
+boat;catamaran;лодка;катамаран
+electronics;CD player;электроника;CD-плеер
+instrument;cello;инструмент;виолончель
+electronics;cellular telephone;электроника;сотовый телефон
+tool;chain;инструмент;цепи
+fence;chainlink fence;забор;забор из колючей проволоки 
+clothing;chain mail;одежда;кольчуги
+tool;chain saw;инструмент;цепная пила
+container;chest;контейнер;грудь
+furniture;chiffonier;мебель;шифоньер
+instrument;chime;инструмент;перезвон
+furniture;china cabinet;мебель;Китай кабинета
+decor;Christmas stocking;декор;Рождественский чулок
+building;church;дом;церковь
+building;cinema;дом;кино
+cooking;cleaver;приготовление;тесак
+building;cliff dwelling;дом;скальный 
+clothing;cloak;одежда;плащ
+clothing;clog;одежда;забивают
+cooking;cocktail shaker;приготовление;шейкер
+cooking;coffee mug;приготовление;кружка кофе
+cooking;coffeepot;приготовление;кофейник
+technology;coil;технология;катушка
+technology;combination lock;технология;кодовый замок
+electronics;computer keyboard;электроника;компьютерная клавиатура
+building;confectionery;дом;кондитерских изделий
+boat;container ship;лодка;контейнеровоз
+vehicle;convertible;автомобиль;кабриолет
+cooking;corkscrew;приготовление;штопор
+instrument;cornet;инструмент;Корнет
+clothing;cowboy boot;одежда;ковбойские сапоги
+clothing;cowboy hat;одежда;ковбойская шляпа
+furniture;cradle;мебель;колыбель
+vehicle;crane;автомобиль;кран
+hat;crash helmet;шляпа;защитный шлем
+container;crate;контейнер;обрешетка
+furniture;crib;мебель;шпаргалка
+cooking;Crock Pot;приготовление;Кастрюлю
+ball;croquet ball;мяч;мяч для крокета 
+tool;crutch;инструмент;костыль
+clothing;cuirass;одежда;кираса
+outdoor scene;dam;Открытая сцена;плотины
+furniture;desk;мебель;рабочий стол
+electronics;desktop computer;электроника;настольный компьютер
+electronics;dial telephone;электроника;телефон
+clothing;diaper;одежда;памперс
+electronics;digital clock;электроника;цифровые часы
+electronics;digital watch;электроника;цифровые часы
+furniture;dining table;мебель;обеденный стол
+decor;dishrag;декор;амеба
+electronics;dishwasher;электроника;посудомоечная машина
+technology;disk brake;технология;тормозной диск 
+outdoor scene;dock;Открытая сцена;док
+vehicle;dogsled;автомобиль;упряжках
+building;dome;дом;купол
+decor;doormat;декор;половик
+outdoor scene;drilling platform;Открытая сцена;буровая платформа
+instrument;drum;инструмент;барабан
+instrument;drumstick;инструмент;голень
+tool;dumbbell;инструмент;гантели
+cooking;Dutch oven;приготовление;Голландская печь
+electronics;electric fan;электроника;электрический вентилятор
+instrument;electric guitar;инструмент;электрическая гитара
+train;electric locomotive;поезд;электровоз
+furniture;entertainment center;мебель;развлекательный центр
+paper;envelope;бумага;конверт
+cooking;espresso maker;приготовление;кофеварка эспрессо
+other;face powder;другие;пудра
+accessory;feather boa;аксессуар;боа
+furniture;file;мебель;файл
+boat;fireboat;лодка;пожарный гидрант
+vehicle;fire engine;автомобиль;пожарная машина
+furniture;fire screen;мебель;экран огонь 
+outdoor scene;flagpole;Открытая сцена;флагшток
+instrument;flute;инструмент;флейта
+furniture;folding chair;мебель;складной стул
+sports equipment;football helmet;спортивное оборудование;футбольный шлем
+vehicle;forklift;автомобиль;грузоподъемник
+outdoor scene;fountain;Открытая сцена;фонтан
+tool;fountain pen;инструмент;фонтан ручка
+furniture;four-poster;мебель;балдахином
+train;freight car;поезд;грузовых автомобилей
+instrument;French horn;инструмент;Валторна
+cooking;frying pan;приготовление;сковорода
+clothing;fur coat;одежда;шуба
+vehicle;garbage truck;автомобиль;мусоровоз 
+accessory;gasmask;аксессуар;противогаз
+technology;gas pump;технология;газовый насос
+cooking;goblet;приготовление;Кубок
+vehicle;go-kart;автомобиль;картинг
+ball;golf ball;мяч;мяч для гольфа
+vehicle;golfcart;автомобиль;golfcart
+boat;gondola;лодка;гондолы
+instrument;gong;инструмент;гонг
+clothing;gown;одежда;платье
+instrument;grand piano;инструмент;рояль
+building;greenhouse;дом;овощеводство
+vehicle;grille;автомобиль;решетка
+building;grocery store;дом;продуктовый магазин
+weapon;guillotine;оружие;гильотина
+accessory;hair slide;аксессуар;заколка
+other;hair spray;другие;лак для волос 
+vehicle;half track;автомобиль;половина трека
+tool;hammer;инструмент;молоток
+decor;hamper;декор;корзина
+electronics;hand blower;электроника;ручная воздуходувка
+electronics;hand-held computer;электроника;ручной компьютер
+accessory;handkerchief;аксессуар;платочек
+electronics;hard disc;электроника;жесткий диск
+instrument;harmonica;инструмент;гармошка
+instrument;harp;инструмент;Харп
+vehicle;harvester;автомобиль;жатки
+tool;hatchet;инструмент;топорик
+weapon;holster;оружие;кобура
+building;home theater;дом;домашний кинотеатр
+other;honeycomb;другие;СОТа
+tool;hook;инструмент;крюк
+clothing;hoopskirt;одежда;hoopskirt
+sports equipment;horizontal bar;спортивное оборудование;турник
+vehicle;horse cart;автомобиль;телега с лошадью 
+technology;hourglass;технология;песочные часы
+electronics;iPod;электроника;для iPod
+tool;iron;инструмент;утюг
+fruit;jack-o'-lantern;фрукты;Джек-o'-фонарь
+clothing;jean;одежда;Жан
+vehicle;jeep;автомобиль;джип
+clothing;jersey;одежда;Джерси
+paper;jigsaw puzzle;бумага;головоломки
+vehicle;jinrikisha;автомобиль;jinrikisha
+electronics;joystick;электроника;джойстик
+clothing;kimono;одежда;кимоно
+clothing;knee pad;одежда;наколенник 
+other;knot;другие;узел
+clothing;lab coat;одежда;пальто лаборатории
+cooking;ladle;приготовление;половник
+decor;lampshade;декор;абажур
+electronics;laptop;электроника;ноутбук
+vehicle;lawn mower;автомобиль;косилка 
+technology;lens cap;технология;крышка объектива
+tool;letter opener;инструмент;письмо открывалка
+building;library;дом;библиотека
+boat;lifeboat;лодка;спасательная шлюпка
+tool;lighter;инструмент;легче
+vehicle;limousine;автомобиль;лимузин
+boat;liner;лодка;вкладыш
+accessory;lipstick;аксессуар;помада
+clothing;Loafer;одежда;Мокасины
+other;lotion;другие;лосьон
+electronics;loudspeaker;электроника;громкоговоритель
+tool;loupe;инструмент;лупа
+building;lumbermill;дом;lumbermill
+tool;magnetic compass;инструмент;магнитный компас
+accessory;mailbag;аксессуар;почта
+furniture;mailbox;мебель;почтовый ящик
+clothing;maillot;одежда;Майо
+clothing;maillot;одежда;Майо
+outdoor scene;manhole cover;Открытая сцена;крышка люка-лаза
+instrument;maraca;инструмент;погремушка
+instrument;marimba;инструмент;маримба
+clothing;mask;одежда;маска
+tool;matchstick;инструмент;спичка
+outdoor scene;maypole;Открытая сцена;верзила
+outdoor scene;maze;Открытая сцена;лабиринт
+cooking;measuring cup;приготовление;мерный стакан
+container;medicine chest;контейнер;аптечка
+outdoor scene;megalith;Открытая сцена;мегалит
+electronics;microphone;электроника;микрофон
+electronics;microwave;электроника;микроволновая печь
+clothing;military uniform;одежда;военная форма
+container;milk can;контейнер;молоко может
+vehicle;minibus;автомобиль;микроавтобус
+clothing;miniskirt;одежда;мини-юбка
+vehicle;minivan;автомобиль;минивен
+weapon;missile;оружие;ракета
+clothing;mitten;одежда;варежки
+cooking;mixing bowl;приготовление;смешивая Bowl
+building;mobile home;дом;мобильный дом
+vehicle;Model T;автомобиль;Модель Т
+electronics;modem;электроника;модем
+building;monastery;дом;монастырь
+electronics;monitor;электроника;монитор
+vehicle;moped;автомобиль;мопед
+cooking;mortar;приготовление;Ступка
+hat;mortarboard;шляпа;мастерок
+building;mosque;дом;мечеть
+other;mosquito net;другие;москитная сетка
+vehicle;motor scooter;автомобиль;мотороллер
+vehicle;mountain bike;автомобиль;горный велосипед
+building;mountain tent;дом;горы шатер
+rodent;mouse;грызун;мышь
+technology;mousetrap;технология;мышеловка
+vehicle;moving van;автомобиль;фургон
+other;muzzle;другие;мордочка
+tool;nail;инструмент;лак для ногтей
+accessory;neck brace;аксессуар;шейный бандаж
+accessory;necklace;аксессуар;ожерелье
+other;nipple;другие;ниппель
+paper;notebook;бумага;ноутбук
+building;obelisk;дом;обелиск
+instrument;oboe;инструмент;гобой
+instrument;ocarina;инструмент;окарина
+electronics;odometer;электроника;одометр
+technology;oil filter;технология;масляный фильтр
+instrument;organ;инструмент;орган
+electronics;oscilloscope;электроника;осциллограф
+clothing;overskirt;одежда;остроугольный
+vehicle;oxcart;автомобиль;повозка
+clothing;oxygen mask;одежда;кислородная маска 
+container;packet;контейнер;пакет
+sports equipment;paddle;спортивное оборудование;весло
+boat;paddlewheel;лодка;лопастные
+technology;padlock;технология;замок
+tool;paintbrush;инструмент;кисть
+clothing;pajama;одежда;пижамные
+building;palace;дом;дворец
+instrument;panpipe;инструмент;свирель
+paper;paper towel;бумага;бумажное полотенце
+aircraft;parachute;самолет;парашют
+sports equipment;parallel bars;спортивное оборудование;параллельные брусья
+furniture;park bench;мебель;скамейке в парке
+electronics;parking meter;электроника;парковка метр
+vehicle;passenger car;автомобиль;легковой автомобиль
+building;patio;дом;патио
+electronics;pay-phone;электроника;платные телефон
+furniture;pedestal;мебель;пьедестал
+other;pencil box;другие;пенал
+tool;pencil sharpener;инструмент;точилка для карандашей
+other;perfume;другие;духи
+lab equipment;Petri dish;лабораторное оборудование;Петри
+electronics;photocopier;электроника;ксерокс
+instrument;pick;инструмент;выбрать
+hat;pickelhaube;шляпа;pickelhaube
+fence;picket fence;забор;забор
+vehicle;pickup;автомобиль;самовывоз
+outdoor scene;pier;Открытая сцена;Пирс
+decor;piggy bank;декор;копилка
+container;pill bottle;контейнер;бутылка таблетки 
+decor;pillow;декор;подушка
+ball;ping-pong ball;мяч;пинг-понг мяч
+toy;pinwheel;игрушка;вертушка
+person;pirate;человек;пират
+cooking;pitcher;приготовление;питчер
+tool;plane;инструмент;самолет
+building;planetarium;дом;планетарий
+container;plastic bag;контейнер;пластиковый мешок
+decor;plate rack;декор;плита стойки
+vehicle;plow;автомобиль;пахать
+tool;plunger;инструмент;плунжер
+electronics;Polaroid camera;электроника;Polaroid камеры
+sports equipment;pole;спортивное оборудование;полюс
+vehicle;police van;автомобиль;полицейский фургон
+clothing;poncho;одежда;пончо
+furniture;pool table;мебель;бильярдный стол 
+food;pop bottle;еда;поп-бутылки
+cooking;pot;приготовление;горшок
+tool;potter's wheel;инструмент;гончарный круг 
+electronics;power drill;электроника;дрель 
+decor;prayer rug;декор;молитвенный коврик
+electronics;printer;электроника;принтер
+building;prison;дом;тюрьма
+weapon;projectile;оружие;снаряд
+electronics;projector;электроника;проектор
+sports equipment;puck;спортивное оборудование;шайба
+sports equipment;punching bag;спортивное оборудование;боксерский мешок
+accessory;purse;аксессуар;портмоне
+tool;quill;инструмент;Квил
+decor;quilt;декор;одеяло
+vehicle;racer;автомобиль;гонщик
+sports equipment;racket;спортивное оборудование;ракетки
+electronics;radiator;электроника;радиатор
+electronics;radio;электроника;радио
+technology;radio telescope;технология;радиотелескоп
+container;rain barrel;контейнер;дождь баррель
+vehicle;recreational vehicle;автомобиль;рекреационного транспортного средства
+technology;reel;технология;вьюрок
+electronics;reflex camera;электроника;зеркальный фотоаппарат
+furniture;refrigerator;мебель;холодильник
+electronics;remote control;электроника;пульт дистанционного управления
+building;restaurant;дом;ресторан
+weapon;revolver;оружие;Наган
+weapon;rifle;оружие;винтовка
+furniture;rocking chair;мебель;кресло-качалка
+cooking;rotisserie;приготовление;вертела
+tool;rubber eraser;инструмент;резиновый ластик
+ball;rugby ball;мяч;регби мяч
+tool;rule;инструмент;правило
+clothing;running shoe;одежда;кроссовки
+container;safe;контейнер;безопасный
+tool;safety pin;инструмент;булавка 
+food;saltshaker;еда;солонка
+clothing;sandal;одежда;сандал
+clothing;sarong;одежда;саронг
+instrument;sax;инструмент;саксофон
+weapon;scabbard;оружие;ножны
+electronics;scale;электроника;масштаб
+vehicle;school bus;автомобиль;школьный автобус
+boat;schooner;лодка;шхуна
+sports equipment;scoreboard;спортивное оборудование;табло
+decor;screen;декор;экран
+tool;screw;инструмент;винт
+tool;screwdriver;инструмент;отвертка
+technology;seat belt;технология;ремень безопасности 
+technology;sewing machine;технология;швейная машина
+tool;shield;инструмент;щит
+building;shoe shop;дом;магазин обуви 
+furniture;shoji;мебель;Седзи
+container;shopping basket;контейнер;корзина для покупок
+container;shopping cart;контейнер;корзина
+tool;shovel;инструмент;лопата
+hat;shower cap;шляпа;шапочка для душа
+decor;shower curtain;декор;душ занавес
+sports equipment;ski;спортивное оборудование;лыжи
+clothing;ski mask;одежда;лыжная маска
+accessory;sleeping bag;аксессуар;спальный мешок
+technology;slide rule;технология;логарифмическая линейка 
+furniture;sliding door;мебель;раздвижные двери
+electronics;slot;электроника;слот
+sports equipment;snorkel;спортивное оборудование;шноркель
+vehicle;snowmobile;автомобиль;снегоход
+vehicle;snowplow;автомобиль;Снегоочиститель
+decor;soap dispenser;декор;мыла
+ball;soccer ball;мяч;футбольный мяч
+clothing;sock;одежда;носок
+technology;solar dish;технология;солнечное блюдо
+hat;sombrero;шляпа;сомбреро
+cooking;soup bowl;приготовление;суп чаша
+electronics;space bar;электроника;пробел
+electronics;space heater;электроника;обогреватель
+aircraft;space shuttle;самолет;космический челнок
+cooking;spatula;приготовление;шпатель
+boat;speedboat;лодка;катер
+outdoor scene;spider web;Открытая сцена;веб-паук 
+technology;spindle;технология;шпиндель
+vehicle;sports car;автомобиль;спортивный автомобиль
+electronics;spotlight;электроника;прожектор
+furniture;stage;мебель;этап
+train;steam locomotive;поезд;паровоз
+outdoor scene;steel arch bridge;Открытая сцена;стальной арочный мост
+instrument;steel drum;инструмент;стальной барабан
+tool;stethoscope;инструмент;стетоскоп
+accessory;stole;аксессуар;украл
+outdoor scene;stone wall;Открытая сцена;каменная стена
+electronics;stopwatch;электроника;секундомер
+furniture;stove;мебель;плита
+cooking;strainer;приготовление;стрейнер
+vehicle;streetcar;автомобиль;трамвай
+furniture;stretcher;мебель;растяжитель
+furniture;studio couch;мебель;студия диван
+building;stupa;дом;ступа
+boat;submarine;лодка;подводная лодка
+clothing;suit;одежда;костюм
+outdoor scene;sundial;Открытая сцена;солнечные часы
+tool;sunglass;инструмент;очки
+clothing;sunglasses;одежда;солнцезащитные очки
+other;sunscreen;другие;солнцезащитный крем
+outdoor scene;suspension bridge;Открытая сцена;подвесной мост
+tool;swab;инструмент;тампоном
+clothing;sweatshirt;одежда;толстовка
+clothing;swimming trunks;одежда;плавки
+toy;swing;игрушка;качели
+electronics;switch;электроника;переключатель
+tool;syringe;инструмент;шприц
+decor;table lamp;декор;настольная лампа
+vehicle;tank;автомобиль;танк
+electronics;tape player;электроника;магнитофон
+cooking;teapot;приготовление;чайничек
+toy;teddy;игрушка;Тедди
+electronics;television;электроника;телевизор
+ball;tennis ball;мяч;теннисный мяч
+building;thatch;дом;Тэтч
+decor;theater curtain;декор;театральный занавес
+tool;thimble;инструмент;наперсток
+vehicle;thresher;автомобиль;молотильщик
+furniture;throne;мебель;трон
+building;tile roof;дом;плитка крыши 
+electronics;toaster;электроника;тостер
+building;tobacco shop;дом;табачный магазин
+furniture;toilet seat;мебель;сиденье для унитаза
+tool;torch;инструмент;факел
+outdoor scene;totem pole;Открытая сцена;тотемный столб
+vehicle;tow truck;автомобиль;эвакуатор
+building;toyshop;дом;магазинов
+vehicle;tractor;автомобиль;трактор
+vehicle;trailer truck;автомобиль;грузовик с прицепом
+decor;tray;декор;лоток
+clothing;trench coat;одежда;пальто
+vehicle;tricycle;автомобиль;трицикл
+boat;trimaran;лодка;тримаран
+technology;tripod;технология;штатив
+outdoor scene;triumphal arch;Открытая сцена;Триумфальная арка
+vehicle;trolleybus;автомобиль;троллейбус
+instrument;trombone;инструмент;тромбон
+furniture;tub;мебель;ванна
+technology;turnstile;технология;турникет
+electronics;typewriter keyboard;электроника;клавиатура пишущей машинки 
+accessory;umbrella;аксессуар;зонтик
+vehicle;unicycle;автомобиль;моноцикл
+instrument;upright;инструмент;в вертикальном положении
+electronics;vacuum;электроника;вакуум
+decor;vase;декор;ВАЗа
+container;vault;контейнер;хранилище
+other;velvet;другие;бархат
+technology;vending machine;технология;торговый автомат
+clothing;vestment;одежда;облачение
+outdoor scene;viaduct;Открытая сцена;виадук
+instrument;violin;инструмент;скрипка
+ball;volleyball;мяч;волейбол
+electronics;waffle iron;электроника;вафельница
+technology;wall clock;технология;настенные часы
+accessory;wallet;аксессуар;кошелек
+furniture;wardrobe;мебель;шкаф
+aircraft;warplane;самолет;самолет
+container;washbasin;контейнер;умывальник
+electronics;washer;электроника;шайба
+container;water bottle;контейнер;бутылка воды
+container;water jug;контейнер;кувшин для воды
+outdoor scene;water tower;Открытая сцена;водонапорная башня
+container;whiskey jug;контейнер;жбан виски 
+tool;whistle;инструмент;свисток
+clothing;wig;одежда;парик
+decor;window screen;декор;экран окна 
+decor;window shade;декор;тень окна 
+accessory;Windsor tie;аксессуар;Виндзор галстук
+food;wine bottle;еда;бутылки вина
+other;wing;другие;крыло
+cooking;wok;приготовление;вок
+cooking;wooden spoon;приготовление;деревянной ложкой
+other;wool;другие;шерсть
+fence;worm fence;забор;забор червя 
+boat;wreck;лодка;развалина
+boat;yawl;лодка;ял
+building;yurt;дом;юрт
+technology;web site;технология;веб-сайт
+paper;comic book;бумага;комикс 
+paper;crossword puzzle;бумага;кроссворд
+outdoor scene;street sign;Открытая сцена;дорожный знак
+electronics;traffic light;электроника;светофор
+paper;book jacket;бумага;суперобложка
+paper;menu;бумага;меню
+cooking;plate;приготовление;плиты
+food;guacamole;еда;гуакамоле
+food;consomme;еда;консоме
+cooking;hot pot;приготовление;горячий горшок
+food;trifle;еда;мелочь
+food;ice cream;еда;мороженое
+food;ice lolly;еда;Lolly льда
+food;French loaf;еда;Французской булкой
+food;bagel;еда;бублик
+food;pretzel;еда;крендель
+food;cheeseburger;еда;чизбургер
+food;hotdog;еда;хотдог
+food;mashed potato;еда;картофельное пюре
+vegetable;head cabbage;овощ;головки капусты
+vegetable;broccoli;овощ;брокколи
+vegetable;cauliflower;овощ;цветная капуста
+fruit;zucchini;фрукты;цукини
+fruit;spaghetti squash;фрукты;спагетти сквош
+fruit;acorn squash;фрукты;желудь сквош
+vegetable;butternut squash;овощ;баттернат сквош
+vegetable;cucumber;овощ;огурец
+vegetable;artichoke;овощ;артишок
+vegetable;bell pepper;овощ;перец
+flower;cardoon;цветок;артишок испанский
+fungus;mushroom;грибок;гриб
+fruit;Granny Smith;фрукты;Гренни Смит
+fruit;strawberry;фрукты;клубничный
+fruit;orange;фрукты;оранжевый
+fruit;lemon;фрукты;лимон
+fruit;fig;фрукты;рис
+fruit;pineapple;фрукты;ананас
+fruit;banana;фрукты;банан
+fruit;jackfruit;фрукты;джекфрут
+fruit;custard apple;фрукты;кремовое яблоко
+fruit;pomegranate;фрукты;гранат
+other;hay;другие;сено
+food;carbonara;еда;карбонара
+food;chocolate sauce;еда;шоколадный соус
+food;dough;еда;бабла
+food;meat loaf;еда;мясной рулет
+food;pizza;еда;пицца
+food;potpie;еда;пирог
+food;burrito;еда;буррито
+food;red wine;еда;красное вино
+food;espresso;еда;эспрессо
+cooking;cup;приготовление;Кубок
+food;eggnog;еда;гоголь-моголь
+outdoor scene;alp;Открытая сцена;Алп
+other;bubble;другие;пузырь
+outdoor scene;cliff;Открытая сцена;скалы
+coral;coral reef;коралловый;коралловый риф
+outdoor scene;geyser;Открытая сцена;гейзер
+outdoor scene;lakeside;Открытая сцена;Лейксайд
+outdoor scene;promontory;Открытая сцена;мыс
+outdoor scene;sandbar;Открытая сцена;косы
+outdoor scene;seashore;Открытая сцена;моря
+outdoor scene;valley;Открытая сцена;долина
+outdoor scene;volcano;Открытая сцена;вулкан
+person;ballplayer;человек;бейсболист
+person;groom;человек;жених
+person;scuba diver;человек;аквалангист
+flower;rapeseed;цветок;рапса
+flower;daisy;цветок;Дейзи
+flower;yellow lady's slipper;цветок;венерин башмачок желтый 
+food;corn;еда;кукуруза
+plant;acorn;завод;желудь
+flower;hip;цветок;бедра
+plant;buckeye;завод;Бакай
+coral;coral fungus;коралловый;коралловый гриб
+fungus;agaric;грибок;мухомор
+fungus;gyromitra;грибок;строчок
+fungus;stinkhorn;грибок;stinkhorn
+fungus;earthstar;грибок;earthstar
+fungus;hen-of-the-woods;грибок;курица-оф-Вудс
+fungus;bolete;грибок;гриб
+food;ear;еда;ухо
+other;toilet tissue;другие;туалет ткани

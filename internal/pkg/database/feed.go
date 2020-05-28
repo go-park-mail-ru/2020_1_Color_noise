@@ -9,6 +9,7 @@ func (db *PgxDB) GetSubFeed(user models.DataBaseUser, start, limit int) ([]*mode
 	var res []*models.Pin
 
 	row, err := db.dbPool.Query(Feed, user.Id, limit, start)
+	defer row.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -20,6 +21,8 @@ func (db *PgxDB) GetSubFeed(user models.DataBaseUser, start, limit int) ([]*mode
 			return nil, errors.New("pin not found")
 		}
 		p := models.GetPin(tmp)
+		us, _ := db.GetUserById(models.DataBaseUser{Id:tmp.UserId})
+		p.User = &us
 		res = append(res, &p)
 	}
 	return res, nil
@@ -29,6 +32,7 @@ func (db *PgxDB) GetMainFeed(user models.DataBaseUser, start, limit int) ([]*mod
 	var res []*models.Pin
 
 	row, err := db.dbPool.Query(Main, limit, start)
+	defer row.Close()
 	if err != nil {
 		return nil, errors.New("db problem")
 	}
@@ -40,6 +44,8 @@ func (db *PgxDB) GetMainFeed(user models.DataBaseUser, start, limit int) ([]*mod
 			return res, nil
 		}
 		p := models.GetPin(tmp)
+		us, _ := db.GetUserById(models.DataBaseUser{Id:tmp.UserId})
+		p.User = &us
 		res = append(res, &p)
 	}
 	return res, nil
@@ -49,6 +55,7 @@ func (db *PgxDB) GetRecFeed(user models.DataBaseUser, start, limit int) ([]*mode
 	var res []*models.Pin
 
 	row, err := db.dbPool.Query(Recommendation, limit, start)
+	defer row.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -60,6 +67,8 @@ func (db *PgxDB) GetRecFeed(user models.DataBaseUser, start, limit int) ([]*mode
 			return res, nil
 		}
 		p := models.GetPin(tmp)
+		us, _ := db.GetUserById(models.DataBaseUser{Id:tmp.UserId})
+		p.User = &us
 		res = append(res, &p)
 	}
 	return res, nil

@@ -1,8 +1,8 @@
 -- Database: pinterest
 
-DROP DATABASE test;
+-- DROP DATABASE pinterest;
 
-CREATE DATABASE test
+CREATE DATABASE pinterest
     WITH
     OWNER = postgres
     ENCODING = 'UTF8'
@@ -17,58 +17,71 @@ CREATE DATABASE test
 -- DROP TABLE IF EXISTS subscriptions CASCADE;
 -- DROP TABLE IF EXISTS commentaries CASCADE;
 
+
+
 CREATE TABLE users(
-	id serial PRIMARY KEY,
-	email text NOT NULL,
-	login text UNIQUE NOT NULL,
-	encrypted_password text NOT NULL,
-	about text,
-	avatar text,
-	subscriptions int,
-	subscribers int,
-	created_at TIMESTAMP NOT NULL
+                      id serial PRIMARY KEY,
+                      email text NOT NULL,
+                      login text UNIQUE NOT NULL,
+                      encrypted_password text NOT NULL,
+                      about text,
+                      avatar text,
+                      subscriptions int,
+                      subscribers int,
+                      created_at TIMESTAMP NOT NULL,
+                      tags text[] NOT NULL
 );
 
 CREATE TABLE sessions (
-	id int REFERENCES users(id) NOT NULL,
-	cookie text NOT NULL,
-	token text NOT NULL,
-	created_at timestamp NOT NULL,
-	deleting_at timestamp
+                          id int REFERENCES users(id) NOT NULL,
+                          cookie text NOT NULL,
+                          token text NOT NULL,
+                          created_at timestamp NOT NULL,
+                          deleting_at timestamp
 );
 
 
 CREATE TABLE boards(
-	id serial PRIMARY KEY,
-	user_id int REFERENCES users(id),
-	name text NOT NULL,
-	description text,
-	created_at timestamp
+                       id serial PRIMARY KEY,
+                       user_id int REFERENCES users(id),
+                       name text NOT NULL,
+                       description text,
+                       created_at timestamp
 );
 
 CREATE TABLE pins (
-	id serial PRIMARY KEY,
-	user_id int REFERENCES users(id),
-	name text,
-	description text,
-	image text NOT NULL,
-	board_id int REFERENCES boards(id),
-	created_at timestamp
+                      id serial PRIMARY KEY,
+                      user_id int REFERENCES users(id),
+                      name text,
+                      description text,
+                      image text NOT NULL,
+                      created_at timestamp,
+                      tags text[] NOT NULL,
+                      views int NOT NULL,
+                      comments int NOT NULL
 );
 
+CREATE TABLE boards_pins (
+                             image_id int REFERENCES pins(id) NOT NULL ,
+                             board_id int REFERENCES boards(id) NOT NULL,
+                             original boolean,
+                             UNIQUE (image_id, board_id)
+);
+
+
 CREATE TABLE subscriptions (
-	id serial PRIMARY KEY,
-	user_id int REFERENCES users(id) NOT NULL,
-	subscribed_at int REFERENCES users(id) NOT NULL,
-	UNIQUE (user_id, subscribed_at)
+                               id serial PRIMARY KEY,
+                               user_id int REFERENCES users(id) NOT NULL,
+                               subscribed_at int REFERENCES users(id) NOT NULL,
+                               UNIQUE (user_id, subscribed_at)
 );
 
 CREATE TABLE commentaries (
-	id serial PRIMARY KEY,
-	user_id int REFERENCES users(id) NOT NULL,
-	pin_id int REFERENCES pins(id) NOT NULL,
-	comment text NOT NULL,
-	created_at timestamp
+                              id serial PRIMARY KEY,
+                              user_id int REFERENCES users(id) NOT NULL,
+                              pin_id int REFERENCES pins(id) NOT NULL,
+                              comment text NOT NULL,
+                              created_at timestamp
 );
 
 CREATE TABLE notifies (
@@ -105,6 +118,15 @@ CREATE TABLE chat_messages(
                               id serial PRIMARY KEY,
                               sender_id int REFERENCES users(id) NOT NULL,
                               receiver_id int REFERENCES users(id) NOT NULL,
-                              message text NOT NULL,
+                              message text,
+                              sticker text,
                               created_at TIMESTAMP
 );
+
+CREATE OR REPLACE FUNCTION make_tsvector(name TEXT)
+    RETURNS tsvector AS $$
+BEGIN
+    RETURN (setweight(to_tsvector('russian', name),'A') ||
+            setweight(to_tsvector('english', name), 'B'));
+END
+$$ LANGUAGE 'plpgsql' IMMUTABLE;

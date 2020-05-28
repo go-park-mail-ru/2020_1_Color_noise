@@ -195,6 +195,26 @@ func (mr *MockUserServiceClientMockRecorder) Follow(ctx, in interface{}, opts ..
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Follow", reflect.TypeOf((*MockUserServiceClient)(nil).Follow), varargs...)
 }
 
+// IsFollowed mocks base method
+func (m *MockUserServiceClient) IsFollowed(ctx context.Context, in *user.Following, opts ...grpc.CallOption) (*user.Status, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "IsFollowed", varargs...)
+	ret0, _ := ret[0].(*user.Status)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IsFollowed indicates an expected call of IsFollowed
+func (mr *MockUserServiceClientMockRecorder) IsFollowed(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsFollowed", reflect.TypeOf((*MockUserServiceClient)(nil).IsFollowed), varargs...)
+}
+
 // Unfollow mocks base method
 func (m *MockUserServiceClient) Unfollow(ctx context.Context, in *user.Following, opts ...grpc.CallOption) (*user.Nothing, error) {
 	m.ctrl.T.Helper()
@@ -273,6 +293,26 @@ func (mr *MockUserServiceClientMockRecorder) GetSubscriptions(ctx, in interface{
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, in}, opts...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubscriptions", reflect.TypeOf((*MockUserServiceClient)(nil).GetSubscriptions), varargs...)
+}
+
+// UpdatePreferences mocks base method
+func (m *MockUserServiceClient) UpdatePreferences(ctx context.Context, in *user.Pref, opts ...grpc.CallOption) (*user.Nothing, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdatePreferences", varargs...)
+	ret0, _ := ret[0].(*user.Nothing)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdatePreferences indicates an expected call of UpdatePreferences
+func (mr *MockUserServiceClientMockRecorder) UpdatePreferences(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePreferences", reflect.TypeOf((*MockUserServiceClient)(nil).UpdatePreferences), varargs...)
 }
 
 // MockUserServiceServer is a mock of UserServiceServer interface
@@ -418,6 +458,21 @@ func (mr *MockUserServiceServerMockRecorder) Follow(arg0, arg1 interface{}) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Follow", reflect.TypeOf((*MockUserServiceServer)(nil).Follow), arg0, arg1)
 }
 
+// IsFollowed mocks base method
+func (m *MockUserServiceServer) IsFollowed(arg0 context.Context, arg1 *user.Following) (*user.Status, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsFollowed", arg0, arg1)
+	ret0, _ := ret[0].(*user.Status)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IsFollowed indicates an expected call of IsFollowed
+func (mr *MockUserServiceServerMockRecorder) IsFollowed(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsFollowed", reflect.TypeOf((*MockUserServiceServer)(nil).IsFollowed), arg0, arg1)
+}
+
 // Unfollow mocks base method
 func (m *MockUserServiceServer) Unfollow(arg0 context.Context, arg1 *user.Following) (*user.Nothing, error) {
 	m.ctrl.T.Helper()
@@ -476,4 +531,19 @@ func (m *MockUserServiceServer) GetSubscriptions(arg0 context.Context, arg1 *use
 func (mr *MockUserServiceServerMockRecorder) GetSubscriptions(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubscriptions", reflect.TypeOf((*MockUserServiceServer)(nil).GetSubscriptions), arg0, arg1)
+}
+
+// UpdatePreferences mocks base method
+func (m *MockUserServiceServer) UpdatePreferences(arg0 context.Context, arg1 *user.Pref) (*user.Nothing, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePreferences", arg0, arg1)
+	ret0, _ := ret[0].(*user.Nothing)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdatePreferences indicates an expected call of UpdatePreferences
+func (mr *MockUserServiceServerMockRecorder) UpdatePreferences(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePreferences", reflect.TypeOf((*MockUserServiceServer)(nil).UpdatePreferences), arg0, arg1)
 }

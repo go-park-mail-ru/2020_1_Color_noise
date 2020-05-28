@@ -15,7 +15,7 @@ type Handler struct {
 	logger  *zap.SugaredLogger
 }
 
-func NewHandler(usecase notifications.IUsecase, logger  *zap.SugaredLogger) *Handler {
+func NewHandler(usecase notifications.IUsecase, logger *zap.SugaredLogger) *Handler {
 	return &Handler{
 		usecase: usecase,
 		logger:  logger,
@@ -23,24 +23,27 @@ func NewHandler(usecase notifications.IUsecase, logger  *zap.SugaredLogger) *Han
 }
 
 func (nh *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
-	
+
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
 	if isAuth != true {
 		err := error.Unauthorized.New("GetNotifacations: user is unauthorized")
-		error.ErrorHandler(w, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
 	id, ok := r.Context().Value("Id").(uint)
 	if !ok {
 		err := error.NoType.New("Received bad id from context")
-		error.ErrorHandler(w, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+	start, err := strconv.Atoi(r.URL.Query().Get("start"))
+	if err != nil {
+		err = nil
+	}
 
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
@@ -49,7 +52,7 @@ func (nh *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
 
 	notifications, err := nh.usecase.GetNotifications(id, start, limit)
 	if err != nil {
-		error.ErrorHandler(w, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		error.ErrorHandler(w, r, nh.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 

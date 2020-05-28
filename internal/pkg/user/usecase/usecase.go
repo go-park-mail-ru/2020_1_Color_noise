@@ -3,7 +3,6 @@ package usecase
 import (
 	"2020_1_Color_noise/internal/models"
 	. "2020_1_Color_noise/internal/pkg/error"
-	"2020_1_Color_noise/internal/pkg/image"
 	"2020_1_Color_noise/internal/pkg/user"
 	"2020_1_Color_noise/internal/pkg/utils"
 	"github.com/asaskevich/govalidator"
@@ -131,7 +130,7 @@ func (uu *UserUsecase) UpdateDescription(id uint, input *models.UpdateDescriptio
 }
 
 func (uu *UserUsecase) UpdateAvatar(id uint, buffer []byte) (string, error) {
-	path, err := image.SaveImage(&buffer)
+	path, err := utils.SaveImage(&buffer)
 	if err != nil {
 		return "", Wrapf(err, "Updating avatar error, id:%d", id)
 	}
@@ -154,15 +153,28 @@ func (uu *UserUsecase) Delete(id uint) error {
 
 func (uu *UserUsecase) Follow(id uint, subId uint) error {
 	if err := uu.repo.Follow(id, subId); err != nil {
-		return Wrap(err, "Following error")
+		err = WithMessage(FollowingIsAlreadyDone.Wrap(err, "You are following this user"),
+			"You are following this user")
+		return err
 	}
 
 	return nil
 }
 
+func (uu *UserUsecase) IsFollowed(id uint, subId uint) (bool, error) {
+	s, err := uu.repo.IsFollowed(id, subId)
+	if err != nil {
+		return false, Wrap(err, "Error in during check follow")
+	}
+
+	return s, nil
+}
+
 func (uu *UserUsecase) Unfollow(id uint, subId uint) error {
 	if err := uu.repo.Unfollow(id, subId); err != nil {
-		return Wrap(err, "Unfollowing error")
+		err = WithMessage(FollowingIsNotYetDone.Wrap(err, "You are not following this user"),
+			"You are not following this user")
+		return err
 	}
 
 	return nil
@@ -184,4 +196,41 @@ func (uu *UserUsecase) GetSubscriptions(id uint, start int, limit int) ([]*model
 	}
 
 	return users, nil
+}
+
+func (uu *UserUsecase) UpdatePreferences(userId uint, preferences []string) error {
+	u, err := uu.repo.GetByID(userId)
+	if err != nil {
+		return Wrap(err, "UpdatePreferences error")
+	}
+
+	counter := 0
+	for i, tag := range u.Tags {
+		isExists := false
+
+		for _, pref := range preferences {
+			if tag == pref {
+				isExists = true
+				break
+			}
+		}
+
+		if !isExists {
+			counter++
+			if len(preferences) < 10 {
+				preferences = append(preferences, tag)
+			} else {
+				preferences[i] = tag
+			}
+		}
+	}
+
+	if counter != 0 {
+		err = uu.repo.UpdatePreferences(userId, preferences);
+		if err != nil {
+			return Wrap(err, "UpdatePreferences error")
+		}
+	}
+
+	return nil
 }

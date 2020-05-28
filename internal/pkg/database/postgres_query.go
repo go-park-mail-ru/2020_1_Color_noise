@@ -1,22 +1,82 @@
 package database
 
 const (
-	InsertPin = "INSERT INTO pins(user_id, name, description, image, board_id, created_at) " +
-		"VALUES($1, $2, $3, $4, $5, $6) RETURNING id"
-	UpdatePin = "UPDATE pins SET " +
-		"name = $1, description = $2, board_id = $3 " +
-		"WHERE id = $4"
-	DeletePin  = "DELETE from pins WHERE id = $1"
-	PinById    = "SELECT * FROM pins WHERE id = $1"
-	PinByUser  = "SELECT * FROM pins WHERE user_id = $1"
-	PinByName  = "SELECT * FROM pins WHERE LOWER(name) = LOWER($1);"
-	PinByBoard = "SELECT * FROM pins WHERE board_id = $1"
+	InsertPin = "INSERT INTO pins(user_id, name, description, image, created_at, tags, views, comments) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
+	InsertBoardsPin = "INSERT INTO boards_pins(image_id, board_id, original) VALUES ($1, $2, $3) RETURNING 0;"
+	UpdatePin       = "UPDATE pins SET " +
+		" name = $1, description = $2, board_id = $3 " +
+		" WHERE id = $4"
+	UpdateViews = "UPDATE pins SET " +
+		" views = views + 1" +
+		" WHERE id = $1"
+	UpdateComments = "UPDATE pins SET " +
+		" comments = comments + 1" +
+		" WHERE id = $1"
+	DeletePin = "DELETE from pins WHERE id = $1 CASCADE;"
+	PinById   = "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
+		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
+		" JOIN users ON pins.user_id = users.id" +
+		" WHERE original = true AND pins.id = $1"
+	PinByUser =  "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
+		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
+		" JOIN users ON pins.user_id = users.id" +
+		" WHERE original = true AND user_id = $1  ORDER BY pins.id DESC OFFSET $2 LIMIT $3;"
+	PinByBoard =  "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
+		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
+		" JOIN users ON pins.user_id = users.id" +
+		" WHERE board_id = $1"
+	AddTags = "UPDATE pins SET tags= $1 WHERE id = $2 RETURNING 0;"
+
+	PopularDesc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
+		" users.id, users.login, users.avatar" +
+		" FROM pins " +
+		" JOIN users ON pins.user_id = users.id" +
+		" WHERE make_tsvector(name) @@ to_tsquery($1)" +
+		" AND pins.created_at BETWEEN $2 AND $3" +
+		" ORDER BY pins.views DESC OFFSET $4 LIMIT $5;"
+	PopularAsc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
+		" users.id, users.login, users.avatar" +
+		" FROM pins " +
+		" JOIN users ON pins.user_id = users.id" +
+		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
+		" ORDER BY pins.views ASC OFFSET $4 LIMIT $5;"
+	CommentsDesc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
+		" users.id, users.login, users.avatar" +
+		" FROM pins " +
+		" JOIN users ON pins.user_id = users.id" +
+		" WHERE name LIKE $1  AND pins.created_at BETWEEN $2 AND $3" +
+		" ORDER BY pins.comments DESC OFFSET $4 LIMIT $5;"
+	CommentsAsc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
+		" users.id, users.login, users.avatar" +
+		" FROM pins " +
+		" JOIN users ON pins.user_id = users.id" +
+		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
+		" ORDER BY pins.comments ASC OFFSET $4 LIMIT $5;"
+	IdDesc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
+		" users.id, users.login, users.avatar" +
+		" FROM pins " +
+		" JOIN users ON pins.user_id = users.id" +
+		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
+		" ORDER BY pins.id DESC OFFSET $4 LIMIT $5;"
+	IdAsc = "SELECT pins.id, name, description, image, pins.created_at, pins.tags, pins.views, pins.comments," +
+		" users.id, users.login, users.avatar" +
+		" FROM pins  " +
+		" JOIN users ON pins.user_id = users.id" +
+		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3" +
+		" ORDER BY pins.id ASC OFFSET $4 LIMIT $5;"
+
+	PinByTag = "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, users.id, users.login, users.avatar" +
+	" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
+	" JOIN users ON pins.user_id = users.id" +
+	" WHERE pins.tags[0] = ANY ($1 ) OR pins.tags[1] = ANY ($1 )" +
+		" ORDER BY pins.views OFFSET $2 LIMIT $3;"
 )
 
 const (
 	InsertUser = "INSERT INTO users(email, login, encrypted_password, about, avatar, " +
-		"subscriptions, subscribers, created_at) " +
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id"
+		"subscriptions, subscribers, created_at, tags) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id"
 	UpdateUser = "UPDATE users SET " +
 		"email = $1, login = $2 " +
 		"WHERE id = $3 RETURNING id"
@@ -29,10 +89,12 @@ const (
 	UpdateUserAv = "UPDATE users SET " +
 		"avatar = $1 " +
 		"WHERE id = $2 RETURNING id;"
-	DeleteUser        = "DELETE FROM users WHERE id = $1;"
-	UserById          = "SELECT * FROM users WHERE id = $1"
+	DeleteUser = "DELETE FROM users WHERE id = $1;"
+	UserById   = "SELECT id, email, login, encrypted_password, about, avatar, subscriptions, subscribers, created_at, tags FROM users WHERE id = $1"
 	//это поиск
-	UserByLogin       = "SELECT * FROM users WHERE LOWER(login) = LOWER($1) LIMIT $2 OFFSET $3"
+	UserByLogin = "SELECT * FROM users " +
+		" WHERE make_tsvector(login) @@ to_tsquery($1) " +
+		" LIMIT $2 OFFSET $3"
 	//это точный поиск
 	UserByLoginSearch = "SELECT * FROM users WHERE login = $1"
 	UserByEmail       = "SELECT * FROM users WHERE email = $1"
@@ -44,10 +106,16 @@ const (
 	UserSubscriptionsUsers = "SELECT users.id, email, login, encrypted_password, about, avatar, subscriptions, subscribers, created_at  " +
 		" FROM users JOIN subscriptions ON users.ID = subscriptions.subscribed_at" +
 		" WHERE user_id = $1"
-	UserSubscribed    = "SELECT COUNT(subscribed_at) FROM subscriptions WHERE user_id = $1"
-	UserSubscriptions = "SELECT COUNT(user_id) FROM subscriptions WHERE subscribed_at = $1"
+	UserSubscribed    = "SELECT subscribers FROM users WHERE id = $1;"
+	UserSubscriptions = "SELECT subscriptions FROM users WHERE id = $1;"
 	Follow            = "INSERT INTO subscriptions( user_id, subscribed_at) VALUES ($1, $2) RETURNING id;"
-	Unfollow          = "DELETE FROM public.subscriptions WHERE user_id = $1 AND subscribed_at = $2 RETURNING 0;"
+	Unfollow          = "DELETE FROM subscriptions WHERE user_id = $1 AND subscribed_at = $2 RETURNING 0;"
+	UpdateUnfollowA   = "UPDATE users SET subscriptions = subscriptions - 1 WHERE id = $1 RETURNING 0;"
+	UpdateFollowA     = "UPDATE users SET subscriptions = subscriptions + 1 WHERE id = $1 RETURNING 0;"
+	UpdateUnfollowB   = "UPDATE users SET subscribers = subscribers - 1 WHERE id = $1 RETURNING 0;"
+	UpdateFollowB     = "UPDATE users SET subscribers = subscribers + 1 WHERE id =  $1 RETURNING 0;"
+	AddUserTags       = "UPDATE users SET tags= $1 WHERE id = $2 RETURNING 0;"
+	IsFollowing       = "SELECT id FROM subscriptions WHERE user_id = $1 AND subscribed_at = $2;"
 )
 
 const (
@@ -64,21 +132,21 @@ const (
 
 const (
 	InsertBoard = "INSERT INTO boards(user_id, name, description, created_at) " +
-		"VALUES($1, $2, $3, $4) RETURNING id"
+		" VALUES($1, $2, $3, $4) RETURNING id"
 	UpdateBoard = "UPDATE boards SET " +
-		"name = $1, description = $2 " +
-		"WHERE id = $3"
+		" name = $1, description = $2 " +
+		" WHERE id = $3"
 	DeleteBoard        = "DELETE FROM boards WHERE id = $1"
 	BoardById          = "SELECT * FROM boards WHERE id = $1"
-	BoardsByUserId     = "SELECT * FROM boards WHERE user_id = $1 LIMIT $2 OFFSET $3"
+	BoardsByUserId     = "SELECT * FROM boards WHERE user_id = $1 ORDER BY id ASC LIMIT $2 OFFSET $3"
 	BoardsByNameSearch = "SELECT * FROM boards WHERE name = $1 LIMIT $2 OFFSET $3"
 	LastPin            = "SELECT id, user_id, name, description, image, board_id, created_at " +
-		"FROM pins WHERE board_id = $1 ORDER BY created_at DESC LIMIT 1;"
+		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id WHERE board_id = $1 ORDER BY created_at DESC LIMIT 1;"
 )
 
 const (
 	InsertSession = "INSERT INTO sessions(" +
-		"id, cookie, token, created_at, deleting_at)" +
+		" id, cookie, token, created_at, deleting_at)" +
 		" VALUES ($1, $2, $3, $4, $5) RETURNING 0;"
 
 	UpdateSession = "UPDATE sessions" +
@@ -92,14 +160,19 @@ const (
 
 const (
 	Feed = "SELECT pins.id, pins.user_id, name, description, image, board_id, created_at " +
-		" FROM subscriptions JOIN pins ON subscriptions.subscribed_at = pins.user_id" +
-		" WHERE subscriptions.user_id = $1  ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
-	Main           = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1  OFFSET $2;"
-	Recommendation = "SELECT * FROM pins ORDER BY created_at DESC LIMIT $1 OFFSET $2;"
+		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		" JOIN subscriptions ON subscriptions.subscribed_at = pins.user_id" +
+		" WHERE subscriptions.user_id = $1  AND original = true ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
+	Main = "SELECT id, user_id, name, description, image, board_id, created_at " +
+		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		" WHERE original = true ORDER BY views DESC LIMIT $1  OFFSET $2;"
+	Recommendation = "SELECT id, user_id, name, description, image, board_id, created_at " +
+		" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id " +
+		" WHERE original = true ORDER BY created_at DESC LIMIT $1  OFFSET $2;"
 )
 
 const (
-	GetNoti = "SELECT message, from_user_id FROM notifies WHERE user_id = $1 ORDER BY created_at DESC;"
+	GetNoti = "SELECT message, from_user_id FROM notifies WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3;"
 	PutNoti = "INSERT INTO notifies(" +
 		"user_id, message, from_user_id, created_at) VALUES($1, $2, $3, $4) RETURNING id;"
 )
@@ -109,9 +182,9 @@ const (
 	GetChats = "SELECT sender_id, receiver_id FROM chat_messages WHERE sender_id = $1 OR receiver_id = $1 " +
 		" GROUP BY sender_id, receiver_id LIMIT $2 OFFSET $3;"
 
-	AddMsg = "INSERT INTO chat_messages(sender_id, receiver_id, message, created_at) " +
-		"VALUES ($1, $2, $3, $4) RETURNING 0;"
-	GetMsg = "SELECT sender_id, message, created_at FROM chat_messages " +
+	AddMsg = "INSERT INTO chat_messages(sender_id, receiver_id, message, sticker, created_at) " +
+		"VALUES ($1, $2, $3, $4, $5) RETURNING 0;"
+	GetMsg = "SELECT sender_id, message, sticker, created_at FROM chat_messages " +
 		" WHERE sender_id = $1 AND receiver_id = $2 OR sender_id = $2 AND receiver_id = $1 " +
 		" ORDER BY created_at ASC LIMIT $3 OFFSET $4;"
 )

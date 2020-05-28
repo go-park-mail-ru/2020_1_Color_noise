@@ -21,7 +21,7 @@ func main() {
 	}
 
 	db := database.NewPgxDB()
-	if err := db.Open(c); err != nil {
+	if err = db.Open(c); err != nil {
 		panic(err)
 	}
 
@@ -29,9 +29,8 @@ func main() {
 	userUse := userUsecase.NewUsecase(userRepo)
 	userDelivery := userDeliveryGRPC.NewUserService(userUse)
 
-
-	lis, err := net.Listen("tcp", ":8004")
-	if err != nil {
+	lis, ok := net.Listen("tcp", ":8000")
+	if ok != nil {
 		log.Fatalln("cant listet port", err)
 	}
 
@@ -39,6 +38,6 @@ func main() {
 
 	user.RegisterUserServiceServer(server, userDelivery)
 
-	fmt.Println("starting server at :8003")
+	fmt.Println("starting server at :8000")
 	server.Serve(lis)
 }

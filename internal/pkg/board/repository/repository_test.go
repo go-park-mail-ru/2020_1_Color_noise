@@ -13,7 +13,7 @@ var db = database.NewPgxDB()
 var repo = NewRepo(db)
 
 type Case struct {
-	b     models.Board
+	b      models.Board
 	answer error
 }
 
@@ -29,14 +29,13 @@ func TestRepository_Create(t *testing.T) {
 
 	cases := []Case{
 		{
-			b:      models.Board{
-				UserId:    id,
+			b: models.Board{
+				UserId: id,
 			},
 			answer: nil,
 		},
 		{
-			b:      models.Board{
-			},
+			b:      models.Board{},
 			answer: fmt.Errorf("board can not be created, err: user not found"),
 		},
 	}
@@ -68,14 +67,13 @@ func TestRepository_Delete(t *testing.T) {
 
 	cases := []Case{
 		{
-			b:      models.Board{
-				UserId:    id,
+			b: models.Board{
+				UserId: id,
 			},
 			answer: nil,
 		},
 		{
-			b:      models.Board{
-			},
+			b:      models.Board{},
 			answer: nil,
 		},
 	}
@@ -109,15 +107,14 @@ func TestRepository_Update(t *testing.T) {
 
 	cases := []Case{
 		{
-			b:      models.Board{
-				UserId:    id,
+			b: models.Board{
+				UserId: id,
 			},
 			answer: nil,
 		},
 		{
-			b:      models.Board{
-			},
-			answer:nil,
+			b:      models.Board{},
+			answer: nil,
 		},
 	}
 
@@ -149,14 +146,13 @@ func TestRepository_GetByID(t *testing.T) {
 
 	cases := []Case{
 		{
-			b:      models.Board{
-				UserId:    id,
+			b: models.Board{
+				UserId: id,
 			},
 			answer: nil,
 		},
 		{
-			b:      models.Board{
-			},
+			b:      models.Board{},
 			answer: fmt.Errorf("Board not found, board id: 0"),
 		},
 	}
@@ -190,8 +186,8 @@ func TestRepository_GetByUserID(t *testing.T) {
 
 	cases := []Case{
 		{
-			b:      models.Board{
-				UserId:    id,
+			b: models.Board{
+				UserId: id,
 			},
 			answer: nil,
 		},
@@ -224,8 +220,8 @@ func TestRepository_GetByName(t *testing.T) {
 
 	cases := []Case{
 		{
-			b:      models.Board{
-				UserId:    id,
+			b: models.Board{
+				UserId: id,
 			},
 			answer: nil,
 		},
@@ -259,8 +255,8 @@ func TestRepository_GetByNameID(t *testing.T) {
 
 	cases := []Case{
 		{
-			b:      models.Board{
-				UserId:    id,
+			b: models.Board{
+				UserId: id,
 			},
 			answer: fmt.Errorf("board not found"),
 		},

@@ -13,9 +13,11 @@ type IUsecase interface {
 	UpdateAvatar(id uint, buffer []byte) (string, error)
 	Delete(id uint) error
 	Follow(id uint, subId uint) error
+	IsFollowed(id uint, subId uint) (bool, error)
 	Unfollow(id uint, subId uint) error
 	GetByLogin(login string) (*models.User, error)
 	Search(login string, start int, limit int) ([]*models.User, error)
 	GetSubscribers(id uint, start int, limit int) ([]*models.User, error)
 	GetSubscriptions(id uint, start int, limit int) ([]*models.User, error)
+	UpdatePreferences(userId uint, preferences []string) error
 }

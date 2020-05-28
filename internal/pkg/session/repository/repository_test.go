@@ -13,7 +13,7 @@ var db = database.NewPgxDB()
 var repo = NewRepo(db)
 
 type Case struct {
-	s     models.Session
+	s      models.Session
 	answer error
 }
 
@@ -25,9 +25,14 @@ func TestRepository_Add(t *testing.T) {
 	}
 	db.Open(c)
 
+	id, _ := db.CreateUser(models.DataBaseUser{
+		Login: fmt.Sprint(time.Now()),
+	})
+
 	cases := []Case{
 		{
-			s:      models.Session{
+			s: models.Session{
+				Id:         id,
 				Cookie:     "",
 				Token:      "",
 				CreatedAt:  time.Time{},
@@ -36,7 +41,8 @@ func TestRepository_Add(t *testing.T) {
 			answer: nil,
 		},
 		{
-			s:      models.Session{
+			s: models.Session{
+				Id:         id,
 				Cookie:     "cookie",
 				Token:      "token",
 				CreatedAt:  time.Time{},
@@ -71,7 +77,7 @@ func TestRepository_Delete(t *testing.T) {
 
 	cases := []Case{
 		{
-			s:      models.Session{
+			s: models.Session{
 				Cookie:     "",
 				Token:      "",
 				CreatedAt:  time.Time{},
@@ -105,9 +111,14 @@ func TestRepository_Update(t *testing.T) {
 	}
 	db.Open(c)
 
+	id, _ := db.CreateUser(models.DataBaseUser{
+		Login: fmt.Sprint(time.Now()),
+	})
+
 	cases := []Case{
 		{
-			s:      models.Session{
+			s: models.Session{
+				Id:         id,
 				Cookie:     "",
 				Token:      "",
 				CreatedAt:  time.Time{},
@@ -143,7 +154,7 @@ func TestRepository_GetByCookie(t *testing.T) {
 
 	cases := []Case{
 		{
-			s:      models.Session{
+			s: models.Session{
 				Cookie:     "cookie",
 				Token:      "token",
 				CreatedAt:  time.Time{},
@@ -152,10 +163,9 @@ func TestRepository_GetByCookie(t *testing.T) {
 			answer: nil,
 		},
 		{
-		s:      models.Session{
+			s:      models.Session{},
+			answer: nil,
 		},
-		answer: fmt.Errorf("Session is not found, cookie: "),
-	},
 	}
 
 	for i, item := range cases {
