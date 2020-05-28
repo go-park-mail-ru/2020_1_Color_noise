@@ -5,7 +5,9 @@ import (
 )
 
 type IUsecase interface {
-	Create(input *models.InputPin, userId uint) (uint, error)
+	//Create(input *models.InputPin, userId uint) (uint, error)
+	CreatePin(input *models.InputPin, userId uint) (uint, error)
+	SaveImage(userId uint, buffer *[]byte) (uint, error)
 	Save(pinId uint, boardId uint) (bool, error)
 	GetById(id uint, userId uint) (*models.Pin, error)
 	GetByUserId(id uint, start int, limit int) ([]*models.Pin, error)

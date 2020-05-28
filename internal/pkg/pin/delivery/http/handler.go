@@ -5,10 +5,12 @@ import (
 	"2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/pin"
 	"2020_1_Color_noise/internal/pkg/response"
+	"bytes"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
 	"github.com/mailru/easyjson"
 	"go.uber.org/zap"
+	"io"
 	"net/http"
 	"strconv"
 )
@@ -25,7 +27,7 @@ func NewHandler(usecase pin.IUsecase, logger *zap.SugaredLogger) *Handler {
 	}
 }
 
-func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
+func (ph *Handler) CreatePin(w http.ResponseWriter, r *http.Request) {
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -62,6 +64,59 @@ func (ph *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id, err := ph.pinUsecase.Create(input, userId)
+	if err != nil {
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	resp := &models.ResponsePin{
+		Id: id,
+	}
+
+	response.Respond(w, http.StatusCreated, resp)
+}
+
+func (ph *Handler) CreateImage(w http.ResponseWriter, r *http.Request) {
+	reqId := r.Context().Value("ReqId")
+
+	isAuth := r.Context().Value("IsAuth")
+	if isAuth != true {
+		err := error.Unauthorized.New("Upload avatar of user: user is unauthorized")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	userId, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	err := r.ParseMultipartForm(5 * 1024 * 1025)
+	if err != nil {
+		err = error.Wrap(err, "Decoding error during updating password")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	file, _, err := r.FormFile("image")
+	if err != nil {
+		err = error.Wrap(err, "Reading image from form error")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	buffer := bytes.NewBuffer(nil)
+	_, err = io.Copy(buffer, file)
+	if err != nil {
+		err = error.Wrap(err, "Coping byte form error")
+		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
+		return
+	}
+
+	b := buffer.Bytes()
+	id, err := ph.pinUsecase.SaveImage(userId, &b)
 	if err != nil {
 		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return

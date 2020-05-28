@@ -103,6 +103,7 @@ func (pr *Repository) Delete(pinId uint, userId uint) error {
 
 	p := models.DataBasePin{
 		Id: pinId,
+		UserId: userId,
 	}
 
 	err := pr.db.DeletePin(p)

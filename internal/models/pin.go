@@ -17,6 +17,7 @@ type Pin struct {
 	UpdatedAt   time.Time
 	Views       uint
 	Comment     uint
+	IsVisible   bool
 }
 
 type DataBasePin struct {

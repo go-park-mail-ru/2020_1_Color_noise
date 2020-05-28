@@ -9,10 +9,8 @@ import (
 	userService "2020_1_Color_noise/internal/pkg/proto/user"
 	"2020_1_Color_noise/internal/pkg/utils"
 	"context"
-	"encoding/base64"
 	"log"
 	"math/rand"
-	"strings"
 	"time"
 )
 
@@ -31,7 +29,7 @@ func NewUsecase(repoPin pin.IRepository, repoBoard board.IRepository, imageServ 
 		userServ,
 	}
 }
-
+/*
 func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 	b64data := input.Image[strings.IndexByte(input.Image, ',')+1:]
 
@@ -72,6 +70,33 @@ func (pu *Usecase) Create(input *models.InputPin, userId uint) (uint, error) {
 			log.Println(err)
 		}
 	}()
+
+	return id, nil
+}
+*/
+func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, error) {
+	name, err := utils.SaveImage(buffer)
+	if err != nil {
+		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
+	}
+
+	p := &models.Pin {
+		User:        &models.User{
+			Id: userId,
+		},
+		Image:       name,
+		IsVisible:   false,
+	}
+
+	id, err := pu.repoPin.SaveImage(p)
+	if err != nil {
+		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
+	}
+
+	err = pu.Analyze(id, name)
+	if err != nil {
+		return 0, Wrapf(err, "Creating pin error, userId: %d", userId)
+	}
 
 	return id, nil
 }

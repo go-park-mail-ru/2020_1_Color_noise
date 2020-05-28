@@ -129,8 +129,8 @@ func (uu *UserUsecase) UpdateDescription(id uint, input *models.UpdateDescriptio
 	return nil
 }
 
-func (uu *UserUsecase) UpdateAvatar(id uint, buffer []byte) (string, error) {
-	path, err := utils.SaveImage(&buffer)
+func (uu *UserUsecase) UpdateAvatar(id uint, buffer *[]byte) (string, error) {
+	path, err := utils.SaveImage(buffer)
 	if err != nil {
 		return "", Wrapf(err, "Updating avatar error, id:%d", id)
 	}

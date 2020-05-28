@@ -10,7 +10,7 @@ type IUsecase interface {
 	UpdateProfile(id uint, input *models.UpdateProfileInput) error
 	UpdateDescription(id uint, input *models.UpdateDescriptionInput) error
 	UpdatePassword(id uint, input *models.UpdatePasswordInput) error
-	UpdateAvatar(id uint, buffer []byte) (string, error)
+	UpdateAvatar(id uint, buffer *[]byte) (string, error)
 	Delete(id uint) error
 	Follow(id uint, subId uint) error
 	IsFollowed(id uint, subId uint) (bool, error)

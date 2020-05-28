@@ -121,7 +121,7 @@ func (us *UserService) UpdatePassword(ctx context.Context, in *userService.Passw
 }
 
 func (us *UserService) UpdateAvatar(ctx context.Context, in *userService.Avatar) (*userService.Address, error) {
-	image, err := us.usecase.UpdateAvatar(uint(in.Id.Id), in.Avatar)
+	image, err := us.usecase.UpdateAvatar(uint(in.Id.Id), &in.Avatar)
 	if err != nil {
 		return nil, status.Error(codes.Code(uint(GetType(err))), Wrap(err, "GRPC UpdateAvatar error").Error())
 	}

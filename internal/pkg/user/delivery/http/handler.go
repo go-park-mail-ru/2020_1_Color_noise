@@ -392,7 +392,6 @@ func (ud *Handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
-
 	reqId := r.Context().Value("ReqId")
 
 	isAuth := r.Context().Value("IsAuth")
@@ -402,16 +401,16 @@ func (ud *Handler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := r.ParseMultipartForm(5 * 1024 * 1025)
-	if err != nil {
-		err = error.Wrap(err, "Decoding error during updating password")
+	id, ok := r.Context().Value("Id").(uint)
+	if !ok {
+		err := error.NoType.New("Received bad id from context")
 		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}
 
-	id, ok := r.Context().Value("Id").(uint)
-	if !ok {
-		err = error.NoType.New("Received bad id from context")
+	err := r.ParseMultipartForm(5 * 1024 * 1025)
+	if err != nil {
+		err = error.Wrap(err, "Decoding error during updating password")
 		error.ErrorHandler(w, r, ud.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return
 	}

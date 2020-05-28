@@ -6,6 +6,9 @@ import (
 )
 
 func SaveImage(b *[]byte) (string, error) {
+	if b == nil {
+		return "", New("Empty buffer")
+	}
 	name := RandStringRunes(30) + ".jpg"
 	path := "../storage/" + name
 	file, err := os.Create(path)
