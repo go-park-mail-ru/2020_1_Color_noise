@@ -249,7 +249,7 @@ func (db *PgxDB) GetPinsByTag(tags []string, start, limit int) ([]*models.Pin, e
 		var tmp models.DataBasePin
 		var us models.DataBaseUser
 		ok := row.Scan(&tmp.Id, &tmp.Name, &tmp.Description,
-			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags,
+			&tmp.Image, &tmp.BoardId, &tmp.CreatedAt, &tmp.Tags, &tmp.Views,
 			&us.Id, &us.Login, &us.Avatar)
 		if ok != nil {
 			return nil, ok
