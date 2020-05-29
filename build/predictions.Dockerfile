@@ -18,6 +18,6 @@ FROM alpine
 WORKDIR /app
 
 COPY --from=builder app/predictions .
-#COPY --from=builder app/ .
+COPY --from=builder app/internal/pkg/predictions/usecase/model.json .
 
 CMD sleep 15 && ./predictions

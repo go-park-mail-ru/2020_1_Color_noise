@@ -11,6 +11,10 @@ import (
 type Usecase struct {
 }
 
+func NewUsecase() *Usecase {
+	return &Usecase{}
+}
+
 var chain *gomarkov.Chain
 
 func init(){

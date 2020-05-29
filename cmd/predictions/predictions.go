@@ -2,6 +2,7 @@ package main
 
 import (
 	predictionsDeliveryGRPC "2020_1_Color_noise/internal/pkg/predictions/delivery/grpc"
+	predictionsUsecase "2020_1_Color_noise/internal/pkg/predictions/usecase"
 
 
 	"2020_1_Color_noise/internal/pkg/proto/predictions"
@@ -13,7 +14,9 @@ import (
 
 func main() {
 
-	predictionsDelivery := predictionsDeliveryGRPC.NewPredictionsService()
+	us := predictionsUsecase.NewUsecase()
+
+	predictionsDelivery := predictionsDeliveryGRPC.NewPredictionsService(us)
 
 	lis, ok := net.Listen("tcp", ":8000")
 	if ok != nil {
