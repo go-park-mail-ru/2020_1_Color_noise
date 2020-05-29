@@ -523,7 +523,7 @@ cooking;Crock Pot;приготовление;Кастрюля
 ball;croquet ball;мяч;мяч для крокета 
 tool;crutch;инструмент;костыль
 clothing;cuirass;одежда;кираса
-outdoor scene;dam;Открытая сцена;плотины
+dam;dam;плотины;плотины
 furniture;desk;мебель;рабочий стол
 electronics;desktop computer;электроника;настольный компьютер
 electronics;dial telephone;электроника;телефон
@@ -886,7 +886,7 @@ container;vault;контейнер;хранилище
 other;velvet;другие;бархат
 technology;vending machine;технология;торговый автомат
 clothing;vestment;одежда;облачение
-outdoor scene;viaduct;виадук;виадук
+viaduct;viaduct;виадук;виадук
 instrument;violin;инструмент;скрипка
 ball;volleyball;мяч;волейбол
 electronics;waffle iron;электроника;вафельница
