@@ -36,8 +36,6 @@ func (us* Usecase) Predict(tags *[]string) (*[]string, error){
 	var generated []string
 
 	for _, i := range *tags {
-
-		for j := 0; j < 2; j++ {
 			tokens := []string{i}
 
 			next, _ := chain.Generate(tokens[(len(tokens) - 1):])
@@ -45,8 +43,6 @@ func (us* Usecase) Predict(tags *[]string) (*[]string, error){
 
 			str := strings.Join(tokens[0:len(tokens)-1], " ")
 			generated = append(generated, str)
-
-		}
 	}
 
 	return &generated, nil
