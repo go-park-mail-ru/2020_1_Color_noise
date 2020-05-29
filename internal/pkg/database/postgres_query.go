@@ -83,7 +83,7 @@ const (
 	" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 	" JOIN users ON pins.user_id = users.id" +
 	" WHERE pins.tags[0] = ANY ($1 ) OR pins.tags[1] = ANY ($1 ) AND visible = true" +
-		" ORDER BY ORDER BY pins.views OFFSET $2 LIMIT $3;"
+		" ORDER BY pins.views OFFSET $2 LIMIT $3;"
 )
 
 const (
