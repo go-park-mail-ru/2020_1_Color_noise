@@ -79,10 +79,10 @@ const (
 		" WHERE make_tsvector(name) @@ to_tsquery($1)  AND pins.created_at BETWEEN $2 AND $3 AND visible = true" +
 		" ORDER BY pins.id ASC OFFSET $4 LIMIT $5;"
 
-	PinByTag = "SELECT DISTINCT pins.id, name, description, image, board_id, pins.created_at, pins.tags, pins.views, users.id, users.login, users.avatar" +
+	PinByTag = "SELECT pins.id, name, description, image, board_id, pins.created_at, pins.tags, pins.views, users.id, users.login, users.avatar" +
 	" FROM pins JOIN boards_pins ON pins.id = boards_pins.image_id" +
 	" JOIN users ON pins.user_id = users.id" +
-	" WHERE pins.tags[0] = ANY ($1 ) OR pins.tags[1] = ANY ($1 ) AND visible = true" +
+	" WHERE pins.tags[0] = ANY ($1 ) OR pins.tags[1] = ANY ($1 ) AND visible = true AND original = true" +
 		" ORDER BY pins.views OFFSET $2 LIMIT $3;"
 )
 

@@ -43,6 +43,9 @@ func (us* Usecase) Predict(tags *[]string) (*[]string, error){
 			tokens := []string{i}
 
 			next, _ := chain.Generate(tokens[(len(tokens) - 1):])
+
+			println(next)
+
 			tokens = append(tokens, next)
 
 			str := strings.Join(tokens[0:len(tokens)-1], " ")
