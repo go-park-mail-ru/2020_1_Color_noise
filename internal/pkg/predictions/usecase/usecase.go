@@ -48,7 +48,7 @@ func (us* Usecase) Predict(tags *[]string) (*[]string, error){
 
 			tokens = append(tokens, next)
 
-			str := strings.Join(tokens[0:len(tokens)-1], " ")
+			str := strings.Join(tokens, " ")
 			generated = append(generated, str)
 	}
 
