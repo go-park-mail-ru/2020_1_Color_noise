@@ -52,12 +52,12 @@ services:
     depends_on:
       - database
 
-  predictions:
-    build:
-      context: .
-      dockerfile: build/predictions.Dockerfile
+  #predictions:
+   # build:
+    #  context: .
+     # dockerfile: build/predictions.Dockerfile
 
-    image: zinterest/predictions:${GITHUB_SHA}
+    #image: zinterest/predictions:${GITHUB_SHA}
 
   chat:
     build:

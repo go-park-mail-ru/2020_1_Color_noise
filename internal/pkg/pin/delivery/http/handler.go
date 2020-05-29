@@ -174,8 +174,7 @@ func (ph *Handler) CreateImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	b := buffer.Bytes()
-	id, names, err := ph.pinUsecase.SaveImage(userId, &b)
+	id, names, err := ph.pinUsecase.SaveImage(userId, buffer)
 	if err != nil {
 		error.ErrorHandler(w, r, ph.logger, reqId, error.Wrapf(err, "request id: %s", reqId))
 		return

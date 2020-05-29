@@ -9,6 +9,7 @@ import (
 	predictionsService "2020_1_Color_noise/internal/pkg/proto/predictions"
 	userService "2020_1_Color_noise/internal/pkg/proto/user"
 	"2020_1_Color_noise/internal/pkg/utils"
+	"bytes"
 	"context"
 	"log"
 	"math/rand"
@@ -98,7 +99,7 @@ func (pu *Usecase) CreatePin(input *models.InputPin, id uint, userId uint) (uint
 	return id, nil
 }
 
-func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, *[]string, error) {
+func (pu *Usecase) SaveImage(userId uint, buffer *bytes.Buffer) (uint, *[]string, error) {
 	name, err := utils.SaveImage(buffer)
 	if err != nil {
 		return 0, &[]string{}, Wrapf(err, "Creating pin error, userId: %d", userId)
@@ -120,26 +121,25 @@ func (pu *Usecase) SaveImage(userId uint, buffer *[]byte) (uint, *[]string, erro
 	timer := time.NewTimer(5 * time.Minute)
 
 	go func(t *time.Timer, pinId uint, pu *Usecase) {
-		select {
-		case <-timer.C:
-			p, err := pu.repoPin.GetImageByID(pinId)
+		<-timer.C
+		p, err := pu.repoPin.GetImageByID(pinId)
+		if err != nil {
+			log.Println("error in timer: getting pin error: ", pinId, err)
+			return
+		}
+
+		if p.Name == "" {
+			err = pu.repoPin.Delete(pinId, p.User.Id)
 			if err != nil {
-				log.Println("error in timer: getting pin error: ", pinId, err)
-				return
+				log.Println("error in timer: deleting pin error pinId:", pinId, " ", err )
 			}
 
-			if p.Name == "" {
-				err = pu.repoPin.Delete(pinId, p.User.Id)
-				if err != nil {
-					log.Println("error in timer: deleting pin error pinId:", pinId, " ", err )
-				}
-
-				err = utils.DeleteImage(p.Image)
-				if err != nil {
-					log.Println("error in timer: deleting image error ", pinId)
-				}
+			err = utils.DeleteImage(p.Image)
+			if err != nil {
+				log.Println("error in timer: deleting image error ", pinId)
 			}
 		}
+
 	} (timer, id, pu)
 
 	tags, err := pu.Analyze(id, name)

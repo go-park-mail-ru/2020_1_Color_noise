@@ -5,6 +5,7 @@ import (
 	. "2020_1_Color_noise/internal/pkg/error"
 	"2020_1_Color_noise/internal/pkg/user"
 	"2020_1_Color_noise/internal/pkg/utils"
+	"bytes"
 	"github.com/asaskevich/govalidator"
 )
 
@@ -130,7 +131,11 @@ func (uu *UserUsecase) UpdateDescription(id uint, input *models.UpdateDescriptio
 }
 
 func (uu *UserUsecase) UpdateAvatar(id uint, buffer *[]byte) (string, error) {
-	path, err := utils.SaveImage(buffer)
+	if buffer == nil {
+		return "", New("empty buffer for saving avatar")
+	}
+
+	path, err := utils.SaveImage(bytes.NewBuffer(*buffer))
 	if err != nil {
 		return "", Wrapf(err, "Updating avatar error, id:%d", id)
 	}
@@ -139,6 +144,7 @@ func (uu *UserUsecase) UpdateAvatar(id uint, buffer *[]byte) (string, error) {
 	if err != nil {
 		return "", Wrap(err, "Updating avatar error")
 	}
+
 
 	return path, nil
 }

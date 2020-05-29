@@ -2,24 +2,32 @@ package utils
 
 import (
 	. "2020_1_Color_noise/internal/pkg/error"
+	"bytes"
+	"image"
+	"io/ioutil"
+	"log"
 	"os"
+	"github.com/chai2010/webp"
 )
 
-func SaveImage(b *[]byte) (string, error) {
-	if b == nil {
+func SaveImage(buffer *bytes.Buffer) (string, error) {
+	if buffer == nil {
 		return "", New("Empty buffer")
 	}
-	name := RandStringRunes(30) + ".jpg"
-	path := "../storage/" + name
-	file, err := os.Create(path)
+
+	img, _, err := image.Decode(buffer)
 	if err != nil {
-		return "", Wrap(err, "Creating image error")
+		log.Println(err)
 	}
 
-	defer file.Close()
+	var buf bytes.Buffer
+	if err = webp.Encode(&buf, img, &webp.Options{Lossless: true}); err != nil {
+		log.Println(err)
+	}
 
-	_, err = file.Write(*b)
-	if err != nil {
+	name := RandStringRunes(30) + ".webp"
+	path := "../storage/" + name
+	if err = ioutil.WriteFile(path, buf.Bytes(), 0666); err != nil {
 		return "", Wrap(err, "Saving image error")
 	}
 
