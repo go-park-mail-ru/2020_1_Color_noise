@@ -33,6 +33,10 @@ func init(){
 
 func (us* Usecase) Predict(tags *[]string) (*[]string, error){
 
+	chain := gomarkov.Chain{Order:1}
+	data, _ := ioutil.ReadFile("model.json")
+	 json.Unmarshal(data, &chain)
+
 	var generated []string
 
 	for _, i := range *tags {
