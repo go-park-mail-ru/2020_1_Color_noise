@@ -4,7 +4,6 @@ go 1.13
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
-	github.com/chai2010/webp v1.1.0
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/gofrs/uuid v3.2.0+incompatible // indirect
 	github.com/golang/mock v1.4.3
