@@ -36,17 +36,16 @@ func (us* Usecase) Predict(tags *[]string) (*[]string, error){
 	var generated []string
 
 	for _, i := range *tags {
+
 		for j := 0; j < 2; j++ {
 			tokens := []string{i}
 
-			for tokens[len(tokens)-1] != gomarkov.EndToken {
-				next, _ := chain.Generate(tokens[(len(tokens) - 1):])
-				tokens = append(tokens, next)
-			}
+			next, _ := chain.Generate(tokens[(len(tokens) - 1):])
+			tokens = append(tokens, next)
+
 			str := strings.Join(tokens[0:len(tokens)-1], " ")
-			if str != "" {
-				generated = append(generated, str)
-			}
+			generated = append(generated, str)
+			
 		}
 	}
 
