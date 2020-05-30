@@ -5,6 +5,7 @@ import (
 	"github.com/mb-14/gomarkov"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"strings"
 )
 
@@ -16,6 +17,8 @@ func NewUsecase() *Usecase {
 }
 
 var chain *gomarkov.Chain
+
+var Smile = []string{"❤", "💥","😁","🤩", "🎈", "🌸"}
 
 func init(){
 	chain = gomarkov.NewChain(1)
@@ -29,6 +32,8 @@ func init(){
 		log.Fatal("incorrect data")
 	}
 
+
+
 }
 
 func (us* Usecase) Predict(tags *[]string) (*[]string, error){
@@ -39,17 +44,22 @@ func (us* Usecase) Predict(tags *[]string) (*[]string, error){
 
 	var generated []string
 
-	for _, i := range *tags {
-			tokens := []string{i}
+	if len(*tags) < 3 {
+		return nil, nil
+	}
 
-			next, _ := chain.Generate(tokens[(len(tokens) - 1):])
+	for i := 0; i < 4; i++ {
+		tokens := []string{(*tags)[3]}
+		next, _ := chain.Generate(tokens[(len(tokens) - 1):])
 
-			println(next)
+		if next == gomarkov.EndToken {
+			next = Smile[rand.Intn(len(Smile))]
+		}
+		tokens = append(tokens, next)
 
-			tokens = append(tokens, next)
+		str := strings.Join(tokens, " ")
+		generated = append(generated, str)
 
-			str := strings.Join(tokens, " ")
-			generated = append(generated, str)
 	}
 
 	return &generated, nil
