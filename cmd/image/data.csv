@@ -68,16 +68,16 @@ snake;horned viper;змея;гадюка
 snake;diamondback;змея;капустная змея
 snake;sidewinder;змея;змея
 trilobite;trilobite;трилобит;трилобит
-arachnid;harvestman;паукообразный;пауки сенокосцы
-arachnid;scorpion;паукообразный;Скорпион
-arachnid;black and gold garden spider;паукообразный;паук
-arachnid;barn spider;паукообразный;паук
-arachnid;garden spider;паукообразный;паук
-arachnid;black widow;паукообразный;Черная вдова
-arachnid;tarantula;паукообразный;тарантул
+arachnid;harvestman;паук;пауки сенокосцы
+arachnid;scorpion;паук;Скорпион
+arachnid;black and gold garden spider;паук;паук
+arachnid;barn spider;паук;паук
+arachnid;garden spider;паук;паук
+arachnid;black widow;паук;Черная вдова
+arachnid;tarantula;паук;тарантул
 arachnid;wolf spider;паукообразный;паук волк 
-bug;tick;жук;клещ
-bug;centipede;жук;сороконожка
+bug;tick;насекомое;клещ
+bug;centipede;насекомое;сороконожка
 bird;black grouse;птица;тетерев
 bird;ptarmigan;птица;куропатка
 bird;ruffed grouse;птица;гривистый тетерев
@@ -108,22 +108,22 @@ marsupial;wombat;сумчатые;вомбат
 fish;jellyfish;рыбы;медузы
 coral;sea anemone;коралловый;морской анемон
 coral;brain coral;коралловый;мозг коралл
-bug;flatworm;жук;червь
-bug;nematode;жук;нематоды
+bug;flatworm;насекомое;червь
+bug;nematode;насекомое;нематоды
 mollusk;conch;моллюск;Конч
 mollusk;snail;моллюск;улитка
 mollusk;slug;моллюск;слизень
 mollusk;sea slug;моллюск;морской слизень
 mollusk;chiton;моллюск;Хитон
 mollusk;chambered nautilus;моллюск;Наутилус
-crustacean;Dungeness crab;Ракообразные;краб
+crustacean;Dungeness crab;краб;краб
 crustacean;rock crab;рачок;краб
-crustacean;fiddler crab;Ракообразные;краб
-crustacean;king crab;Ракообразные;краб
-crustacean;American lobster;Ракообразные;Американский лобстер
-crustacean;spiny lobster;Ракообразные;лангуст
-crustacean;crayfish;Ракообразные;Рак
-crustacean;hermit crab;Ракообразные;рак-отшельник
+crustacean;fiddler crab;краб;краб
+crustacean;king crab;краб;краб
+crustacean;American lobster;краб;Американский лобстер
+crustacean;spiny lobster;краб;лангуст
+crustacean;crayfish;краб;Рак
+crustacean;hermit crab;краб;рак-отшельник
 crustacean;isopod;рачок;изопода
 bird;white stork;птица;Белый аист
 bird;black stork;птица;черный аист
@@ -339,9 +339,9 @@ rodent;beaver;грызун;бобр
 rodent;guinea pig;грызун;морская свинка
 plant;sorrel;завод;щавель
 ungulate;zebra;копытное животное;зебра
-hog;hog;кабанчик;кабанчик
-hog;wild boar;кабанчик;кабан
-hog;warthog;кабанчик;бородавочник
+hog;hog;кабан;кабан
+hog;wild boar;кабан;кабан
+hog;warthog;кабан;бородавочник
 ungulate;hippopotamus;копытное животное;гиппопотам
 ungulate;ox;копытное животное;бык
 ungulate;water buffalo;копытное животное;буйвол
@@ -363,26 +363,26 @@ ferret;skunk;хорек;скунс
 ferret;badger;хорек;Барсук
 armadillo;armadillo;броненосец;броненосец
 sloth;three-toed sloth;ленивец;ленивец
-primate;orangutan;примат;орангутанг
-primate;gorilla;примат;горилла
-primate;chimpanzee;примат;шимпанзе
-primate;gibbon;примат;гиббон
-primate;siamang;примат;обезьяна
-primate;guenon;примат;обезьяна
-primate;patas;примат;обезьяна
-primate;baboon;примат;бабуин
-primate;macaque;примат;макаки
-primate;langur;примат;обезьяна
-primate;colobus;примат;обезьяна
-primate;proboscis monkey;примат;обезьяна
-primate;marmoset;примат;мартышка
-primate;capuchin;примат;Капуцин
-primate;howler monkey;примат;обезьяна
-primate;titi;примат;обезьяна
-primate;spider monkey;примат;обезьяна
-primate;squirrel monkey;примат;обезьяна
+primate;orangutan;обезьяна;орангутанг
+primate;gorilla;обезьяна;горилла
+primate;chimpanzee;обезьяна;шимпанзе
+primate;gibbon;обезьяна;гиббон
+primate;siamang;обезьяна;обезьяна
+primate;guenon;обезьяна;обезьяна
+primate;patas;обезьяна;обезьяна
+primate;baboon;обезьяна;бабуин
+primate;macaque;обезьяна;макаки
+primate;langur;обезьяна;обезьяна
+primate;colobus;обезьяна;обезьяна
+primate;proboscis monkey;обезьяна;обезьяна
+primate;marmoset;обезьяна;мартышка
+primate;capuchin;обезьяна;Капуцин
+primate;howler monkey;обезьяна;обезьяна
+primate;titi;обезьяна;обезьяна
+primate;spider monkey;обезьяна;обезьяна
+primate;squirrel monkey;обезьяна;обезьяна
 mongoose;Madagascar cat;Мангуст;Мангуст
-primate;indri;примат;индри
+primate;indri;обезьяна;индри
 ungulate;Indian elephant;копытное животное;Индийский слон
 ungulate;African elephant;копытное животное;Африканский слон
 bear;lesser panda;медведь;малая панда
@@ -390,7 +390,7 @@ bear;giant panda;медведь;Большая панда
 fish;barracouta;рыбы;рыбы
 fish;eel;рыбы;угорь
 shark;coho;Акула;акула
-coral;rock beauty;коралл;рыбы
+coral;rock beauty;риф;рыбы
 fish;anemone fish;рыбы;рыбы
 fish;sturgeon;рыбы;осетрина
 fish;gar;рыбы;рыбы
@@ -467,7 +467,7 @@ clothing;bulletproof vest;одежда;бронежилет
 train;bullet train;поезд;скоростной поезд
 building;butcher shop;дом;мясной магазин
 vehicle;cab;автомобиль;такси
-cooking;caldron;приготовление;котел
+cooking;caldron;еда;котел
 tool;candle;инструмент;свеча
 weapon;cannon;оружие;пушка
 boat;canoe;лодка;каноэ
@@ -480,12 +480,12 @@ container;carton;контейнер;коробка
 technology;car wheel;технология;колеса автомобиля
 technology;cash machine;технология;банкомат
 technology;cassette;технология;кассета
-electronics;cassette player;электроника;кассетный плеер
+electronics;cassette player;техника;кассетный плеер
 building;castle;дом;замок
 boat;catamaran;лодка;катамаран
-electronics;CD player;электроника;CD-плеер
+electronics;CD player;техника;CD-плеер
 instrument;cello;инструмент;виолончель
-electronics;cellular telephone;электроника;сотовый телефон
+electronics;cellular telephone;техника;сотовый телефон
 tool;chain;инструмент;цепи
 fence;chainlink fence;забор;забор из колючей проволоки 
 clothing;chain mail;одежда;кольчуги
@@ -497,20 +497,20 @@ furniture;china cabinet;мебель;Китайский шкаф
 decor;Christmas stocking;декор;Рождественский чулок
 building;church;дом;храм
 building;cinema;дом;кино
-cooking;cleaver;приготовление;тесак
+cooking;cleaver;еда;тесак
 building;cliff dwelling;дом;Скальные жилища
 clothing;cloak;одежда;плащ
 clothing;clog;одежда;забивают
-cooking;cocktail shaker;приготовление;шейкер
-cooking;coffee mug;приготовление;кружка кофе
-cooking;coffeepot;приготовление;кофейник
+cooking;cocktail shaker;еда;шейкер
+cooking;coffee mug;еда;кружка кофе
+cooking;coffeepot;еда;кофейник
 technology;coil;технология;катушка
 technology;combination lock;технология;кодовый замок
-electronics;computer keyboard;электроника;клавиатура
+electronics;computer keyboard;техника;клавиатура
 building;confectionery;дом;кондитерских изделий
 boat;container ship;лодка;контейнеровоз
 vehicle;convertible;автомобиль;кабриолет
-cooking;corkscrew;приготовление;штопор
+cooking;corkscrew;еда;штопор
 instrument;cornet;инструмент;Корнет
 clothing;cowboy boot;одежда;ковбойские сапоги
 clothing;cowboy hat;одежда;ковбойская шляпа
@@ -519,20 +519,20 @@ vehicle;crane;автомобиль;кран
 hat;crash helmet;шляпа;защитный шлем
 container;crate;контейнер;обрешетка
 furniture;crib;мебель;шпаргалка
-cooking;Crock Pot;приготовление;Кастрюля
+cooking;Crock Pot;еда;Кастрюля
 ball;croquet ball;мяч;мяч для крокета 
 tool;crutch;инструмент;костыль
 clothing;cuirass;одежда;кираса
 dam;dam;плотины;плотины
 furniture;desk;мебель;рабочий стол
-electronics;desktop computer;электроника;настольный компьютер
-electronics;dial telephone;электроника;телефон
+electronics;desktop computer;техника;настольный компьютер
+electronics;dial telephone;техника;телефон
 clothing;diaper;одежда;памперс
-electronics;digital clock;электроника;цифровые часы
-electronics;digital watch;электроника;наручные часы
+electronics;digital clock;техника;цифровые часы
+electronics;digital watch;техника;наручные часы
 furniture;dining table;мебель;обеденный стол
 decor;dishrag;декор;амеба
-electronics;dishwasher;электроника;посудомоечная машина
+electronics;dishwasher;техника;посудомоечная машина
 technology;disk brake;технологии;тормозной диск
 dock;dock;пристань;пристань
 vehicle;dogsled;транспорт;собачья упряжка
@@ -542,13 +542,13 @@ drilling platform;;drilling platform;буровая платформа;буро�
 instrument;drum;инструмент;барабан
 instrument;drumstick;инструмент;голень
 tool;dumbbell;инструмент;гантели
-cooking;Dutch oven;приготовление;Жаровня
-electronics;electric fan;электроника;электрический вентилятор
+cooking;Dutch oven;еда;Жаровня
+electronics;electric fan;техника;электрический вентилятор
 instrument;electric guitar;инструмент;электрическая гитара
 train;electric locomotive;поезд;электровоз
 furniture;entertainment center;мебель;развлекательный центр
 paper;envelope;бумага;конверт
-cooking;espresso maker;приготовление;кофеварка эспрессо
+cooking;espresso maker;еда;кофеварка эспрессо
 other;face powder;другие;пудра
 accessory;feather boa;аксессуар;боа
 furniture;file;мебель;файл
@@ -565,12 +565,12 @@ tool;fountain pen;инструмент;Перьевая ручка
 furniture;four-poster;мебель;кровати с балдахином
 train;freight car;поезд;грузовых автомобилей
 instrument;French horn;инструмент;Валторна
-cooking;frying pan;приготовление;сковорода
+cooking;frying pan;еда;сковорода
 clothing;fur coat;одежда;шуба
 vehicle;garbage truck;автомобиль;мусоровоз 
 accessory;gasmask;аксессуар;противогаз
 technology;gas pump;технология;газовый насос
-cooking;goblet;приготовление;Кубок
+cooking;goblet;еда;Кубок
 vehicle;go-kart;автомобиль;картинг
 ball;golf ball;мяч;мяч для гольфа
 vehicle;golfcart;автомобиль;гольфкар
@@ -587,10 +587,10 @@ hair spray;hair spray;лак для волос;лак для волос
 vehicle;half track;автомобиль;полугусеничная машина
 tool;hammer;инструмент;молоток
 decor;hamper;декор;корзина
-electronics;hand blower;электроника;ручная воздуходувка
-electronics;hand-held computer;электроника;карманный компьютер
+electronics;hand blower;техника;ручная воздуходувка
+electronics;hand-held computer;техника;карманный компьютер
 accessory;handkerchief;аксессуар;платочек
-electronics;hard disc;электроника;жесткий диск
+electronics;hard disc;техника;жесткий диск
 instrument;harmonica;инструмент;гармошка
 instrument;harp;инструмент;арфа
 vehicle;harvester;автомобиль;уборочная машина
@@ -603,7 +603,7 @@ clothing;hoopskirt;одежда;hoopskirt
 sports equipment;horizontal bar;спортивное оборудование;турник
 vehicle;horse cart;автомобиль;телега с лошадью 
 technology;hourglass;технологии;песочные часы
-electronics;iPod;электроника;iPod
+electronics;iPod;техника;iPod
 tool;iron;инструмент;утюг
 fruit;jack-o'-lantern;фрукты;Фонарь из тыквы
 clothing;jean;одежда;джинсы
@@ -611,14 +611,14 @@ vehicle;jeep;автомобиль;джип
 clothing;jersey;одежда;свитер
 paper;jigsaw puzzle;бумага;головоломки
 vehicle;jinrikisha;транспорт;рикша
-electronics;joystick;электроника;джойстик
+electronics;joystick;техника;джойстик
 clothing;kimono;одежда;кимоно
 clothing;knee pad;одежда;наколенник 
 other;knot;другие;узел
 clothing;lab coat;одежда;лабараторный халат
-cooking;ladle;приготовление;половник
+cooking;ladle;еда;половник
 decor;lampshade;декор;абажур
-electronics;laptop;электроника;ноутбук
+electronics;laptop;техника;ноутбук
 vehicle;lawn mower;автомобиль;косилка 
 technology;lens cap;технология;крышка объектива
 tool;letter opener;инструмент;письмо открывалка
@@ -630,7 +630,7 @@ boat;liner;лодка;вкладыш
 accessory;lipstick;аксессуар;помада
 clothing;Loafer;одежда;Мокасины
 other;lotion;другие;лосьон
-electronics;loudspeaker;электроника;громкоговоритель
+electronics;loudspeaker;техника;громкоговоритель
 tool;loupe;инструмент;лупа
 lumbermill;lumbermill;здание;лесопилка
 tool;magnetic compass;инструмент;магнитный компас
@@ -645,11 +645,11 @@ clothing;mask;одежда;маска
 tool;matchstick;инструмент;спичка
 maypole;maypole;верзила;верзила
 maze;maze;лабиринт;лабиринт
-cooking;measuring cup;приготовление;мерный стакан
+cooking;measuring cup;еда;мерный стакан
 container;medicine chest;контейнер;аптечка
 megalith;megalith;мегалит;мегалит
-electronics;microphone;электроника;микрофон
-electronics;microwave;электроника;микроволновая печь
+electronics;microphone;техника;микрофон
+electronics;microwave;техника;микроволновая печь
 clothing;military uniform;одежда;военная форма
 container;milk can;контейнер;банка молока
 vehicle;minibus;автомобиль;микроавтобус
@@ -657,14 +657,14 @@ clothing;miniskirt;одежда;мини-юбка
 vehicle;minivan;автомобиль;минивен
 weapon;missile;оружие;ракета
 clothing;mitten;одежда;варежки
-cooking;mixing bowl;приготовление;миска
+cooking;mixing bowl;еда;миска
 building;mobile home;дом;мобильный дом
 vehicle;Model T;автомобиль;Форд Модель Т
-electronics;modem;электроника;модем
+electronics;modem;техника;модем
 building;monastery;здание;монастырь
-electronics;monitor;электроника;монитор
+electronics;monitor;техника;монитор
 vehicle;moped;машина;мопед
-cooking;mortar;приготовление;Ступка
+cooking;mortar;еда;Ступка
 hat;mortarboard;шляпа;мастерок
 building;mosque;дом;мечеть
 other;mosquito net;другие;москитная сетка
@@ -683,10 +683,10 @@ paper;notebook;бумага;ноутбук
 building;obelisk;дом;обелиск
 instrument;oboe;инструмент;гобой
 instrument;ocarina;инструмент;окарина
-electronics;odometer;электроника;одометр
+electronics;odometer;техника;одометр
 technology;oil filter;технология;масляный фильтр
 instrument;organ;инструмент;орган
-electronics;oscilloscope;электроника;осциллограф
+electronics;oscilloscope;техника;осциллограф
 clothing;overskirt;одежда;остроугольный
 vehicle;oxcart;автомобиль;повозка
 clothing;oxygen mask;одежда;кислородная маска 
@@ -702,16 +702,16 @@ paper;paper towel;бумага;бумажное полотенце
 aircraft;parachute;самолет;парашют
 sports equipment;parallel bars;спортивное оборудование;параллельные брусья
 furniture;park bench;мебель;скамейке в парке
-electronics;parking meter;электроника;счетчик на стоянке
+electronics;parking meter;техника;счетчик на стоянке
 vehicle;passenger car;автомобиль;легковой автомобиль
 building;patio;дом;внутренний дворик
-electronics;pay-phone;электроника;платные телефон
+electronics;pay-phone;техника;платные телефон
 furniture;pedestal;мебель;пьедестал
 other;pencil box;другие;пенал
 tool;pencil sharpener;инструмент;точилка для карандашей
 other;perfume;другие;духи
 lab equipment;Petri dish;лабораторное оборудование;чашка Петри
-electronics;photocopier;электроника;ксерокс
+electronics;photocopier;техника;ксерокс
 instrument;pick;инструмент;кирка
 hat;pickelhaube;шляпа;пикельхельм
 fence;picket fence;забор;забор
@@ -723,27 +723,27 @@ decor;pillow;декор;подушка
 ball;ping-pong ball;мяч;мяч для пин-понга
 toy;pinwheel;игрушка;вертушка
 person;pirate;человек;пират
-cooking;pitcher;приготовление;кувшин
+cooking;pitcher;еда;кувшин
 tool;plane;инструмент;уровень
 building;planetarium;дом;планетарий
 container;plastic bag;контейнер;пластиковый контейнер
 decor;plate rack;декор;сушилка для тарелок
 vehicle;plow;автомобиль;плуг
 tool;plunger;инструмент;плунжер
-electronics;Polaroid camera;электроника;камера Поларойд
+electronics;Polaroid camera;техника;камера Поларойд
 sports equipment;pole;спортивное оборудование;шест
 vehicle;police van;автомобиль;полицейский фургон
 clothing;poncho;одежда;пончо
 furniture;pool table;мебель;бильярдный стол 
 food;pop bottle;еда;бутылка
-cooking;pot;приготовление;горшок
+cooking;pot;еда;горшок
 tool;potter's wheel;инструмент;гончарный круг 
-electronics;power drill;электроника;дрель 
+electronics;power drill;техника;дрель 
 decor;prayer rug;декор;молитвенный коврик
-electronics;printer;электроника;принтер
+electronics;printer;техника;принтер
 building;prison;дом;тюрьма
 weapon;projectile;оружие;снаряд
-electronics;projector;электроника;проектор
+electronics;projector;техника;проектор
 sports equipment;puck;спортивное оборудование;шайба
 sports equipment;punching bag;спортивное оборудование;боксерская груша
 accessory;purse;аксессуар;портмоне
@@ -751,20 +751,20 @@ tool;quill;инструмент;полый вал
 decor;quilt;декор;одеяло
 vehicle;racer;автомобиль;гонщик
 sports equipment;racket;спортивное оборудование;ракетки
-electronics;radiator;электроника;радиатор
-electronics;radio;электроника;радио
+electronics;radiator;техника;радиатор
+electronics;radio;техника;радио
 technology;radio telescope;технология;радиотелескоп
 container;rain barrel;контейнер;дождевая бочка
 vehicle;recreational vehicle;автомобиль;дом на колёсах
 technology;reel;технология;катушка
-electronics;reflex camera;электроника;зеркальный фотоаппарат
+electronics;reflex camera;техника;зеркальный фотоаппарат
 furniture;refrigerator;мебель;холодильник
-electronics;remote control;электроника;пульт дистанционного управления
+electronics;remote control;техника;пульт дистанционного управления
 building;restaurant;дом;ресторан
 weapon;revolver;оружие;Наган
 weapon;rifle;оружие;винтовка
 furniture;rocking chair;мебель;кресло-качалка
-cooking;rotisserie;приготовление;вертел
+cooking;rotisserie;еда;вертел
 tool;rubber eraser;инструмент;ластик
 ball;rugby ball;мяч;мяч для рэгби
 tool;rule;инструмент;правило
@@ -776,7 +776,7 @@ clothing;sandal;одежда;сандал
 clothing;sarong;одежда;саронг
 instrument;sax;инструмент;саксофон
 weapon;scabbard;оружие;ножны
-electronics;scale;электроника;масштаб
+electronics;scale;техника;масштаб
 vehicle;school bus;автомобиль;школьный автобус
 boat;schooner;лодка;шхуна
 sports equipment;scoreboard;спортивное оборудование;табло
@@ -798,7 +798,7 @@ clothing;ski mask;одежда;лыжная маска
 accessory;sleeping bag;аксессуар;спальный мешок
 technology;slide rule;технологии;логарифмическая линейка
 furniture;sliding door;мебель;раздвижные двери
-electronics;slot;электроника;слот
+electronics;slot;техника;слот
 sports equipment;snorkel;спортивное оборудование;дыхательная трубка
 vehicle;snowmobile;автомобиль;снегоход
 vehicle;snowplow;автомобиль;Снегоочиститель
@@ -807,26 +807,26 @@ ball;soccer ball;мяч;футбольный мяч
 clothing;sock;одежда;носок
 technology;solar dish;технология;солнечное блюдо
 hat;sombrero;шляпа;сомбреро
-cooking;soup bowl;приготовление;таредка супа
-electronics;space bar;электроника;пробел
-electronics;space heater;электроника;обогреватель
+cooking;soup bowl;еда;таредка супа
+electronics;space bar;техника;пробел
+electronics;space heater;техника;обогреватель
 aircraft;space shuttle;самолет;космический челнок
-cooking;spatula;приготовление;шпатель
+cooking;spatula;еда;шпатель
 boat;speedboat;лодка;катер
 spider web;spider web;паутина;паутина
 technology;spindle;технология;шпиндель
 vehicle;sports car;автомобиль;спортивный автомобиль
-electronics;spotlight;электроника;прожектор
+electronics;spotlight;техника;прожектор
 furniture;stage;мебель;сцена
 train;steam locomotive;поезд;паровоз
-arch bridge;arch bridge;арочный мост;арочный мост
+arch bridge;arch bridge;мост;арочный мост
 instrument;steel drum;инструмент;стальной барабан
 tool;stethoscope;инструмент;стетоскоп
 accessory;stole;аксессуар;палантин
 stone wall;stone wall;каменная стена;каменная стена
-electronics;stopwatch;электроника;секундомер
+electronics;stopwatch;техника;секундомер
 furniture;stove;мебель;плита
-cooking;strainer;приготовление;сито
+cooking;strainer;еда;сито
 vehicle;streetcar;автомобиль;трамвай
 furniture;stretcher;мебель;носилки
 furniture;studio couch;мебель;диван
@@ -837,19 +837,19 @@ sundial;sundial;солнечные часы;солнечные часы
 tool;sunglass;инструмент;очки
 clothing;sunglasses;одежда;солнцезащитные очки
 sunscreen;sunscreen;солнцезащитный крем;солнцезащитный крем
-suspension bridge;suspension bridge;подвесной мост;подвесной мост
+suspension bridge;suspension bridge;мост;подвесной мост
 tool;swab;инструмент;тампон
 clothing;sweatshirt;одежда;толстовка
 clothing;swimming trunks;одежда;плавки
 toy;swing;игрушка;качели
-electronics;switch;электроника;переключатель
+electronics;switch;техника;переключатель
 tool;syringe;инструмент;шприц
 decor;table lamp;декор;настольная лампа
 vehicle;tank;транспорт;танк
-electronics;tape player;электроника;магнитофон
-cooking;teapot;приготовление;чайничек
+electronics;tape player;техника;магнитофон
+cooking;teapot;еда;чайничек
 toy;teddy;игрушка;плюшевый мишка
-electronics;television;электроника;телевизор
+electronics;television;техника;телевизор
 ball;tennis ball;мяч;теннисный мяч
 building;thatch;дом;Соломенная крыша
 decor;theater curtain;декор;театральный занавес
@@ -857,7 +857,7 @@ tool;thimble;инструмент;наперсток
 vehicle;thresher;машина;молотильщик
 furniture;throne;мебель;трон
 building;tile roof;дом;крыша
-electronics;toaster;электроника;тостер
+electronics;toaster;техника;тостер
 building;tobacco shop;дом;табачный магазин
 furniture;toilet seat;мебель;сиденье для унитаза
 tool;torch;инструмент;факел
@@ -876,11 +876,11 @@ vehicle;trolleybus;автомобиль;троллейбус
 instrument;trombone;инструмент;тромбон
 furniture;tub;мебель;ванна
 technology;turnstile;технология;турникет
-electronics;typewriter keyboard;электроника;клавиатура пишущей машинки 
+electronics;typewriter keyboard;техника;клавиатура пишущей машинки 
 accessory;umbrella;аксессуар;зонтик
 vehicle;unicycle;автомобиль;моноцикл
 instrument;upright;инструмент;контрабас
-electronics;vacuum;электроника;вакуум
+electronics;vacuum;техника;вакуум
 decor;vase;декор;ваза
 container;vault;контейнер;хранилище
 other;velvet;другие;бархат
@@ -889,13 +889,13 @@ clothing;vestment;одежда;облачение
 viaduct;viaduct;виадук;виадук
 instrument;violin;инструмент;скрипка
 ball;volleyball;мяч;волейбол
-electronics;waffle iron;электроника;вафельница
+electronics;waffle iron;техника;вафельница
 technology;wall clock;технология;настенные часы
 accessory;wallet;аксессуар;кошелек
 furniture;wardrobe;мебель;шкаф
 aircraft;warplane;самолет;самолет
 container;washbasin;контейнер;умывальник
-electronics;washer;электроника;стиральная машины
+electronics;washer;техника;стиральная машины
 container;water bottle;контейнер;бутылка воды
 container;water jug;контейнер;кувшин для воды
 water tower;water tower;водонапорная башня;водонапорная башня
@@ -907,8 +907,8 @@ decor;window shade;декор;шторка
 accessory;Windsor tie;аксессуар;Виндзорский узел
 food;wine bottle;еда;бутылки вина
 other;wing;другие;крыло
-cooking;wok;приготовление;вок
-cooking;wooden spoon;приготовление;деревянная ложка
+cooking;wok;еда;вок
+cooking;wooden spoon;еда;деревянная ложка
 other;wool;другие;шерсть
 fence;worm fence;забор;изгородь
 boat;wreck;лодка;затонувший корабль
@@ -918,13 +918,13 @@ technology;web site;технология;веб-сайт
 paper;comic book;бумага;комикс 
 paper;crossword puzzle;бумага;кроссворд
 street sign;street sign;дорожный знак;дорожный знак
-electronics;traffic light;электроника;светофор
+electronics;traffic light;техника;светофор
 paper;book jacket;бумага;суперобложка
 paper;menu;бумага;меню
-cooking;plate;приготовление;кухонная плита
+cooking;plate;еда;кухонная плита
 food;guacamole;еда;гуакамоле
 food;consomme;еда;консоме
-cooking;hot pot;приготовление;тушеное мясо с овощами
+cooking;hot pot;еда;тушеное мясо с овощами
 food;trifle;еда;трайфл
 food;ice cream;еда;мороженое
 food;ice lolly;еда;мороженное на палочке
@@ -940,12 +940,12 @@ vegetable;cauliflower;овощи;цветная капуста
 fruit;zucchini;фрукты;цукини
 fruit;spaghetti squash;фрукты;тыква
 fruit;acorn squash;фрукты;тыква
-vegetable;butternut squash;овощ;тыква
-vegetable;cucumber;овощ;огурец
-vegetable;artichoke;овощ;артишок
-vegetable;bell pepper;овощ;перец
+vegetable;butternut squash;овощи;тыква
+vegetable;cucumber;овощи;огурец
+vegetable;artichoke;овощи;артишок
+vegetable;bell pepper;овощи;перец
 flower;cardoon;цветок;артишок испанский
-fungus;mushroom;грибок;гриб
+fungus;mushroom;гриб;гриб
 fruit;Granny Smith;фрукты;яблоко
 fruit;strawberry;фрукты;клубника
 fruit;orange;фрукты;апельсин
@@ -966,12 +966,12 @@ food;potpie;еда;пирог
 food;burrito;еда;буррито
 food;red wine;еда;красное вино
 food;espresso;еда;эспрессо
-cooking;cup;приготовление;кружка
+cooking;cup;еда;кружка
 food;eggnog;еда;гоголь-моголь
 alp;alp;гора;гора
 other;bubble;другое;пузырь
 cliff;cliff;скалы;скалы
-coral;coral reef;коралл;коралловый риф
+coral;coral reef;риф;коралловый риф
 geyser;geyser;гейзер;гейзер
 lakeside;lakeside;берег озера;берег озера
 promontory;promontory;мыс;мыс
@@ -989,12 +989,12 @@ food;corn;еда;кукуруза
 plant;acorn;завод;желудь
 flower;hip;цветок;бедра
 plant;buckeye;завод;Бакай
-coral;coral fungus;коралловый;коралловый гриб
-fungus;agaric;грибок;мухомор
-fungus;gyromitra;грибок;строчок
-fungus;stinkhorn;грибок;stinkhorn
-fungus;earthstar;грибок;earthstar
-fungus;hen-of-the-woods;грибок;курица-оф-Вудс
-fungus;bolete;грибок;гриб
+coral;coral fungus;риф;коралловый гриб
+fungus;agaric;гриб;мухомор
+fungus;gyromitra;гриб;строчок
+fungus;stinkhorn;гриб;stinkhorn
+fungus;earthstar;гриб;earthstar
+fungus;hen-of-the-woods;гриб;курица-оф-Вудс
+fungus;bolete;гриб;гриб
 food;ear;еда;початок
 other;toilet tissue;другие;туалет ткани
