@@ -60,7 +60,7 @@ func (us* Usecase) Predict(tags *[]string) (*[]string, error){
 		tokens = append(tokens, next)
 
 		str := strings.Join(tokens, " ")
-		
+
 		m[str] = true
 	}
 
