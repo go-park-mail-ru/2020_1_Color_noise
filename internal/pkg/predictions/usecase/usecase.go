@@ -44,6 +44,8 @@ func (us* Usecase) Predict(tags *[]string) (*[]string, error){
 
 	var generated []string
 
+	m := make(map[string]bool)
+
 	if len(*tags) < 3 {
 		return nil, nil
 	}
@@ -58,8 +60,12 @@ func (us* Usecase) Predict(tags *[]string) (*[]string, error){
 		tokens = append(tokens, next)
 
 		str := strings.Join(tokens, " ")
-		generated = append(generated, str)
+		
+		m[str] = true
+	}
 
+	for key, _ := range m {
+		generated = append(generated, key)
 	}
 
 	return &generated, nil
