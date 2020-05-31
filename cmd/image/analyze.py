@@ -22,7 +22,7 @@ class ImageServiceServicer(image_pb2_grpc.ImageServiceServicer):
     """Provides methods that implement functionality of route guide server."""
 
     def Analyze(self, request, context):
-        input_image = Image.open('../storage/' + request.Image)
+        input_image = Image.open('../storage/' + request.Image).convert('RGB')
         preprocess = transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
